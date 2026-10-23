@@ -4306,6 +4306,39 @@ BANK.push(
 );
 
 /* =========================================================
+   Hand-written hard problems, round 5 (number theory, counting, logic, functions)
+   ========================================================= */
+BANK.push(
+  H("h5-pr1", "amc8", "primes", "For how many primes p are p + 2 and p + 4 also both prime?", ["0", "1", "2", "3", "Infinitely many"], "1", "Look at p, p + 2, p + 4 when you divide by 3.", "One of the three is always a multiple of 3, so one of them must be 3 itself. Only p = 3 works (3, 5, 7)."),
+  H("h5-pr2", "amc8", "primes", "What is the sum of all the primes between 40 and 60?", ["186", "200", "243", "250", "290"], "243", "Check each odd number for small factors.", "41 + 43 + 47 + 53 + 59 = 243."),
+  H("h5-dv1", "amc8", "divisibility", "The five-digit number 2A7A4 is divisible by 9. What digit is A?", ["2", "4", "5", "7", "9"], "7", "The digit sum must be a multiple of 9.", "13 + 2A must be a multiple of 9. A = 7 gives 27."),
+  H("h5-dv2", "amc10", "divisibility", "How many of the integers from 1 to 1000 are divisible by 6 but not by 9?", ["111", "112", "121", "138", "166"], "111", "Divisible by both 6 and 9 means divisible by 18.", "166 multiples of 6, minus 55 multiples of 18: 111."),
+  H("h5-gl1", "amc8", "gcd-lcm", "Two numbers have GCD 6 and LCM 180. One of them is 36. What is the other?", ["18", "24", "30", "36", "60"], "30", "GCD × LCM = product of the two numbers.", "6 × 180 = 1080 = 36 × 30."),
+  H("h5-gl2", "amc8", "gcd-lcm", "What is the smallest whole number greater than 1 that leaves remainder 1 when divided by 2, 3, 4, 5, and 6?", ["31", "59", "61", "121", "301"], "61", "Subtract 1: the result is a multiple of all five numbers.", "LCM(2, 3, 4, 5, 6) = 60, so the answer is 61."),
+  H("h5-md1", "amc8", "modular", "What is the remainder when 2<sup>100</sup> is divided by 7?", ["1", "2", "3", "4", "6"], "2", "2³ = 8 leaves remainder 1.", "2¹⁰⁰ = (2³)³³ × 2 leaves remainder 1 × 2 = 2."),
+  H("h5-md2", "amc10", "modular", "What is the remainder when 1! + 2! + 3! + ⋯ + 100! is divided by 12?", ["0", "3", "9", "10", "11"], "9", "From 4! on, every term is a multiple of 12.", "1 + 2 + 6 = 9, and everything after adds multiples of 12."),
+  H("h5-ud1", "amc8", "units-digit", "What is the units digit of 3<sup>2026</sup> + 7<sup>2026</sup>?", ["0", "2", "4", "6", "8"], "8", "Both cycle with length 4. 2026 leaves remainder 2 when divided by 4.", "3² ends in 9 and 7² ends in 9. 9 + 9 = 18, units digit 8."),
+  H("h5-ud2", "amc10", "units-digit", "What is the units digit of 1 + 2 + 3 + ⋯ + 2026?", ["1", "3", "5", "6", "7"], "1", "The sum is 2026 × 2027 / 2.", "1013 × 2027 ends in 3 × 7 = 21, so the units digit is 1."),
+  H("h5-bs1", "amc8", "bases", "How is 100 written in base 5?", ["244", "320", "400", "410", "1000"], "400", "Powers of 5: 1, 5, 25, 125.", "100 = 4 × 25, so it's 400 in base 5."),
+  H("h5-bs2", "amc10", "bases", "In some base b, the number written 121 equals 144 in base 10. What is b?", ["9", "10", "11", "12", "13"], "11", "121 in base b is b² + 2b + 1 = (b + 1)².", "(b + 1)² = 144 gives b = 11."),
+  H("h5-dg1", "amc8", "digits", "How many digits are printed to number the pages of a book from 1 to 150?", ["300", "339", "342", "351", "450"], "342", "Count 1-digit, 2-digit, and 3-digit page numbers separately.", "9 + 90 × 2 + 51 × 3 = 9 + 180 + 153 = 342."),
+  H("h5-dg2", "amc10", "digits", "What is the sum of all the digits in all the numbers from 1 to 99?", ["450", "810", "900", "990", "4950"], "900", "Each digit 0–9 appears equally often in each place.", "Units place: each of 1–9 appears 10 times, giving 450. Tens place: same, 450. Total 900."),
+  H("h5-di1", "amc10", "diophantine", "How many pairs of non-negative integers (x, y) satisfy 3x + 5y = 47?", ["2", "3", "4", "5", "9"], "3", "47 − 5y must be a multiple of 3.", "y = 1, 4, 7 give x = 14, 9, 4. Three pairs."),
+  H("h5-di2", "amc8", "diophantine", "Using only 7¢ and 11¢ stamps, Kim pays exactly $1.00 in postage. How many stamps does she use?", ["9", "10", "11", "12", "13"], "12", "Try each number of 11¢ stamps.", "Only 4 × 11 + 8 × 7 = 100 works: 12 stamps."),
+
+  H("h5-pm1", "amc8", "permutations", "Five kids line up in a row. In how many orders is Ann somewhere ahead of Bo?", ["24", "48", "60", "96", "120"], "60", "In every order, Ann is either ahead of Bo or behind. Those cases match up in pairs.", "Half of 5! = 120: 60."),
+  H("h5-pm2", "amc10", "permutations", "How many four-digit even numbers have four different digits?", ["2240", "2296", "2520", "2688", "4536"], "2296", "Split by whether the last digit is 0.", "Ends in 0: 9 × 8 × 7 = 504. Ends in 2, 4, 6, or 8: 4 × 8 × 8 × 7 = 1792. Total 2296."),
+  H("h5-cw1", "amc10", "casework", "How many three-digit numbers have digits that add up to 10?", ["45", "48", "54", "55", "63"], "54", "Fix the hundreds digit, then count the pairs for the last two digits.", "Hundreds digit h leaves 10 − h for the last two digits, which can be split 11 − h ways. h = 1 gives 10 ways, h = 2 gives 9, …, h = 9 gives 2. 10 + 9 + ⋯ + 2 = 54."),
+  H("h5-cw2", "amc8", "casework", "How many integers from 1 to 100 contain exactly one digit 5?", ["17", "18", "19", "20", "21"], "18", "Split into numbers with 5 in the ones place and 5 in the tens place.", "Ones digit 5: 5, 15, …, 95 is 10 numbers. Tens digit 5: 50–59 is 10 numbers. 55 has two 5s, so remove it from both: 9 + 9 = 18."),
+  H("h5-pc1", "amc8", "pascal", "Row 10 of Pascal's triangle starts 1, 10, 45, …. What is the sum of the numbers in that row?", ["100", "512", "1023", "1024", "2048"], "1024", "Each row sums to a power of 2.", "Row n sums to 2ⁿ: 2¹⁰ = 1024."),
+  H("h5-pc2", "amc10", "pascal", "C(10, 3) + C(10, 4) = C(11, k) for some k ≤ 5. What is k?", ["3", "4", "5", "7", "8"], "4", "Pascal's rule: two neighbors add to the number below them.", "C(10, 3) + C(10, 4) = C(11, 4)."),
+  H("h5-pa1", "amc8", "parity", "Can you put a + or − sign in front of each of 1, 2, 3, …, 10 so that the total is 0?", ["Yes, in exactly one way", "Yes, in many ways", "No: the total is always odd", "No: the total is always a multiple of 3", "Only if 10 gets a − sign"], "No: the total is always odd", "Changing a + to a − changes the total by an even amount.", "With all + signs the total is 55, which is odd. Flipping a sign changes it by an even number, so it stays odd and can never be 0."),
+  H("h5-pa2", "amc10", "parity", "A knight starts in one corner of a chessboard. Can it reach the diagonally opposite corner in exactly 7 moves?", ["Yes", "No: it needs an even number of moves", "No: it needs at least 8 moves", "No: it can never get there", "Only on a 7 × 7 board"], "No: it needs an even number of moves", "Each knight move lands on the other color.", "Opposite corners are the same color. Each move switches color, so getting there takes an even number of moves."),
+  H("h5-fn1", "amc8", "functions", "f(x) = 2x + 3 and g(x) = x² − 1. What is f(g(3))?", ["11", "19", "24", "35", "48"], "19", "Work inside out.", "g(3) = 8, f(8) = 19."),
+  H("h5-fn2", "amc10", "functions", "f(x + 1) = x² + 3x for every x. What is f(5)?", ["20", "28", "30", "40", "44"], "28", "Which x makes x + 1 = 5?", "x = 4: 16 + 12 = 28."),
+);
+
+/* =========================================================
    GENERATORS: Counting
    ========================================================= */
 
