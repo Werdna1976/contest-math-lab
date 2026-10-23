@@ -71,6 +71,7 @@ main{max-width:1440px;margin:0 auto;padding-block:28px 64px;padding-left:max(16p
 .status{font-size:.82rem;color:var(--muted);display:flex;align-items:center;gap:6px}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
 .dot.on{background:var(--good)}
+.status.warn{color:var(--bad)}.status.warn .dot{background:var(--bad)}
 
 /* home */
 .hero{display:grid;grid-template-columns:1.3fr 1fr;gap:28px;align-items:center}
@@ -7667,44 +7668,83 @@ GEN("olh-dice-product", "organized-lists", "amc10", R => {
    ========================================================= */
 const LS_KEY = "cml.results.v1", LS_OPEN = "cml.opened.v1", LS_WHO = "cml.student", LS_THEME = "cml.theme", LS_SET = "cml.settings.v1", LS_FMHIDE = "cml.fmhide", LS_TIER = "cml.tier";
 const COMPLETE_AT = 0.8; // best lesson-check score that counts as complete
+const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const byDateDesc = (a, b) => (b.date || "").localeCompare(a.date || "");
+// Every save goes to this browser first. When the shared db is reachable it is merged in (deduped by id)
+// and any record only this browser has is copied up, so a failed or offline write is never lost.
 const store = {
-  mode: "local", db: null, results: [], opened: {}, settings: {}, listeners: [],
-  lsGet(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } },
-  lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+  mode: "local", db: null, results: [], opened: {}, settings: {}, listeners: [], lsOK: true,
+  dbResults: null, dbOpened: null, pushed: new Set(),
+  mem: {},  // keeps this visit working when the browser refuses storage
+  lsGet(k, d) { try { const v = localStorage.getItem(k); if (v !== null) return JSON.parse(v) ?? d; } catch {} return this.mem[k] ?? d; },
+  lsSet(k, v) { this.mem[k] = v; try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { this.lsOK = false; return false; } },
+  probe() { try { localStorage.setItem("cml.probe", "1"); const ok = localStorage.getItem("cml.probe") === "1"; localStorage.removeItem("cml.probe"); return ok; } catch { return false; } },
+  // local records, each given a stable id so they can be matched against the db
+  localResults() {
+    const list = this.lsGet(LS_KEY, []);
+    let changed = false;
+    list.forEach(r => { if (!r.id) { r.id = newId(); changed = true; } });
+    if (changed) this.lsSet(LS_KEY, list);
+    return list;
+  },
+  merge() {
+    const local = this.localResults(), localOpen = this.lsGet(LS_OPEN, {});
+    if (!this.dbResults) { this.results = local.sort(byDateDesc); this.opened = localOpen; return; }
+    const have = new Set(this.dbResults.map(r => r.id || r._id));
+    const extra = local.filter(r => !have.has(r.id));
+    this.results = [...this.dbResults, ...extra].sort(byDateDesc);
+    this.opened = { ...localOpen, ...(this.dbOpened || {}) };
+    // copy up anything only this browser has
+    for (const r of extra) if (!this.pushed.has(r.id)) {
+      this.pushed.add(r.id);
+      this.db.collection("results").doc(r.id).set(r).catch(() => this.pushed.delete(r.id));
+    }
+    if (this.dbOpened) for (const [k, date] of Object.entries(localOpen)) if (!this.dbOpened[k] && !this.pushed.has("o:" + k)) {
+      this.pushed.add("o:" + k);
+      const [student, lessonId] = k.split("__");
+      this.db.collection("opened").doc(k).set({ student, lessonId, date }).catch(() => this.pushed.delete("o:" + k));
+    }
+  },
   async init() {
-    this.results = this.lsGet(LS_KEY, []);
-    this.opened = this.lsGet(LS_OPEN, {});
+    this.lsOK = this.probe();
     this.settings = this.lsGet(LS_SET, {});
+    this.merge();
+    addEventListener("storage", e => { if ([LS_KEY, LS_OPEN].includes(e.key)) { this.merge(); this.emit(); } });
     const db = await (window.claude?.use?.("db") ?? Promise.resolve(null)).catch(() => null);
-    if (!db) return;
+    if (!db) { this.emit(); return; }
     this.db = db; this.mode = "shared";
-    const fail = () => { this.mode = "local"; this.results = this.lsGet(LS_KEY, []); this.opened = this.lsGet(LS_OPEN, {}); this.settings = this.lsGet(LS_SET, {}); this.emit(); };
+    const fail = () => { this.mode = "local"; this.dbResults = this.dbOpened = null; this.merge(); this.emit(); };
     db.collection("results").orderBy("date", "desc").limit(1000).onSnapshot(
-      snap => { this.results = snap.docs.map(d => ({ _id: d.id, ...d.data() })); this.emit(); }, fail);
+      snap => { this.dbResults = snap.docs.map(d => ({ _id: d.id, ...d.data() })); this.merge(); this.emit(); }, fail);
     db.collection("opened").limit(1000).onSnapshot(
-      snap => { const o = {}; snap.docs.forEach(d => { o[d.id] = d.data().date; }); this.opened = o; this.emit(); }, fail);
+      snap => { const o = {}; snap.docs.forEach(d => { o[d.id] = d.data().date; }); this.dbOpened = o; this.merge(); this.emit(); }, fail);
     db.collection("settings").onSnapshot(
-      snap => { const o = {}; snap.docs.forEach(d => { o[d.id] = d.data(); }); this.settings = o; this.lsSet(LS_SET, o); this.emit(); }, () => {});
+      snap => { const o = {}; snap.docs.forEach(d => { o[d.id] = d.data(); }); this.settings = { ...this.settings, ...o }; this.lsSet(LS_SET, this.settings); this.emit(); }, () => {});
     this.emit();
   },
+  // returns "shared", "local", or "none" (nowhere to keep it)
   async add(rec) {
-    if (this.mode === "shared") {
-      try { await this.db.collection("results").add(rec); return "shared"; } catch { /* fall back to local */ }
-    }
-    const list = this.lsGet(LS_KEY, []); list.unshift(rec); this.lsSet(LS_KEY, list);
-    if (this.mode === "local") this.results = list;
+    rec.id = rec.id || newId();
+    const list = this.localResults(); list.unshift(rec);
+    const savedLocal = this.lsSet(LS_KEY, list);
+    this.results = [rec, ...this.results.filter(r => r.id !== rec.id)];
     this.emit();
-    return "local";
+    if (this.mode === "shared") {
+      this.pushed.add(rec.id);
+      try { await this.db.collection("results").doc(rec.id).set(rec); return "shared"; } catch { this.pushed.delete(rec.id); }
+    }
+    return savedLocal ? "local" : "none";
   },
   async markOpened(student, lessonId) {
     const key = `${student}__${lessonId}`;
     if (this.opened[key]) return;
     const date = new Date().toISOString();
     this.opened[key] = date;
-    if (this.mode === "shared") {
-      try { await this.db.collection("opened").doc(key).set({ student, lessonId, date }); return; } catch { /* fall back */ }
-    }
     const o = this.lsGet(LS_OPEN, {}); o[key] = date; this.lsSet(LS_OPEN, o);
+    if (this.mode === "shared") {
+      this.pushed.add("o:" + key);
+      try { await this.db.collection("opened").doc(key).set({ student, lessonId, date }); } catch { this.pushed.delete("o:" + key); }
+    }
   },
   async setSetting(student, patch) {
     this.settings = { ...this.settings, [student]: { ...this.settings[student], ...patch } };
@@ -7714,17 +7754,32 @@ const store = {
   },
   // delete results matching isResult and opened marks whose key matches isOpen, in both places they may live
   async reset(isResult, isOpen) {
-    this.lsSet(LS_KEY, this.lsGet(LS_KEY, []).filter(r => !isResult(r)));
+    this.lsSet(LS_KEY, this.localResults().filter(r => !isResult(r)));
     const lo = this.lsGet(LS_OPEN, {}); for (const k of Object.keys(lo)) if (isOpen(k)) delete lo[k]; this.lsSet(LS_OPEN, lo);
     const goneR = this.results.filter(isResult), goneO = Object.keys(this.opened).filter(isOpen);
+    if (this.dbResults) this.dbResults = this.dbResults.filter(r => !isResult(r));
+    if (this.dbOpened) this.dbOpened = Object.fromEntries(Object.entries(this.dbOpened).filter(([k]) => !isOpen(k)));
     this.results = this.results.filter(r => !isResult(r));
     this.opened = Object.fromEntries(Object.entries(this.opened).filter(([k]) => !isOpen(k)));
     this.emit();
     if (this.mode !== "shared") return true;
-    const jobs = [...goneR.filter(r => r._id).map(r => this.db.collection("results").doc(r._id).delete()),
+    const jobs = [...goneR.map(r => r._id || r.id).filter(Boolean).map(id => this.db.collection("results").doc(id).delete()),
                   ...goneO.map(k => this.db.collection("opened").doc(k).delete())];
     const out = await Promise.allSettled(jobs);
     return out.every(o => o.status === "fulfilled");
+  },
+  // backup file: everything this page knows, so progress can move between browsers or PCs
+  exportData() { return { app: "contest-math-lab", version: 1, saved: new Date().toISOString(), results: this.results.map(({ _id, ...r }) => r), opened: this.opened, settings: this.settings }; },
+  importData(data) {
+    if (data?.app !== "contest-math-lab" || !Array.isArray(data.results)) throw new Error("Not a Contest Math Lab backup");
+    const list = this.localResults(), have = new Set(this.results.map(r => r.id || r._id));
+    let added = 0;
+    for (const r of data.results) { const rec = { ...r, id: r.id || newId() }; if (!have.has(rec.id)) { list.push(rec); have.add(rec.id); added++; } }
+    this.lsSet(LS_KEY, list.sort(byDateDesc));
+    this.lsSet(LS_OPEN, { ...(data.opened || {}), ...this.lsGet(LS_OPEN, {}) });
+    if (data.settings) { this.settings = { ...data.settings, ...this.settings }; this.lsSet(LS_SET, this.settings); }
+    this.merge(); this.emit();
+    return added;
   },
   emit() { this.listeners.forEach(f => f()); },
 };
@@ -7856,9 +7911,26 @@ $("#who").addEventListener("click", e => {
 });
 
 function storageNote() {
-  return store.mode === "shared"
-    ? `<span class="status"><span class="dot on"></span>Results save to your shared record (visible on every PC)</span>`
-    : `<span class="status"><span class="dot"></span>Results save in this browser only</span>`;
+  if (store.mode === "shared") return `<span class="status"><span class="dot on"></span>Saving to shared record (every PC)</span>`;
+  if (!store.lsOK) return `<span class="status warn"><span class="dot"></span>Not saving: this browser blocks storage · use Save backup on Progress</span>`;
+  return `<span class="status"><span class="dot"></span>Saving in this browser</span>`;
+}
+function saveMsg(where, student) {
+  if (where === "shared") return `Saved to ${nameOf(student)}'s record`;
+  if (where === "local") return store.mode === "shared" ? "Shared record unreachable · saved in this browser" : `Saved in this browser for ${nameOf(student)}`;
+  return "Not saved: this browser blocks storage · use Save backup on Progress";
+}
+function downloadBackup() {
+  const blob = new Blob([JSON.stringify(store.exportData(), null, 1)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `math-progress-${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+function loadBackup(file) {
+  file.text().then(t => { const n = store.importData(JSON.parse(t)); toast(`Backup loaded · ${n} new result${n === 1 ? "" : "s"}`); })
+    .catch(e => toast(e.message.startsWith("Not a") ? e.message : "Couldn't read that file"));
 }
 
 /* =========================================================
@@ -8238,7 +8310,7 @@ async function finishTest(timedOut = false) {
   S.test = null;
   go("result");
   const where = await store.add(rec);
-  toast(where === "shared" ? `Saved to ${nameOf(rec.student)}'s record` : `Saved in this browser for ${nameOf(rec.student)}`);
+  toast(saveMsg(where, rec.student));
 }
 
 function viewResult() {
@@ -8277,7 +8349,8 @@ function viewProgress() {
   const people = who === "All" ? STUDENTS : [who];
   const chaps = CURRICULUM.filter(c => readyLessons(c).length);
   return `
-  <section style="display:flex;flex-direction:column;gap:8px"><span class="eyebrow">Progress</span><h1>${who === "All" ? "Everyone" : nameOf(who)}</h1>${storageNote()}</section>
+  <section style="display:flex;flex-direction:column;gap:8px"><span class="eyebrow">Progress</span><h1>${who === "All" ? "Everyone" : nameOf(who)}</h1>${storageNote()}
+    <div class="row"><button class="btn ghost" data-act="backup">Save backup</button><label class="btn ghost">Load backup<input type="file" accept=".json,application/json" data-act="restore" hidden></label></div></section>
   <div class="row">${["All", ...STUDENTS].map(s => `<button class="pill" aria-pressed="${s === who}" data-act="pwho" data-s="${s}">${s === "All" ? "All" : nameOf(s)}</button>`).join("")}</div>
   <section class="stats">
     <div class="stat"><div class="v">${tests.length}</div><div class="l">Tests taken</div></div>
@@ -8326,6 +8399,10 @@ app.addEventListener("submit", e => {
   document.activeElement?.blur?.();
   store.setSetting(S.student, { name: v === S.student ? "" : v }); toast(`Saved: ${v || S.student}`);
 });
+app.addEventListener("change", e => {
+  const el = e.target.closest('[data-act="restore"]'); if (!el?.files?.[0]) return;
+  loadBackup(el.files[0]); el.value = "";
+});
 app.addEventListener("input", e => {
   const el = e.target.closest('[data-act="qnum"]'); if (!el) return;
   S.quizState[S.lessonId].answers[+el.dataset.i] = el.value;
@@ -8348,7 +8425,8 @@ app.addEventListener("click", async e => {
         missed: res.filter(r => !r.ok).map(({ it, i }) => ({ id: S.lessonId + "-" + (i + 1), q: strip(it.q), your: blank(st.answers[i]) ? null : (it.type === "mc" ? strip(it.choices[st.answers[i]]) : String(st.answers[i])), correct: it.type === "mc" ? strip(it.choices[it.answer]) : String(it.answer) })) };
       const where = store.add(rec);
       render();
-      if ((await where) === "local" && store.mode === "shared") toast("Couldn't reach the shared record; saved in this browser");
+      const w = await where;
+      if (w === "none" || (w === "local" && store.mode === "shared")) toast(saveMsg(w, rec.student));
       break;
     }
     case "level": S.level = b.dataset.k; render(); break;
@@ -8378,6 +8456,7 @@ app.addEventListener("click", async e => {
     case "fmnone": CURRICULUM.forEach(c => S.fmHide.add(c.id)); store.lsSet(LS_FMHIDE, [...S.fmHide]); render(); break;
     case "fmtop": window.scrollTo({ top: 0, behavior: "smooth" }); break;
     case "fmjump": document.getElementById("fm-" + b.dataset.id)?.scrollIntoView({ behavior: "smooth", block: "start" }); break;
+    case "backup": downloadBackup(); break;
     case "popen": S.openAttempt = S.openAttempt === b.dataset.k ? null : b.dataset.k; render(); break;
   }
 });
