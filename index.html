@@ -118,7 +118,17 @@ main{max-width:1440px;margin:0 auto;padding-block:28px 64px;padding-left:max(16p
 .tag.st-opened{background:var(--hi-soft);color:var(--ink)}
 .tag.st-progress{background:var(--hi);color:#1B1A10}
 .tag.st-complete{background:var(--good-soft);color:var(--good)}
-.legend{gap:6px}
+.legend{gap:12px}
+.legend .lg{display:inline-flex;align-items:center;gap:5px;font:500 .75rem var(--f-mono);color:var(--muted)}
+.legend .pring{width:24px;height:24px;font-size:.55rem}
+.pring{--c:var(--accent);width:30px;height:30px;border-radius:50%;flex:none;align-self:center;display:inline-grid;place-items:center;font:700 .66rem/1 var(--f-mono);letter-spacing:-.04em;color:var(--ink);background:radial-gradient(closest-side,var(--surface) 74%,transparent 76%),conic-gradient(var(--c) calc(var(--p) * 1%),var(--grid) 0)}
+.pring.st-ready,.pring.st-soon{background:var(--surface);border:2px solid var(--accent)}
+.pring.st-soon{border-color:var(--line)}
+.pring.st-opened{background:var(--hi-soft);border:2px solid var(--hi)}
+.pring.st-progress{--c:var(--hi)}
+.pring.st-complete{--c:var(--good);color:var(--good)}
+.tdot2{width:11px;height:11px;border-radius:50%;flex:none;align-self:center}
+.tdot2.t1{background:var(--t1)} .tdot2.t2{background:var(--t2)} .tdot2.t3{background:var(--t3)}
 .sdot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;flex:none;border:1.5px solid var(--muted)}
 .sdot.st-ready{border-color:var(--accent)}
 .sdot.st-opened{border-color:var(--hi);background:var(--hi-soft)}
@@ -8551,7 +8561,9 @@ const levelOK = (student, level) => LEVEL_ORDER.indexOf(level) <= LEVEL_ORDER.in
 const inLevel = (student, id) => levelOK(student, lessonLevel(id));
 const nameOf = k => (store.settings[k]?.name || "").trim() || k;
 const tierOf = id => lessonMeta(id)?.lesson.tier || 2;
-const tierTag = (id, short = false) => { const t = tierOf(id); return `<span class="tier t${t}" title="${TIERS[t]} lesson">${short ? TIERS[t].slice(0, 3) : TIERS[t]}</span>`; };
+const tierTag = id => { const t = tierOf(id); return `<span class="tier t${t}" title="${TIERS[t]} lesson">${TIERS[t]}</span>`; };
+// in lists the tier is just a dot in its color (the tier buttons above are the key)
+const tierDot = id => { const t = tierOf(id); return `<span class="tdot2 t${t}" title="${TIERS[t]}" aria-label="${TIERS[t]}"></span>`; };
 const tierOK = id => !S.tier || tierOf(id) === S.tier;
 /* every ready lesson of one tier, in chapter order: the path a student follows */
 const tierPath = t => CURRICULUM.flatMap(readyLessons).filter(l => l.tier === t);
@@ -8570,7 +8582,8 @@ function lessonStatus(student, id) {
   if (store.opened[`${student}__${id}`]) return { s: "opened", label: "opened" };
   return { s: "ready", label: "ready" };
 }
-const statusTag = st => `<span class="tag st-${st.s}">${st.label}</span>`;
+// status = a ring that fills to the best check score; the words live in the legend and the tooltip
+const statusTag = st => { const p = st.best == null ? null : Math.round(st.best * 100); return `<span class="pring st-${st.s}" style="--p:${p ?? 0}" title="${st.label}" aria-label="${st.label}">${p == null ? "" : p}</span>`; };
 function chapterProgress(student, c) {
   const ready = readyLessons(c).filter(l => inLevel(student, l.id));
   const done = ready.filter(l => lessonStatus(student, l.id).s === "complete").length;
@@ -8681,7 +8694,8 @@ function viewHome() {
 }
 
 function statusLegend() {
-  return `<div class="row legend">${["ready", "opened", "progress", "complete"].map(s => statusTag({ s, label: { ready: "ready", opened: "opened", progress: "in progress", complete: "complete" }[s] })).join("")}<span class="status">complete = ${Math.round(COMPLETE_AT * 100)}%+</span></div>`;
+  const ex = { ready: null, opened: null, progress: .5, complete: 1 };
+  return `<div class="row legend">${["ready", "opened", "progress", "complete"].map(s => `<span class="lg">${statusTag({ s, label: s, best: ex[s] })}${{ ready: "ready", opened: "opened", progress: "in progress", complete: `${Math.round(COMPLETE_AT * 100)}%+` }[s]}</span>`).join("")}</div>`;
 }
 
 function tierBar() {
@@ -8710,7 +8724,7 @@ function viewMap() {
             const st = lessonStatus(S.student, l.id), above = !inLevel(S.student, l.id);
             return st.s === "soon"
               ? `<li><button disabled>${l.title}${statusTag(st)}</button></li>`
-              : `<li><button class="ready t${l.tier} ${above ? "above" : ""}" data-act="lesson" data-id="${l.id}"><span class="lt">${l.title}${above ? lvlTag(l.id) : ""}</span><span class="row" style="gap:4px;flex-wrap:nowrap">${S.tier ? "" : tierTag(l.id, true)}${statusTag(st)}</span></button></li>`;
+              : `<li><button class="ready t${l.tier} ${above ? "above" : ""}" data-act="lesson" data-id="${l.id}"><span class="lt">${l.title}${above ? lvlTag(l.id) : ""}</span><span class="row" style="gap:4px;flex-wrap:nowrap">${S.tier ? "" : tierDot(l.id)}${statusTag(st)}</span></button></li>`;
           }).join("")}</ul>` : "";
         }).join("")}
         <button class="fm-tile" data-act="chapter" data-id="${c.id}"><span class="fm-ico" aria-hidden="true">ƒ(x)</span><span><b>Key formulas</b><small>${(FORMULAS[c.id] || []).length} equations · chapter page</small></span><span aria-hidden="true">→</span></button>
@@ -8747,7 +8761,7 @@ function viewChapter() {
       ${c.groups.map(g => `<section style="display:flex;flex-direction:column;gap:8px"><h3>${g.title}</h3>
         <div class="lesson-list">${g.lessons.filter(l => (S.showAbove || inLevel(S.student, l.id)) && tierOK(l.id)).map(l => {
           const st = lessonStatus(S.student, l.id), les = LESSONS[l.id], above = !inLevel(S.student, l.id);
-          return `<button class="lesson-row t${l.tier} ${above ? "above" : ""}" data-act="lesson" data-id="${l.id}" ${les ? "" : "disabled"}><span><b>${l.title}</b>${les ? `<small>about ${les.minutes} min · ${les.quiz.length}-question check${above ? " · above " + S.student + "'s level" : ""}</small>` : `<small>Not written yet</small>`}</span><span class="row" style="gap:6px">${tierTag(l.id)}${lvlTag(l.id)}${statusTag(st)}</span></button>`;
+          return `<button class="lesson-row t${l.tier} ${above ? "above" : ""}" data-act="lesson" data-id="${l.id}" ${les ? "" : "disabled"}><span><b>${l.title}</b>${les ? `<small>about ${les.minutes} min · ${les.quiz.length}-question check${above ? " · above " + S.student + "'s level" : ""}</small>` : `<small>Not written yet</small>`}</span><span class="row" style="gap:6px;flex-wrap:nowrap">${tierDot(l.id)}${lvlTag(l.id)}${statusTag(st)}</span></button>`;
         }).join("")}</div></section>`).join("")}
       ${levelNote()}
       ${resetBlock("chapter", c.id, `Reset ${c.title} for ${nameOf(S.student)}`, `This erases ${nameOf(S.student)}'s lesson checks, "opened" marks, and chapter-only tests for ${c.title}. Other chapters and mixed tests stay.`)}
