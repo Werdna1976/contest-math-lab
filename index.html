@@ -29,7 +29,7 @@
   --good:#4CC28A; --good-soft:#173528; --bad:#F07A72; --bad-soft:#3F1D1C; color-scheme:dark}
 
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;
   background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
   background-size:28px 28px;background-attachment:fixed}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
@@ -170,6 +170,9 @@ main{max-width:1440px;margin:0 auto;padding-block:28px 64px;padding-left:max(16p
 .ex .lbl{font-family:var(--f-mono);font-size:.75rem;color:var(--accent);text-transform:uppercase;letter-spacing:.06em}
 .ex details summary{cursor:pointer;color:var(--accent);font-weight:500}
 .ex details[open] summary{margin-bottom:6px}
+.steps{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:4px}
+.steps li::marker{color:var(--muted);font-family:var(--f-mono);font-size:.85em}
+.fb .steps{margin-top:6px}
 .tbl-wrap{overflow-x:auto}
 table{border-collapse:collapse;font-size:.92rem;width:100%}
 th,td{padding:6px 10px;border-bottom:1px solid var(--line);text-align:left;font-variant-numeric:tabular-nums}
@@ -461,7 +464,9 @@ const frac = (a, b) => `<span class="frac"><span>${a}</span><span>${b}</span></s
 /* =========================================================
    AUTHORING HELPERS (used by content/*.js)
    ========================================================= */
-const ex = (q, sol, tag = "") => `<div class="ex"><span class="lbl">Example${tag ? " · " + tag : ""}</span><p>${q}</p><details><summary>Show solution</summary><p>${sol}</p></details></div>`;
+// a solution is either one sentence or an array of steps, shown as a numbered list
+const steps = sol => Array.isArray(sol) ? `<ol class="steps">${sol.map(s => `<li>${s}</li>`).join("")}</ol>` : `<p>${sol}</p>`;
+const ex = (q, sol, tag = "") => `<div class="ex"><span class="lbl">Example${tag ? " · " + tag : ""}</span><p>${q}</p><details><summary>Show solution</summary>${steps(sol)}</details></div>`;
 const rule = (title, html) => `<div class="rule"><b>${title}</b> ${html}</div>`;
 const aops = (page, label) => `<p class="lede">Reference: <a href="https://artofproblemsolving.com/wiki/index.php/${page}" target="_blank" rel="noopener">AoPS Wiki: ${label}</a></p>`;
 const tbl = (head, rows) => `<div class="tbl-wrap"><table><thead><tr>${head.map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
@@ -3254,21 +3259,21 @@ Object.assign(LESSONS, {
       <h3>The order</h3>
       ${rule("Order:", "parentheses, then exponents, then × and ÷ from left to right, then + and − from left to right.")}
       <p>The trap is thinking × always comes before ÷. They are a tie, so you go left to right: 24 ÷ 4 × 3 = 6 × 3 = 18, not 24 ÷ 12.</p>
-      ${ex("Compute 8 − 2 × 3 + 4.", "Multiply first: 8 − 6 + 4. Then left to right: <b>6</b>.")}
+      ${ex("Compute 8 − 2 × 3 + 4.", ["Multiplication comes before + and −: 2 × 3 = 6, so the problem becomes 8 − 6 + 4.", "Now + and − go left to right: 8 − 6 = 2, then 2 + 4 = <b>6</b>.", "Doing 6 + 4 first would give 8 − 10 = −2, which is wrong."])}
       <h3>Group to save work</h3>
       <p>Contest problems are built so the long way is slow and the clever way is fast. Look for a common factor before you multiply anything.</p>
-      ${ex("Compute 17 × 23 + 17 × 77.", "Factor out 17: 17 × (23 + 77) = 17 × 100 = <b>1700</b>.")}
+      ${ex("Compute 17 × 23 + 17 × 77.", ["Both products contain a 17. That's the signal to factor it out.", "17 × 23 + 17 × 77 = 17 × (23 + 77). This is the distributive property run backward.", "23 + 77 = 100, a friendly number.", "17 × 100 = <b>1700</b>. The long way takes two multiplications and an addition."])}
       <h3>Pairing tricks</h3>
       <p>Long alternating sums usually collapse when you pair neighbors.</p>
-      ${ex("Compute 1 − 2 + 3 − 4 + ··· + 99 − 100.", "Each pair (1 − 2), (3 − 4), … is −1. There are 50 pairs: <b>−50</b>.")}
-      ${ex("Compute (1 + 2 + ··· + 20) − (1 + 3 + ··· + 19).", "The odd numbers cancel, leaving 2 + 4 + ··· + 20 = 2 × 55 = <b>110</b>.", "contest style")}
+      ${ex("Compute 1 − 2 + 3 − 4 + ··· + 99 − 100.", ["Group the terms in pairs: (1 − 2) + (3 − 4) + ··· + (99 − 100).", "Every pair equals −1.", "100 numbers make 100 ÷ 2 = 50 pairs.", "50 × (−1) = <b>−50</b>."])}
+      ${ex("Compute (1 + 2 + ··· + 20) − (1 + 3 + ··· + 19).", ["The first sum has every number from 1 to 20. The second has only the odd ones: 1, 3, 5, …, 19.", "Each odd number appears once with + and once with −, so it cancels. What's left is the even numbers: 2 + 4 + 6 + ··· + 20.", "Every even number is 2 times something, so factor out the 2: 2 + 4 + ··· + 20 = 2 × (1 + 2 + ··· + 10).", "Find 1 + 2 + ··· + 10 by pairing the ends: 1 + 10, 2 + 9, 3 + 8, 4 + 7, 5 + 6. That's 5 pairs of 11, so 5 × 11 = 55. (In general, 1 + 2 + ··· + n = n(n + 1)/2.)", "So the answer is 2 × 55 = <b>110</b>.", "Check it another way: 1 + ··· + 20 = 20 × 21 / 2 = 210. The odd numbers 1 + 3 + ··· + 19 are the first 10 odd numbers, which add to 10² = 100. 210 − 100 = 110."], "contest style")}
       ${aops("Order_of_operations", "Order of operations")}`,
     quiz: [
-      num("What is 8 − 2 × 3 + 4?", 6, "8 − 6 + 4 = 6."),
-      num("What is 24 ÷ 4 × 3?", 18, "Left to right: 6 × 3."),
-      num("Compute 17 × 23 + 17 × 77.", 1700, "17 × 100."),
-      num("Compute 1 − 2 + 3 − 4 + ··· + 99 − 100.", -50, "50 pairs of −1."),
-      mc("What is 2 + 3 × 4²?", ["50", "80", "100", "196", "400"], 0, "4² = 16, 3 × 16 = 48, plus 2."),
+      num("What is 8 − 2 × 3 + 4?", 6, "Multiply first: 2 × 3 = 6. Then go left to right: 8 − 6 = 2, and 2 + 4 = 6."),
+      num("What is 24 ÷ 4 × 3?", 18, "× and ÷ are a tie, so go left to right: 24 ÷ 4 = 6 first, then 6 × 3 = 18."),
+      num("Compute 17 × 23 + 17 × 77.", 1700, "Factor out the 17: 17 × (23 + 77) = 17 × 100 = 1700."),
+      num("Compute 1 − 2 + 3 − 4 + ··· + 99 − 100.", -50, "Pair neighbors: (1 − 2), (3 − 4), and so on. Each pair is −1, and 100 numbers make 50 pairs. 50 × (−1) = −50."),
+      mc("What is 2 + 3 × 4²?", ["50", "80", "100", "196", "400"], 0, "Exponent first: 4² = 16. Then multiply: 3 × 16 = 48. Add last: 2 + 48 = 50."),
     ],
   },
 
@@ -3280,19 +3285,19 @@ Object.assign(LESSONS, {
       ${tbl(["Fraction", "Decimal", "Percent"], [["1/2", "0.5", "50%"], ["1/4", "0.25", "25%"], ["1/5", "0.2", "20%"], ["1/8", "0.125", "12.5%"], ["3/8", "0.375", "37.5%"], ["1/3", "0.333…", "33⅓%"]])}
       <p>Memorize the eighths. They show up constantly, and knowing 7/8 = 0.875 saves a long division.</p>
       <h3>“Of” means multiply</h3>
-      ${ex("What is 3/4 of 2/3 of 60?", "3/4 × 2/3 = 1/2, and half of 60 is <b>30</b>.")}
-      ${ex("What is 20% of 35% of 400?", "0.2 × 0.35 × 400 = 0.2 × 140 = <b>28</b>.")}
+      ${ex("What is 3/4 of 2/3 of 60?", ["“Of” means multiply: 3/4 × 2/3 × 60.", "Multiply the fractions first: (3 × 2)/(4 × 3) = 6/12 = 1/2. The 3s cancel.", "1/2 of 60 is <b>30</b>."])}
+      ${ex("What is 20% of 35% of 400?", ["Write the percents as decimals: 0.2 × 0.35 × 400.", "Do the easiest pair first: 0.35 × 400 = 140.", "Then 0.2 × 140 = <b>28</b>. (20% is one fifth, and 140 ÷ 5 = 28.)"])}
       <h3>Percent off and percent of</h3>
       ${rule("Discount:", "25% off means you pay 75%. Multiply by 0.75, don't subtract twice.")}
-      ${ex("A $80 jacket is 25% off, then another 10% off the sale price. Final price?", "80 × 0.75 × 0.9 = <b>$54</b>. Not 35% off, which would be $52.")}
-      ${ex("A number goes up 20% and then down 20%. What percent of the original is it?", "1.2 × 0.8 = 0.96, so <b>96%</b>. The 20% drop is taken from a bigger number.", "trap")}
+      ${ex("A $80 jacket is 25% off, then another 10% off the sale price. Final price?", ["25% off means you pay 75%: 80 × 0.75 = $60.", "The next 10% comes off the new price, $60, not $80. You pay 90%: 60 × 0.9 = <b>$54</b>.", "Adding the discounts to get 35% off would give 80 × 0.65 = $52. That's wrong because the second discount is taken from a smaller price."])}
+      ${ex("A number goes up 20% and then down 20%. What percent of the original is it?", ["Going up 20% means multiplying by 1.2. Going down 20% means multiplying by 0.8.", "1.2 × 0.8 = 0.96, so the result is <b>96%</b> of the original.", "Try it with 100: up 20% gives 120. Then 20% of 120 is 24, so down to 96. The drop is bigger than the rise because it's taken from 120, not 100."], "trap")}
       ${aops("Percent", "Percent")}`,
     quiz: [
-      num("What is 3/4 of 2/3 of 60?", 30, "3/4 × 2/3 = 1/2."),
-      num("What is 20% of 35% of 400?", 28, "0.2 × 0.35 × 400."),
-      num("Write 7/8 as a decimal.", 0.875, "1/8 = 0.125, times 7."),
-      num("A $40 shirt is 25% off. What is the sale price in dollars?", 30, "40 × 0.75.", "$"),
-      mc("Which is largest?", ["5/8", "0.6", "3/5", "0.62", "13/20"], 4, "13/20 = 0.65; 5/8 = 0.625."),
+      num("What is 3/4 of 2/3 of 60?", 30, "“Of” means multiply. 3/4 × 2/3 = 6/12 = 1/2, and half of 60 is 30."),
+      num("What is 20% of 35% of 400?", 28, "0.35 × 400 = 140. Then 20% of 140 is 140 ÷ 5 = 28."),
+      num("Write 7/8 as a decimal.", 0.875, "1/8 = 0.125, so 7/8 = 7 × 0.125 = 0.875. Or: 7/8 = 1 − 1/8 = 1 − 0.125 = 0.875."),
+      num("A $40 shirt is 25% off. What is the sale price in dollars?", 30, "25% off means you pay 75%: 40 × 0.75 = 30. Or: 25% of 40 is 10, and 40 − 10 = 30.", "$"),
+      mc("Which is largest?", ["5/8", "0.6", "3/5", "0.62", "13/20"], 4, "Turn each into a decimal: 5/8 = 0.625, 0.6, 3/5 = 0.6, 0.62, and 13/20 = 0.65. The largest is 13/20."),
     ],
   },
 
@@ -3303,21 +3308,21 @@ Object.assign(LESSONS, {
       <h3>Parts of a whole</h3>
       <p>A ratio of 3 : 5 means the total is split into 3 + 5 = 8 equal parts. Find the size of one part and you can answer anything.</p>
       ${fig(figTape([3, 5], ["boys", "girls"], "Tape diagram: 3 parts boys, 5 parts girls"), "8 parts in all. If the class has 32 students, each part is 4.")}
-      ${ex("Boys to girls is 3 : 5 in a class of 32. How many girls?", "One part = 32 ÷ 8 = 4, so girls = 5 × 4 = <b>20</b>.")}
-      ${ex("Cats to dogs is 4 : 3, and there are 12 more cats than dogs. How many animals?", "The difference is 1 part, so a part is 12. Total 7 parts = <b>84</b>.")}
+      ${ex("Boys to girls is 3 : 5 in a class of 32. How many girls?", ["3 : 5 means 3 parts boys and 5 parts girls, so 8 equal parts in all.", "32 students ÷ 8 parts = 4 students per part.", "Girls are 5 parts: 5 × 4 = <b>20</b>. Boys are 3 × 4 = 12. Check: 12 + 20 = 32."])}
+      ${ex("Cats to dogs is 4 : 3, and there are 12 more cats than dogs. How many animals?", ["Cats are 4 parts and dogs are 3 parts, so cats have 1 more part than dogs.", "That 1 extra part is the 12 extra cats, so one part = 12.", "The total is 4 + 3 = 7 parts: 7 × 12 = <b>84</b>. That's 48 cats and 36 dogs."])}
       <h3>Scaling</h3>
       ${rule("Proportion:", "a/b = c/d → cross-multiply: ad = bc. Or find the unit rate first.")}
-      ${ex("If 5 pencils cost $1.20, what do 8 cost?", "One pencil is 24¢, so 8 cost <b>$1.92</b>.")}
+      ${ex("If 5 pencils cost $1.20, what do 8 cost?", ["Find the cost of one pencil: $1.20 ÷ 5 = $0.24.", "Then 8 pencils cost 8 × $0.24 = <b>$1.92</b>."])}
       <h3>Chaining ratios</h3>
       <p>When two ratios share a middle term, rescale so the shared term matches.</p>
-      ${ex("a : b = 2 : 3 and b : c = 4 : 5. Find a : b : c.", "Make b equal 12 in both: 8 : 12 and 12 : 15, so <b>8 : 12 : 15</b>.")}
+      ${ex("a : b = 2 : 3 and b : c = 4 : 5. Find a : b : c.", ["b is 3 in the first ratio and 4 in the second. Both describe the same b, so rescale them to a common value.", "The least common multiple of 3 and 4 is 12.", "Multiply a : b = 2 : 3 by 4 to get 8 : 12. Multiply b : c = 4 : 5 by 3 to get 12 : 15.", "Now b is 12 in both, so a : b : c = <b>8 : 12 : 15</b>."])}
       ${aops("Ratio", "Ratio")}`,
     quiz: [
-      num("Boys to girls is 3 : 5 in a class of 32. How many girls?", 20, "One part is 4."),
-      num("A recipe uses 3 cups of flour for every 2 cups of sugar. How many cups of flour go with 10 cups of sugar?", 15, "Sugar is 5 times as much, so flour is too."),
-      num("a : b = 2 : 3 and b : c = 4 : 5. If a = 16, what is c?", 30, "a : b : c = 8 : 12 : 15, then double."),
-      num("If 5 pencils cost $1.20, how many cents do 8 pencils cost?", 192, "24¢ each.", "¢"),
-      mc("Red to blue marbles in a jar is 2 : 7. Which could be the total number of marbles?", ["36", "35", "40", "42", "50"], 0, "The total must be a multiple of 9."),
+      num("Boys to girls is 3 : 5 in a class of 32. How many girls?", 20, "There are 3 + 5 = 8 parts, so one part is 32 ÷ 8 = 4. Girls are 5 parts: 5 × 4 = 20."),
+      num("A recipe uses 3 cups of flour for every 2 cups of sugar. How many cups of flour go with 10 cups of sugar?", 15, "10 cups of sugar is 5 times 2 cups, so use 5 times the flour: 5 × 3 = 15."),
+      num("a : b = 2 : 3 and b : c = 4 : 5. If a = 16, what is c?", 30, "Match the b's: a : b : c = 8 : 12 : 15. a = 16 is double 8, so c is double 15, which is 30."),
+      num("If 5 pencils cost $1.20, how many cents do 8 pencils cost?", 192, "One pencil costs 120¢ ÷ 5 = 24¢. Eight cost 8 × 24 = 192¢.", "¢"),
+      mc("Red to blue marbles in a jar is 2 : 7. Which could be the total number of marbles?", ["36", "35", "40", "42", "50"], 0, "2 : 7 splits the jar into 2 + 7 = 9 equal parts, so the total must be a multiple of 9. Only 36 is."),
     ],
   },
 
@@ -3327,22 +3332,22 @@ Object.assign(LESSONS, {
     body: () => `
       <h3>Mean is really a sum</h3>
       ${rule("Key idea:", "sum = mean × count. Most average problems become easy once you turn averages back into sums.")}
-      ${ex("Five numbers average 12. Four of them are 10, 11, 13, 14. Find the fifth.", "Sum must be 60. The four add to 48, so the fifth is <b>12</b>.")}
-      ${ex("Ana averages 85 on 4 tests. What does she need on test 5 to average 87?", "Needed total 5 × 87 = 435. She has 340, so she needs <b>95</b>.")}
+      ${ex("Five numbers average 12. Four of them are 10, 11, 13, 14. Find the fifth.", ["Turn the average into a sum: 5 numbers × 12 = 60.", "The four known numbers add to 10 + 11 + 13 + 14 = 48.", "The fifth makes up the difference: 60 − 48 = <b>12</b>."])}
+      ${ex("Ana averages 85 on 4 tests. What does she need on test 5 to average 87?", ["To average 87 on 5 tests she needs a total of 5 × 87 = 435.", "So far she has 4 × 85 = 340.", "She needs 435 − 340 = <b>95</b>.", "Shortcut: 87 is 2 more than 85, for each of the 5 tests. So the 5th test must be 85 + 5 × 2 = 95."])}
       <h3>Median and mode</h3>
       <p>The median is the middle value after sorting. With an even count, average the two middle values. The mode is the value that appears most often.</p>
-      ${ex("Find the median of 8, 3, 12, 5, 9, 1.", "Sorted: 1, 3, 5, 8, 9, 12. The middles are 5 and 8, so the median is <b>6.5</b>.")}
+      ${ex("Find the median of 8, 3, 12, 5, 9, 1.", ["Sort first: 1, 3, 5, 8, 9, 12.", "Six numbers have no single middle, so take the two in the middle: 5 and 8.", "Their average is (5 + 8) ÷ 2 = <b>6.5</b>."])}
       <h3>Changing the data</h3>
       <p>Adding the same number to every value adds it to the mean. Multiplying every value multiplies the mean. Removing a value changes the sum by exactly that value.</p>
-      ${ex("Six numbers have mean 10. One is removed and the rest have mean 9. What was removed?", "60 − 45 = <b>15</b>.")}
-      ${ex("Five positive integers have mean 6, median 7, and a unique mode of 8. What is the largest the smallest number can be?", "The list is a, b, 7, 8, 8 with a + b = 7 and a < b. The best is a = <b>3</b> (3, 4, 7, 8, 8).", "contest style")}
+      ${ex("Six numbers have mean 10. One is removed and the rest have mean 9. What was removed?", ["All six add to 6 × 10 = 60.", "The five left add to 5 × 9 = 45.", "The removed number is the difference: 60 − 45 = <b>15</b>."])}
+      ${ex("Five positive integers have mean 6, median 7, and a unique mode of 8. What is the largest the smallest number can be?", ["Mean 6 with 5 numbers means they add to 5 × 6 = 30.", "Sorted, the middle (third) number is the median, 7.", "The mode 8 appears at least twice, and 8 is bigger than the median, so it fills the top two spots: a, b, 7, 8, 8.", "That leaves a + b = 30 − 7 − 8 − 8 = 7. Also a and b must be different, or there would be a second mode.", "To make a as large as possible, make a and b as close as possible: a = 3, b = 4.", "The list 3, 4, 7, 8, 8 works, so the answer is <b>3</b>."], "contest style")}
       ${aops("Arithmetic_mean", "Arithmetic mean")}`,
     quiz: [
-      num("What is the mean of 4, 7, 10, 15, 19?", 11, "Sum 55, divided by 5."),
-      num("Five numbers average 12. Four of them are 10, 11, 13, 14. What is the fifth?", 12, "60 − 48."),
-      num("What is the median of 8, 3, 12, 5, 9, 1?", 6.5, "Average of 5 and 8."),
-      num("Ana's average on 4 tests is 85. What must she score on the 5th to make her average 87?", 95, "435 − 340."),
-      mc("For the list 3, 5, 5, 6, 11, which is largest?", ["The mean", "The median", "The mode", "The range", "They are all equal"], 3, "Mean 6, median 5, mode 5, range 8."),
+      num("What is the mean of 4, 7, 10, 15, 19?", 11, "Add them: 4 + 7 + 10 + 15 + 19 = 55. Divide by how many there are: 55 ÷ 5 = 11."),
+      num("Five numbers average 12. Four of them are 10, 11, 13, 14. What is the fifth?", 12, "Five numbers averaging 12 add to 5 × 12 = 60. The four given add to 48. 60 − 48 = 12."),
+      num("What is the median of 8, 3, 12, 5, 9, 1?", 6.5, "Sorted: 1, 3, 5, 8, 9, 12. The two middle numbers are 5 and 8, and their average is 6.5."),
+      num("Ana's average on 4 tests is 85. What must she score on the 5th to make her average 87?", 95, "She needs 5 × 87 = 435 in total and has 4 × 85 = 340. 435 − 340 = 95."),
+      mc("For the list 3, 5, 5, 6, 11, which is largest?", ["The mean", "The median", "The mode", "The range", "They are all equal"], 3, "Mean: 30 ÷ 5 = 6. Median: the middle number is 5. Mode: 5 appears twice. Range: 11 − 3 = 8. The range is largest."),
     ],
   },
 
@@ -3351,25 +3356,25 @@ Object.assign(LESSONS, {
     outline: ["Round and fix", "Friendly numbers", "Squares and near-squares", "Estimating", "Check yourself"],
     body: () => `
       <h3>Round and fix</h3>
-      ${ex("99 × 13", "100 × 13 − 13 = <b>1287</b>.")}
+      ${ex("99 × 13", ["99 is 1 less than 100, and multiplying by 100 is easy.", "100 × 13 = 1300.", "That counts one 13 too many, so subtract it: 1300 − 13 = <b>1287</b>."])}
       <h3>Friendly numbers</h3>
       <p>25 × 4 = 100 and 125 × 8 = 1000. Split the other factor to make these pairs.</p>
-      ${ex("25 × 36", "25 × 4 × 9 = 100 × 9 = <b>900</b>.")}
-      ${ex("125 × 32", "125 × 8 × 4 = <b>4000</b>.")}
+      ${ex("25 × 36", ["25 × 4 = 100, so look for a 4 inside 36: 36 = 4 × 9.", "25 × 36 = 25 × 4 × 9 = 100 × 9 = <b>900</b>."])}
+      ${ex("125 × 32", ["125 × 8 = 1000, so split 32 into 8 × 4.", "125 × 32 = 125 × 8 × 4 = 1000 × 4 = <b>4000</b>."])}
       <h3>Squares and near-squares</h3>
       ${rule("Difference of squares:", "(n − k)(n + k) = n² − k².")}
-      ${ex("48 × 52", "50² − 2² = 2500 − 4 = <b>2496</b>.")}
-      ${ex("2023² − 2022²", "(2023 − 2022)(2023 + 2022) = <b>4045</b>.", "contest style")}
+      ${ex("48 × 52", ["48 and 52 are both 2 away from 50: 48 = 50 − 2 and 52 = 50 + 2.", "(50 − 2)(50 + 2) = 50² − 2². When you multiply it out, the middle terms −100 and +100 cancel.", "2500 − 4 = <b>2496</b>."])}
+      ${ex("2023² − 2022²", ["Squaring 2023 by hand is slow. Use a² − b² = (a − b)(a + b) instead.", "a − b = 2023 − 2022 = 1.", "a + b = 2023 + 2022 = 4045.", "1 × 4045 = <b>4045</b>."], "contest style")}
       ${rule("Ending in 5:", "for 65², take 6 × 7 = 42 and write 25 after it: 4225.")}
       <h3>Estimating</h3>
       <p>When the answer choices are far apart, round hard. 0.49 × 401 is about ½ × 400 = 200.</p>
       ${aops("Mental_math", "Mental math")}`,
     quiz: [
-      num("Compute 99 × 13.", 1287, "1300 − 13."),
-      num("Compute 25 × 36.", 900, "100 × 9."),
-      num("Compute 48 × 52.", 2496, "2500 − 4."),
-      num("Compute 65².", 4225, "6 × 7 = 42, then 25."),
-      mc("Which is closest to 0.49 × 401?", ["2", "20", "40", "100", "200"], 4, "About ½ × 400."),
+      num("Compute 99 × 13.", 1287, "99 × 13 = 100 × 13 − 13 = 1300 − 13 = 1287."),
+      num("Compute 25 × 36.", 900, "36 = 4 × 9, and 25 × 4 = 100. So 25 × 36 = 100 × 9 = 900."),
+      num("Compute 48 × 52.", 2496, "Both are 2 away from 50: (50 − 2)(50 + 2) = 50² − 2² = 2500 − 4 = 2496."),
+      num("Compute 65².", 4225, "For a number ending in 5, multiply the front digit by the next number up: 6 × 7 = 42. Then write 25 after it: 4225."),
+      mc("Which is closest to 0.49 × 401?", ["2", "20", "40", "100", "200"], 4, "0.49 is about ½ and 401 is about 400. Half of 400 is 200."),
     ],
   },
 
@@ -3379,20 +3384,20 @@ Object.assign(LESSONS, {
     body: () => `
       <h3>Multiply by 1</h3>
       <p>A fraction like (12 in)/(1 ft) equals 1, so multiplying by it changes the units without changing the amount. Line the fractions up so units cancel.</p>
-      ${ex("How many seconds are in 2.5 hours?", "2.5 h × 60 min/h × 60 s/min = <b>9000 s</b>.")}
+      ${ex("How many seconds are in 2.5 hours?", ["Each hour is 60 minutes: 2.5 × 60 = 150 minutes.", "Each minute is 60 seconds: 150 × 60 = <b>9000 s</b>.", "Or in one step: an hour has 60 × 60 = 3600 seconds, and 2.5 × 3600 = 9000."])}
       <h3>Square and cubic units</h3>
       ${rule("Careful:", "1 yd = 3 ft, but 1 yd² = 9 ft² and 1 yd³ = 27 ft³.")}
-      ${ex("A rug is 3 yd by 4 yd. Area in square feet?", "9 ft by 12 ft = <b>108 ft²</b>.")}
+      ${ex("A rug is 3 yd by 4 yd. Area in square feet?", ["Convert each side before multiplying: 3 yd = 9 ft and 4 yd = 12 ft.", "Area = 9 × 12 = <b>108 ft²</b>.", "Watch out: 12 yd² × 3 = 36 is wrong. A square yard is 3 ft by 3 ft, so it holds 9 ft², not 3."])}
       <h3>Speeds</h3>
-      ${ex("30 miles per hour is how many feet per second?", "30 × 5280 ÷ 3600 = <b>44 ft/s</b>. Handy fact: 60 mph = 88 ft/s.")}
-      ${ex("A snail crawls 3 feet per minute. How many inches per second?", "36 in per 60 s = <b>0.6 in/s</b>.")}
+      ${ex("30 miles per hour is how many feet per second?", ["30 miles = 30 × 5280 = 158,400 feet.", "1 hour = 60 × 60 = 3600 seconds.", "158,400 ÷ 3600 = <b>44 ft/s</b>.", "Handy fact: 60 mph = 88 ft/s, and 30 mph is half of that."])}
+      ${ex("A snail crawls 3 feet per minute. How many inches per second?", ["3 feet = 36 inches, so the snail goes 36 inches per minute.", "1 minute = 60 seconds, so divide by 60: 36 ÷ 60 = <b>0.6 in/s</b>."])}
       ${aops("Unit_conversion", "Unit conversion")}`,
     quiz: [
-      num("How many inches are in 3.5 feet?", 42, "3.5 × 12."),
-      num("How many seconds are in 2.5 hours?", 9000, "2.5 × 3600."),
-      num("How many square feet are in 4 square yards?", 36, "4 × 9."),
-      num("A car goes 30 miles per hour. How many feet does it go per second?", 44, "30 × 5280 ÷ 3600."),
-      mc("How many cubic feet are in one cubic yard?", ["3", "6", "9", "27", "81"], 3, "3 × 3 × 3."),
+      num("How many inches are in 3.5 feet?", 42, "Each foot is 12 inches: 3.5 × 12 = 42."),
+      num("How many seconds are in 2.5 hours?", 9000, "One hour is 60 × 60 = 3600 seconds. 2.5 × 3600 = 9000."),
+      num("How many square feet are in 4 square yards?", 36, "A square yard is 3 ft by 3 ft, which is 9 square feet. 4 × 9 = 36."),
+      num("A car goes 30 miles per hour. How many feet does it go per second?", 44, "30 miles is 30 × 5280 = 158,400 feet, and an hour is 3600 seconds. 158,400 ÷ 3600 = 44."),
+      mc("How many cubic feet are in one cubic yard?", ["3", "6", "9", "27", "81"], 3, "A cubic yard is 3 ft long, 3 ft wide and 3 ft tall: 3 × 3 × 3 = 27."),
     ],
   },
 });
@@ -8117,7 +8122,7 @@ function quizHTML(id, items, st) {
     if (graded) {
       const ok = isRight(it, ans);
       const shown = it.type === "mc" ? `${L(it.answer)}. ${it.choices[it.answer]}` : it.answer;
-      fb = `<div class="fb ${ok ? "ok" : "no"}"><b>${ok ? "Correct." : `Answer: ${shown}.`}</b> ${it.explain}</div>`;
+      fb = `<div class="fb ${ok ? "ok" : "no"}"><b>${ok ? "Correct." : `Answer: ${shown}.`}</b> ${Array.isArray(it.explain) ? steps(it.explain) : it.explain}</div>`;
     }
     return `<div class="q"><div class="q-h"><span class="q-n">Question ${i + 1}</span></div><p>${it.q}</p>${input}${fb}</div>`;
   }).join("");
