@@ -74,9 +74,9 @@ main{max-width:1440px;margin:0 auto;padding-block:28px 64px;padding-left:max(16p
 .status.warn{color:var(--bad)}.status.warn .dot{background:var(--bad)}
 
 /* home */
-.hero{display:grid;grid-template-columns:1.3fr 1fr;gap:28px;align-items:center}
+.hero{display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center}
 .hero-fig{min-width:0}
-.hero-fig svg{width:100%;height:auto;max-width:360px;display:block;margin-left:auto}
+.hero-fig svg{width:160px;height:auto;display:block;margin-left:auto}
 .doors{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .door{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:6px}
 .door:hover{border-color:var(--accent)}
@@ -234,7 +234,7 @@ th{font-weight:600;color:var(--muted);font-size:.8rem;text-transform:uppercase;l
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:.9rem;z-index:20}
 
 @media (max-width:820px){
-  .hero{grid-template-columns:1fr}.hero-fig svg{margin:0 auto;max-width:260px}
+  .hero{grid-template-columns:1fr}.hero-fig svg{margin:0 auto;width:120px}
   .doors{grid-template-columns:1fr}
   .lesson{grid-template-columns:1fr}.side{position:static}
   .levels,.stats{grid-template-columns:repeat(2,minmax(0,1fr))}
