@@ -5431,6 +5431,421 @@ GEN("sc-percent", "scaling", "amc10", R => {
 }, ({ p, kind }) => `${+((Math.pow(1 + p / 100, kind ? 3 : 2) - 1) * 100).toFixed(1)}%`);
 
 /* =========================================================
+   GENERATORS: Arithmetic, Rates
+   ========================================================= */
+const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const MDAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+const pct = v => `${m(+v.toFixed(2))}%`;
+const money = v => `$${commas(v)}`;
+/* fraction traps: nearby fractions that are different from the answer */
+const frTraps = (n, d, extra = []) => [...new Set([...extra, fr(n + 1, d), fr(n, d + 1), fr(Math.max(1, n - 1), d), fr(d, n || 1), fr(n, d * 2), fr(n * 2, d)])].filter(x => x !== fr(n, d));
+
+/* ---- order of operations & shortcuts ---- */
+GEN("oo-distribute", "order-ops", "mk56", R => {
+  const a = R.int(12, 99), b = R.int(11, 89), c = (R.pick([100, 100, 200, 1000]) - b); R.p = { a, b, c };
+  const ans = a * (b + c);
+  return { q: `Compute ${a} × ${b} + ${a} × ${c}.`, a: ans, traps: [a * b + c, a + b + c, ans - a, ans + a].filter(v => v !== ans), hint: `Both products share the factor ${a}.`, sol: `${a} × (${b} + ${c}) = ${a} × ${b + c} = ${commas(ans)}.` };
+}, ({ a, b, c }) => a * b + a * c);
+
+GEN("oo-telescope", "order-ops", "amc8", R => {
+  const n = R.int(5, 40), kind = R.int(0, 1); R.p = { n, kind };
+  if (kind) return { q: `Compute (1 − 1/2)(1 − 1/3)(1 − 1/4) ⋯ (1 − 1/${n}).`, a: fr(1, n), traps: frTraps(1, n, [fr(1, n - 1), fr(n - 1, n), fr(1, 2)]), hint: "Write each factor as a single fraction and look for cancellation.", sol: `1/2 · 2/3 · 3/4 ⋯ ${n - 1}/${n} = 1/${n}.` };
+  return { q: `Compute (1 + 1/2)(1 + 1/3)(1 + 1/4) ⋯ (1 + 1/${n}).`, a: fr(n + 1, 2), traps: frTraps(n + 1, 2, [fr(n, 2), fr(n + 1, n), fr(n + 2, 2)]), hint: "Write each factor as a single fraction and look for cancellation.", sol: `3/2 · 4/3 · 5/4 ⋯ ${n + 1}/${n} = ${fr(n + 1, 2)}.` };
+}, ({ n, kind }) => { let N = 1, D = 1; for (let k = 2; k <= n; k++) { N *= kind ? k - 1 : k + 1; D *= k; const g = gcd(N, D); N /= g; D /= g; } return fr(N, D); });
+
+GEN("oo-alternating", "order-ops", "mk78", R => {
+  const n = R.int(10, 200), kind = R.int(0, 1); R.p = { n, kind };
+  const ans = kind ? n : -n;
+  const q = kind ? `Compute ${2 * n} − ${2 * n - 1} + ${2 * n - 2} − ${2 * n - 3} + ⋯ + 2 − 1.` : `Compute 1 − 2 + 3 − 4 + ⋯ + ${2 * n - 1} − ${2 * n}.`;
+  return { q, a: ans, traps: [-ans, 2 * n, ans + (kind ? 1 : -1), n * (2 * n + 1)].filter(v => v !== ans), min: -Infinity, hint: "Group the terms in pairs.", sol: `There are ${n} pairs, each worth ${kind ? "1" : "−1"}: total ${m(ans)}.` };
+}, ({ n, kind }) => { let s = 0; for (let k = 1; k <= 2 * n; k++) s += (kind ? (k % 2 ? -1 : 1) : (k % 2 ? 1 : -1)) * k; return s; });
+
+/* ---- fractions, decimals & percents ---- */
+GEN("fp-of", "fractions", "mk56", R => {
+  const q = R.int(3, 12), p = R.int(1, q - 1), N = q * R.int(2, 15); R.p = { p, q, N };
+  if (gcd(p, q) !== 1) return again("fp-of")(R);
+  return { q: `What is ${p}/${q} of ${N}?`, a: p * N / q, traps: [N / q, N - p * N / q, p * N, N / p].filter(v => Number.isInteger(v) && v !== p * N / q), hint: `Find 1/${q} first.`, sol: `${N} ÷ ${q} = ${N / q}, times ${p} = ${p * N / q}.` };
+}, ({ p, q, N }) => p * N / q);
+
+GEN("fp-up-down", "fractions", "amc8", R => {
+  const p = R.pick([10, 20, 25, 30, 40, 50]), q = R.pick([10, 20, 25, 30, 40, 50]), up = R.int(0, 1); R.p = { p, q, up };
+  const ans = ((100 + (up ? p : -p)) * (100 + (up ? -q : q)) - 10000) / 100;
+  return { q: `A price is ${up ? "raised" : "cut"} by ${p}%, and then the new price is ${up ? "cut" : "raised"} by ${q}%. By what percent did the price change overall? (Negative means it went down.)`, a: ans, traps: [up ? p - q : q - p, -(p * q) / 100, ans + 5, ans - 5, 0].filter(v => v !== ans), min: -Infinity, step: 1, fmt: pct, hint: "Multiply the two factors, like 1.2 × 0.8.", sol: `${(1 + (up ? p : -p) / 100).toFixed(2)} × ${(1 + (up ? -q : q) / 100).toFixed(2)} = ${(1 + ans / 100).toFixed(4).replace(/0+$/, "").replace(/\.$/, "")}, a change of ${pct(ans)}.` };
+}, ({ p, q, up }) => pct(Math.round(((1 + (up ? p : -p) / 100) * (1 + (up ? -q : q) / 100) - 1) * 1e6) / 1e4));
+
+GEN("fp-unit-sum", "fractions", "mk78", R => {
+  const a = R.int(2, 12), b = R.int(2, 15), c = R.int(2, 20); R.p = { a, b, c };
+  if (a === b || b === c || a === c) return again("fp-unit-sum")(R);
+  const N = b * c + a * c + a * b, D = a * b * c;
+  return { q: `What is 1/${a} + 1/${b} + 1/${c}?`, a: fr(N, D), traps: frTraps(N / gcd(N, D), D / gcd(N, D), [fr(3, a + b + c), fr(1, a + b + c), fr(3, D)]), hint: "Use a common denominator.", sol: `= ${fr(N, D)}.` };
+}, ({ a, b, c }) => { let N = 0, D = 1; for (const x of [a, b, c]) { N = N * x + D; D *= x; } return fr(N, D); });
+
+GEN("fp-percent-of", "fractions", "mk78", R => {
+  const a = R.pick([5, 8, 12, 15, 20, 24, 25, 30, 40, 45, 60, 75]), b = R.pick([20, 25, 40, 50, 60, 75, 80, 120, 150, 200]); R.p = { a, b };
+  return { q: `${a}% of ${b} is the same as what percent of ${a}?`, a: b, traps: [a, a * b / 100, 100 - b > 0 ? 100 - b : b + 5, b / 2].filter(v => v !== b && Number.isInteger(v)), fmt: v => `${v}%`, hint: "x% of y = y% of x.", sol: `${a}% of ${b} = ${a * b / 100} = ${b}% of ${a}.` };
+}, ({ a, b }) => `${(a * b / 100) / a * 100}%`);
+
+/* ---- ratios ---- */
+GEN("ra-share", "ratios", "mk56", R => {
+  const p = R.int(1, 7), q = R.int(p + 1, 9), t = R.int(2, 20); R.p = { p, q, t };
+  if (gcd(p, q) !== 1) return again("ra-share")(R);
+  const ans = q * t, N = (p + q) * t;
+  return { q: `${N} marbles are split between two friends in the ratio ${p} : ${q}. How many does the friend with more get?`, a: ans, traps: [p * t, N / q * p, ans + t, N - p].filter(v => Number.isInteger(v) && v !== ans), hint: `Think of ${p + q} equal parts.`, sol: `Each part is ${N} ÷ ${p + q} = ${t}; ${q} parts = ${ans}.` };
+}, ({ p, q, t }) => (p + q) * t * q / (p + q));
+
+GEN("ra-chain", "ratios", "mk78", R => {
+  const p = R.int(1, 6), q = R.int(1, 6), r = R.int(1, 6), s = R.int(1, 6); R.p = { p, q, r, s };
+  if (p === q || r === s || p * r === q * s || gcd(p, q) > 1 || gcd(r, s) > 1) return again("ra-chain")(R);
+  const g = gcd(p * r, q * s), A = p * r / g, C = q * s / g, ans = `${A} : ${C}`;
+  return { q: `If a : b = ${p} : ${q} and b : c = ${r} : ${s}, what is a : c?`, a: ans, traps: [`${p + r} : ${q + s}`, `${p * s / gcd(p * s, q * r)} : ${q * r / gcd(p * s, q * r)}`, `${C} : ${A}`, `${p} : ${s}`, `${A + 1} : ${C}`, `${A} : ${C + 1}`, `${q} : ${r}`, `${A + 2} : ${C + 1}`].filter(x => x !== ans && x.split(" : ")[0] !== x.split(" : ")[1]), hint: "Make the b values match.", sol: `a/c = (a/b)(b/c) = ${p}/${q} × ${r}/${s} = ${A}/${C}.` };
+}, ({ p, q, r, s }) => { const A = p * r, C = q * s, g = gcd(A, C); return `${A / g} : ${C / g}`; });
+
+GEN("ra-change", "ratios", "amc8", R => {
+  const p = R.int(2, 7), q = R.int(2, 7), t = R.int(2, 12), k = R.int(2, 20); R.p = { p, q, t, k };
+  if (gcd(p, q) !== 1) return again("ra-change")(R);
+  const B = p * t, G = q * t + k, g = gcd(B, G), P = B / g, Q = G / g;
+  if (P === p && Q === q) return again("ra-change")(R);
+  const ans = (p + q) * t;
+  return { q: `In a club the ratio of boys to girls is ${p} : ${q}. After ${k} more girls join, the ratio becomes ${P} : ${Q}. How many members did the club have before the new girls joined?`, a: ans, traps: [ans + k, p * t, (P + Q) * t, ans - k].filter(v => v > 0 && v !== ans), hint: `Call the numbers ${p}t boys and ${q}t girls.`, sol: `${p}t : (${q}t + ${k}) = ${P} : ${Q} gives t = ${t}, so ${ans} members.` };
+}, ({ p, q, t, k }) => { const B = p * t, G = q * t + k, g = gcd(B, G), P = B / g, Q = G / g; const T = P * k / (Q * p - P * q); return (p + q) * T; });
+
+/* ---- averages ---- */
+GEN("av-added", "averages", "mk56", R => {
+  const n = R.int(3, 12), A = R.int(60, 90), B = A + R.pick([-3, -2, -1, 1, 2, 3, 4]); R.p = { n, A, B };
+  const ans = (n + 1) * B - n * A;
+  if (ans < 0 || ans > 100) return again("av-added")(R);
+  return { q: `The average of ${n} test scores is ${A}. After one more test, the average is ${B}. What was the new score?`, a: ans, traps: [B, 2 * B - A, ans + n, n * B - (n - 1) * A].filter(v => v !== ans && v >= 0), hint: "Compare the totals before and after.", sol: `${n + 1} × ${B} − ${n} × ${A} = ${(n + 1) * B} − ${n * A} = ${ans}.` };
+}, ({ n, A, B }) => (n + 1) * B - n * A);
+
+GEN("av-removed", "averages", "mk78", R => {
+  const n = R.int(4, 10), A = R.int(10, 40), B = R.int(8, 45); R.p = { n, A, B };
+  const ans = n * A - (n - 1) * B; if (ans < 1) return again("av-removed")(R);
+  return { q: `The mean of ${n} numbers is ${A}. When one number is removed, the mean of the rest is ${B}. What number was removed?`, a: ans, traps: [A - B, n * (A - B), ans + B, Math.abs(2 * A - B)].filter(v => v !== ans && v >= 0), hint: "Work with totals, not averages.", sol: `${n * A} − ${(n - 1) * B} = ${ans}.` };
+}, ({ n, A, B }) => n * A - (n - 1) * B);
+
+GEN("av-mean-median", "averages", "amc8", R => {
+  const k = R.pick([5, 7]); let xs = R.distinct(k, 1, 30).sort((a, b) => a - b), s = xs.reduce((a, b) => a + b, 0);
+  const fix = (k - s % k) % k; xs[k - 1] += fix; s += fix; R.p = { xs };
+  if (new Set(xs).size !== k) return again("av-mean-median")(R);
+  const mean = s / k, med = xs[(k - 1) / 2], ans = mean - med;
+  return { q: `What is the mean minus the median of ${R.shuffle(xs).join(", ")}?`, a: ans, traps: [med - mean, mean, med, ans + 1, ans - 2].filter(v => v !== ans), min: -Infinity, hint: "Put the numbers in order to find the median.", sol: `Mean ${mean}, median ${med}: ${ans}.` };
+}, ({ xs }) => { const s = [...xs].sort((a, b) => a - b); return s.reduce((a, b) => a + b, 0) / s.length - s[(s.length - 1) / 2]; });
+
+/* ---- mental math ---- */
+GEN("mm-near-round", "mental-math", "mk78", R => {
+  const base = R.pick([100, 1000, 50, 200]), d = R.int(1, 4), sg = R.pick([1, -1]), kind = R.int(0, 1); R.p = { base, d, sg, kind };
+  const x = base + sg * d;
+  if (kind) return { q: `Compute ${x}<sup>2</sup>.`, a: x * x, traps: [base * base + d * d, base * base + sg * base * d + d * d, x * x + 2 * d, x * x - 2 * d].filter(v => v !== x * x), hint: `(${base} ${sg > 0 ? "+" : "−"} ${d})² = ${base}² ${sg > 0 ? "+" : "−"} 2·${base}·${d} + ${d}².`, sol: `${commas(base * base)} ${sg > 0 ? "+" : "−"} ${2 * base * d} + ${d * d} = ${commas(x * x)}.` };
+  return { q: `Compute ${base + d} × ${base - d}.`, a: base * base - d * d, traps: [base * base, base * base + d * d, base * base - d, base * base - 2 * d].filter(v => v !== base * base - d * d), hint: "Difference of squares.", sol: `${base}² − ${d}² = ${commas(base * base - d * d)}.` };
+}, ({ base, d, sg, kind }) => kind ? (base + sg * d) ** 2 : (base + d) * (base - d));
+
+GEN("mm-pairs", "mental-math", "mk56", R => {
+  const a = R.int(2, 40), b = R.int(2, 30), kind = R.int(0, 1); R.p = { a, b, kind };
+  const [x, y] = kind ? [125, 8] : [25, 4], ans = a * b * x * y;
+  return { q: `Compute ${x} × ${a} × ${y} × ${b}.`, a: ans, traps: [a * b * (x + y), ans / 10, ans * 10, a * b + x * y].filter(v => v !== ans), hint: `${x} × ${y} = ${x * y}.`, sol: `${x * y} × ${a * b} = ${commas(ans)}.` };
+}, ({ a, b, kind }) => kind ? 1000 * a * b : 100 * a * b);
+
+/* ---- units ---- */
+GEN("un-length", "units", "mk56", R => {
+  const yd = R.int(1, 9), ft = R.int(1, 2), inch = R.int(1, 11); R.p = { yd, ft, inch };
+  const ans = 36 * yd + 12 * ft + inch;
+  const part = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+  return { q: `How many inches are in ${part(yd, "yard", "yards")}, ${part(ft, "foot", "feet")}, and ${part(inch, "inch", "inches")}?`, a: ans, traps: [12 * yd + 12 * ft + inch, 3 * yd + ft + inch, 36 * yd + ft + inch, ans + 12].filter(v => v !== ans), hint: "1 yard = 3 feet = 36 inches.", sol: `${36 * yd} + ${12 * ft} + ${inch} = ${ans}.` };
+}, ({ yd, ft, inch }) => (yd * 3 + ft) * 12 + inch);
+
+GEN("un-square", "units", "mk78", R => {
+  const k = R.int(2, 20), kind = R.int(0, 2); R.p = { k, kind };
+  const [u, v, f] = [["square yards", "square feet", 9], ["square feet", "square inches", 144], ["cubic feet", "cubic inches", 1728]][kind];
+  return { q: `How many ${v} are in ${k} ${u}?`, a: k * f, traps: [k * (kind ? 12 : 3), k * (kind === 2 ? 144 : kind ? 24 : 6), k * (kind === 2 ? 36 : kind ? 72 : 27), k * f * 2, k * f / 3].filter(v => Number.isInteger(v) && v !== k * f), hint: kind === 2 ? "1 foot = 12 inches, so a cubic foot is 12 × 12 × 12 cubic inches." : "Square the length conversion: a square foot is 12 × 12 square inches.", sol: `${k} × ${f} = ${commas(k * f)}.` };
+}, ({ k, kind }) => k * [3 * 3, 12 * 12, 12 * 12 * 12][kind]);
+
+GEN("un-speed", "units", "amc8", R => {
+  const v = 15 * R.int(1, 6), kind = R.int(0, 1); R.p = { v, kind };
+  const fps = v * 5280 / 3600;
+  if (kind) return { q: `A car goes ${fps} feet per second. How fast is that in miles per hour?`, a: v, traps: [fps, Math.round(fps * 3600 / 5280 * 1.5), v + 15, Math.round(fps * 60 / 5280 * 60) + 5].filter(x => x !== v && x > 0), hint: "1 mile = 5,280 feet and 1 hour = 3,600 seconds.", sol: `${fps} × 3600 ÷ 5280 = ${v} mph.` };
+  return { q: `A car goes ${v} miles per hour. How many feet does it travel each second?`, a: fps, traps: [v, Math.round(v * 5280 / 60), fps + 11, v * 2].filter(x => x !== fps), hint: "1 mile = 5,280 feet and 1 hour = 3,600 seconds.", sol: `${v} × 5280 ÷ 3600 = ${fps} feet per second.` };
+}, ({ v, kind }) => kind ? v : v * 22 / 15);
+
+/* =========================================================
+   Rates
+   ========================================================= */
+GEN("dr-minutes", "drt", "mk56", R => {
+  const s = R.pick([20, 30, 40, 45, 48, 50, 60, 72, 75]), t = R.int(10, 150); R.p = { s, t };
+  const d = s * t / 60; if (!Number.isInteger(d)) return again("dr-minutes")(R);
+  return { q: `A car drives ${d} miles at ${s} miles per hour. How many minutes does the trip take?`, a: t, traps: [Math.round(d / s * 100), d, Math.round(s / d * 60), t + 10].filter(v => v !== t && v > 0), hint: "Time = distance ÷ rate, then change hours to minutes.", sol: `${d} ÷ ${s} = ${fr(d, s)} hours = ${t} minutes.` };
+}, ({ s, t }) => cl((s * t / 60) / s * 60));
+
+GEN("dr-stream", "drt", "amc8", R => {
+  const b = R.int(6, 20), c = R.int(1, b - 2), D = lcm(b + c, b - c) * R.int(1, 3); R.p = { b, c, D };
+  if (D > 200) return again("dr-stream")(R);
+  const ans = D / (b + c) + D / (b - c);
+  return { q: `A boat goes ${b} mph in still water. The river flows at ${c} mph. How many hours does a trip ${D} miles downstream and back take?`, a: ans, traps: [2 * D / b, D / (b + c) * 2, D / (b - c) * 2, ans + 1].filter(v => Number.isInteger(v) && v !== ans), hint: "Downstream the speeds add; upstream they subtract.", sol: `${D}/${b + c} + ${D}/${b - c} = ${D / (b + c)} + ${D / (b - c)} = ${ans}.` };
+}, ({ b, c, D }) => D / (b + c) + D / (b - c));
+
+GEN("as-round", "avg-speed", "mk78", R => {
+  const [a, b] = R.shuffle(R.pick([[30, 60], [40, 60], [20, 30], [12, 24], [60, 90], [45, 90], [30, 70], [10, 15], [10, 40], [20, 80], [15, 30], [36, 45], [42, 56], [24, 40], [35, 140]])); R.p = { a, b };
+  const ans = 2 * a * b / (a + b);
+  return { q: `You drive to a town at ${a} mph and return the same way at ${b} mph. What is your average speed for the round trip?`, a: ans, traps: [(a + b) / 2, Math.round((a + b) / 2) + 2, ans - 2, Math.max(a, b) - Math.min(a, b)].filter(v => Number.isInteger(v) && v !== ans), hint: "Average speed = total distance ÷ total time. Pick a convenient distance.", sol: `Harmonic mean: 2·${a}·${b}/(${a} + ${b}) = ${ans} mph.` };
+}, ({ a, b }) => { const d = a * b, t = d / a + d / b; return 2 * d / t; });
+
+GEN("as-three", "avg-speed", "amc8", R => {
+  const [a, b, c] = R.shuffle(R.pick([[10, 15, 30], [20, 30, 60], [12, 20, 30], [6, 10, 15], [30, 45, 90], [4, 6, 12], [8, 12, 24], [24, 40, 60], [14, 21, 42], [36, 60, 90]])); R.p = { a, b, c };
+  const ans = 3 / (1 / a + 1 / b + 1 / c);
+  return { q: `A runner covers three equal legs of a course at ${a}, ${b}, and ${c} km per hour. What is her average speed for the whole course?`, a: Math.round(ans), traps: [(a + b + c) / 3, Math.round((a + b + c) / 3) + 1, Math.round(ans) - 3, b].filter(v => Number.isInteger(v) && v !== Math.round(ans)), hint: "Pick a leg length that all three speeds divide.", sol: `With legs of length L, the time is L/${a} + L/${b} + L/${c}; average speed = 3L ÷ time = ${Math.round(ans)}.` };
+}, ({ a, b, c }) => { const L = a * b * c; return 3 * L / (L / a + L / b + L / c); });
+
+GEN("mt-toward", "meeting", "mk56", R => {
+  const a = R.int(3, 15) * 5, b = R.int(3, 15) * 5, t = R.int(1, 6); R.p = { a, b, t };
+  const d = (a + b) * t;
+  return { q: `Two trains start ${d} miles apart and head toward each other, one at ${a} mph and the other at ${b} mph. How many hours until they meet?`, a: t, traps: [d / Math.max(a, b), d / Math.abs(a - b || 1), 2 * t, t + 1].filter(v => Number.isInteger(v) && v !== t && v > 0), hint: "The gap closes at the sum of their speeds.", sol: `${d} ÷ (${a} + ${b}) = ${t} hours.` };
+}, ({ a, b, t }) => (a + b) * t / (a + b));
+
+GEN("mt-catch", "meeting", "mk78", R => {
+  const a = R.int(3, 12) * 5, h = R.int(1, 4), d = R.int(1, 6) * 5; R.p = { a, h, d };
+  const b = a + d, ans = a * h / d;
+  if (!Number.isInteger(ans)) return again("mt-catch")(R);
+  return { q: `Ann leaves at ${a} mph. ${h} hour${h > 1 ? "s" : ""} later Bo follows the same road at ${b} mph. How many hours after Bo leaves does he catch Ann?`, a: ans, traps: [ans + h, a * h / b > 0 ? Math.round(a * h / b) || ans + 2 : ans + 2, h, ans * 2].filter(v => v !== ans && v > 0), hint: `When Bo starts, Ann is ${a * h} miles ahead. Bo gains ${d} mph.`, sol: `${a * h} ÷ ${d} = ${ans} hours.` };
+}, ({ a, h, d }) => { let t = 0; while (a * (t + h) > (a + d) * t) t++; return t; });
+
+GEN("mt-track", "meeting", "amc10", R => {
+  const L = R.pick([400, 300, 600]), a = R.int(2, 6) * 50, b = R.int(2, 6) * 50, T = R.int(6, 20) + 0.5, opp = R.int(0, 1); R.p = { L, a, b, T, opp };
+  if (!opp && a === b) return again("mt-track")(R);
+  const rel = opp ? a + b : Math.abs(a - b), ans = Math.floor(rel * T / L);
+  return { q: `Two runners start together on a ${L}-meter circular track and run in ${opp ? "opposite directions" : "the same direction"}, at ${a} and ${b} meters per minute. How many times do they ${opp ? "pass each other" : "meet (the faster one lapping the slower one)"} in the first ${T} minutes?`, a: ans, traps: [Math.floor((opp ? Math.abs(a - b) : a + b) * T / L), ans + 1, Math.max(0, ans - 1), Math.floor(Math.max(a, b) * T / L)].filter(v => v !== ans && v >= 0), hint: "Think of one runner standing still and the other running at the relative speed.", sol: `Relative speed ${rel} m/min, so they meet every ${fr(L, rel)} minutes: ${ans} times in ${T} minutes.` };
+}, ({ L, a, b, T, opp }) => { let n = 0; for (let s = 1; s <= T * 100; s++) { const t0 = (s - 1) / 100, t1 = s / 100; const gap = t => ((opp ? a + b : Math.abs(a - b)) * t) / L; n += Math.floor(gap(t1) + 1e-9) - Math.floor(gap(t0) + 1e-9); } return n; });
+
+GEN("wk-together", "work", "mk78", R => {
+  const a = R.int(2, 12), b = R.int(2, 15); R.p = { a, b };
+  const mins = 60 * a * b / (a + b);
+  if (!Number.isInteger(mins) || a === b) return again("wk-together")(R);
+  return { q: `Ana can paint a fence in ${a} hours. Ben can paint it in ${b} hours. Working together, how many minutes does it take?`, a: mins, traps: [30 * (a + b), 60 * Math.min(a, b), Math.round(mins * 1.5), mins + 30].filter(v => Number.isInteger(v) && v !== mins), hint: "Add their rates: 1/a + 1/b fences per hour.", sol: `1/${a} + 1/${b} = ${fr(a + b, a * b)} fence per hour, so it takes ${fr(a * b, a + b)} hours = ${mins} minutes.` };
+}, ({ a, b }) => cl(60 / (1 / a + 1 / b)));
+
+GEN("wk-pipes", "work", "amc8", R => {
+  const a = R.int(2, 10), b = R.int(a + 1, 30); R.p = { a, b };
+  const ans = a * b / (b - a); if (!Number.isInteger(ans)) return again("wk-pipes")(R);
+  return { q: `A faucet fills a tub in ${a} minutes. The open drain empties a full tub in ${b} minutes. With both open, how many minutes does it take to fill the empty tub?`, a: ans, traps: [b - a, a * b / (a + b), a + b, ans + a].filter(v => Number.isInteger(v) && v !== ans && v > 0), hint: "Subtract the drain's rate from the faucet's rate.", sol: `1/${a} − 1/${b} = ${fr(b - a, a * b)}, so ${ans} minutes.` };
+}, ({ a, b }) => cl(1 / (1 / a - 1 / b)));
+
+GEN("wk-crew", "work", "mk56", R => {
+  const n = R.int(2, 12), d = R.int(2, 15), m2 = R.pick(divisors(n * d).filter(x => x !== n && x > 1 && x < 60)); R.p = { n, d, m2 };
+  if (m2 === undefined) return again("wk-crew")(R);
+  return { q: `${n} workers can build a wall in ${d} days. How many days would ${m2} workers take, working at the same rate?`, a: n * d / m2, traps: [d * m2 / n, n + d - m2, n * d, d].filter(v => Number.isInteger(v) && v > 0 && v !== n * d / m2), hint: "Find the total worker-days first.", sol: `${n} × ${d} = ${n * d} worker-days; ÷ ${m2} = ${n * d / m2} days.` };
+}, ({ n, d, m2 }) => n * d / m2);
+
+GEN("mx-blend", "mixtures", "amc8", R => {
+  const x = R.int(1, 10), y = R.int(1, 10), p = R.int(1, 9) * 5, q = R.int(1, 19) * 5; R.p = { x, y, p, q };
+  const ans = (x * p + y * q) / (x + y); if (!Number.isInteger(ans) || p === q) return again("mx-blend")(R);
+  return { q: `${x} liters of a ${p}% salt solution are mixed with ${y} liters of a ${q}% salt solution. What percent salt is the mixture?`, a: ans, traps: [(p + q) / 2, ans + 5, ans - 5, Math.round((p * y + q * x) / (x + y))].filter(v => Number.isInteger(v) && v !== ans && v >= 0), fmt: v => `${v}%`, hint: "Find the total amount of salt, then divide by the total volume.", sol: `Salt: ${x * p / 100} + ${y * q / 100} = ${(x * p + y * q) / 100} liters out of ${x + y}: ${ans}%.` };
+}, ({ x, y, p, q }) => `${(x * p + y * q) / (x + y)}%`);
+
+GEN("mx-water", "mixtures", "mk78", R => {
+  const V = R.int(2, 20) * 2, p = R.pick([10, 20, 25, 30, 40, 50, 60]), q = R.pick([5, 8, 10, 12, 15, 20, 24, 30]); R.p = { V, p, q };
+  const add = V * p / q - V; if (q >= p || !Number.isInteger(add)) return again("mx-water")(R);
+  return { q: `A ${V}-liter solution is ${p}% juice. How many liters of water must be added to make it ${q}% juice?`, a: add, traps: [V * p / q, V * (p - q) / 100, add + V / 2, V * (p - q) / p].filter(v => Number.isInteger(v) && v !== add && v > 0), hint: "The amount of juice doesn't change.", sol: `Juice: ${V * p / 100} liters. That must be ${q}% of the new total ${V * p / q}, so add ${add} liters.` };
+}, ({ V, p, q }) => { for (let w = 0; w < 10000; w++) if (V * p * 100 === q * 100 * (V + w)) return w; });
+
+GEN("mx-salary", "mixtures", "mk56", R => {
+  const P = R.int(4, 40) * 5, p = R.pick([10, 20, 25, 40, 50]), kind = R.int(0, 1); R.p = { P, p, kind };
+  const ans = P * (100 + (kind ? p : -p)) / 100; if (!Number.isInteger(ans)) return again("mx-salary")(R);
+  return { q: `A $${P} jacket goes ${kind ? "up" : "on sale for"} ${p}% ${kind ? "in price" : "off"}. What is the new price?`, a: ans, traps: [P * p / 100, P - p, P + p, P * (100 + (kind ? -p : p)) / 100].filter(v => Number.isInteger(v) && v !== ans && v > 0), fmt: money, hint: `${p}% of ${P} is ${P * p / 100}.`, sol: `${P} ${kind ? "+" : "−"} ${P * p / 100} = ${money(ans)}.` };
+}, ({ P, p, kind }) => money(P + (kind ? 1 : -1) * P * p / 100));
+
+GEN("cc-weekday", "clocks", "mk78", R => {
+  const d0 = R.int(0, 6), N = R.int(20, 1000); R.p = { d0, N };
+  const ans = DAYS[(d0 + N) % 7];
+  return { q: `Today is ${DAYS[d0]}. What day of the week will it be ${N} days from now?`, a: ans, traps: DAYS.filter(x => x !== ans && x !== DAYS[(d0 + N + 3) % 7]).slice(0, 6), hint: "Only the remainder when you divide by 7 matters.", sol: `${N} = 7 × ${Math.floor(N / 7)} + ${N % 7}, so count ${N % 7} days ahead: ${ans}.` };
+}, ({ d0, N }) => { let d = d0; for (let i = 0; i < N; i++) d = (d + 1) % 7; return DAYS[d]; });
+
+GEN("cc-date", "clocks", "amc8", R => {
+  const d0 = R.int(0, 6), mo = R.int(1, 11), day = R.int(1, MDAYS[mo]); R.p = { d0, mo, day };
+  let n = day - 1; for (let i = 0; i < mo; i++) n += MDAYS[i];
+  const ans = DAYS[(d0 + n) % 7];
+  return { q: `In a year that is not a leap year, January 1 is a ${DAYS[d0]}. What day of the week is ${MONTHS[mo]} ${day}?`, a: ans, traps: [DAYS[(d0 + n + 1) % 7], DAYS[(d0 + n + 6) % 7], DAYS[(d0 + n + 2) % 7], DAYS[(d0 + n + 4) % 7]], hint: "Count the days after January 1, then take the remainder mod 7.", sol: `${MONTHS[mo]} ${day} is ${n} days after January 1; ${n} mod 7 = ${n % 7}, so it's a ${ans}.` };
+}, ({ d0, mo, day }) => { // 2023 is not a leap year and began on a Sunday
+  const n = Math.round((Date.UTC(2023, mo, day) - Date.UTC(2023, 0, 1)) / 864e5); return DAYS[(d0 + n) % 7]; });
+
+/* =========================================================
+   GENERATORS: Probability, Logic & Problem Solving
+   ========================================================= */
+/* probabilities can't exceed 1 */
+const le1 = x => { const [a, b] = String(x).split("/"); return b ? +a <= +b : +a <= 1; };
+const DICE2 = []; for (let a = 1; a <= 6; a++) for (let b = 1; b <= 6; b++) DICE2.push([a, b]);
+
+/* ---- basic probability ---- */
+GEN("pr-dice-sum", "prob-basic", "mk78", R => {
+  const s = R.int(2, 12), kind = R.int(0, 1); R.p = { s, kind };
+  const n = DICE2.filter(([a, b]) => kind ? a + b >= s : a + b === s).length;
+  if (n === 0 || n === 36) return again("pr-dice-sum")(R);
+  return { q: `Two fair dice are rolled. What is the probability that the sum is ${kind ? `at least ${s}` : s}?`, a: fr(n, 36), traps: frTraps(n, 36, [fr(n, 12), fr(36 - n, 36), fr(1, 11), fr(n + 1, 36)]).filter(le1), hint: "There are 36 equally likely outcomes. List the ones that work.", sol: `${n} of the 36 outcomes work: ${fr(n, 36)}.` };
+}, ({ s, kind }) => { let n = 0; for (let a = 1; a <= 6; a++) for (let b = 1; b <= 6; b++) if (kind ? a + b >= s : a + b === s) n++; return fr(n, 36); });
+
+GEN("pr-marbles", "prob-basic", "mk56", R => {
+  const r = R.int(1, 12), b = R.int(1, 12), g = R.int(1, 12), kind = R.int(0, 2); R.p = { r, b, g, kind };
+  const T = r + b + g, n = [r, b + g, r + g][kind];
+  return { q: `A bag has ${r} red, ${b} blue, and ${g} green marbles. One is drawn at random. What is the probability it is ${["red", "not red", "red or green"][kind]}?`, a: fr(n, T), traps: frTraps(n, T, [fr(T - n, T), fr(n, T - n || 1), fr(1, 3)]).filter(le1), hint: "Count the marbles that work, then divide by the total.", sol: `${n} of ${T}: ${fr(n, T)}.` };
+}, ({ r, b, g, kind }) => fr([r, b + g, r + g][kind], r + b + g));
+
+GEN("pr-number", "prob-basic", "amc8", R => {
+  const N = R.pick([20, 30, 40, 50, 60, 100]), kind = R.int(0, 2), k = R.pick([3, 4, 6]); R.p = { N, kind, k };
+  const test = [n => n % k === 0 || n % 5 === 0, n => isPrime(n), n => Number.isInteger(Math.sqrt(n))][kind];
+  const c = countIf(1, N, test);
+  return { q: `A number is picked at random from 1 to ${N}. What is the probability that it is ${[`a multiple of ${k} or of 5`, "prime", "a perfect square"][kind]}?`, a: fr(c, N), traps: frTraps(c, N, [fr(c - 1, N), fr(c + 2, N)]).filter(le1), hint: kind === 0 ? "Inclusion-exclusion: don't count the multiples of both twice." : "Count carefully, then divide by the total.", sol: `${c} numbers work: ${fr(c, N)}.` };
+}, ({ N, kind, k }) => { let c = 0; for (let n = 1; n <= N; n++) { if (kind === 0 && (n % k === 0 || n % 5 === 0)) c++; if (kind === 1 && divisors(n).length === 2) c++; if (kind === 2 && divisors(n).length % 2 === 1) c++; } return fr(c, N); });
+
+/* ---- complements ---- */
+GEN("pc-coins", "prob-complement", "mk78", R => {
+  const kind = R.int(0, 1), n = R.int(kind ? 3 : 2, 8); R.p = { n, kind };
+  const T = 2 ** n, c = kind ? T - 1 - n : T - 1;
+  return { q: `${n} fair coins are flipped. What is the probability of getting at least ${kind ? "two heads" : "one head"}?`, a: fr(c, T), traps: frTraps(c, T, [fr(1, T), fr(n, T), fr(1, 2), fr(T - 2, T)]).filter(le1), hint: `Use the complement: P(at least ${kind ? 2 : 1}) = 1 − P(${kind ? "0 or 1" : "none"}).`, sol: `1 − ${kind ? `(1 + ${n})` : "1"}/${T} = ${fr(c, T)}.` };
+}, ({ n, kind }) => { let c = 0; for (let m2 = 0; m2 < 2 ** n; m2++) { const h = m2.toString(2).split("").filter(x => x === "1").length; if (h >= (kind ? 2 : 1)) c++; } return fr(c, 2 ** n); });
+
+GEN("pc-dice", "prob-complement", "amc10", R => {
+  const n = R.int(2, 3), k = R.int(1, 3); R.p = { n, k };
+  const T = 6 ** n, miss = (6 - k) ** n, c = T - miss, what = ["a 6", "a 5 or a 6", "a number greater than 3"][k - 1];
+  return { q: `${n} fair dice are rolled. What is the probability that at least one shows ${what}?`, a: fr(c, T), traps: frTraps(c, T, [fr(n * k, 6), fr(miss, T), fr(k * n, T)]).filter(le1), hint: "Find the chance that none of them do, then subtract from 1.", sol: `P(none) = (${6 - k}/6)<sup>${n}</sup> = ${fr(miss, T)}, so the answer is ${fr(c, T)}.` };
+}, ({ n, k }) => { let c = 0, T = 0; const go = (i, hit) => { if (i === n) { T++; if (hit) c++; return; } for (let f = 1; f <= 6; f++) go(i + 1, hit || f > 6 - k); }; go(0, false); return fr(c, T); });
+
+/* ---- independent & dependent ---- */
+GEN("id-draws", "independent", "amc8", R => {
+  const r = R.int(2, 8), b = R.int(2, 8), back = R.int(0, 1); R.p = { r, b, back };
+  const T = r + b, N = back ? r * r : r * (r - 1), D = back ? T * T : T * (T - 1);
+  return { q: `A bag has ${r} red and ${b} blue marbles. Two are drawn ${back ? "with replacement (the first goes back in)" : "without replacement"}. What is the probability both are red?`, a: fr(N, D), traps: frTraps(N / gcd(N, D), D / gcd(N, D), [back ? fr(r * (r - 1), T * (T - 1)) : fr(r * r, T * T), fr(r, T), fr(2 * r, T)]).filter(le1), hint: back ? "The draws don't affect each other: multiply." : "After one red is drawn, there's one fewer red and one fewer marble.", sol: `${r}/${T} × ${back ? `${r}/${T}` : `${r - 1}/${T - 1}`} = ${fr(N, D)}.` };
+}, ({ r, b, back }) => { let c = 0, t = 0; const T = r + b; for (let i = 0; i < T; i++) for (let j = 0; j < T; j++) { if (!back && i === j) continue; t++; if (i < r && j < r) c++; } return fr(c, t); });
+
+GEN("id-spinners", "independent", "mk78", R => {
+  const a = R.int(3, 8), b = R.int(3, 8), kind = R.int(0, 1); R.p = { a, b, kind };
+  let c = 0; for (let x = 1; x <= a; x++) for (let y = 1; y <= b; y++) if (kind ? (x * y) % 2 === 0 : (x + y) % 2 === 0) c++;
+  return { q: `Spinner A has the numbers 1 to ${a}, and spinner B has the numbers 1 to ${b}, each equally likely. Both are spun. What is the probability that the ${kind ? "product" : "sum"} is even?`, a: fr(c, a * b), traps: frTraps(c, a * b, [fr(1, 2), fr(a * b - c, a * b), fr(3, 4)]).filter(le1), hint: kind ? "The product is odd only when both are odd." : "The sum is even when both are even or both are odd.", sol: `${c} of the ${a * b} pairs work: ${fr(c, a * b)}.` };
+}, ({ a, b, kind }) => { const oa = Math.ceil(a / 2), ob = Math.ceil(b / 2), ea = a - oa, eb = b - ob; return fr(kind ? a * b - oa * ob : oa * ob + ea * eb, a * b); });
+
+/* ---- conditional ---- */
+GEN("cd-dice", "conditional", "amc10", R => {
+  const S = R.int(4, 10), k = R.int(1, 6); R.p = { S, k };
+  const given = DICE2.filter(([a, b]) => a + b === S), c = given.filter(([a, b]) => a === k || b === k).length;
+  if (c === 0) return again("cd-dice")(R);
+  return { q: `Two fair dice are rolled and the sum is ${S}. Given that, what is the probability that at least one die shows ${k}?`, a: fr(c, given.length), traps: frTraps(c, given.length, [fr(11, 36), fr(c, 36), fr(1, 6)]).filter(le1), hint: "Only the outcomes with that sum count. List them.", sol: `Sum ${S} happens ${given.length} ways; ${c} of them include a ${k}: ${fr(c, given.length)}.` };
+}, ({ S, k }) => { let t = 0, c = 0; for (let a = 1; a <= 6; a++) for (let b = 1; b <= 6; b++) if (a + b === S) { t++; if (a === k || b === k) c++; } return fr(c, t); });
+
+GEN("cd-table", "conditional", "amc8", R => {
+  const bg = R.int(2, 15), bn = R.int(2, 15), gg = R.int(2, 15), gn = R.int(2, 15), kind = R.int(0, 1); R.p = { bg, bn, gg, gn, kind };
+  const glasses = bg + gg, girls = gg + gn;
+  if (kind) return { q: `A class has ${bg + bn} boys and ${girls} girls. ${bg} boys and ${gg} girls wear glasses. A student who wears glasses is picked at random. What is the probability the student is a girl?`, a: fr(gg, glasses), traps: frTraps(gg, glasses, [fr(gg, girls), fr(gg, bg + bn + girls), fr(girls, bg + bn + girls)]).filter(le1), hint: "Only students with glasses count.", sol: `${gg} of the ${glasses} students with glasses are girls: ${fr(gg, glasses)}.` };
+  return { q: `A class has ${bg + bn} boys and ${girls} girls. ${bg} boys and ${gg} girls wear glasses. A girl is picked at random. What is the probability she wears glasses?`, a: fr(gg, girls), traps: frTraps(gg, girls, [fr(gg, glasses), fr(gg, bg + bn + girls), fr(glasses, bg + bn + girls)]).filter(le1), hint: "Only girls count.", sol: `${gg} of ${girls} girls: ${fr(gg, girls)}.` };
+}, ({ bg, bn, gg, gn, kind }) => kind ? fr(gg, bg + gg) : fr(gg, gg + gn));
+
+/* ---- expected value ---- */
+GEN("ev-dice", "expected", "mk78", R => {
+  const n = R.int(2, 10), kind = R.int(0, 1); R.p = { n, kind };
+  if (kind) return { q: `A fair die is rolled ${n * 6} times. What is the expected number of 6s?`, a: n, traps: [n * 6, n + 1, Math.round(n * 3.5), n / 2 > 1 ? n / 2 : n + 2].filter(v => v !== n && Number.isInteger(v)), hint: "Each roll is a 6 with probability 1/6.", sol: `${n * 6} × 1/6 = ${n}.` };
+  return { q: `${n} fair dice are rolled. What is the expected value of their sum?`, a: fr(7 * n, 2), traps: [fr(6 * n, 2), String(3 * n), String(4 * n), fr(7 * n + 1, 2), String(6 * n)].filter(x => x !== fr(7 * n, 2)), hint: "One die averages 3.5. Expected values add.", sol: `${n} × 7/2 = ${fr(7 * n, 2)}.` };
+}, ({ n, kind }) => kind ? n : fr(7 * n, 2));
+
+GEN("ev-tickets", "expected", "amc8", R => {
+  const vals = R.distinct(3, 1, 10).map(v => v * 5), cnt = [R.int(1, 6), R.int(1, 6), R.int(1, 6)]; R.p = { vals, cnt };
+  const N = vals.reduce((s, v, i) => s + v * cnt[i], 0), D = cnt.reduce((s, c) => s + c, 0);
+  return { q: `A jar holds ${cnt.map((c, i) => `${c} ticket${c > 1 ? "s" : ""} worth $${vals[i]}`).join(", ")}. One ticket is drawn at random. What is its expected value, in dollars?`, a: fr(N, D), traps: frTraps(N / gcd(N, D), D / gcd(N, D), [fr(vals.reduce((s, v) => s + v, 0), 3), fr(N, 3), fr(N, D + 1)]), hint: "Weight each value by how many tickets carry it.", sol: `${N} total dollars over ${D} tickets: ${fr(N, D)}.` };
+}, ({ vals, cnt }) => { let N = 0, D = 0; vals.forEach((v, i) => { for (let j = 0; j < cnt[i]; j++) { N += v; D++; } }); return fr(N, D); });
+
+GEN("ev-game", "expected", "amc10", R => {
+  const win = R.int(2, 12), lose = R.int(1, 6), k = R.int(1, 5); R.p = { win, lose, k };
+  const N = win * k - lose * (6 - k), F = x => x.replace(/^-/, "−"), ans = F(fr(N, 6));
+  if (N === 0) return again("ev-game")(R);
+  return { q: `You roll a fair die. If it shows ${k === 1 ? "1" : `1 through ${k}`}, you win $${win}; otherwise you lose $${lose}. What is your expected gain in dollars? (Negative means a loss.)`, a: ans, traps: [...new Set([fr(win - lose, 2), fr(win * k + lose * (6 - k), 6), fr(-N, 6), fr(N, 6 - k), fr(N + 1, 6), fr(N - 1, 6), fr(N + 2, 6)].map(F))].filter(x => x !== ans), hint: "Multiply each outcome by its probability and add.", sol: `(${k}/6)(${win}) − (${6 - k}/6)(${lose}) = ${fr(N, 6).replace(/^-/, "−")}.` };
+}, ({ win, lose, k }) => { let s = 0; for (let f = 1; f <= 6; f++) s += f <= k ? win : -lose; return fr(s, 6).replace(/^-/, "−"); });
+
+/* ---- geometric probability ---- */
+GEN("gp-target", "geo-prob", "amc8", R => {
+  const kind = R.int(0, 1), a = R.int(1, 6), b = R.int(a + 1, 10); R.p = { kind, a, b };
+  if (kind) return { q: `A dart lands at a random point inside a circle of radius ${b}. What is the probability it is within ${a} of the center?`, a: fr(a * a, b * b), traps: frTraps(a * a, b * b, [fr(a, b), fr(b * b - a * a, b * b), fr(a, 2 * b)]).filter(le1), hint: "Compare areas, not radii.", sol: `πa²/πb² = ${a * a}/${b * b} = ${fr(a * a, b * b)}.` };
+  return { q: `A point is chosen at random inside a ${2 * b} × ${2 * b} square. A ${2 * a} × ${2 * a} square sits in the middle of it. What is the probability the point lands inside the small square?`, a: fr(a * a, b * b), traps: frTraps(a * a, b * b, [fr(a, b), fr(b * b - a * a, b * b), fr(2 * a, 4 * b * b)]).filter(le1), hint: "Compare areas.", sol: `${4 * a * a}/${4 * b * b} = ${fr(a * a, b * b)}.` };
+}, ({ a, b }) => fr(a * a, b * b));
+
+GEN("gp-line", "geo-prob", "amc10", R => {
+  const L = R.int(4, 20), c = R.int(1, L - 1), kind = R.int(0, 1); R.p = { L, c, kind };
+  if (kind) { const k = R.int(1, Math.ceil(L / 2) - 1); R.p.k = k; const good = Math.max(0, L - 2 * k); return { q: `A point is chosen at random on a segment of length ${L}. What is the probability it is more than ${k} from both ends?`, a: fr(good, L), traps: frTraps(good, L, [fr(k, L), fr(2 * k, L), fr(L - k, L)]).filter(le1), hint: "Mark off the bad zones at each end.", sol: `The good middle part has length ${L} − 2·${k} = ${good}: ${fr(good, L)}.` }; }
+  return { q: `A number x is chosen at random between 0 and ${L}. What is the probability that x<sup>2</sup> < ${c * c}?`, a: fr(c, L), traps: frTraps(c, L, [fr(c * c, L), fr(c * c, L * L), fr(L - c, L)]).filter(le1), hint: `x² < ${c * c} means x < ${c}.`, sol: `x must be less than ${c}: ${fr(c, L)}.` };
+}, ({ L, c, kind, k }) => { let g = 0; const N = L * 1000; for (let i = 0; i < N; i++) { const x = (i + 0.5) / 1000; if (kind ? x > k && x < L - k : x * x < c * c) g++; } return fr(Math.round(g / 1000), L); });
+
+/* =========================================================
+   Logic & problem solving
+   ========================================================= */
+GEN("pt-letter", "patterns", "mk56", R => {
+  const w = R.pick(["KANGAROO", "CONTEST", "PROBLEMS", "AMCEIGHT", "TRIANGLE", "SQUARED", "NUMBERS"]), N = R.int(50, 2025); R.p = { w, N };
+  const ans = w[(N - 1) % w.length], letters = [...new Set(w)].filter(x => x !== ans);
+  return { q: `The word ${w} is written over and over: ${w}${w}${w}… What is the ${ordinal(N)} letter?`, a: ans, traps: [w[N % w.length], w[(N - 2 + w.length) % w.length], ...letters].filter(x => x !== ans), hint: `The pattern repeats every ${w.length} letters. Find the remainder.`, sol: `${N} = ${w.length} × ${Math.floor((N - 1) / w.length)} + ${(N - 1) % w.length + 1}, so it's letter ${(N - 1) % w.length + 1} of ${w}: ${ans}.` };
+}, ({ w, N }) => w.repeat(Math.ceil(N / w.length) + 1)[N - 1]);
+
+GEN("pt-figures", "patterns", "mk78", R => {
+  const a = R.int(3, 8), d = R.int(2, 7), N = R.int(15, 120); R.p = { a, d, N };
+  const t = n => a + d * (n - 1), ans = t(N);
+  return { q: `Figure 1 uses ${t(1)} toothpicks, figure 2 uses ${t(2)}, figure 3 uses ${t(3)}, and the pattern continues the same way. How many toothpicks does figure ${N} use?`, a: ans, traps: [d * N, a * N, ans + d, ans - d, a + d * N].filter(v => v !== ans), hint: `Each new figure adds ${d}.`, sol: `${a} + ${d} × (${N} − 1) = ${ans}.` };
+}, ({ a, d, N }) => { let v = a; for (let i = 1; i < N; i++) v += d; return v; });
+
+GEN("pt-digit-count", "patterns", "amc8", R => {
+  const N = R.int(50, 500), d = R.int(1, 9); R.p = { N, d };
+  let c = 0; for (let i = 1; i <= N; i++) c += String(i).split("").filter(x => +x === d).length;
+  return { q: `Write the whole numbers from 1 to ${N}. How many times do you write the digit ${d}?`, a: c, traps: [Math.floor(N / 10) + (N >= d ? 1 : 0), c + 1, c - 1, countIf(1, N, i => String(i).includes(String(d)))].filter(v => v !== c && v >= 0), hint: "Count the ones place, tens place, and hundreds place separately.", sol: `Counting place by place gives ${c}.` };
+}, ({ N, d }) => { let c = 0; for (let i = 1; i <= N; i++) for (const ch of String(i)) if (ch === String(d)) c++; return c; });
+
+GEN("bw-number", "backwards", "mk78", R => {
+  const x = R.int(2, 40), a = R.int(2, 6), b = R.int(1, 20), c = R.pick([2, 3, 4, 5]), d = R.int(1, 15); R.p = { a, b, c, d };
+  if ((a * x + b) % c) return again("bw-number")(R);
+  const r = (a * x + b) / c - d; R.p.r = r;
+  return { q: `I think of a number, multiply it by ${a}, add ${b}, divide by ${c}, and subtract ${d}. The result is ${m(r)}. What was my number?`, a: x, traps: [((r - d) * c + b) / a, ((r + d) * c + b) / a, (r + d) * c / a, x + 1].filter(v => Number.isInteger(v) && v !== x), min: -Infinity, hint: "Undo each step in reverse order.", sol: `${m(r)} + ${d} = ${r + d}; × ${c} = ${(r + d) * c}; − ${b} = ${(r + d) * c - b}; ÷ ${a} = ${x}.` };
+}, ({ a, b, c, d, r }) => { for (let x = -1000; x <= 1000; x++) if ((a * x + b) / c - d === r) return x; });
+
+GEN("bw-money", "backwards", "amc8", R => {
+  const k = R.int(1, 10), j = R.int(1, 10), left = R.int(1, 20); R.p = { k, j, left };
+  const after1 = 2 * (left + j), start = 2 * (after1 + k);
+  return { q: `Mia spent half her money plus $${k} on a book. Then she spent half of what was left plus $${j} on lunch. She had $${left} left. How much did she start with?`, a: start, traps: [2 * (left + j + k), 4 * left + k + j, start - 2 * k, start + 2 * j].filter(v => v !== start && v > 0), fmt: money, hint: "Work backwards: before lunch she had 2 × (left + lunch extra).", sol: `Before lunch: 2(${left} + ${j}) = ${after1}. At the start: 2(${after1} + ${k}) = ${money(start)}.` };
+}, ({ k, j, left }) => { for (let s = 1; s < 10000; s++) { const a = s - (s / 2 + k); if (a - (a / 2 + j) === left) return money(s); } });
+
+GEN("lp-pair-sums", "logic-puzzles", "amc8", R => {
+  const [x, y, z] = R.distinct(3, 1, 40).sort((a, b) => a - b), ask = R.int(0, 2); R.p = { s: R.shuffle([x + y, x + z, y + z]), ask };
+  const ans = [x, y, z][ask];
+  return { q: `Three different numbers are added two at a time, giving sums ${R.p.s.join(", ")}. What is the ${["smallest", "middle", "largest"][ask]} of the three numbers?`, a: ans, traps: [x, y, z, (x + y + z), Math.round((x + y + z) / 3)].filter(v => v !== ans), hint: "Add all three sums: that counts each number twice.", sol: `Total of the numbers: (${R.p.s.join(" + ")}) ÷ 2 = ${x + y + z}. The numbers are ${x}, ${y}, ${z}.` };
+}, ({ s, ask }) => { const T = (s[0] + s[1] + s[2]) / 2; return s.map(v => T - v).sort((a, b) => a - b)[ask]; });
+
+GEN("lp-legs", "logic-puzzles", "mk56", R => {
+  const c = R.int(2, 30), p = R.int(2, 30), kind = R.pick([["chickens", "pigs", 2, 4], ["bicycles", "tricycles", 2, 3], ["spiders", "beetles", 8, 6]]); R.p = { c, p, kind: kind[0] };
+  const [A, B, la, lb] = kind, heads = c + p, legs = la * c + lb * p;
+  return { q: `A ${A === "chickens" ? "farm" : A === "bicycles" ? "shop" : "jar"} has ${A} and ${B}: ${heads} in all, with ${legs} ${A === "bicycles" ? "wheels" : "legs"}. How many ${B} are there?`, a: p, traps: [c, Math.round(legs / lb), heads - p + 1, Math.abs(legs - la * heads)].filter(v => v !== p && v > 0), hint: `If every one were ${A}, how many ${A === "bicycles" ? "wheels" : "legs"} would there be?`, sol: `If all ${heads} were ${A}, there would be ${la * heads}. Each of the ${B} changes that by ${Math.abs(lb - la)}, and the gap is ${Math.abs(legs - la * heads)}, so there are ${p} ${B}.` };
+}, ({ c, p, kind }) => { const [la, lb] = { chickens: [2, 4], bicycles: [2, 3], spiders: [8, 6] }[kind], H = c + p, L = la * c + lb * p; for (let y = 0; y <= H; y++) if (la * (H - y) + lb * y === L) return y; });
+
+GEN("pi-odd-divisors", "parity", "amc8", R => {
+  const N = R.int(20, 400), kind = R.int(0, 1); R.p = { N, kind };
+  const sq = Math.floor(Math.sqrt(N));
+  if (kind) return { q: `${N} lockers are closed. Student 1 opens every locker. Student 2 toggles every 2nd locker, student 3 toggles every 3rd, and so on up to student ${N}. How many lockers end up open?`, a: sq, traps: [N - sq, sq + 1, Math.floor(N / 2), sq - 1].filter(v => v !== sq && v >= 0), hint: "A locker is toggled once for each divisor of its number.", sol: `Only perfect squares have an odd number of divisors: ${sq} of them up to ${N}.` };
+  return { q: `How many of the numbers 1, 2, …, ${N} have an odd number of positive divisors?`, a: sq, traps: [Math.ceil(N / 2), sq + 1, N - sq, sq - 1].filter(v => v !== sq && v >= 0), hint: "Divisors come in pairs, except when a divisor is paired with itself.", sol: `Exactly the perfect squares: ${sq}.` };
+}, ({ N }) => { let c = 0; for (let n = 1; n <= N; n++) { let d = 0; for (let i = 1; i <= n; i++) if (n % i === 0) d++; if (d % 2) c++; } return c; });
+
+GEN("pi-board", "parity", "amc10", R => {
+  const N = R.int(5, 30), k = R.int(1, 5); R.p = { N, k };
+  const ans = N * (N + 1) / 2 + (N - 1) * k;
+  return { q: `The numbers 1, 2, …, ${N} are written on a board. A move erases two numbers a and b and writes a + b + ${k}. After ${N - 1} moves one number is left. What is it?`, a: ans, traps: [N * (N + 1) / 2, ans + k, N * (N + 1) / 2 + N * k, ans - k].filter(v => v !== ans), hint: "What happens to the total on the board with each move?", sol: `Each move adds ${k} to the total. Start ${N * (N + 1) / 2}, plus ${N - 1} × ${k}: ${ans}.` };
+}, ({ N, k }) => { let a = range(1, N); while (a.length > 1) { const x = a.pop(), y = a.shift(); a.push(x + y + k); } return a[0]; });
+
+GEN("ol-coins", "organized-lists", "mk78", R => {
+  const C = R.int(10, 60); R.p = { C };
+  let c = 0; for (let d = 0; d * 10 <= C; d++) for (let n = 0; d * 10 + n * 5 <= C; n++) c++;
+  return { q: `How many ways can you make ${C} cents using pennies, nickels, and dimes?`, a: c, traps: [c - 1, c + 2, Math.floor(C / 5) + 1, Math.floor(C / 10) + Math.floor(C / 5)].filter(v => v !== c && v > 0), hint: "Go by the number of dimes, then count the choices for nickels.", sol: `Listing by dimes then nickels (pennies fill the rest) gives ${c} ways.` };
+}, ({ C }) => { let c = 0; for (let p = 0; p <= C; p++) for (let n = 0; n <= C / 5; n++) for (let d = 0; d <= C / 10; d++) if (p + 5 * n + 10 * d === C) c++; return c; });
+
+GEN("ol-rect", "organized-lists", "mk56", R => {
+  const kind = R.int(0, 1), V = kind ? R.pick([12, 16, 18, 20, 24, 30, 36, 40, 48, 60, 64, 72, 84, 96, 100]) : 2 * R.int(5, 30); R.p = { kind, V };
+  const c = kind ? divisors(V).filter(d => d * d <= V).length : Math.floor(V / 4);
+  return { q: kind ? `How many different rectangles with whole-number sides have area ${V}? (A 2 × 3 and a 3 × 2 count as the same.)` : `How many different rectangles with whole-number sides have perimeter ${V}? (A 2 × 3 and a 3 × 2 count as the same.)`, a: c, traps: [kind ? divisors(V).length : V / 2 - 1, c + 1, c - 1, c * 2].filter(v => v !== c && v > 0), hint: "List the shorter side from 1 upward.", sol: `Listing the shorter side gives ${c}.` };
+}, ({ kind, V }) => { let c = 0; for (let a = 1; a <= V; a++) for (let b = a; b <= V; b++) if (kind ? a * b === V : 2 * (a + b) === V) c++; return c; });
+
+GEN("ol-goldbach", "organized-lists", "amc8", R => {
+  const N = 2 * R.int(10, 50); R.p = { N };
+  const c = countIf(2, N / 2, p => isPrime(p) && isPrime(N - p));
+  return { q: `In how many ways can ${N} be written as the sum of two primes? (Order doesn't matter.)`, a: c, traps: [c + 1, c * 2, Math.max(0, c - 1), c + 2].filter(v => v !== c), hint: "Check each prime up to half of the number.", sol: `Checking primes up to ${N / 2}: ${c} way${c === 1 ? "" : "s"}.` };
+}, ({ N }) => { let c = 0; for (let a = 2; a <= N; a++) for (let b = a; b <= N; b++) if (a + b === N && divisors(a).length === 2 && divisors(b).length === 2) c++; return c; });
+
+/* =========================================================
    STORAGE: shared Claude db when available, else this browser
    results: one doc per finished test or lesson check
    opened:  one doc per student+lesson, written the first time a lesson is opened
