@@ -90,8 +90,15 @@ main{max-width:1440px;margin:0 auto;padding-block:28px 64px;padding-left:max(16p
 .grp{font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-top:4px;font-family:var(--f-mono)}
 .tier{font:600 .68rem/1.2 var(--f-mono);letter-spacing:.02em;padding:2px 7px;border-radius:999px;white-space:nowrap;flex:none}
 .tier.t1{background:var(--t1-soft);color:var(--t1)} .tier.t2{background:var(--t2-soft);color:var(--t2)} .tier.t3{background:var(--t3-soft);color:var(--t3)}
-.lessons button.t1{box-shadow:inset 3px 0 0 var(--t1)} .lessons button.t2{box-shadow:inset 3px 0 0 var(--t2)} .lessons button.t3{box-shadow:inset 3px 0 0 var(--t3)}
-.lesson-row.t1{border-left:4px solid var(--t1)} .lesson-row.t2{border-left:4px solid var(--t2)} .lesson-row.t3{border-left:4px solid var(--t3)}
+/* tier hover: a straight bar on the left plus a light tier-colored wash */
+.lessons button,.lesson-row{position:relative}
+.lessons button::before,.lesson-row::before{content:"";position:absolute;left:0;top:6px;bottom:6px;width:3px;background:transparent;transition:background .12s}
+.lesson-row::before{left:-1px;width:4px;top:8px;bottom:8px}
+.lessons button.t1{--tc:var(--t1);--ts:var(--t1-soft)} .lessons button.t2{--tc:var(--t2);--ts:var(--t2-soft)} .lessons button.t3{--tc:var(--t3);--ts:var(--t3-soft)}
+.lesson-row.t1{--tc:var(--t1);--ts:var(--t1-soft)} .lesson-row.t2{--tc:var(--t2);--ts:var(--t2-soft)} .lesson-row.t3{--tc:var(--t3);--ts:var(--t3-soft)}
+.lessons button:not(:disabled):hover,.lessons button:not(:disabled):focus-visible{background:var(--ts,var(--accent-soft))}
+.lessons button:not(:disabled):hover .tier,.lesson-row:not(:disabled):hover .tier{background:var(--surface)}
+.lessons button:not(:disabled):hover::before,.lessons button:not(:disabled):focus-visible::before,.lesson-row:not(:disabled):hover::before,.lesson-row:not(:disabled):focus-visible::before{background:var(--tc,var(--accent))}
 .lessons .lt{display:flex;align-items:center;gap:6px;min-width:0}
 .tierbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .tierbar button{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 14px;font-weight:600;font-size:.88rem;display:flex;gap:8px;align-items:center}
@@ -102,7 +109,6 @@ main{max-width:1440px;margin:0 auto;padding-block:28px 64px;padding-left:max(16p
 .tierbar button.on .tdot{background:currentColor!important}
 .lessons{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
 .lessons button{width:100%;text-align:left;background:none;border:0;padding:4px 6px;border-radius:6px;display:flex;justify-content:space-between;gap:8px;font-size:.93rem}
-.lessons button:not(:disabled):hover{background:var(--accent-soft)}
 .lessons button:disabled{color:var(--muted);cursor:default;opacity:.75}
 .lessons .ready{color:var(--ink);font-weight:500}
 .tag{font-family:var(--f-mono);font-size:.7rem;padding:1px 7px;border-radius:999px;white-space:nowrap;align-self:center}
@@ -125,7 +131,7 @@ main{max-width:1440px;margin:0 auto;padding-block:28px 64px;padding-left:max(16p
 .btn.small{padding:5px 10px;font-size:.85rem;align-self:flex-start}
 .lesson-list{display:flex;flex-direction:column;gap:6px}
 .lesson-row{display:flex;justify-content:space-between;align-items:center;gap:12px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
-.lesson-row:not(:disabled):hover{border-color:var(--accent)}
+.lesson-row:not(:disabled):hover,.lesson-row:not(:disabled):focus-visible{border-color:var(--tc,var(--accent));background:var(--ts,var(--surface))}
 .lesson-row:disabled{cursor:default;opacity:.6}
 .lesson-row small{display:block;color:var(--muted);font-size:.8rem}
 .formulas{margin:0;display:flex;flex-direction:column;gap:12px}
