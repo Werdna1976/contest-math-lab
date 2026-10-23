@@ -185,6 +185,8 @@ th{font-weight:600;color:var(--muted);font-size:.8rem;text-transform:uppercase;l
 .side li.cur{color:var(--ink);font-weight:600}
 .frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.9em;line-height:1.1}
 .frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 3px}
+.frac>span{padding:0 2px}.frac .fs{display:none}
+.md{font-weight:800}
 .sb{font-family:var(--f-mono);font-size:1.6rem;letter-spacing:.12em;display:flex;align-items:flex-end;gap:2px;flex-wrap:wrap;justify-content:center}
 .sb .bar{color:var(--accent);font-weight:600}
 .sb .star{color:var(--hi)}
@@ -462,7 +464,7 @@ function figMcNugget(a, b, upto = 30) {
   return `<div class="ngrid" role="img" aria-label="Numbers 1 to ${upto}; unreachable with ${a} and ${b} shown in red">${cells}</div>`;
 }
 
-const frac = (a, b) => `<span class="frac"><span>${a}</span><span>${b}</span></span>`;
+const frac = (a, b) => `<span class="frac"><span>${a}</span><i class="fs">/</i><span>${b}</span></span>`;
 
 
 /* =========================================================
@@ -470,7 +472,7 @@ const frac = (a, b) => `<span class="frac"><span>${a}</span><span>${b}</span></s
    ========================================================= */
 // a solution is either one sentence or an array of steps, shown as a numbered list
 const steps = sol => Array.isArray(sol) ? `<ol class="steps">${sol.map(s => `<li>${s}</li>`).join("")}</ol>` : `<p>${sol}</p>`;
-const ex = (q, sol, tag = "") => `<div class="ex"><span class="lbl">Example${tag ? " · " + tag : ""}</span><p>${q}</p><details><summary>Show solution</summary>${steps(sol)}</details></div>`;
+const ex = (q, sol, tag = "") => `<div class="ex"><span class="lbl">Example${tag ? ": " + tag : ""}</span><p>${q}</p><details><summary>Show solution</summary>${steps(sol)}</details></div>`;
 const rule = (title, html) => `<div class="rule"><b>${title}</b> ${html}</div>`;
 const aops = (page, label) => `<p class="lede">Reference: <a href="https://artofproblemsolving.com/wiki/index.php/${page}" target="_blank" rel="noopener">AoPS Wiki: ${label}</a></p>`;
 const tbl = (head, rows) => `<div class="tbl-wrap"><table><thead><tr>${head.map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
@@ -626,7 +628,7 @@ Object.assign(LESSONS, {
         <details><summary>Show solution</summary><p>Exterior angle = 180° − 140° = 40°. Sides = 360 ÷ 40 = <b>9</b>.</p></details></div>
       <div class="ex"><span class="lbl">Example 3</span><p>A pentagon has angles 100°, 110°, 120°, x°, and x°. Find x.</p>
         <details><summary>Show solution</summary><p>Pentagon sum = 540°. So 330 + 2x = 540, which gives 2x = 210 and <b>x = 105</b>.</p></details></div>
-      <div class="ex"><span class="lbl">Example 4 · contest style</span><p>Can a regular polygon have interior angles of 130°?</p>
+      <div class="ex"><span class="lbl">Example 4: contest style</span><p>Can a regular polygon have interior angles of 130°?</p>
         <details><summary>Show solution</summary><p>Exterior would be 50°, and 360 ÷ 50 = 7.2. That's not a whole number of sides, so <b>no</b>. A regular polygon exists only when 360 ÷ (exterior angle) is a whole number of at least 3.</p></details></div>
       <p class="lede">Reference: <a href="https://artofproblemsolving.com/wiki/index.php/Polygon" target="_blank" rel="noopener">AoPS Wiki: Polygon</a></p>`,
     quiz: [
@@ -659,7 +661,7 @@ Object.assign(LESSONS, {
       <p>If you know the number of diagonals D, then n(n − 3) = 2D. Look for two numbers that differ by 3 and multiply to 2D.</p>
       <div class="ex"><span class="lbl">Example 2</span><p>A convex polygon has 27 diagonals. How many sides?</p>
         <details><summary>Show solution</summary><p>n(n − 3) = 54. Try numbers 3 apart: 9 × 6 = 54. So <b>n = 9</b>.</p></details></div>
-      <div class="ex"><span class="lbl">Example 3 · contest style</span><p>Which polygon has exactly as many diagonals as sides?</p>
+      <div class="ex"><span class="lbl">Example 3: contest style</span><p>Which polygon has exactly as many diagonals as sides?</p>
         <details><summary>Show solution</summary><p>n(n − 3)/2 = n. Divide by n: (n − 3)/2 = 1, so n = 5. The <b>pentagon</b>: 5 sides, 5 diagonals (the star inside it).</p></details></div>
       <p class="lede">Reference: <a href="https://artofproblemsolving.com/wiki/index.php/Diagonal" target="_blank" rel="noopener">AoPS Wiki: Diagonal</a></p>`,
     quiz: [
@@ -699,7 +701,7 @@ Object.assign(LESSONS, {
 
       <h3>Minimums and shortcuts</h3>
       <p>If a box needs at least m, give it m up front and then use the basic formula on what's left.</p>
-      <div class="ex"><span class="lbl">Example 4 · contest style</span><p>12 identical cookies go to 3 children, and each child must get at least 2. How many ways?</p>
+      <div class="ex"><span class="lbl">Example 4: contest style</span><p>12 identical cookies go to 3 children, and each child must get at least 2. How many ways?</p>
         <details><summary>Show solution</summary><p>Give each child 2 (6 used). Share the other 6 freely: C(6 + 2, 2) = C(8, 2) = <b>28</b>.</p></details></div>
       <p><b>Watch for:</b> if the <i>items</i> are different (5 different books), stars and bars does not apply. If the <i>boxes</i> are identical (splitting into piles with no names), it doesn't apply either.</p>
       <p class="lede">Reference: <a href="https://artofproblemsolving.com/wiki/index.php/Ball-and-urn" target="_blank" rel="noopener">AoPS Wiki: Ball-and-urn (stars and bars)</a></p>`,
@@ -796,7 +798,7 @@ BANK.push(
    ========================================================= */
 Object.assign(TRICKS, {
   "order-ops": [
-    { at: "The order", t: "PEMDAS: “Please Excuse My Dear Aunt Sally.”", h: "Parentheses, Exponents, Multiply/Divide, Add/Subtract. Read it as P · E · MD · AS: M and D are partners, and so are A and S. Partners tie, so you go left to right. 24 ÷ 4 × 3 = 6 × 3 = 18." },
+    { at: "The order", t: "PEMDAS: “Please Excuse My Dear Aunt Sally.”", h: "Parentheses, Exponents, Multiply/Divide, Add/Subtract. Read it as P, E, MD, AS: M and D are partners, and so are A and S. Partners tie, so you go left to right. 24 ÷ 4 × 3 = 6 × 3 = 18." },
     { at: "Group to save work", t: "Hunt for 10s and 100s.", h: "Before adding a list, look for pairs that make a round number. 37 + 46 + 63 = (37 + 63) + 46 = 100 + 46 = 146. You may reorder and regroup + and × freely, but never − or ÷." },
     { at: "Pairing tricks", t: "First plus last, times the number of pairs.", h: "1 + 2 + ··· + 100: pair 1 with 100, 2 with 99, and so on. Each pair makes 101 and there are 50 pairs, so 101 × 50 = 5050." },
   ],
@@ -1256,7 +1258,7 @@ FORMULAS["geo-shapes"] = [
   { name: "Euler's formula for polyhedra", eq: "V − E + F = 2", core: true },
   { name: "Prism on an n-gon base", eq: "V = 2n · E = 3n · F = n + 2" },
   { name: "Pyramid on an n-gon base", eq: "V = n + 1 · E = 2n · F = n + 1" },
-  { name: "n×n×n painted cube", eq: "3 faces: 8 · 2 faces: 12(n−2) · 1 face: 6(n−2)² · 0 faces: (n−2)³" },
+  { name: "n×n×n painted cube", eq: "3 faces: 8; 2 faces: 12(n−2); 1 face: 6(n−2)²; 0 faces: (n−2)³" },
 ];
 
 function figTriangleKinds() {
@@ -1908,7 +1910,7 @@ FORMULAS["nt"] = [
   { name: "Divisibility by 11", eq: "alternating digit sum (+ − + − …) divisible by 11" },
   { name: "Number of divisors of p^a q^b r^c", eq: "(a + 1)(b + 1)(c + 1)", core: true },
   { name: "Odd number of divisors", eq: "exactly when n is a perfect square" },
-  { name: "GCD and LCM", eq: "gcd: smaller exponents · lcm: larger exponents", core: true },
+  { name: "GCD and LCM", eq: "gcd: smaller exponents; lcm: larger exponents", core: true },
   { name: "GCD × LCM", eq: "gcd(a, b) × lcm(a, b) = a × b" },
   { name: "Remainders", eq: "add, subtract, multiply remainders, then reduce", core: true },
   { name: "Units-digit cycles", eq: "2: 2486 · 3: 3971 · 7: 7931 · 8: 8426 · 4: 46 · 9: 91", note: "Use the exponent mod 4 (0 means the last in the cycle)", core: true },
@@ -2210,12 +2212,12 @@ FORMULAS["algebra"] = [
   { name: "Inequality with a negative", eq: "multiply or divide by a negative → flip the sign" },
   { name: "Absolute value", eq: "|x − a| ≤ b  ⇔  a − b ≤ x ≤ a + b", core: true },
   { name: "Slope", eq: "m = (y₂ − y₁) ÷ (x₂ − x₁)", core: true },
-  { name: "Line", eq: "y = mx + b · parallel: same m · perpendicular: m₁m₂ = −1", core: true },
+  { name: "Line", eq: "y = mx + b; parallel: same m; perpendicular: m₁m₂ = −1", core: true },
   { name: "Quadratic formula", eq: "x = (−b ± √(b² − 4ac)) ÷ 2a", core: true },
   { name: "Vieta's formulas (ax² + bx + c)", eq: "r + s = −b/a · rs = c/a", core: true },
   { name: "Sum of squares of roots", eq: "r² + s² = (r + s)² − 2rs" },
   { name: "Vertex of y = ax² + bx + c", eq: "x = −b ÷ 2a" },
-  { name: "Discriminant", eq: "b² − 4ac: positive 2 roots · zero 1 root · negative none (real)" },
+  { name: "Discriminant", eq: "b² − 4ac: positive 2 roots; zero 1 root; negative none (real)" },
   { name: "Arithmetic sequence", eq: "aₙ = a₁ + (n − 1)d · sum = n(a₁ + aₙ) ÷ 2", core: true },
   { name: "Number of terms a, a + d, …, L", eq: "(L − a) ÷ d + 1" },
   { name: "1 + 2 + … + n", eq: "n(n + 1) ÷ 2", core: true },
@@ -2893,7 +2895,7 @@ FORMULAS["geo-angles"] = [
   { name: "Complementary / supplementary", eq: "add to 90° / add to 180°" },
   { name: "Vertical angles", eq: "equal" },
   { name: "Around a point", eq: "360°" },
-  { name: "Parallel lines cut by a transversal", eq: "corresponding = · alternate interior = · same-side interior add to 180°", core: true },
+  { name: "Parallel lines cut by a transversal", eq: "corresponding =; alternate interior =; same-side interior add to 180°", core: true },
   { name: "Triangle angle sum", eq: "180°", core: true },
   { name: "Exterior angle of a triangle", eq: "= sum of the two remote interior angles", core: true },
   { name: "Clock hands at H:M", eq: "angle = |30H − 5.5M|", note: "Minute hand 6°/min, hour hand 0.5°/min" },
@@ -3404,15 +3406,15 @@ BANK.push(
    CHAPTER: Geometry: Area & Volume
    ========================================================= */
 FORMULAS["geo-area"] = [
-  { name: "Rectangle · parallelogram", eq: "lw · bh (h is perpendicular height)" },
+  { name: "Rectangle, parallelogram", eq: "lw; bh (h is perpendicular height)" },
   { name: "Triangle", eq: "½ × base × height", core: true },
   { name: "Trapezoid", eq: "½ (b₁ + b₂) h", core: true },
   { name: "Heron's formula", eq: "√(s(s − a)(s − b)(s − c)),  s = (a + b + c)/2", note: "13-14-15 → 84 is the favorite" },
   { name: "Triangle with two sides and the angle between", eq: "½ ab sin C  (sin 30° = ½, sin 90° = 1)" },
   { name: "Pick's theorem (lattice polygon)", eq: "A = I + B/2 − 1", core: true },
   { name: "Shoelace formula", eq: "A = ½ |Σ (xᵢ yᵢ₊₁ − xᵢ₊₁ yᵢ)|" },
-  { name: "Prism or cylinder volume", eq: "base area × height · cylinder πr²h", core: true },
-  { name: "Pyramid or cone volume", eq: "⅓ × base area × height · cone ⅓πr²h", core: true },
+  { name: "Prism or cylinder volume", eq: "base area × height; cylinder πr²h", core: true },
+  { name: "Pyramid or cone volume", eq: "⅓ × base area × height; cone ⅓πr²h", core: true },
   { name: "Sphere", eq: "V = (4/3)πr³ · S = 4πr²", core: true },
   { name: "Box surface area", eq: "2(lw + lh + wh)" },
   { name: "Cylinder surface area", eq: "2πr² + 2πrh" },
@@ -3685,11 +3687,11 @@ FORMULAS["arith"] = [
   { name: "Successive percents", eq: "multiply the factors: +20% then −20% → 1.2 × 0.8 = 0.96", core: true },
   { name: "Ratio a : b", eq: "total = a + b parts; one part = total ÷ (a + b)", core: true },
   { name: "Chaining ratios", eq: "a:b = 2:3, b:c = 4:5 → a:b:c = 8:12:15" },
-  { name: "Mean", eq: "mean = sum ÷ count  ·  sum = mean × count", core: true },
+  { name: "Mean", eq: "mean = sum ÷ count; sum = mean × count", core: true },
   { name: "Median", eq: "middle of the sorted list (average the two middles if even)" },
   { name: "Squares ending in 5", eq: "(10a + 5)² = a(a + 1) | 25  ·  65² = 4225" },
   { name: "Near-square products", eq: "(n − k)(n + k) = n² − k²  ·  48 × 52 = 2496", core: true },
-  { name: "Unit conversion", eq: "multiply by fractions equal to 1  ·  1 yd² = 9 ft², 1 yd³ = 27 ft³" },
+  { name: "Unit conversion", eq: "multiply by fractions equal to 1; 1 yd² = 9 ft², 1 yd³ = 27 ft³" },
   { name: "Speed conversion", eq: "60 mph = 88 ft/s  ·  30 mph = 44 ft/s" },
 ];
 
@@ -3710,6 +3712,8 @@ Object.assign(LESSONS, {
     outline: ["The order", "Group to save work", "Pairing tricks", "Check yourself"],
     body: () => `
       <h3>The order</h3>
+      ${rule("Two ways to write times:", "3 &times; 4 and 3 · 4 mean the same thing. From here on we use the dot, because in algebra x is a letter, and 3 &times; x looks too much like 3 x x.")}
+      <p>A fraction bar means divide, too: 12 ÷ 4 can be written ${frac(12, 4)}, and both equal 3. The bar also groups: ${frac("6 + 2", 4)} means (6 + 2) ÷ 4 = 2.</p>
       ${rule("Order:", "parentheses, then exponents, then × and ÷ from left to right, then + and − from left to right.")}
       <p>The trap is thinking × always comes before ÷. They are a tie, so you go left to right: 24 ÷ 4 × 3 = 6 × 3 = 18, not 24 ÷ 12.</p>
       ${ex("Compute 8 − 2 × 3 + 4.", ["Multiplication comes before + and −: 2 × 3 = 6, so the problem becomes 8 − 6 + 4.", "Now + and − go left to right: 8 − 6 = 2, then 2 + 4 = <b>6</b>.", "Doing 6 + 4 first would give 8 − 10 = −2, which is wrong."])}
@@ -3896,9 +3900,9 @@ FORMULAS["rates"] = [
   { name: "Work rates", eq: "rates add: 1/T = 1/a + 1/b  ·  together time = ab ÷ (a + b)", core: true },
   { name: "Fill and drain", eq: "net rate = fill rate − drain rate" },
   { name: "Mixtures", eq: "amount of pure stuff = percent × total amount", core: true },
-  { name: "Clock hands", eq: "minute hand 6°/min · hour hand ½°/min · angle = |30h − 5.5m|", core: true },
+  { name: "Clock hands", eq: "minute hand 6°/min; hour hand ½°/min; angle = |30h − 5.5m|", core: true },
   { name: "Hands overlap", eq: "every 12/11 hours (65 5/11 minutes)" },
-  { name: "Calendar shift", eq: "365 days = 52 weeks + 1 day · leap year shifts 2 days" },
+  { name: "Calendar shift", eq: "365 days = 52 weeks + 1 day; leap year shifts 2 days" },
 ];
 
 function figMeet() {
@@ -4095,7 +4099,7 @@ FORMULAS["prob"] = [
   { name: "Without replacement", eq: "multiply, shrinking the counts: 3/5 × 2/4" },
   { name: "Either-or", eq: "P(A or B) = P(A) + P(B) − P(A and B)" },
   { name: "Conditional", eq: "P(A | B) = P(A and B) ÷ P(B)  (shrink the sample space to B)", core: true },
-  { name: "Expected value", eq: "E = Σ value × probability  ·  expected values add", core: true },
+  { name: "Expected value", eq: "E = Σ value × probability; expected values add", core: true },
   { name: "Waiting for success", eq: "expected tries = 1 ÷ p  (a 6 on a die: 6 rolls)" },
   { name: "Geometric probability", eq: "favorable length or area ÷ total length or area", core: true },
   { name: "Two dice", eq: "36 outcomes; sum 7 has 6 ways; sum s (2 to 7) has s − 1 ways" },
@@ -4296,7 +4300,7 @@ FORMULAS["logic"] = [
   { name: "Sum of an arithmetic sequence", eq: "(first + last) ÷ 2 × count  ·  1 + ··· + n = n(n + 1)/2", core: true },
   { name: "Repeating patterns", eq: "position n → look at n mod (cycle length)", core: true },
   { name: "Working backwards", eq: "undo each step in reverse order (× ↔ ÷, + ↔ −)" },
-  { name: "Parity", eq: "odd + odd = even · a sum is odd ⇔ it has an odd number of odd terms" },
+  { name: "Parity", eq: "odd + odd = even; a sum is odd ⇔ it has an odd number of odd terms" },
   { name: "Invariant", eq: "find a quantity no move can change; compare start and goal" },
   { name: "Coloring argument", eq: "a domino always covers one black and one white square" },
   { name: "Venn diagram (two sets)", eq: "|A or B| = |A| + |B| − |A and B|" },
@@ -8266,6 +8270,115 @@ GEN("olh-dice-product", "organized-lists", "amc10", R => {
   let u = 0; for (let a = 1; a <= 6; a++) for (let b = a; b <= 6; b++) for (let d = b; d <= 6; d++) if (a * b * d === P) u++;
   return { q: `Three dice, colored red, white, and blue, are rolled. In how many of the 216 outcomes is the product of the three numbers ${P}?`, a: c, traps: [u, c + u, c - 1, c + 3, 2 * u].filter(x => x > 0 && x !== c), hint: "List the unordered triples first, then count how many orders each has.", sol: [`List the sets of three die numbers with product ${P}: ${(() => { const o = []; for (let a = 1; a <= 6; a++) for (let b = a; b <= 6; b++) for (let d = b; d <= 6; d++) if (a * b * d === P) o.push(`${a}·${b}·${d} (${[0, 1, 3, 6][new Set([a, b, d]).size]} order${new Set([a, b, d]).size > 1 ? "s" : ""})`); return o.join(", "); })()}.`, `Orders: all different → 6, two the same → 3, all the same → 1.`, `Total: <b>${c}</b>.`] };
 }, ({ P }) => { let c = 0; eachTuple(6, 3, t => { if ((t[0] + 1) * (t[1] + 1) * (t[2] + 1) === P) c++; }); return c; });
+
+/* =========================================================
+   DISPLAY POLISH for content text
+   a/b → stacked fraction, × → · (the dot is introduced in Order of Operations).
+   Write &times; in content to keep a ×. Dimensions like "8 × 8 board" keep ×.
+   ========================================================= */
+const PM_TOK = /[0-9A-Za-zπθ√½¼¾⅓⅔⅛²³⁴⁵⁶⁷⁸⁹⁰¹ⁿ₀₁₂₃₄′°!]/;
+const PM_DIMS = /(\d+) × (\d+)((?: × \d+)?)(?=(?: (?:cm|m|in|ft|inch|foot|meter|unit))? (?:grid|board|checkerboard|chessboard|cube|box|rectangle|array|square|table|block|garden|room|floor|field|tile|sheet|strip|rug|prism|brick|lattice|wall|pool|patio|courtyard|piece|rectangular|solid|tower))/g;
+
+function pmFrac(a, b) {
+  const pa = /[\s+−-]/.test(a.replace(/<[^>]+>/g, "")) ? ["<i class=\"fs\">(</i>", "<i class=\"fs\">)</i>"] : ["", ""];
+  const pb = /[\s+−-]/.test(b.replace(/<[^>]+>/g, "")) ? ["<i class=\"fs\">(</i>", "<i class=\"fs\">)</i>"] : ["", ""];
+  return `<span class="frac"><span>${pa[0]}${a}${pa[1]}</span><i class="fs">/</i><span>${pb[0]}${b}${pb[1]}</span></span>`;
+}
+
+function prettyMath(h) {
+  if (typeof h !== "string" || (!h.includes("/") && !h.includes("×"))) return h;
+  const n = h.length, ok = new Uint8Array(n);
+  // ok[i] = 1 for plain text outside tags, SVG, and entities
+  for (let i = 0, svg = 0; i < n; ) {
+    if (h[i] === "<" && /[A-Za-z\/!]/.test(h[i + 1] || "")) {
+      const j = h.indexOf(">", i); if (j < 0) break;
+      const tag = h.slice(i, j + 1);
+      if (/^<svg\b/i.test(tag)) svg++; else if (/^<\/svg/i.test(tag)) svg = Math.max(0, svg - 1);
+      i = j + 1; continue;
+    }
+    if (h[i] === "&") { const m = /^&#?\w+;/.exec(h.slice(i, i + 10)); if (m) { i += m[0].length; continue; } }
+    if (!svg) ok[i] = 1;
+    i++;
+  }
+  const reps = [];
+  const matchBack = (j) => { let d = 0; for (let k = j; k >= 0; k--) { if (ok[k] && h[k] === ")") d++; else if (ok[k] && h[k] === "(") { d--; if (!d) return k; } } return -1; };
+  const matchFwd = (j) => { let d = 0; for (let k = j; k < n; k++) { if (ok[k] && h[k] === "(") d++; else if (ok[k] && h[k] === ")") { d--; if (!d) return k; } } return -1; };
+  const isTok = k => k >= 0 && k < n && ok[k] && (PM_TOK.test(h[k]) || (h[k] === "." && /\d/.test(h[k - 1] || "") && /\d/.test(h[k + 1] || "")));
+  for (let i = 0; i < n; i++) {
+    if (h[i] !== "/" || !ok[i] || h[i + 1] === "/" || h[i - 1] === "/") continue;
+    // "6√3 / 3" with spaces counts too
+    const sp = h[i - 1] === " " && h[i + 1] === " " && h[i - 2] !== " " && h[i + 2] !== " ";
+    const ja = sp ? i - 2 : i - 1, jb = sp ? i + 2 : i + 1;
+    // numerator: tokens and (groups) run together, so n(n + 1)/2 takes all of n(n + 1)
+    let a0, a, k = ja;
+    for (;;) {
+      if (k >= 5 && h.startsWith("</sup>", k - 5)) { const s = h.lastIndexOf("<sup>", k); if (s < 0) break; k = s - 1; continue; }
+      if (isTok(k)) { k--; continue; }
+      if (ok[k] && h[k] === ")") { const g = matchBack(k); if (g < 0) break; k = g - 1; continue; }
+      break;
+    }
+    a0 = k + 1; a = h.slice(a0, ja + 1);
+    if (h[a0] === "(" && matchFwd(a0) === ja) a = h.slice(a0 + 1, ja);
+    let j;
+    // denominator
+    let b1, b; j = jb;
+    if (ok[j] && h[j] === "(") {
+      const e = matchFwd(j); if (e < 0) continue;
+      let k = e + 1;
+      while (/[²³⁴]/.test(h[k] || "") && ok[k]) k++;
+      if (h.startsWith("<sup>", k)) { const s = h.indexOf("</sup>", k); if (s > 0) k = s + 6; }
+      b1 = k; b = k > e + 1 ? h.slice(j, k) : h.slice(j + 1, e);
+    } else {
+      let k = j;
+      for (;;) {
+        if (h.startsWith("<sup>", k)) { const s = h.indexOf("</sup>", k); if (s < 0) break; k = s + 6; continue; }
+        if (isTok(k)) { k++; continue; }
+        break;
+      }
+      b1 = k; b = h.slice(j, k);
+    }
+    const ta = a.replace(/<[^>]+>/g, ""), tb = b.replace(/<[^>]+>/g, "");
+    if (!ta.trim() || !tb.trim()) continue;
+    // word/word and unit/unit (km/h, m/s, and/or) stay as written; segment ratios like AD/AB stack
+    const wa = /^[A-Za-z]+$/.test(ta), wb = /^[A-Za-z]+$/.test(tb);
+    if (wa && wb && !(/^[A-Z]{2}$/.test(ta) && /^[A-Z]{2}$/.test(tb)) && (ta.length > 1 || tb.length > 1 || ta + "/" + tb === "m/s")) continue;
+    if (!(/^[A-Z]{2}$/.test(ta) && /^[A-Z]{2}$/.test(tb)) && h[a0] !== "(" && h[jb] !== "(" && /[A-Za-z]{2,}/.test(ta) && /[A-Za-z]{2,}/.test(tb)) continue;
+    if (sp && (/[A-Za-z]{2,}/.test(ta) || /[A-Za-z]{2,}/.test(tb) || !/[0-9√]/.test(ta + tb))) continue;
+    if (/MK $/.test(h.slice(Math.max(0, a0 - 3), a0))) continue;
+    if (h[b1] === "/") continue;
+    if (reps.length && reps[reps.length - 1][1] > a0) continue;
+    // "(3/4)" alone in parentheses: the bar already groups it, so drop the parentheses (keep them before an exponent)
+    let s0 = a0, s1 = b1;
+    if (h[a0 - 1] === "(" && ok[a0 - 1] && !PM_TOK.test(h[a0 - 2] || " ") && h[a0 - 2] !== ")" && h[b1] === ")" && ok[b1] && !/[⁰¹²³⁴⁵⁶⁷⁸⁹ⁿ⁻]/.test(h[b1 + 1] || "") && !h.startsWith("<sup>", b1 + 1)) { s0 = a0 - 1; s1 = b1 + 1; }
+    if (reps.length && reps[reps.length - 1][1] > s0) continue;
+    reps.push([s0, s1, pmFrac(prettyMath(a), prettyMath(b))]);
+    i = b1 - 1;
+  }
+  let out = h;
+  for (let r = reps.length - 1; r >= 0; r--) out = out.slice(0, reps[r][0]) + reps[r][2] + out.slice(reps[r][1]);
+  // × → ·, except in dimensions
+  if (out.includes("×")) {
+    out = out.replace(PM_DIMS, (m, x, y, z) => `${x} \u0001 ${y}${z.replace("×", "\u0001")}`);
+    out = out.replace(/<[A-Za-z\/!][^>]*>|&#?\w+;|×/g, t => t === "×" ? "<b class=\"md\">·</b>" : t).replace(/\u0001/g, "×");
+  }
+  return out;
+}
+
+// apply to all content once at startup
+(() => {
+  const P = prettyMath, PA = v => Array.isArray(v) ? v.map(P) : P(v);
+  const fixItem = it => { for (const k of ["q", "hint", "explain"]) if (it[k] != null) it[k] = PA(it[k]); if (it.solution != null) it.solution = PA(it.solution); if (it.choices) it.choices = it.choices.map(P); };
+  BANK.forEach(fixItem);
+  for (const l of Object.values(LESSONS)) {
+    const body = l.body; l.body = () => P(body());
+    (l.quiz || []).forEach(fixItem);
+  }
+  for (const list of Object.values(TRICKS)) for (const t of list) { t.t = P(t.t); t.h = P(t.h); }
+  // formulas use " · " between separate facts; make that "; " so the dot only ever means times
+  for (const list of Object.values(FORMULAS)) for (const f of list) for (const k of ["name", "eq", "note"]) if (f[k]) f[k] = P(f[k].replace(/\s+·\s+/g, "; "));
+  const gp = genProblem;
+  genProblem = g => { const p = gp(g); fixItem(p); return p; };
+})();
 
 /* =========================================================
    STORAGE: shared Claude db when available, else this browser
