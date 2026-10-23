@@ -4271,6 +4271,41 @@ BANK.push(
 );
 
 /* =========================================================
+   Hand-written hard problems, round 4
+   ========================================================= */
+BANK.push(
+  H("h4-we1", "amc8", "word-eq", "Adult movie tickets cost $9 and child tickets cost $5. A theater sold 120 tickets for $760. How many adult tickets were sold?", ["30", "35", "40", "45", "80"], "40", "If all 120 were child tickets, the total would be $600.", "Each adult ticket adds $4. ($760 − $600) ÷ 4 = 40."),
+  H("h4-gf1", "amc10", "gcf-factor", "What is the largest prime factor of 2<sup>12</sup> − 1?", ["7", "13", "31", "63", "91"], "13", "Factor as a difference of squares, then again.", "2¹² − 1 = (2⁶ − 1)(2⁶ + 1) = 63 × 65 = 3² · 7 · 5 · 13. Largest prime: 13."),
+  H("h4-ck1", "amc8", "clock-angles", "What is the smaller angle between the hands of a clock at 7:20?", ["90°", "95°", "100°", "110°", "120°"], "100°", "At 7:20 the hour hand is a third of the way from 7 to 8.", "Hour hand at 210 + 10 = 220°, minute hand at 120°. Difference 100°."),
+  H("h4-ti1", "amc10", "triangle-inequality", "A triangle has sides 2x + 1, x + 4, and 10, where x is a positive integer. How many values of x are possible?", ["9", "10", "11", "12", "13"], "11", "Write all three triangle inequalities.", "3x + 5 &gt; 10 gives x ≥ 2. x + 14 &gt; 2x + 1 gives x ≤ 12. The third always holds. x = 2, …, 12: 11 values."),
+  H("h4-cp1", "amc10", "circle-parts", "A chord of length 10 cuts off a 90° arc of a circle. What is the circle's radius?", ["5", "5√2", "5√3", "10", "10√2"], "5√2", "The two radii to the chord's ends meet at a right angle.", "The chord is the hypotenuse of a right isosceles triangle with legs r: r√2 = 10, r = 5√2."),
+  H("h4-pr1", "amc8", "prisms", "A cube has volume 343. How long is a diagonal running through its center from corner to corner?", ["7", "7√2", "7√3", "14", "21"], "7√3", "Edge first, then the space diagonal is edge × √3.", "Edge 7, diagonal 7√3."),
+  H("h4-su1", "amc10", "surface-area", "A cube's surface area (in square units) equals its volume (in cubic units). How long is its edge?", ["3", "4", "6", "8", "12"], "6", "Set 6s² = s³.", "6s² = s³ gives s = 6."),
+  H("h4-sc1", "amc8", "scaling", "A 1 : 24 scale model car is 7 inches long. How long is the real car, in feet?", ["12", "14", "16", "18", "24"], "14", "Multiply by 24, then convert inches to feet.", "7 × 24 = 168 inches = 14 feet."),
+
+  H("h4-oo1", "amc8", "order-ops", "Compute (1/2 − 1/3) ÷ (1/3 − 1/4).", ["1/2", "1", "3/2", "2", "3"], "2", "Work out each set of parentheses first.", "1/6 ÷ 1/12 = 2."),
+  H("h4-fr1", "amc8", "fractions", "What is 2/3 of 3/4 of 4/5 of 5/6 of 60?", ["10", "12", "15", "20", "30"], "20", "Multiply the fractions first and watch them cancel.", "2/3 · 3/4 · 4/5 · 5/6 = 2/6 = 1/3, and 1/3 of 60 is 20."),
+  H("h4-rt1", "amc10", "ratios", "Two numbers are in the ratio 3 : 5. When 9 is added to each, the ratio becomes 3 : 4. What is the sum of the original numbers?", ["16", "24", "32", "40", "48"], "24", "Call them 3k and 5k.", "4(3k + 9) = 3(5k + 9) gives k = 3. The numbers are 9 and 15, sum 24."),
+  H("h4-un1", "amc8", "units", "A pool is 20 m long, 10 m wide, and 2 m deep. How many liters of water fill it? (1 cubic meter = 1000 liters)", ["400", "4,000", "40,000", "400,000", "4,000,000"], "400,000", "Find the volume in cubic meters first.", "20 × 10 × 2 = 400 m³ = 400,000 liters."),
+
+  H("h4-dr1", "amc8", "drt", "If Sam walks to school at 3 mph he is 5 minutes late. At 4 mph he is 5 minutes early. How far is school, in miles?", ["1", "1.5", "2", "2.5", "3"], "2", "The two times differ by 10 minutes = 1/6 hour.", "d/3 − d/4 = 1/6 gives d/12 = 1/6, d = 2."),
+  H("h4-as1", "amc10", "avg-speed", "A cyclist rides up a hill at 6 mph and back down the same road at 12 mph. What is her average speed for the round trip?", ["6", "7.5", "8", "9", "10"], "8", "Not 9: she spends more time going slowly. Pick a hill length, like 12 miles.", "12 miles up takes 2 h, down takes 1 h: 24 miles in 3 h = 8 mph."),
+  H("h4-mt1", "amc8", "meeting", "At 9:00 AM two cars 210 miles apart drive toward each other at 40 mph and 30 mph. At what time do they meet?", ["11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM", "1:00 PM"], "12:00 PM", "They close the gap at 70 mph combined.", "210 ÷ 70 = 3 hours: noon."),
+  H("h4-cl1", "amc8", "clocks", "A clock gains 3 minutes every hour. It is set correctly at noon. What does it show when the true time is 8:00 PM that day?", ["8:03", "8:08", "8:20", "8:24", "8:30"], "8:24", "Count the hours that have passed.", "8 hours × 3 minutes = 24 minutes ahead: 8:24."),
+
+  H("h4-pb1", "amc8", "prob-basic", "A number from 1 to 50 is picked at random. What is the probability that it is a multiple of 3 or of 4?", ["6/25", "11/25", "12/25", "13/25", "14/25"], "12/25", "Don't count multiples of 12 twice.", "16 multiples of 3 + 12 of 4 − 4 of 12 = 24. 24/50 = 12/25."),
+  H("h4-pc1", "amc10", "prob-complement", "Three different cards are drawn from cards numbered 1 to 10. What is the probability that they are not all odd?", ["1/12", "1/2", "5/6", "7/8", "11/12"], "11/12", "Find the chance that all three are odd.", "C(5, 3)/C(10, 3) = 10/120 = 1/12, so the answer is 11/12."),
+  H("h4-in1", "amc10", "independent", "A spinner lands on red with probability 1/3. It is spun 3 times. What is the probability that it lands on red exactly twice?", ["1/9", "4/27", "2/9", "8/27", "1/3"], "2/9", "Which two spins are red? There are 3 choices.", "3 × (1/3)² × (2/3) = 6/27 = 2/9."),
+  H("h4-cd1", "amc10", "conditional", "Two fair dice are rolled and their sum is 8. Given that, what is the probability that one of the dice shows a 3?", ["2/9", "1/5", "1/3", "2/5", "1/2"], "2/5", "List the ways to roll a sum of 8.", "(2,6), (3,5), (4,4), (5,3), (6,2). Two of the five include a 3: 2/5."),
+  H("h4-ev1", "amc8", "expected", "You roll a fair die and win as many dollars as the square of the number rolled. What are your expected winnings, in dollars?", ["21/2", "49/4", "15", "91/6", "36"], "91/6", "Average the six squares. It's not 3.5².", "(1 + 4 + 9 + 16 + 25 + 36)/6 = 91/6, about $15.17."),
+
+  H("h4-pt1", "amc10", "patterns", "What is the 100th digit after the decimal point in 1/7 = 0.142857142857…?", ["1", "2", "4", "5", "8"], "8", "The block 142857 has 6 digits.", "100 = 6 × 16 + 4, so it's the 4th digit of the block: 8."),
+  H("h4-bw1", "amc8", "backwards", "Lily pads in a pond double in area every day, and the pond is fully covered on day 30. On what day was it one quarter covered?", ["7.5", "15", "27", "28", "29"], "28", "Work backward one day at a time.", "Day 29 half covered, day 28 a quarter."),
+  H("h4-lp1", "amc8", "logic-puzzles", "Knights always tell the truth and knaves always lie. A says, \"B is a knave.\" B says, \"A and I are the same type.\" What are A and B?", ["Both knights", "Both knaves", "A knight, B knave", "A knave, B knight", "Can't be decided"], "A knight, B knave", "Try B as a knight and see if it breaks.", "If B were a knight, A would be a knight too, but then A's claim that B is a knave would be false. So B is a knave, B's claim is false, and A is a knight. A's statement checks out."),
+  H("h4-ol1", "amc10", "organized-lists", "In how many ways can 10 be written as a sum of 1s, 2s, and 3s if the order doesn't matter? (3 + 3 + 2 + 2 and 2 + 3 + 2 + 3 count once.)", ["10", "12", "14", "16", "21"], "14", "Organize by the number of 3s, then the number of 2s.", "Zero 3s: 6 ways (0–5 twos). One 3: 4 ways. Two 3s: 3 ways. Three 3s: 1 way. Total 14."),
+);
+
+/* =========================================================
    GENERATORS: Counting
    ========================================================= */
 
