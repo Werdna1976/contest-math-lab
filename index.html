@@ -3996,6 +3996,213 @@ BANK.push(
 );
 
 /* =========================================================
+   Hand-written hard problems: geometry chapters
+   H(...) is B(...) with the answer given by value, so it can't point at the wrong letter.
+   ========================================================= */
+const H = (id, level, topic, q, choices, ans, hint, solution) => { const i = choices.indexOf(ans); if (i < 0) throw new Error("bad answer " + id); return B(id, level, topic, q, choices, i, hint, solution); };
+
+BANK.push(
+  /* ---- shapes ---- */
+  H("hg-qd1", "amc8", "quadrilaterals", "A rhombus has diagonals of length 10 and 24. What is its perimeter?", ["34", "48", "52", "60", "120"], "52", "The diagonals of a rhombus cross at right angles and cut each other in half.", "Half-diagonals 5 and 12 make a right triangle with hypotenuse 13. Four sides: 52."),
+  H("hg-qd2", "amc8", "quadrilaterals", "An isosceles trapezoid has parallel sides 8 and 20, and each leg is 10. What is its area?", ["112", "120", "128", "140", "160"], "112", "Drop heights from the ends of the short side. Each overhang is (20 − 8)/2.", "Overhang 6, leg 10, so the height is 8. Area = (8 + 20)/2 × 8 = 112."),
+  H("hg-qd3", "amc8", "quadrilaterals", "In parallelogram ABCD, angle A is 40° larger than angle B. What is angle C?", ["55°", "70°", "90°", "100°", "110°"], "110°", "Neighboring angles of a parallelogram add to 180°. Opposite angles are equal.", "A + B = 180 and A − B = 40, so A = 110°. C is opposite A, so C = 110°."),
+
+  H("hg-sy1", "amc10", "symmetry", "A square is cut by its two diagonals and its two midlines into 8 congruent triangles. Two of the triangles are shaded. In how many of the 28 possible choices does the shaded figure have at least one line of symmetry?", ["8", "12", "14", "16", "20"], "16", "The square has 4 lines of symmetry. Each one pairs the 8 triangles into 4 mirror pairs.", "Each of the 4 mirror lines gives 4 mirror-image pairs, and no pair is a mirror pair for two different lines. 4 × 4 = 16."),
+  H("hg-sy2", "amc10", "symmetry", "Each vertex of a regular hexagon is colored red or blue. How many of the 64 colorings look the same after some rotation of less than a full turn?", ["6", "8", "10", "12", "14"], "10", "Count colorings unchanged by a half turn, by a one-third turn, and by both.", "Half turn: opposite vertices match, 2³ = 8. One-third turn: every other vertex matches, 2² = 4. Both: all one color, 2. Total 8 + 4 − 2 = 10."),
+  H("hg-sy3", "amc8", "symmetry", "The point (3, 5) is reflected over the line x = 1, and the image is reflected over the line y = −2. What is the sum of the coordinates of the final point?", ["−10", "−8", "−6", "2", "8"], "−10", "Reflecting over x = 1 keeps y and moves x to the same distance on the other side of 1.", "Over x = 1: (−1, 5). Over y = −2: (−1, −9). Sum −10."),
+
+  H("hg-cs1", "amc8", "congruent-similar", "A triangle with sides 6, 8, and 10 is similar to a triangle with perimeter 60. What is the longest side of the larger triangle?", ["20", "24", "25", "30", "36"], "25", "The perimeters are in the same ratio as the sides.", "Perimeter 24 scales to 60, a factor of 5/2. 10 × 5/2 = 25."),
+  H("hg-cs2", "amc10", "congruent-similar", "A 1 × x rectangle (x &gt; 1) has a 1 × 1 square cut off one end. The rectangle that is left is similar to the original. What is x?", ["√2", "3/2", "(1 + √5)/2", "√3", "2"], "(1 + √5)/2", "The leftover rectangle is 1 by x − 1. Set up the ratio of long side to short side.", "x/1 = 1/(x − 1), so x² − x − 1 = 0 and x = (1 + √5)/2, the golden ratio."),
+  H("hg-cs3", "amc8", "congruent-similar", "Two similar cylinders have heights in the ratio 2 : 3. The smaller one holds 16 liters. How many liters does the larger one hold?", ["24", "36", "48", "54", "81"], "54", "Volume scales with the cube of the length ratio.", "16 × (3/2)³ = 16 × 27/8 = 54."),
+
+  H("hg-co1", "amc8", "coordinates", "What is the area of the triangle with vertices (1, 1), (7, 1), and (4, 9)?", ["18", "24", "27", "30", "48"], "24", "The first two points lie on a horizontal line.", "Base 6 along y = 1, height 8. Area = ½ × 6 × 8 = 24."),
+  H("hg-co2", "amc10", "coordinates", "How far is the origin from the line 3x + 4y = 20?", ["3", "4", "5", "20/3", "20"], "4", "The line crosses the axes at (20/3, 0) and (0, 5). Use the area of the triangle it makes with the axes.", "The intercepts form a right triangle with legs 20/3 and 5, hypotenuse 25/3, area 50/3. The height to the hypotenuse is 2 × (50/3) ÷ (25/3) = 4."),
+  H("hg-co3", "amc8", "coordinates", "A = (2, 3) and B = (8, 11). Point C is on segment AB, one quarter of the way from A to B. What is the sum of the coordinates of C?", ["7", "8", "8.5", "9", "12"], "8.5", "Move a quarter of the way in x and a quarter of the way in y.", "C = (2 + 6/4, 3 + 8/4) = (3.5, 5). Sum 8.5."),
+
+  H("hg-so1", "amc8", "solids", "A soccer ball pattern has 12 pentagons and 20 hexagons. Exactly 3 faces meet at each corner. How many corners (vertices) does it have?", ["32", "60", "90", "120", "180"], "60", "Count the corners of all the faces, then divide by how many faces share each corner.", "12 × 5 + 20 × 6 = 180 face-corners, each vertex counted 3 times: 60. (Check: V − E + F = 60 − 90 + 32 = 2.)"),
+  H("hg-so2", "amc8", "solids", "A 5 × 5 × 5 cube is painted on the outside and cut into 125 unit cubes. How many of the small cubes have paint on exactly two faces?", ["24", "27", "36", "48", "54"], "36", "Two painted faces means on an edge but not at a corner.", "Each of the 12 edges has 5 − 2 = 3 such cubes: 36."),
+  H("hg-so3", "amc10", "solids", "A square pyramid has 8 edges. How many pairs of its edges are skew (not parallel and not meeting)?", ["4", "6", "8", "10", "12"], "8", "A slanted edge meets the two base edges at its foot and is skew to the other two.", "Each of the 4 slanted edges is skew to 2 base edges: 8. Base edges meet or are parallel to each other, and slanted edges all meet at the top."),
+
+  /* ---- angles ---- */
+  H("hg-an1", "amc8", "angle-basics", "The supplement of an angle is 6 times its complement. What is the angle?", ["60°", "63°", "72°", "75°", "80°"], "72°", "Write both in terms of x: 180 − x and 90 − x.", "180 − x = 6(90 − x) gives 5x = 360, so x = 72°."),
+  H("hg-an2", "amc8", "angle-basics", "Rays OA, OB, OC, OD go around point O in that order. Angle AOD = 160°, angle AOC = 110°, and angle BOD = 100°. What is angle BOC?", ["40°", "50°", "55°", "60°", "70°"], "50°", "Adding AOC and BOD counts BOC twice.", "AOC + BOD = AOD + BOC, so BOC = 110 + 100 − 160 = 50°."),
+  H("hg-an3", "amc8", "angle-basics", "Six angles fill the space around a point. Five of them measure x, 2x, 3x, 4x, and 5x, and the sixth is 60°. What is x?", ["18°", "20°", "24°", "30°", "36°"], "20°", "Angles around a point add to 360°.", "15x + 60 = 360, so x = 20°."),
+
+  H("hg-pl1", "amc8", "parallel-lines", "Two parallel lines are cut by a transversal. Two same-side interior angles measure (3x + 20)° and (5x − 8)°. What is the larger angle?", ["83°", "90°", "97°", "105°", "112°"], "97°", "Same-side interior angles add to 180°.", "8x + 12 = 180, x = 21. The angles are 83° and 97°."),
+  H("hg-pl2", "amc8", "parallel-lines", "Point P lies between parallel lines ℓ and m. Segment PA goes left to point A on ℓ, making a 35° angle with ℓ. Segment PB goes left to point B on m, making a 50° angle with m. What is angle APB?", ["75°", "85°", "95°", "105°", "130°"], "85°", "Draw a third line through P parallel to ℓ and m.", "The parallel through P splits angle APB into 35° and 50° (alternate angles). Total 85°."),
+  H("hg-pl3", "amc8", "parallel-lines", "A line through vertex A of triangle ABC is parallel to BC. It makes a 48° angle with AB and a 65° angle with AC. What is angle BAC?", ["48°", "57°", "62°", "67°", "113°"], "67°", "The three angles at A along the line add to 180°.", "180 − 48 − 65 = 67°. (Also, B = 48° and C = 65° by alternate angles.)"),
+
+  H("hg-ea1", "amc8", "exterior-angle", "In triangle ABC, angles A and B are equal. The exterior angle at C is 4 times the interior angle at C. What is angle A?", ["54°", "60°", "64°", "72°", "76°"], "72°", "An interior and exterior angle at the same vertex add to 180°.", "C + 4C = 180, so C = 36°. A = B = (180 − 36)/2 = 72°."),
+  H("hg-ea2", "amc8", "exterior-angle", "Two exterior angles of a triangle (at different vertices) measure 130° and 140°. What is the exterior angle at the third vertex?", ["80°", "90°", "100°", "110°", "120°"], "90°", "One exterior angle at each vertex: they add to 360°.", "360 − 130 − 140 = 90°."),
+
+  H("hg-ck1", "amc8", "clock-angles", "How many times in a 12-hour period do the hands of a clock point in exactly opposite directions?", ["10", "11", "12", "22", "24"], "11", "The minute hand gains one full lap on the hour hand 11 times in 12 hours.", "Opposite happens once per lap gained, so 11 times."),
+  H("hg-ck2", "amc10", "clock-angles", "How many minutes after 2:00 do the hands of a clock first point in exactly opposite directions?", ["40 10/11", "43 7/11", "43 1/2", "44", "45 5/11"], "43 7/11", "The minute hand is at 6m degrees and the hour hand at 60 + m/2.", "6m − (60 + m/2) = 180 gives 11m/2 = 240, m = 480/11 = 43 7/11."),
+
+  H("hg-sr1", "amc8", "special-right", "An equilateral triangle has area 36√3. What is its perimeter?", ["18", "24", "36", "48", "72"], "36", "Area = (√3/4)s².", "(√3/4)s² = 36√3 gives s² = 144, s = 12, perimeter 36."),
+  H("hg-sr2", "amc10", "special-right", "In triangle ABC, angle B = 45° and angle C = 30°. The altitude from A to BC has length 6. How long is BC?", ["12", "6 + 6√2", "6 + 6√3", "12√3", "18"], "6 + 6√3", "The altitude splits the triangle into a 45-45-90 and a 30-60-90 triangle.", "On the 45° side the base piece is 6. On the 30° side it is 6√3. BC = 6 + 6√3."),
+  H("hg-sr3", "amc8", "special-right", "A regular hexagon has side 4. What is the distance between two opposite (parallel) sides?", ["4", "4√2", "4√3", "8", "6√3"], "4√3", "The hexagon is six equilateral triangles. Opposite sides are two triangle heights apart.", "Each triangle has height 2√3, so the distance is 4√3. (8 is the distance between opposite corners.)"),
+
+  H("hg-st1", "amc8", "similar-triangles", "In triangle ABC, D is on AB and E is on AC with DE parallel to BC. AD = 4, DB = 6, and DE = 6. What is BC?", ["9", "12", "15", "16", "18"], "15", "Triangle ADE is similar to triangle ABC with ratio AD : AB.", "AD : AB = 4 : 10, so BC = 6 × 10/4 = 15."),
+  H("hg-st2", "amc8", "similar-triangles", "A 6-foot person stands 12 feet from a 15-foot lamppost. How long is the person's shadow, in feet?", ["6", "7.2", "8", "9", "10"], "8", "The person and the lamppost make similar triangles with the tip of the shadow.", "s/6 = (s + 12)/15 gives 15s = 6s + 72, s = 8."),
+  H("hg-st3", "amc10", "similar-triangles", "A right triangle has legs 6 and 8. A square sits inside it with one corner at the right angle and the opposite corner on the hypotenuse. What is the side of the square?", ["3", "24/7", "7/2", "4", "48/7"], "24/7", "The small triangle above the square is similar to the big one.", "With the square's side s, (6 − s)/s = 6/8, so 8(6 − s) = 6s and s = 48/14 = 24/7."),
+
+  H("hg-ti1", "amc8", "triangle-inequality", "A triangle has sides 5, 12, and x, where x is a whole number. How many values can x take?", ["7", "8", "9", "10", "16"], "9", "x must be more than 12 − 5 and less than 12 + 5.", "7 &lt; x &lt; 17, so x = 8, …, 16: 9 values."),
+  H("hg-ti2", "amc10", "triangle-inequality", "A triangle has sides 3, 4, and x, where x is a whole number. For how many values of x is the triangle obtuse?", ["1", "2", "3", "4", "5"], "2", "x can be 2 through 6. Check whether the longest side squared is more than the sum of the other two squares.", "x = 6: 36 &gt; 25, obtuse. x = 2: 16 &gt; 4 + 9, obtuse. x = 3, 4: acute. x = 5: right. Two values."),
+  H("hg-ti3", "amc8", "triangle-inequality", "How many isosceles triangles with whole-number sides have perimeter 20? (Congruent triangles count once.)", ["3", "4", "5", "6", "9"], "4", "Sides a, a, 20 − 2a. The base must be shorter than 2a.", "20 − 2a &lt; 2a gives a &gt; 5, and the base must be positive, so a = 6, 7, 8, 9: 4 triangles."),
+
+  /* ---- circles ---- */
+  H("hg-cp1", "amc8", "circle-parts", "A chord of length 16 is drawn in a circle of radius 10. How far is the chord from the center?", ["4", "5", "6", "8", "12"], "6", "The perpendicular from the center bisects the chord.", "Half-chord 8, radius 10, distance √(100 − 64) = 6."),
+  H("hg-cp2", "amc10", "circle-parts", "Two circles have the same center. A chord of the larger circle is tangent to the smaller circle and has length 24. What is the area of the ring between the circles?", ["24π", "72π", "144π", "288π", "576π"], "144π", "R² − r² is all you need, and the tangent point is the chord's midpoint.", "R² − r² = 12² = 144, so the ring has area 144π, whatever the radii are."),
+  H("hg-cp3", "amc8", "circle-parts", "A circle passes through (0, 0), (8, 0), and (0, 6). What is its radius?", ["4", "5", "6", "7", "10"], "5", "The angle at the origin is a right angle, so it sits on a diameter's ends.", "The segment from (8, 0) to (0, 6) is a diameter of length 10. Radius 5."),
+
+  H("hg-cf1", "amc8", "circumference", "A wheel with diameter 28 inches rolls 1 mile (63,360 inches). Using π ≈ 22/7, how many turns does it make?", ["360", "600", "720", "800", "1440"], "720", "One turn moves the wheel one circumference.", "Circumference = 22/7 × 28 = 88 inches. 63,360 ÷ 88 = 720."),
+  H("hg-cf2", "amc10", "circumference", "A rope fits snugly around the equator. It is made 2π feet longer and lifted evenly all the way around. How high above the ground is it?", ["1/π", "1/2", "1", "2", "π"], "1", "C = 2πr. Adding 2π to C adds how much to r?", "2π(r + h) = 2πr + 2π gives h = 1 foot, no matter how big the Earth is."),
+  H("hg-cf3", "amc8", "circumference", "A semicircle is attached to one side of a 10 × 10 square, on the outside. What is the perimeter of the whole figure?", ["30 + 5π", "40 + 5π", "30 + 10π", "40 + 10π", "20 + 5π"], "30 + 5π", "The side under the semicircle is no longer on the outside.", "Three square sides make 30, and the semicircle arc is half of 10π. Total 30 + 5π."),
+
+  H("hg-ca1", "amc8", "circle-area", "A 16-inch pizza (diameter) costs the same as two 8-inch pizzas. How many times as much pizza does the big one have as the two small ones together?", ["1", "3/2", "2", "4", "8"], "2", "Area grows with the square of the diameter.", "Big: π·8² = 64π. Two small: 2 × π·4² = 32π. Ratio 2."),
+  H("hg-ca2", "amc10", "circle-area", "A square is inscribed in a circle of radius 6, and a circle is inscribed in that square. What is the area of the small circle?", ["9π", "12π", "18π", "24π", "36π"], "18π", "The square's diagonal is the big diameter. The small circle's diameter is the square's side.", "Diagonal 12, side 6√2, small radius 3√2, area 18π."),
+  H("hg-ca3", "amc8", "circle-area", "A circle's area (in square units) equals its circumference (in units). What is its radius?", ["1", "2", "π", "4", "2π"], "2", "Set πr² = 2πr.", "πr² = 2πr gives r = 2."),
+
+  H("hg-ia1", "amc8", "inscribed-angles", "Points A, B, C lie on a circle. The arc AB that does not contain C measures 110°. What is angle ACB?", ["35°", "55°", "70°", "110°", "125°"], "55°", "An inscribed angle is half its arc.", "110 ÷ 2 = 55°."),
+  H("hg-ia2", "amc8", "inscribed-angles", "Quadrilateral ABCD is inscribed in a circle, and angle A is twice angle C. What is angle A?", ["60°", "90°", "100°", "120°", "135°"], "120°", "Opposite angles of an inscribed quadrilateral add to 180°.", "A + C = 180 and A = 2C, so C = 60° and A = 120°."),
+  H("hg-ia3", "amc10", "inscribed-angles", "Triangle ABC is inscribed in a circle of radius 10, and angle A = 30°. How long is BC?", ["5", "5√3", "10", "10√2", "10√3"], "10", "The central angle BOC is twice angle A.", "Angle BOC = 60°, so triangle BOC is equilateral with side 10."),
+
+  H("hg-pp1", "amc8", "power-point", "Chords AB and CD cross at P. AP = 4, PB = 9, and CP = 3. What is PD?", ["6", "8", "9", "12", "13"], "12", "AP × PB = CP × PD.", "4 × 9 = 3 × PD, so PD = 12."),
+  H("hg-pp2", "amc10", "power-point", "From an outside point P, a tangent segment PT has length 12. A line through P meets the circle at A and then B, with PA = 8. What is AB?", ["8", "10", "12", "16", "18"], "10", "PT² = PA × PB.", "144 = 8 × PB, PB = 18, AB = 18 − 8 = 10."),
+
+  /* ---- area & volume ---- */
+  H("hg-ba1", "amc8", "basic-area", "A rectangle has area 48 and perimeter 28. How long is its diagonal?", ["8", "10", "12", "14", "√48"], "10", "Find two numbers that add to 14 and multiply to 48.", "6 and 8, so the diagonal is 10."),
+  H("hg-ba2", "amc8", "basic-area", "Triangle T has vertices (0, 0), (10, 0), and (4, 6). The midpoints of its sides form a smaller triangle. What is the smaller triangle's area?", ["6", "7.5", "10", "15", "22.5"], "7.5", "The midpoint triangle has half the side lengths.", "T has area 30. Half the sides means a quarter of the area: 7.5."),
+  H("hg-ba3", "amc8", "basic-area", "Rectangle ABCD has AB = 12 and BC = 8. E is any point on side CD. What is the area of triangle ABE?", ["24", "32", "48", "64", "96"], "48", "The base AB is fixed. What is the height?", "Height is always 8, so area = ½ × 12 × 8 = 48, wherever E is."),
+
+  H("hg-sa1", "amc10", "shaded-area", "Inside a 6 × 6 square, a semicircle is drawn on each side, bulging inward. What is the total area of the four petal-shaped regions where the semicircles overlap?", ["9π − 18", "18π − 36", "36 − 9π", "18π", "36π − 72"], "18π − 36", "The four semicircles together cover the square, and each petal is covered twice.", "Four semicircles of radius 3 have total area 18π. They cover the 36-unit square with the petals counted twice, so petals = 18π − 36."),
+  H("hg-sa2", "amc10", "shaded-area", "Two circles of radius 6 each pass through the other's center. What is the area of the region inside both?", ["12π − 9√3", "24π − 18√3", "24π − 36√3", "12π", "36π − 18√3"], "24π − 18√3", "Join the centers and the two crossing points: you get two equilateral triangles.", "Each half of the lens is a 120° sector minus a triangle: 12π − 9√3. Two halves: 24π − 18√3."),
+  H("hg-sa3", "amc8", "shaded-area", "A circle is inscribed in a 10 × 10 square. What is the area of one of the four corner regions inside the square but outside the circle?", ["25 − 25π/4", "100 − 25π", "25 − 5π", "25π/4", "(100 − 10π)/4"], "25 − 25π/4", "Find the whole leftover area, then split it into four equal parts.", "100 − 25π split four ways is 25 − 25π/4."),
+
+  H("hg-he1", "amc10", "heron", "A triangle has sides 10, 17, and 21. What is the length of the altitude to the side of length 21?", ["6", "7", "8", "9", "10"], "8", "Find the area with Heron's formula, then use area = ½ × base × height.", "s = 24. Area = √(24 · 14 · 7 · 3) = 84. Height = 2 × 84 ÷ 21 = 8."),
+  H("hg-he2", "amc10", "heron", "What is the radius of the circle inscribed in a triangle with sides 5, 5, and 6?", ["1", "4/3", "3/2", "2", "5/2"], "3/2", "Area = r × s, where s is the semiperimeter.", "Height to the base is 4, area 12, s = 8. r = 12/8 = 3/2."),
+
+  H("hg-pk1", "amc10", "picks-shoelace", "What is the area of the quadrilateral with vertices (0, 0), (6, 1), (5, 7), and (1, 4), in that order?", ["21", "23", "25", "27", "50"], "25", "Use the shoelace formula.", "Sum of xᵢyᵢ₊₁ − xᵢ₊₁yᵢ: 0 + 37 + 13 + 0 = 50. Area = 50/2 = 25."),
+  H("hg-pk2", "amc8", "picks-shoelace", "A polygon with corners on grid points has 10 grid points on its boundary and 6 grid points inside. What is its area?", ["10", "11", "12", "15", "16"], "10", "Pick's theorem: A = I + B/2 − 1.", "6 + 5 − 1 = 10."),
+
+  H("hg-pr1", "amc8", "prisms", "What is the longest straight stick that fits inside a 3 × 4 × 12 box?", ["12", "13", "15", "17", "19"], "13", "The longest segment is the space diagonal.", "√(9 + 16 + 144) = √169 = 13."),
+  H("hg-pr2", "amc8", "prisms", "A box has faces with areas 24, 32, and 48. What is its volume?", ["96", "104", "144", "192", "384"], "192", "Multiply the three face areas: you get (lwh)².", "24 × 32 × 48 = 36,864 = 192². Volume 192."),
+  H("hg-pr3", "amc10", "prisms", "A tank with a 10 × 10 base holds water 12 deep. A solid 5 × 5 × 5 cube is dropped in and sinks. How deep is the water now?", ["12.25", "12.5", "13", "13.25", "14.5"], "13.25", "The water rises by the cube's volume divided by the base area.", "125 ÷ 100 = 1.25, so 13.25. The cube is shorter than the water, so it is fully covered."),
+
+  H("hg-cn1", "amc8", "cones-spheres", "A sphere just fits inside a cube with edge 6. What is the sphere's volume?", ["27π", "36π", "48π", "72π", "288π"], "36π", "The sphere's diameter is the cube's edge.", "r = 3, V = (4/3)π · 27 = 36π."),
+  H("hg-cn2", "amc10", "cones-spheres", "A half-disk of paper with radius 10 is rolled into a cone, with the two radii taped together. What is the cone's height?", ["5", "5√2", "5√3", "10", "10√3"], "5√3", "The curved edge becomes the base circle. The paper's radius becomes the slant height.", "Arc 10π = 2πr gives r = 5. Slant 10, so height √(100 − 25) = 5√3."),
+  H("hg-cn3", "amc8", "cones-spheres", "Eight balls of radius 1 are melted and recast as one ball. What is its radius?", ["∛4", "2", "2√2", "4", "8"], "2", "Volumes add. Volume grows with the cube of the radius.", "8 × r³ with r = 1 gives R³ = 8, R = 2."),
+
+  H("hg-su1", "amc10", "surface-area", "A 3 × 3 × 3 cube has a 1 × 1 square hole drilled straight through the middle, from the center of one face to the center of the opposite face. What is the total surface area now, including the inside of the hole?", ["52", "54", "60", "62", "64"], "64", "You lose two unit squares and gain the four walls of the tunnel.", "54 − 2 + 4 × (1 × 3) = 64."),
+  H("hg-su2", "amc8", "surface-area", "Two 2 × 2 × 2 cubes are glued face to face. What is the surface area of the new solid?", ["40", "44", "46", "48", "56"], "40", "Two 2 × 2 faces are hidden.", "2 × 24 − 2 × 4 = 40."),
+
+  H("hg-sc1", "amc8", "scaling", "On a map with scale 1 : 50,000, a park covers 6 cm². What is its real area in km²?", ["0.3", "1.5", "3", "15", "300"], "1.5", "1 cm on the map is 0.5 km. Square the scale for areas.", "1 cm² is 0.25 km², so 6 cm² is 1.5 km²."),
+  H("hg-sc2", "amc10", "scaling", "Every edge of a cube is made 50% longer. By what percent does its surface area increase?", ["50%", "100%", "125%", "150%", "237.5%"], "125%", "Area scales with the square of the length factor.", "1.5² = 2.25, an increase of 125%. (Volume would go up 237.5%.)"),
+);
+
+/* =========================================================
+   Hand-written hard problems: counting, algebra, arithmetic, rates, probability, logic
+   (H is defined in 90-hard-geometry.js)
+   ========================================================= */
+BANK.push(
+  /* ---- counting ---- */
+  H("ho-ph1", "amc8", "pigeonhole", "A drawer has 10 red, 8 blue, and 6 green socks. In the dark, what is the fewest socks you must take to be sure of getting 3 of the same color?", ["4", "6", "7", "9", "19"], "7", "Imagine the worst luck: as many socks as possible with no color reaching 3.", "2 of each color is 6 socks with no triple. The 7th sock must make 3 of some color."),
+  H("ho-ph2", "amc10", "pigeonhole", "What is the fewest numbers you must pick from 1, 2, …, 20 to be sure two of them add to 21?", ["10", "11", "12", "15", "20"], "11", "Group the numbers into pairs that add to 21.", "There are 10 pairs (1, 20), (2, 19), …, (10, 11). You can take one from each pair, 10 numbers, with no sum of 21. The 11th must complete a pair."),
+  H("ho-ph3", "amc8", "pigeonhole", "How many people must be in a room to be sure that at least 3 of them were born in the same month?", ["13", "24", "25", "36", "37"], "25", "Fill each month with 2 people first.", "24 people can have exactly 2 per month. The 25th makes 3 in some month."),
+
+  H("ho-ci1", "amc8", "circular", "Six people sit at a round table, where rotations of the same seating count once. In how many ways can they sit if Ann and Bo must sit next to each other?", ["24", "48", "72", "120", "240"], "48", "Glue Ann and Bo into one block.", "5 units around a table: 4! = 24. Ann and Bo can swap inside the block: 48."),
+  H("ho-ci2", "amc10", "circular", "Seven different beads are put on a bracelet. Two bracelets are the same if one can be turned or flipped to match the other. How many different bracelets are there?", ["180", "360", "720", "2520", "5040"], "360", "Fix one bead to remove rotations, then divide by 2 for flips.", "6! = 720 arrangements up to rotation, and each matches its mirror image: 360."),
+  H("ho-ci3", "amc10", "circular", "Five people sit at a round table (rotations count once). In how many seatings are Ann and Bo NOT next to each other?", ["6", "12", "18", "24", "48"], "12", "Count all seatings, then subtract the ones with them together.", "All: 4! = 24. Together: 2 × 3! = 12. Apart: 12."),
+
+  /* ---- algebra ---- */
+  H("ho-ex1", "amc8", "expressions", "What is x³ − 3x² + 3x − 1 when x = 3?", ["2", "8", "10", "26", "27"], "8", "This is a famous expanded cube.", "It equals (x − 1)³ = 2³ = 8."),
+  H("ho-ex2", "amc10", "expressions", "If a + b = 7 and ab = 10, what is a² + b²?", ["9", "29", "39", "49", "69"], "29", "(a + b)² = a² + 2ab + b².", "49 − 2 × 10 = 29."),
+  H("ho-ex3", "amc8", "expressions", "If 3x − 2y = 7, what is 6y − 9x + 5?", ["−26", "−16", "−2", "16", "26"], "−16", "6y − 9x is a multiple of 3x − 2y.", "6y − 9x = −3(3x − 2y) = −21. Then −21 + 5 = −16."),
+
+  H("ho-le1", "amc8", "linear-eq", "Solve (x + 2)/3 − (x − 1)/4 = 2.", ["9", "11", "13", "15", "17"], "13", "Multiply everything by 12.", "4(x + 2) − 3(x − 1) = 24 gives x + 11 = 24, so x = 13."),
+  H("ho-le2", "amc10", "linear-eq", "For what value of k does the equation kx + 3 = 2x − 5 have no solution?", ["−2", "0", "2", "3", "5"], "2", "Move the x terms together: (k − 2)x = −8.", "If k = 2 the equation says 0 = −8, which is never true."),
+  H("ho-le3", "amc8", "linear-eq", "A number is tripled and then 7 is subtracted. The result is 5 more than twice the number. What is the number?", ["2", "5", "7", "12", "14"], "12", "Translate each phrase into algebra.", "3x − 7 = 2x + 5, so x = 12."),
+
+  H("ho-sy1", "amc8", "systems", "x + y = 10 and x − y = 4. What is xy?", ["14", "21", "24", "25", "40"], "21", "Add the equations to find x.", "x = 7, y = 3, xy = 21."),
+  H("ho-sy2", "amc10", "systems", "2x + 3y = 12 and 3x + 2y = 13. What is x + y?", ["4", "5", "6", "7", "25"], "5", "Add the two equations.", "5x + 5y = 25, so x + y = 5. No need to find x and y."),
+  H("ho-sy3", "amc10", "systems", "a + b = 5, b + c = 8, and a + c = 9. What is abc?", ["24", "30", "36", "40", "48"], "36", "Add all three equations.", "2(a + b + c) = 22, so a + b + c = 11. Then c = 6, a = 3, b = 2, and abc = 36."),
+
+  H("ho-we1", "amc8", "word-eq", "Tom is 3 times as old as Ann. In 10 years he will be twice as old as she is. How old is Ann now?", ["5", "10", "15", "20", "30"], "10", "Write both ages in 10 years.", "3a + 10 = 2(a + 10) gives a = 10."),
+  H("ho-we2", "amc8", "word-eq", "Pencils cost 15¢ and pens cost 40¢. Lee buys 12 items and pays $3.30. How many pens did Lee buy?", ["4", "5", "6", "7", "8"], "6", "If all 12 were pencils, the cost would be $1.80.", "Each pen adds 25¢ over a pencil. $3.30 − $1.80 = $1.50 = 6 × 25¢."),
+  H("ho-we3", "amc10", "word-eq", "A two-digit number is 4 times the sum of its digits. Reversing its digits makes it 27 larger. What is the number?", ["12", "24", "36", "48", "63"], "36", "Write the number as 10a + b.", "10a + b = 4(a + b) gives b = 2a. Reversing adds 9(b − a) = 27, so b − a = 3. a = 3, b = 6: 36."),
+
+  H("ho-sn1", "amc8", "sci-notation", "What is (4 × 10<sup>5</sup>)(5 × 10<sup>7</sup>) in scientific notation?", ["2 × 10<sup>12</sup>", "2 × 10<sup>13</sup>", "20 × 10<sup>12</sup>", "9 × 10<sup>12</sup>", "2 × 10<sup>35</sup>"], "2 × 10<sup>13</sup>", "Multiply the front numbers and add the exponents, then fix the front number.", "20 × 10<sup>12</sup> = 2 × 10<sup>13</sup>."),
+  H("ho-sn2", "amc10", "sci-notation", "How many digits does 2<sup>12</sup> × 5<sup>8</sup> have?", ["8", "9", "10", "11", "12"], "10", "Pair each 5 with a 2 to make 10s.", "2<sup>12</sup> × 5<sup>8</sup> = 2<sup>4</sup> × 10<sup>8</sup> = 1,600,000,000: 10 digits."),
+
+  H("ho-sq1", "amc8", "sqrt-simplify", "√50 + √18 − √8 = k√2. What is k?", ["4", "5", "6", "7", "8"], "6", "Pull the largest square out of each root.", "5√2 + 3√2 − 2√2 = 6√2."),
+  H("ho-sq2", "amc10", "sqrt-simplify", "Which of these equals √(7 + 4√3)?", ["1 + 2√3", "2 + √3", "√7 + 2", "4 + √3", "3 + √2"], "2 + √3", "Look for (a + b√3)² = a² + 3b² + 2ab√3.", "(2 + √3)² = 4 + 3 + 4√3 = 7 + 4√3."),
+  H("ho-sq3", "amc8", "sqrt-simplify", "What is √(16 × 25 × 36)?", ["60", "77", "120", "240", "14400"], "120", "The square root of a product is the product of the square roots.", "4 × 5 × 6 = 120."),
+
+  H("ho-ra1", "amc10", "rationalize", "What is 1/(√3 − √2) + 1/(√3 + √2)?", ["2", "2√2", "√6", "2√3", "4√3"], "2√3", "Rationalize each, or add them over the common denominator (√3)² − (√2)² = 1.", "The fractions become (√3 + √2) + (√3 − √2) = 2√3."),
+  H("ho-ra2", "amc10", "rationalize", "What is 1/(1 + √2) + 1/(√2 + √3) + 1/(√3 + 2)?", ["1", "√2", "√3 − 1", "2", "2 + √3"], "1", "Rationalize: 1/(√k + √(k+1)) = √(k+1) − √k.", "(√2 − 1) + (√3 − √2) + (2 − √3) = 2 − 1 = 1."),
+
+  H("ho-cp1", "amc8", "compare-powers", "Which is largest?", ["2<sup>60</sup>", "3<sup>40</sup>", "4<sup>25</sup>", "5<sup>20</sup>", "6<sup>15</sup>"], "3<sup>40</sup>", "Write each as something to the 5th power.", "2<sup>60</sup> = 4096<sup>5</sup>, 3<sup>40</sup> = 6561<sup>5</sup>, 4<sup>25</sup> = 1024<sup>5</sup>, 5<sup>20</sup> = 625<sup>5</sup>, 6<sup>15</sup> = 216<sup>5</sup>. 3<sup>40</sup> wins."),
+  H("ho-cp2", "amc10", "compare-powers", "What is the smallest positive integer n with n<sup>200</sup> &gt; 5<sup>300</sup>?", ["10", "11", "12", "13", "25"], "12", "Take the 100th root of both sides.", "n² &gt; 5³ = 125. 11² = 121 is too small and 12² = 144 works."),
+
+  H("ho-gf1", "amc8", "gcf-factor", "Compute 47 × 53 + 47 × 47.", ["4400", "4700", "4900", "5000", "5300"], "4700", "Factor out 47.", "47 × (53 + 47) = 47 × 100 = 4700."),
+  H("ho-gf2", "amc8", "gcf-factor", "2<sup>10</sup> − 2<sup>8</sup> is how many times 2<sup>8</sup>?", ["2", "3", "4", "6", "256"], "3", "Factor out 2<sup>8</sup>.", "2<sup>8</sup>(2<sup>2</sup> − 1) = 3 × 2<sup>8</sup>."),
+
+  H("ho-ps1", "amc8", "perfect-squares", "If x + 1/x = 5, what is x² + 1/x²?", ["10", "21", "23", "25", "27"], "23", "Square both sides.", "x² + 2 + 1/x² = 25, so x² + 1/x² = 23."),
+  H("ho-ps2", "amc10", "perfect-squares", "(a + b)² = 49 and (a − b)² = 9. What is ab?", ["8", "10", "12", "20", "40"], "10", "Subtract the two equations.", "(a + b)² − (a − b)² = 4ab = 40, so ab = 10."),
+
+  H("ho-cu1", "amc10", "cubes", "a + b = 5 and ab = 6. What is a³ + b³?", ["35", "45", "65", "90", "125"], "35", "a³ + b³ = (a + b)³ − 3ab(a + b).", "125 − 3 × 6 × 5 = 35. (Check: 2³ + 3³ = 35.)"),
+  H("ho-cu2", "amc10", "cubes", "If x − 1/x = 2, what is x³ − 1/x³?", ["6", "8", "10", "14", "26"], "14", "Cube x − 1/x and look for x³ − 1/x³ inside.", "(x − 1/x)³ = x³ − 1/x³ − 3(x − 1/x), so x³ − 1/x³ = 8 + 6 = 14."),
+
+  H("ho-sf1", "amc10", "sfft", "Positive integers x &lt; y satisfy xy + x + y = 34. What is x + y?", ["8", "10", "12", "14", "34"], "10", "Add 1 to both sides and factor.", "(x + 1)(y + 1) = 35 = 5 × 7, so x = 4, y = 6, and x + y = 10."),
+  H("ho-sf2", "amc10", "sfft", "How many ordered pairs of positive integers (x, y) satisfy xy − 2x − 3y = 0?", ["2", "3", "4", "6", "8"], "4", "Add 6 to both sides and factor.", "(x − 3)(y − 2) = 6. Positive factor pairs give (4, 8), (5, 5), (6, 4), (9, 3). Negative pairs make x or y non-positive. 4 pairs."),
+
+  /* ---- arithmetic ---- */
+  H("ho-oo1", "amc8", "order-ops", "Compute 2 − (−3)<sup>2</sup> ÷ 3 × 2 + 1.", ["−5", "−3", "−1", "3", "9"], "−3", "The exponent comes first, then ÷ and × from left to right.", "(−3)² = 9. 9 ÷ 3 × 2 = 6. 2 − 6 + 1 = −3."),
+  H("ho-oo2", "amc8", "order-ops", "Compute (1 + 2 + 3 + ⋯ + 100) − (2 + 4 + 6 + ⋯ + 100).", ["2450", "2500", "2550", "5000", "5050"], "2500", "What is left after you take out the even numbers?", "The odd numbers 1 + 3 + ⋯ + 99 remain: 50 of them, sum 50² = 2500."),
+
+  H("ho-fr1", "amc8", "fractions", "Compute 1/2 + 1/6 + 1/12 + 1/20 + 1/30.", ["4/5", "5/6", "6/7", "1", "31/30"], "5/6", "1/2 = 1 − 1/2, 1/6 = 1/2 − 1/3, and so on.", "The sum telescopes to 1 − 1/6 = 5/6."),
+  H("ho-fr2", "amc10", "fractions", "What number is exactly halfway between 1/7 and 1/5?", ["1/12", "2/35", "1/6", "6/35", "12/35"], "6/35", "Average them: add and divide by 2.", "1/7 + 1/5 = 12/35. Half of that is 6/35. (1/6 is a common trap.)"),
+
+  H("ho-rt1", "amc8", "ratios", "a : b = 2 : 3 and b : c = 4 : 5. What is a : c?", ["2 : 5", "3 : 4", "4 : 5", "6 : 5", "8 : 15"], "8 : 15", "Rewrite both ratios so b is the same number.", "a : b = 8 : 12 and b : c = 12 : 15, so a : c = 8 : 15."),
+  H("ho-rt2", "amc8", "ratios", "The ratio of red to blue marbles in a bag is 3 : 5. After 10 red marbles are added, the ratio is 1 : 1. How many marbles were in the bag at first?", ["24", "32", "40", "48", "50"], "40", "Call them 3k red and 5k blue.", "3k + 10 = 5k gives k = 5, so 15 + 25 = 40 marbles."),
+
+  H("ho-av1", "amc8", "averages", "The average of 5 numbers is 20. The average of 3 of them is 16. What is the average of the other 2?", ["18", "22", "24", "26", "36"], "26", "Work with totals, not averages.", "Total 100, three of them total 48, the other two total 52. Average 26."),
+  H("ho-av2", "amc8", "averages", "The average score of 20 students is 80. When the lowest score is dropped, the average of the other 19 is 82. What was the lowest score?", ["38", "42", "46", "60", "78"], "42", "Compare the totals.", "20 × 80 = 1600 and 19 × 82 = 1558. Lowest: 42."),
+
+  H("ho-mm1", "amc8", "mental-math", "Compute 999 × 999 + 1999.", ["999,000", "999,999", "1,000,000", "1,001,998", "1,999,000"], "1,000,000", "999 × 999 + 999 + 1000 = 999 × 1000 + 1000.", "999 × 1000 + 1000 = 1000 × 1000 = 1,000,000."),
+  H("ho-mm2", "amc8", "mental-math", "Compute 25 × 37 × 4 × 2.", ["3700", "7400", "7600", "7800", "14800"], "7400", "Pair 25 with 4 first.", "100 × 37 × 2 = 7400."),
+
+  H("ho-un1", "amc8", "units", "How many seconds are in 1/1000 of a day?", ["8.64", "36", "60", "86.4", "864"], "86.4", "A day has 24 × 60 × 60 seconds.", "86,400 ÷ 1000 = 86.4 seconds."),
+  H("ho-un2", "amc8", "units", "A car goes 30 miles per gallon, and gas costs $4 per gallon. What does gas cost for a 450-mile trip?", ["$45", "$54", "$60", "$72", "$120"], "$60", "Find the gallons first.", "450 ÷ 30 = 15 gallons, × $4 = $60."),
+
+  /* ---- rates ---- */
+  H("ho-dr1", "amc8", "drt", "Ann drives to work at 40 mph and home at 60 mph. The two trips take 1 hour in total. How far is work from home, in miles?", ["20", "24", "25", "30", "50"], "24", "Time = distance ÷ speed, for each leg.", "d/40 + d/60 = 1 gives 5d/120 = 1, d = 24."),
+  H("ho-dr2", "amc10", "drt", "A boat goes 36 km downstream in 2 hours and back upstream in 3 hours. How fast is the current, in km/h?", ["2", "3", "5", "6", "15"], "3", "Downstream speed = boat + current; upstream = boat − current.", "Downstream 18, upstream 12. Current = (18 − 12)/2 = 3."),
+  H("ho-as1", "amc8", "avg-speed", "A car drives 2 hours at 50 mph and then 3 hours at 60 mph. What is its average speed for the trip, in mph?", ["54", "55", "56", "57", "58"], "56", "Total distance over total time. (Equal times, not equal distances.)", "100 + 180 = 280 miles in 5 hours: 56 mph."),
+  H("ho-mt1", "amc8", "meeting", "Two trains 300 miles apart head toward each other at 70 and 80 mph. A bird flies back and forth between them at 100 mph until they meet. How many miles does the bird fly?", ["100", "150", "200", "250", "300"], "200", "Don't track the zigzags. How long does the bird fly?", "The trains meet after 300 ÷ 150 = 2 hours. The bird flies 2 × 100 = 200 miles."),
+  H("ho-wk1", "amc8", "work", "Six workers build a wall in 10 days. Working at the same rate, how many days would 4 workers take?", ["6", "12", "15", "16", "20"], "15", "The job is 60 worker-days.", "60 ÷ 4 = 15 days."),
+  H("ho-wk2", "amc10", "work", "A and B together finish a job in 12 days, B and C in 15 days, and A and C in 20 days. How many days do all three take working together?", ["8", "9", "10", "12", "15"], "10", "Add the three pair rates. Each person is counted twice.", "1/12 + 1/15 + 1/20 = 12/60 = 1/5 is twice the total rate, so together they do 1/10 per day: 10 days."),
+  H("ho-mx1", "amc8", "mixtures", "How many liters of 10% acid must be mixed with 30 liters of 40% acid to make a 25% mixture?", ["15", "20", "25", "30", "45"], "30", "25% is exactly halfway between 10% and 40%.", "0.1x + 12 = 0.25(x + 30) gives 0.15x = 4.5, x = 30. (Halfway means equal amounts.)"),
+  H("ho-mx2", "amc8", "mixtures", "A price goes up 25%. By what percent must the new price go down to get back to the original?", ["15%", "20%", "25%", "30%", "80%"], "20%", "The base for the decrease is the bigger, new price.", "1.25 × (1 − d) = 1 gives 1 − d = 0.8, so d = 20%."),
+
+  /* ---- probability ---- */
+  H("ho-pb1", "amc8", "prob-basic", "A two-digit number is chosen at random. What is the probability that its digits add up to 9?", ["9/100", "1/12", "1/11", "1/10", "1/9"], "1/10", "There are 90 two-digit numbers.", "18, 27, 36, 45, 54, 63, 72, 81, 90: 9 of 90, so 1/10."),
+  H("ho-pb2", "amc10", "prob-basic", "The letters of BANANA are put in a random order (all 60 different arrangements equally likely). What is the probability the arrangement starts with B?", ["1/10", "1/6", "1/5", "1/3", "1/2"], "1/6", "Count the arrangements of ANANA after the B.", "5!/(3!·2!) = 10 of the 60 start with B: 1/6."),
+  H("ho-pc1", "amc8", "prob-complement", "Four fair dice are rolled. What is the probability that the product of the numbers is even?", ["1/16", "1/2", "3/4", "7/8", "15/16"], "15/16", "The product is odd only if every die is odd.", "P(all odd) = (1/2)⁴ = 1/16, so the answer is 15/16."),
+  H("ho-in1", "amc8", "independent", "A player makes 70% of her free throws, and each shot is independent. She takes two. What is the probability she makes exactly one?", ["0.21", "0.42", "0.49", "0.51", "0.58"], "0.42", "Make-miss and miss-make are two different ways.", "2 × 0.7 × 0.3 = 0.42."),
+
+  /* ---- logic ---- */
+  H("ho-pt1", "amc8", "patterns", "What is the units digit of 7<sup>2026</sup>?", ["1", "3", "5", "7", "9"], "9", "Units digits of powers of 7 cycle: 7, 9, 3, 1.", "2026 leaves remainder 2 when divided by 4, so the units digit is the 2nd in the cycle: 9."),
+  H("ho-pt2", "amc8", "patterns", "In the sequence 2, 5, 8, 11, …, which term is 2027?", ["674th", "675th", "676th", "677th", "678th"], "676th", "Term n is 2 + 3(n − 1).", "2 + 3(n − 1) = 2027 gives n − 1 = 675, n = 676."),
+  H("ho-bw1", "amc8", "backwards", "A snail at the bottom of a 20-foot well climbs 3 feet each day and slides back 2 feet each night. On which day does it reach the top?", ["17th", "18th", "19th", "20th", "21st"], "18th", "Once it can reach the top during a day, it doesn't slide back.", "After 17 days and nights it is at 17 feet. On day 18 it climbs to 20."),
+  H("ho-bw2", "amc8", "backwards", "I think of a number, double it, subtract 4, divide by 3, and add 5. I get 11. What was my number?", ["9", "10", "11", "12", "13"], "11", "Undo each step in reverse order.", "11 − 5 = 6, × 3 = 18, + 4 = 22, ÷ 2 = 11."),
+  H("ho-lp1", "amc8", "logic-puzzles", "Three boxes are labeled Apples, Oranges, and Mixed, and every label is wrong. You may take one fruit from one box without looking inside. From which box should you take it to be able to fix all the labels?", ["Apples", "Oranges", "Mixed", "Any box works", "No box works"], "Mixed", "The box labeled Mixed is not mixed, so it holds only one kind.", "A fruit from the Mixed box tells you what it really holds. The box labeled with that fruit then can't be that or itself, so it's the third kind, and the last box is mixed."),
+  H("ho-lp2", "amc8", "logic-puzzles", "Five runners A, B, C, D, E finish a race with no ties. D beats E, E beats A, A beats B, and C finishes right after D. Who finishes third?", ["A", "B", "C", "D", "E"], "E", "D, E, A, B are in that order, and C is glued right behind D.", "The only order is D, C, E, A, B. E is third."),
+  H("ho-ol1", "amc8", "organized-lists", "In how many ways can you make 25 cents using pennies, nickels, and dimes?", ["9", "10", "11", "12", "13"], "12", "Organize by the number of dimes.", "0 dimes: 6 ways (0–5 nickels). 1 dime: 4 ways. 2 dimes: 2 ways. Total 12."),
+  H("ho-ol2", "amc8", "organized-lists", "On a 3 × 3 grid of streets (3 blocks east and 3 blocks north), how many shortest paths go from the southwest corner to the northeast corner?", ["6", "9", "12", "20", "27"], "20", "Every shortest path is 3 E moves and 3 N moves in some order.", "Choose which 3 of the 6 moves are E: C(6, 3) = 20."),
+);
+
+/* =========================================================
    GENERATORS: Counting
    ========================================================= */
 
