@@ -4564,6 +4564,385 @@ GEN("di-coins", "diophantine", "amc8", R => {
 }, ({ N, V }) => { for (let d = 0; d <= N; d++) if (10 * d + 5 * (N - d) === V) return d; });
 
 /* =========================================================
+   GENERATORS: Algebra, Exponents & Radicals, Factoring
+   ========================================================= */
+const sgn = (c, first) => c < 0 ? (first ? "−" : " − ") : (first ? "" : " + ");
+const term = (c, v, first) => { if (c === 0) return ""; const m = Math.abs(c); return sgn(c, first) + (m === 1 && v ? "" : m) + v; };
+const poly2 = (a, b, c, v = "x") => { let s = term(a, `${v}<sup>2</sup>`, true); s += term(b, v, !s); s += term(c, "", !s); return s || "0"; };
+const lin = (a, b, v = "x") => { let s = term(a, v, true); s += term(b, "", !s); return s || "0"; };
+const neg = n => n < 0 ? `(−${-n})` : String(n);
+const m = n => n < 0 ? `−${-n}` : String(n);
+const isqrt = n => { const r = Math.round(Math.sqrt(n)); return r * r === n ? r : null; };
+
+/* ---- simplifying expressions ---- */
+GEN("ex-eval", "expressions", "mk56", R => {
+  const a = R.int(2, 9), b = R.int(1, 12), x = R.int(2, 9), y = R.int(1, 6); R.p = { a, b, x, y };
+  const ans = a * x + b * y - x * y;
+  return { q: `What is the value of ${a}x + ${b}y − xy when x = ${x} and y = ${y}?`, a: ans, traps: [a * x + b * y + x * y, a + x + b + y - x * y, ans + y, (a + b) * (x + y) - x * y].filter(v => v !== ans), min: -Infinity, hint: "Substitute, then multiply before adding.", sol: `${a}·${x} + ${b}·${y} − ${x}·${y} = ${a * x} + ${b * y} − ${x * y} = ${ans}.` };
+}, ({ a, b, x, y }) => a * x + b * y - x * y);
+
+GEN("ex-combine", "expressions", "mk78", R => {
+  const a = R.int(2, 9), b = R.int(-9, 9), c = R.int(2, 6), d = R.int(-9, 9), k = R.int(2, 5), x = R.int(-4, 6); R.p = { a, b, c, d, k, x };
+  // a(x + b) − c(kx + d) evaluated at x after simplifying
+  const coef = a - c * k, cons = a * b - c * d, ans = coef * x + cons;
+  return { q: `Simplify ${a}(x ${b < 0 ? "−" : "+"} ${Math.abs(b)}) − ${c}(${k}x ${d < 0 ? "−" : "+"} ${Math.abs(d)}). What is its value when x = ${m(x)}?`, a: ans, traps: [(a + c * k) * x + a * b + c * d, coef * x + a * b + c * d, coef * x + cons - 2 * c * d, (a - c) * x + b - d].filter(v => v !== ans), min: -Infinity,
+    hint: "Distribute the minus sign to both terms in the second parentheses.", sol: `= ${lin(coef, cons)}; at x = ${m(x)} that's ${ans}.` };
+}, ({ a, b, c, d, k, x }) => a * (x + b) - c * (k * x + d));
+
+GEN("ex-like-terms", "expressions", "amc8", R => {
+  const a = R.int(2, 7), b = R.int(2, 7), k = R.int(2, 5), N = R.int(5, 40), c = R.int(-9, 9); R.p = { a, b, k, N, c };
+  const ans = k * N + c;
+  return { q: `If ${a}x + ${b}y = ${N}, what is ${k * a}x + ${k * b}y ${c < 0 ? "−" : "+"} ${Math.abs(c)}?`, a: ans, traps: [k * N, N + c, k * N - c, (k + 1) * N + c].filter(v => v !== ans), min: -Infinity, hint: `Factor ${k} out of the x and y terms.`, sol: `${k * a}x + ${k * b}y = ${k}(${a}x + ${b}y) = ${k} × ${N} = ${k * N}, then ${c < 0 ? "−" : "+"} ${Math.abs(c)} gives ${ans}.` };
+}, ({ k, N, c }) => k * N + c);
+
+/* ---- linear equations ---- */
+GEN("le-solve", "linear-eq", "mk56", R => {
+  const x = R.int(-6, 12), a = R.int(2, 9), b = R.int(-20, 20), c = a * x + b; R.p = { a, b, c };
+  return { q: `Solve for x: ${lin(a, b)} = ${m(c)}.`, a: x, traps: [(c + b) / a, c - b, (c - b) * a, -x].filter(v => Number.isInteger(v) && v !== x), min: -Infinity, hint: "Undo the addition, then undo the multiplication.", sol: `${a}x = ${m(c)} ${b < 0 ? "+" : "−"} ${Math.abs(b)} = ${c - b}, so x = ${x}.` };
+}, ({ a, b, c }) => (c - b) / a);
+
+GEN("le-both-sides", "linear-eq", "mk78", R => {
+  const x = R.int(-8, 12), a = R.int(3, 11), c = R.int(1, a - 1), b = R.int(-15, 15), d = (a - c) * x + b; R.p = { a, b, c, d };
+  return { q: `Solve for x: ${lin(a, b)} = ${lin(c, d)}.`, a: x, traps: [(d + b) / (a - c), (d - b) / (a + c), (d - b) / a, x + 1].filter(v => Number.isInteger(v) && v !== x), min: -Infinity, hint: "Get all the x terms on one side.", sol: `${a - c}x = ${d - b}, so x = ${x}.` };
+}, ({ a, b, c, d }) => (d - b) / (a - c));
+
+GEN("le-fraction", "linear-eq", "amc8", R => {
+  const p = R.int(2, 6), q = R.int(2, 6), x = p * q * R.int(1, 6); if (p === q) return GENS.find(g => g.id === "le-fraction").fn(R); const s = x / p + x / q; R.p = { p, q, s };
+  return { q: `If x/${p} + x/${q} = ${s}, what is x?`, a: x, traps: [s * (p + q) / 2, s * p * q / (p + q) * 2, s * p, x / 2].filter(v => Number.isInteger(v) && v !== x), hint: `Multiply both sides by ${lcm(p, q)}.`, sol: `x(${q} + ${p})/${p * q} = ${s}, so x = ${s} × ${p * q} ÷ ${p + q} = ${x}.` };
+}, ({ p, q, s }) => s * p * q / (p + q));
+
+GEN("le-consecutive", "linear-eq", "mk78", R => {
+  const k = R.int(3, 5), start = R.int(5, 60), step = R.pick([1, 2]), kind = step === 2 ? (start % 2 ? "odd" : "even") : ""; R.p = { k, start, step };
+  const nums = range(0, k - 1).map(i => start + i * step), S = nums.reduce((a, b) => a + b);
+  return { q: `The sum of ${k} consecutive ${kind ? kind + " " : ""}integers is ${S}. What is the largest of them?`, a: nums[k - 1], traps: [nums[0], S / k, nums[k - 2], nums[k - 1] + step].filter(v => Number.isInteger(v) && v !== nums[k - 1]), hint: "The middle (average) is the sum divided by how many.", sol: `Average ${S / k}; the numbers are ${nums.join(", ")}.` };
+}, ({ k, start, step }) => start + (k - 1) * step);
+
+/* ---- systems ---- */
+GEN("sy-basic", "systems", "mk78", R => {
+  const x = R.int(-5, 10), y = R.int(-5, 10), a = R.int(1, 5), b = R.int(1, 5), c = R.int(1, 5), d = R.int(-5, 5) || 2; if (a * d - b * c === 0) return GENS.find(g => g.id === "sy-basic").fn(R); R.p = { a, b, c, d, e: a * x + b * y, f: c * x + d * y };
+  return { q: `If ${lin(a, 0)} + ${b === 1 ? "" : b}y = ${a * x + b * y} and ${lin(c, 0)}${d < 0 ? " − " : " + "}${Math.abs(d) === 1 ? "" : Math.abs(d)}y = ${c * x + d * y}, what is x + y?`, a: x + y, traps: [x, y, x - y, x + y + 1].filter(v => v !== x + y), min: -Infinity, hint: "Eliminate one variable by scaling and subtracting.", sol: `x = ${x}, y = ${y}, so x + y = ${x + y}.` };
+}, ({ a, b, c, d, e, f }) => { for (let x = -50; x <= 50; x++) for (let y = -50; y <= 50; y++) if (a * x + b * y === e && c * x + d * y === f) return x + y; });
+
+GEN("sy-word", "systems", "mk56", R => {
+  const items = R.pick([["pens", "notebooks"], ["apples", "pears"], ["stickers", "markers"]]), p1 = R.int(1, 4), p2 = R.int(p1 + 1, 7), n1 = R.int(2, 8), n2 = R.int(2, 8), tot = n1 + n2, cost = n1 * p1 + n2 * p2; R.p = { p1, p2, tot, cost };
+  return { q: `${items[0][0].toUpperCase() + items[0].slice(1)} cost $${p1} each and ${items[1]} cost $${p2} each. ${R.pick(NAMES)} buys ${tot} items for $${cost}. How many ${items[1]} were bought?`, a: n2, traps: [n1, tot - n2 + 1, Math.round(cost / p2), n2 + 1].filter(v => v !== n2 && v >= 0), hint: `If all ${tot} were ${items[0]}, what would they cost?`, sol: `All ${items[0]}: $${tot * p1}. Each swap to a ${items[1].slice(0, -1)} adds $${p2 - p1}: (${cost} − ${tot * p1}) ÷ ${p2 - p1} = ${n2}.` };
+}, ({ p1, p2, tot, cost }) => { for (let b = 0; b <= tot; b++) if (b * p2 + (tot - b) * p1 === cost) return b; });
+
+GEN("sy-three", "systems", "amc10", R => {
+  const x = R.int(1, 9), y = R.int(1, 9), z = R.int(1, 9); R.p = { s1: x + y, s2: y + z, s3: x + z, ask: R.int(0, 2) };
+  const ask = R.p.ask, ans = [x, y, z][ask];
+  return { q: `If x + y = ${x + y}, y + z = ${y + z}, and x + z = ${x + z}, what is ${"xyz"[ask]}?`, a: ans, traps: [x + y + z, (x + y + z) * 2, [x, y, z][(ask + 1) % 3], [x, y, z][(ask + 2) % 3], ans + 1].filter(v => v !== ans), hint: "Add all three equations.", sol: `Adding: 2(x + y + z) = ${2 * (x + y + z)}, so x + y + z = ${x + y + z}; then ${"xyz"[ask]} = ${ans}.` };
+}, ({ s1, s2, s3, ask }) => { const t = (s1 + s2 + s3) / 2; return [t - s2, t - s3, t - s1][ask]; });
+
+/* ---- word problems ---- */
+GEN("we-age", "word-eq", "mk78", R => {
+  const kid = R.int(4, 14), k = R.int(2, 5), yrs = R.int(2, 12); const parent = k * kid; R.p = { kid, k, yrs };
+  const nm = R.pick(NAMES);
+  return { q: `${nm}'s mom is ${k} times as old as ${nm}. In ${yrs} years, the sum of their ages will be ${kid + parent + 2 * yrs}. How old is ${nm} now?`, a: kid, traps: [kid + yrs, parent, (kid + parent + 2 * yrs) / (k + 1), kid - 1].filter(v => Number.isInteger(v) && v !== kid && v > 0), hint: `Let ${nm}'s age be a; the mom is ${k}a.`, sol: `a + ${k}a + ${2 * yrs} = ${kid + parent + 2 * yrs}, so ${k + 1}a = ${kid + parent}, a = ${kid}.` };
+}, ({ kid, k, yrs }) => { const S = kid + k * kid + 2 * yrs; for (let a = 1; a < 100; a++) if (a + k * a + 2 * yrs === S) return a; });
+
+GEN("we-share", "word-eq", "mk56", R => {
+  const extra = R.int(2, 15), small = R.int(5, 40); const tot = 2 * small + extra; R.p = { extra, tot };
+  return { q: `Two friends share $${tot}. One gets $${extra} more than the other. How much does the friend with more get?`, a: small + extra, traps: [small, tot / 2, tot - extra, small + extra + 1].filter(v => Number.isInteger(v) && v !== small + extra), hint: "Take away the extra, split the rest evenly, then add the extra back.", sol: `(${tot} − ${extra}) ÷ 2 = ${small}; the larger share is ${small + extra}.` };
+}, ({ extra, tot }) => (tot - extra) / 2 + extra);
+
+GEN("we-chickens", "word-eq", "amc8", R => {
+  const c = R.int(5, 30), g = R.int(3, 20), heads = c + g, legs = 2 * c + 4 * g; R.p = { heads, legs };
+  return { q: `A farm has chickens and goats. There are ${heads} heads and ${legs} legs. How many goats are there?`, a: g, traps: [c, legs / 4, heads / 2, g + 2].filter(v => Number.isInteger(v) && v !== g), hint: "If every animal were a chicken, how many legs would there be?", sol: `All chickens: ${2 * heads} legs. Each goat adds 2: (${legs} − ${2 * heads}) ÷ 2 = ${g}.` };
+}, ({ heads, legs }) => (legs - 2 * heads) / 2);
+
+/* ---- inequalities & absolute value ---- */
+GEN("in-count", "inequalities", "mk78", R => {
+  const a = R.int(2, 7), b = R.int(-10, 10), lo = R.int(-20, 5), hi = lo + R.int(15, 50); R.p = { a, b, lo, hi };
+  const ans = countIf(-200, 200, x => lo < a * x + b && a * x + b < hi);
+  return { q: `How many integers x satisfy ${m(lo)} < ${lin(a, b)} < ${hi}?`, a: ans, traps: [ans + 1, ans - 1, Math.floor((hi - lo) / a), ans + 2].filter(v => v !== ans && v >= 0), hint: `Subtract ${m(b)}, then divide by ${a}.`, sol: `${((lo - b) / a).toFixed(2).replace(/\.00$/, "")} < x < ${((hi - b) / a).toFixed(2).replace(/\.00$/, "")}: ${ans} integers.` };
+}, ({ a, b, lo, hi }) => range(-200, 200).filter(x => lo < a * x + b && a * x + b < hi).length);
+
+GEN("in-abs", "inequalities", "amc8", R => {
+  const c = R.int(-8, 8), k = R.int(2, 12), strict = R.int(0, 1); R.p = { c, k, strict };
+  const ans = countIf(-100, 100, x => strict ? Math.abs(x - c) < k : Math.abs(x - c) <= k);
+  return { q: `How many integers x satisfy |x ${c < 0 ? "+" : "−"} ${Math.abs(c)}| ${strict ? "<" : "≤"} ${k}?`, a: ans, traps: [2 * k, 2 * k + 1, 2 * k - 1, k + 1].filter(v => v !== ans), hint: `x is within ${k} of ${m(c)} on the number line.`, sol: `x runs from ${c - k + strict} to ${c + k - strict}: ${ans} integers.` };
+}, ({ c, k, strict }) => range(-100, 100).filter(x => strict ? Math.abs(x - c) < k : Math.abs(x - c) <= k).length);
+
+GEN("in-abs-eq", "inequalities", "amc10", R => {
+  const a = R.int(-6, 6), b = R.int(a + 2, a + 12), kind = R.int(0, 1); R.p = { a, b, kind };
+  // |x − a| + |x − b| = (b − a) + 2t has solutions at a − t, b + t; ask for sum of solutions
+  const t = R.int(1, 6); R.p.t = t; const S = b - a + 2 * t;
+  const ans = kind ? 2 : (a - t) + (b + t);
+  return { q: kind ? `How many real numbers x satisfy |x ${a < 0 ? "+" : "−"} ${Math.abs(a)}| + |x ${b < 0 ? "+" : "−"} ${Math.abs(b)}| = ${S}?` : `What is the sum of all real x with |x ${a < 0 ? "+" : "−"} ${Math.abs(a)}| + |x ${b < 0 ? "+" : "−"} ${Math.abs(b)}| = ${S}?`,
+    a: ans, traps: kind ? [0, 1, 3, 4] : [a + b + 2 * t, b - a, S, a + b - 1].filter(v => v !== ans), min: -Infinity, hint: `Between ${m(a)} and ${m(b)} the sum is always ${b - a}.`, sol: `Solutions are x = ${a - t} and x = ${b + t}${kind ? ": two of them" : `; their sum is ${ans}`}.` };
+}, ({ a, b, kind, t }) => { const S = b - a + 2 * t, sols = []; for (let x = -100; x <= 100; x += 0.5) if (Math.abs(x - a) + Math.abs(x - b) === S) sols.push(x); return kind ? sols.length : sols.reduce((p, q) => p + q, 0); });
+
+/* ---- functions ---- */
+GEN("fn-eval", "functions", "mk78", R => {
+  const a = R.int(-3, 4) || 2, b = R.int(-6, 6), c = R.int(-9, 9), x = R.int(-4, 5); R.p = { a, b, c, x };
+  const ans = a * x * x + b * x + c;
+  return { q: `If f(x) = ${poly2(a, b, c)}, what is f(${m(x)})?`, a: ans, traps: [a * x * 2 + b * x + c, -a * x * x + b * x + c, a * x * x - b * x + c, ans + 1].filter(v => v !== ans), min: -Infinity, hint: "Square first, then multiply, then add.", sol: `${a}(${m(x)})² + ${b}(${m(x)}) + ${c} = ${ans}.` };
+}, ({ a, b, c, x }) => a * x ** 2 + b * x + c);
+
+GEN("fn-compose", "functions", "amc8", R => {
+  const a = R.int(2, 5), b = R.int(-5, 6), c = R.int(-3, 4) || 1, d = R.int(-6, 6), x = R.int(-3, 5); R.p = { a, b, c, d, x };
+  const g = c * x + d, ans = a * g + b;
+  return { q: `Let f(x) = ${lin(a, b)} and g(x) = ${lin(c, d)}. What is f(g(${m(x)}))?`, a: ans, traps: [c * (a * x + b) + d, a * x + b + g, ans + a, a * g - b].filter(v => v !== ans), min: -Infinity, hint: "Work from the inside out: g first.", sol: `g(${m(x)}) = ${g}; f(${g}) = ${ans}.` };
+}, ({ a, b, c, d, x }) => a * (c * x + d) + b);
+
+GEN("fn-rule", "functions", "amc10", R => {
+  const a = R.int(2, 4), b = R.int(1, 5), k = R.int(3, 6); R.p = { a, b, k };
+  // f(1) = b, f(n+1) = a·f(n) + 1  → f(k)
+  let v = b; for (let i = 1; i < k; i++) v = a * v + 1;
+  return { q: `A function has f(1) = ${b} and f(n + 1) = ${a}·f(n) + 1 for every n ≥ 1. What is f(${k})?`, a: v, traps: [v - 1, a * v + 1, (v - 1) / a, b + a * (k - 1)].filter(x => Number.isInteger(x) && x !== v), hint: "Just compute f(2), f(3), … in order.", sol: `f(2), f(3), …: ${(() => { let t = b, o = [b]; for (let i = 1; i < k; i++) { t = a * t + 1; o.push(t); } return o.join(", "); })()}.` };
+}, ({ a, b, k }) => { let v = b; for (let i = 1; i < k; i++) v = a * v + 1; return v; });
+
+/* ---- lines ---- */
+GEN("ln-slope", "lines", "mk78", R => {
+  const x1 = R.int(-6, 6), y1 = R.int(-6, 6), dx = R.pick([1, 2, 3, 4, -2, -1]), dy = R.int(-8, 8) || 3; R.p = { x1, y1, x2: x1 + dx, y2: y1 + dy };
+  const a = fr(dy, dx);
+  return { q: `What is the slope of the line through (${m(x1)}, ${m(y1)}) and (${m(x1 + dx)}, ${m(y1 + dy)})?`, a, traps: [...new Set([fr(dx, dy || 1), fr(-dy, dx), fr(dy + 1, dx), fr(dy, dx + (dx > 0 ? 1 : -1)), fr(y1 + dy + y1, dx), fr(dy - 1, dx), fr(dy + 2, dx), fr(dy - 2, dx)])].filter(x => x !== a), hint: "Slope = rise ÷ run.", sol: `(${m(y1 + dy)} − ${neg(y1)}) ÷ (${m(x1 + dx)} − ${neg(x1)}) = ${a}.` };
+}, ({ x1, y1, x2, y2 }) => fr(y2 - y1, x2 - x1));
+
+GEN("ln-intercepts", "lines", "amc8", R => {
+  const a = R.int(1, 6), b = R.int(1, 6), c = a * b * R.int(1, 4); R.p = { a, b, c };
+  const ans = (c / a) * (c / b) / 2;
+  return { q: `The line ${a === 1 ? "" : a}x + ${b === 1 ? "" : b}y = ${c} and the two axes form a triangle. What is its area?`, a: ans, traps: [ans * 2, c / a + c / b, c, ans / 2].filter(v => v !== ans), fmt: v => Number.isInteger(v) ? String(v) : String(v), hint: "Find where the line crosses each axis.", sol: `Intercepts ${c / a} and ${c / b}; area ½ × ${c / a} × ${c / b} = ${ans}.` };
+}, ({ a, b, c }) => (c / a) * (c / b) / 2);
+
+GEN("ln-collinear", "lines", "amc10", R => {
+  const m1 = R.pick([2, 3, -1, -2, 1, 4]), b1 = R.int(-5, 5), x1 = R.int(-3, 3), x2 = x1 + R.int(1, 3), x3 = x2 + R.int(1, 4); R.p = { m1, b1, x1, x2, x3 };
+  const k = m1 * x3 + b1;
+  return { q: `The points (${m(x1)}, ${m(m1 * x1 + b1)}), (${m(x2)}, ${m(m1 * x2 + b1)}), and (${m(x3)}, k) lie on one line. What is k?`, a: k, traps: [k + m1, k - m1, -k, m1 * x3].filter(v => v !== k), min: -Infinity, hint: "Find the slope from the first two points.", sol: `Slope ${m1}; from (${m(x2)}, ${m(m1 * x2 + b1)}) go ${x3 - x2} right: k = ${k}.` };
+}, ({ m1, b1, x1, x2, x3 }) => { const y1 = m1 * x1 + b1, y2 = m1 * x2 + b1; return y2 + (y2 - y1) / (x2 - x1) * (x3 - x2); });
+
+/* ---- quadratics ---- */
+GEN("qu-roots", "quadratics", "amc8", R => {
+  const r = R.int(-9, 9), s = R.int(-9, 9), kind = R.int(0, 2); R.p = { r, s, kind };
+  const b = -(r + s), c = r * s; const ans = [r + s, r * s, Math.max(r, s)][kind];
+  return { q: `${kind === 2 ? "What is the larger root of" : `What is the ${kind ? "product" : "sum"} of the roots of`} x<sup>2</sup>${b ? (b < 0 ? " − " : " + ") + (Math.abs(b) === 1 ? "" : Math.abs(b)) + "x" : ""}${c ? (c < 0 ? " − " : " + ") + Math.abs(c) : ""} = 0?`, a: ans, traps: [-(r + s), -r * s, Math.min(r, s), r + s + 1, r * s + 1].filter(v => v !== ans), min: -Infinity, hint: kind === 2 ? "Factor it." : "Vieta: sum = −b/a, product = c/a.", sol: `It factors as (x ${r < 0 ? "+" : "−"} ${Math.abs(r)})(x ${s < 0 ? "+" : "−"} ${Math.abs(s)}); roots ${r} and ${s}, so the answer is ${ans}.` };
+}, ({ r, s, kind }) => { const b = -(r + s), c = r * s, roots = range(-30, 30).filter(x => x * x + b * x + c === 0); const rs = roots.length === 1 ? [roots[0], roots[0]] : roots; return [rs[0] + rs[1], rs[0] * rs[1], Math.max(...rs)][kind]; });
+
+GEN("qu-vieta-sq", "quadratics", "amc10", R => {
+  const S = R.int(-8, 8), P = R.int(-10, 12); R.p = { S, P };
+  const ans = S * S - 2 * P;
+  return { q: `The roots r and s of x<sup>2</sup>${S ? (S > 0 ? " − " : " + ") + (Math.abs(S) === 1 ? "" : Math.abs(S)) + "x" : ""}${P ? (P < 0 ? " − " : " + ") + Math.abs(P) : ""} = 0 may not be whole numbers. What is r<sup>2</sup> + s<sup>2</sup>?`, a: ans, traps: [S * S + 2 * P, S * S - P, S - 2 * P, S * S].filter(v => v !== ans), min: -Infinity, hint: "r² + s² = (r + s)² − 2rs.", sol: `r + s = ${S}, rs = ${P}; ${S}² − 2(${P}) = ${ans}.` };
+}, ({ S, P }) => S * S - 2 * P);
+
+GEN("qu-vertex", "quadratics", "amc10", R => {
+  const h = R.int(-6, 6), k = R.int(-10, 10), a = R.pick([1, 2, 3]), up = R.int(0, 1) ? 1 : -1; R.p = { h, k, a: a * up };
+  const A = a * up, b = -2 * A * h, c = A * h * h + k;
+  return { q: `What is the ${up > 0 ? "smallest" : "largest"} value of ${poly2(A, b, c)}?`, a: k, traps: [c, h, k + A, -k].filter(v => v !== k), min: -Infinity, hint: "Complete the square, or use x = −b/(2a).", sol: `Vertex at x = ${h}: the value there is ${k}.` };
+}, ({ h, k, a }) => { let best = a > 0 ? Infinity : -Infinity; for (let x = -50; x <= 50; x += 0.5) { const v = a * x * x - 2 * a * h * x + a * h * h + k; best = a > 0 ? Math.min(best, v) : Math.max(best, v); } return best; });
+
+/* ---- sequences ---- */
+GEN("sq-nth", "sequences", "mk56", R => {
+  const a = R.int(-5, 20), d = R.int(2, 9), n = R.int(10, 60); R.p = { a, d, n };
+  const ans = a + (n - 1) * d;
+  return { q: `The sequence ${a}, ${a + d}, ${a + 2 * d}, ${a + 3 * d}, … goes up by the same amount each time. What is term number ${n}?`, a: ans, traps: [a + n * d, n * d, ans - d, a * n].filter(v => v !== ans), min: -Infinity, hint: `From term 1 to term ${n} there are ${n - 1} steps.`, sol: `${a} + ${n - 1} × ${d} = ${ans}.` };
+}, ({ a, d, n }) => { let t = a; for (let i = 1; i < n; i++) t += d; return t; });
+
+GEN("sq-sum", "sequences", "mk78", R => {
+  const a = R.int(1, 15), d = R.int(1, 6), n = R.int(10, 40); R.p = { a, d, n };
+  const last = a + (n - 1) * d, ans = n * (a + last) / 2;
+  return { q: `What is ${a} + ${a + d} + ${a + 2 * d} + ⋯ + ${last}?`, a: ans, traps: [n * last, (n + 1) * (a + last) / 2, ans - last, n * (a + last)].filter(v => Number.isInteger(v) && v !== ans), hint: "Average of first and last, times the number of terms.", sol: `${n} terms, average ${(a + last) / 2}: ${ans}.` };
+}, ({ a, d, n }) => range(0, n - 1).reduce((s, i) => s + a + i * d, 0));
+
+GEN("sq-geo", "sequences", "amc8", R => {
+  const a = R.int(1, 5), r = R.int(2, 3), n = R.int(5, 8); R.p = { a, r, n };
+  const ans = a * r ** (n - 1);
+  return { q: `In a sequence, each term is ${r} times the one before. The first term is ${a}. What is term ${n}?`, a: ans, traps: [a * r ** n, a * r * (n - 1), a * r ** (n - 2), a + r * (n - 1)].filter(v => v !== ans), hint: `Term n = first × ${r}^(n − 1).`, sol: `${a} × ${r}^${n - 1} = ${ans}.` };
+}, ({ a, r, n }) => { let t = a; for (let i = 1; i < n; i++) t *= r; return t; });
+
+GEN("sq-missing", "sequences", "amc10", R => {
+  const a = R.int(-10, 20), d = R.int(2, 9), i = R.int(3, 6), j = R.int(i + 3, i + 9), k = R.int(j + 2, j + 20); R.p = { a, d, i, j, k };
+  const t = n => a + (n - 1) * d;
+  return { q: `In an arithmetic sequence, term ${i} is ${t(i)} and term ${j} is ${t(j)}. What is term ${k}?`, a: t(k), traps: [t(k) + d, t(k) - d, t(j) + (k - j), t(i) * k / i].filter(v => Number.isInteger(v) && v !== t(k)), min: -Infinity, hint: `${j - i} steps take you from ${t(i)} to ${t(j)}.`, sol: `Common difference (${t(j)} − ${t(i)}) ÷ ${j - i} = ${d}; term ${k} = ${t(j)} + ${k - j} × ${d} = ${t(k)}.` };
+}, ({ a, d, k }) => a + (k - 1) * d);
+
+/* =========================================================
+   Exponents & radicals
+   ========================================================= */
+GEN("er-rules", "exp-rules", "mk78", R => {
+  const b = R.pick([2, 3, 5, 10]), p = R.int(2, 9), q = R.int(2, 9), r = R.int(1, 6), kind = R.int(0, 2); R.p = { b, p, q, r, kind };
+  const ans = [p + q - r, p * q, p + q][kind];
+  const qtxt = [`${b}<sup>${p}</sup> × ${b}<sup>${q}</sup> ÷ ${b}<sup>${r}</sup>`, `(${b}<sup>${p}</sup>)<sup>${q}</sup>`, `${b}<sup>${p}</sup> × ${b}<sup>${q}</sup>`][kind];
+  return { q: `${qtxt} = ${b}<sup>n</sup>. What is n?`, a: ans, traps: [p * q, p + q, p * q - r, p + q + r, p ** q].filter(v => v !== ans && v < 1000), hint: ["Multiply → add exponents; divide → subtract.", "Power of a power → multiply exponents.", "Same base multiplied → add exponents."][kind], sol: `n = ${ans}.` };
+}, ({ b, p, q, r, kind }) => { const v = [p + q - r, p * q, p + q][kind]; return v; });
+
+GEN("er-mixed-base", "exp-rules", "amc8", R => {
+  const [b, k] = R.pick([[2, 2], [2, 3], [3, 2], [2, 4], [5, 2], [3, 3]]), p = R.int(2, 8), q = R.int(2, 8); R.p = { b, k, p, q };
+  const B = b ** k, ans = k * p + q;
+  return { q: `If ${B}<sup>${p}</sup> × ${b}<sup>${q}</sup> = ${b}<sup>n</sup>, what is n?`, a: ans, traps: [p + q, p * q, k * (p + q), B * p + q].filter(v => v !== ans), hint: `Write ${B} as a power of ${b}.`, sol: `${B} = ${b}<sup>${k}</sup>, so ${B}<sup>${p}</sup> = ${b}<sup>${k * p}</sup>; n = ${k * p} + ${q} = ${ans}.` };
+}, ({ b, k, p, q }) => Math.round(Math.log(((b ** k) ** p) * b ** q) / Math.log(b)));
+
+GEN("er-sum-powers", "exp-rules", "amc10", R => {
+  const b = R.pick([2, 3]), n = R.int(5, 20), c = b; R.p = { b, n };
+  // b^n + b^n + ... (b copies) = b^(n+1)
+  const ans = n + 1;
+  return { q: `${Array(b).fill(`${b}<sup>${n}</sup>`).join(" + ")} = ${b}<sup>k</sup>. What is k?`, a: ans, traps: [n * b, n + b, n, b * (n + 1)].filter(v => v !== ans), hint: `There are ${b} equal terms.`, sol: `${b} × ${b}<sup>${n}</sup> = ${b}<sup>${n + 1}</sup>, so k = ${ans}.` };
+}, ({ n }) => n + 1);
+
+GEN("ez-eval", "exp-zero-neg", "amc8", R => {
+  const b = R.pick([2, 3, 4, 5]), e = R.int(1, 3), kind = R.int(0, 2); R.p = { b, e, kind };
+  const a = [fr(1, b ** e), fr(b ** e, 1), "1"][kind];
+  const q = [`${b}<sup>−${e}</sup>`, `(1/${b})<sup>−${e}</sup>`, `${b}<sup>0</sup> × ${b}<sup>${e}</sup> ÷ ${b}<sup>${e}</sup>`][kind];
+  return { q: `What is ${q}?`, a, traps: [fr(1, b ** e), fr(b ** e, 1), "1", "0", `−${b ** e}`, fr(-1, b ** e), String(-b * e)].filter(x => x !== a), hint: "A negative exponent means 1 over the positive power.", sol: `${q} = ${a}.` };
+}, ({ b, e, kind }) => [fr(1, b ** e), fr(b ** e, 1), "1"][kind]);
+
+GEN("ez-solve", "exp-zero-neg", "amc10", R => {
+  const b = R.pick([2, 3, 5]), p = R.int(1, 4), q = R.int(-3, 3); R.p = { b, p, q };
+  // b^(x + q) = 1 / b^p → x = −p − q
+  const ans = -p - q;
+  return { q: `Solve for x: ${b}<sup>x ${q < 0 ? "−" : "+"} ${Math.abs(q)}</sup> = 1/${b ** p}.`, a: ans, traps: [p - q, -p + q, p + q, -p].filter(v => v !== ans), min: -Infinity, hint: `Write 1/${b ** p} as a power of ${b}.`, sol: `1/${b ** p} = ${b}<sup>−${p}</sup>, so x + ${neg(q)} = −${p} and x = ${ans}.` };
+}, ({ b, p, q }) => { for (let x = -20; x <= 20; x++) if (Math.abs(b ** (x + q) - 1 / b ** p) < 1e-12) return x; });
+
+GEN("sn-digits", "sci-notation", "amc8", R => {
+  const [a, b] = R.pick([[2, 5], [4, 25], [8, 125], [16, 5]]), n = R.int(5, 15), extra = R.int(1, 4), kind = R.int(0, 1); R.p = { n, extra, kind };
+  // 2^(n+extra) × 5^n = 2^extra × 10^n
+  const lead = 2 ** extra, ans = String(lead).length + n;
+  return { q: `How many digits does 2<sup>${n + extra}</sup> × 5<sup>${n}</sup> have?`, a: ans, traps: [n, n + extra, ans + 1, 2 * n].filter(v => v !== ans), hint: "Pair each 2 with a 5 to make a 10.", sol: `= 2<sup>${extra}</sup> × 10<sup>${n}</sup> = ${lead} followed by ${n} zeros: ${ans} digits.` };
+}, ({ n, extra }) => (BigInt(2) ** BigInt(n + extra) * BigInt(5) ** BigInt(n)).toString().length);
+
+GEN("sn-product", "sci-notation", "mk78", R => {
+  const a = R.int(2, 9), b = R.int(2, 9), p = R.int(2, 9), q = R.int(-6, 6); R.p = { a, b, p, q };
+  const prod = a * b, ans = prod >= 10 ? p + q + 1 : p + q;
+  return { q: `When (${a} × 10<sup>${p}</sup>)(${b} × 10<sup>${q}</sup>) is written in scientific notation c × 10<sup>n</sup> (1 ≤ c < 10), what is n?`, a: ans, traps: [p + q, p * q, ans + 1, p + q - 1].filter(v => v !== ans), min: -Infinity, hint: `${a} × ${b} = ${prod}. Is that between 1 and 10?`, sol: `${prod} × 10<sup>${p + q}</sup>${prod >= 10 ? ` = ${prod / 10} × 10<sup>${ans}</sup>` : ""}, so n = ${ans}.` };
+}, ({ a, b, p, q }) => Math.floor(Math.log10(a * b * 10 ** (p + q)) + 1e-9));
+
+GEN("sr-simplify", "sqrt-simplify", "mk78", R => {
+  const k = R.int(2, 9), s = R.pick([2, 3, 5, 6, 7]); R.p = { k, s };
+  const n = k * k * s, a = `${k}√${s}`;
+  return { q: `Simplify √${n}.`, a, traps: [`${s}√${k}`, `${k * k}√${s}`, `${k}√${s * 2}`, `${Math.floor(Math.sqrt(n))}`, `${s}√${k * k}`, `${k + 1}√${s}`].filter(x => x !== a), hint: "Pull out the largest perfect-square factor.", sol: `${n} = ${k * k} × ${s}, so √${n} = ${a}.` };
+}, ({ k, s }) => { let best = 1; for (let d = 1; d * d <= k * k * s; d++) if ((k * k * s) % (d * d) === 0) best = d; return `${best}√${k * k * s / best / best}`; });
+
+GEN("sr-add", "sqrt-simplify", "amc8", R => {
+  const s = R.pick([2, 3, 5]), a = R.int(2, 6), b = R.int(2, 6), c = R.int(1, 5); R.p = { s, a, b, c };
+  const coef = a + b - c, ans = coef === 1 ? `√${s}` : `${coef}√${s}`;
+  return { q: `Simplify √${a * a * s} + √${b * b * s} − √${c * c * s}.`, a: ans, traps: [`${a + b + c}√${s}`, `√${(a + b - c) * s}`, `${coef}√${s * 3}`, `${coef + 1}√${s}`, `${a * b * c}√${s}`].filter(x => x !== ans), hint: `Write each as a multiple of √${s}.`, sol: `${a}√${s} + ${b}√${s} − ${c}√${s} = ${ans}.` };
+}, ({ s, a, b, c }) => { const v = a + b - c; return v === 1 ? `√${s}` : `${v}√${s}`; });
+
+GEN("sr-between", "sqrt-simplify", "mk56", R => {
+  const n = R.int(20, 400); if (isqrt(n)) return GENS.find(g => g.id === "sr-between").fn(R); R.p = { n };
+  const lo = Math.floor(Math.sqrt(n));
+  return { q: `√${n} is between which two consecutive whole numbers? Give the smaller one.`, a: lo, traps: [lo + 1, lo - 1, Math.round(n / 2), Math.floor(n / 10)].filter(v => v !== lo), hint: "Which perfect squares sit just below and just above?", sol: `${lo}² = ${lo * lo} < ${n} < ${(lo + 1) ** 2} = ${lo + 1}², so the answer is ${lo}.` };
+}, ({ n }) => { let k = 0; while ((k + 1) * (k + 1) <= n) k++; return k; });
+
+GEN("ra-simple", "rationalize", "amc10", R => {
+  const s = R.pick([2, 3, 5, 6, 7]), k = R.int(1, 4) * s; R.p = { s, k };
+  const g = gcd(k, s), num = k / g, den = s / g; const a = den === 1 ? (num === 1 ? `√${s}` : `${num}√${s}`) : `${num === 1 ? "" : num}√${s}/${den}`;
+  return { q: `Rationalize: ${k}/√${s} = ?`, a, traps: [`${k}√${s}`, `√${s}/${k}`, `${k}/${s}`, `${k * s}√${s}`, `${k / s}`].filter(x => x !== a), hint: `Multiply top and bottom by √${s}.`, sol: `${k}√${s}/${s} = ${a}.` };
+}, ({ s, k }) => { const g = gcd(k, s), num = k / g, den = s / g; return den === 1 ? (num === 1 ? `√${s}` : `${num}√${s}`) : `${num === 1 ? "" : num}√${s}/${den}`; });
+
+GEN("ra-conj", "rationalize", "amc10", R => {
+  const a = R.int(2, 6), s = R.pick([2, 3, 5, 7]); if (a * a === s) return GENS.find(g => g.id === "ra-conj").fn(R); const D = a * a - s; R.p = { a, s };
+  const ans = fr(2 * a, D);
+  return { q: `What is 1/(${a} + √${s}) + 1/(${a} − √${s})?`, a: ans, traps: [...new Set([fr(2, D), fr(2 * a, a * a + s), fr(a, D), fr(2 * a, s), fr(1, a), fr(-2 * a, D), fr(2 * a + 1, D), fr(2 * a, a * a)])].filter(x => x !== ans), hint: "Use a common denominator: (a + √s)(a − √s) = a² − s.", sol: `= 2·${a} ÷ (${a * a} − ${s}) = ${ans}.` };
+}, ({ a, s }) => { const v = 1 / (a + Math.sqrt(s)) + 1 / (a - Math.sqrt(s)), D = a * a - s; return fr(Math.round(v * D), D); });
+
+const CP_SETS = [[[2, 30], [3, 20], [5, 12], [6, 10], [10, 9]], [[2, 100], [3, 60], [5, 40], [7, 35], [10, 32]],
+  [[4, 50], [8, 32], [16, 26], [2, 99], [32, 21]], [[2, 55], [3, 33], [5, 22], [7, 19], [11, 15]], [[2, 40], [3, 25], [5, 17], [6, 15], [7, 14]]];
+const cpTxt = ([b, e]) => `${b}<sup>${e}</sup>`;
+GEN("cp-compare", "compare-powers", "amc8", R => {
+  const si = R.int(0, CP_SETS.length - 1), big = R.int(0, 1); R.p = { si, big }; const S = CP_SETS[si];
+  const v = x => x[1] * Math.log(x[0]), best = S.reduce((x, y) => (big ? v(x) > v(y) : v(x) < v(y)) ? x : y);
+  return { q: `Which is the ${big ? "largest" : "smallest"}: ${R.shuffle(S).map(cpTxt).join(", ")}?`, a: cpTxt(best), traps: S.filter(x => x !== best).map(cpTxt), hint: "Rewrite with matching exponents or matching bases.", sol: `Rewriting to a common exponent or base (or comparing logarithms), ${cpTxt(best)} is the ${big ? "largest" : "smallest"}.` };
+}, ({ si, big }) => { const S = CP_SETS[si], V = x => BigInt(x[0]) ** BigInt(x[1]); return cpTxt(S.reduce((x, y) => (big ? V(x) > V(y) : V(x) < V(y)) ? x : y)); });
+
+GEN("cp-solve", "compare-powers", "amc10", R => {
+  const [b, k] = R.pick([[2, 2], [2, 3], [3, 2], [5, 2], [2, 4]]), p = R.int(2, 12); R.p = { b, k, p };
+  // (b^k)^x = b^(p) * b^(?) ... ask: largest integer n with n^k < b^(... ) keep simple: smallest n with b^n > (b^k)^p
+  const ans = k * p + 1;
+  return { q: `What is the smallest integer n for which ${b}<sup>n</sup> > ${b ** k}<sup>${p}</sup>?`, a: ans, traps: [k * p, p + 1, k + p, k * (p + 1)].filter(v => v !== ans), hint: `Write ${b ** k} as ${b}<sup>${k}</sup>.`, sol: `${b ** k}<sup>${p}</sup> = ${b}<sup>${k * p}</sup>, so n = ${ans}.` };
+}, ({ b, k, p }) => { for (let n = 1; ; n++) if (BigInt(b) ** BigInt(n) > (BigInt(b) ** BigInt(k)) ** BigInt(p)) return n; });
+
+/* =========================================================
+   Factoring & identities
+   ========================================================= */
+GEN("gf-gcf", "gcf-factor", "mk78", R => {
+  const g = R.int(2, 9), a = R.int(2, 9), b = R.int(2, 9); if (gcd(a, b) !== 1) return GENS.find(x => x.id === "gf-gcf").fn(R); R.p = { g, a, b };
+  return { q: `${g * a}x + ${g * b} = k(${a}x + ${b}). What is k?`, a: g, traps: [g * a, g * b, a + b, g + 1].filter(v => v !== g), hint: "What divides both coefficients?", sol: `gcd(${g * a}, ${g * b}) = ${g}.` };
+}, ({ g, a, b }) => gcd(g * a, g * b));
+
+GEN("gf-group", "gcf-factor", "amc8", R => {
+  const a = R.int(2, 15), b = R.int(2, 15), c = R.int(2, 15); R.p = { a, b, c };
+  // a·b + a·c + 2b + 2c with a known: (a + 2)(b + c)
+  const ans = (a + 2) * (b + c);
+  return { q: `Compute ${a}·${b} + ${a}·${c} + 2·${b} + 2·${c} by factoring.`, a: ans, traps: [a * (b + c) + 2, (a + 2) * b + c, (a + b) * (2 + c), ans + 2].filter(v => v !== ans), hint: "Group the first two terms and the last two.", sol: `${a}(${b} + ${c}) + 2(${b} + ${c}) = ${a + 2} × ${b + c} = ${ans}.` };
+}, ({ a, b, c }) => a * b + a * c + 2 * b + 2 * c);
+
+GEN("ds-mental", "diff-squares", "mk78", R => {
+  const n = R.int(15, 120), k = R.int(1, 9); R.p = { n, k };
+  const ans = n * n - k * k;
+  return { q: `Compute ${n + k} × ${n - k}.`, a: ans, traps: [n * n - k, n * n + k * k, n * n - 2 * k, ans + 10].filter(v => v !== ans), hint: `It's (${n} + ${k})(${n} − ${k}).`, sol: `${n}² − ${k}² = ${n * n} − ${k * k} = ${ans}.` };
+}, ({ n, k }) => (n + k) * (n - k));
+
+GEN("ds-big", "diff-squares", "amc8", R => {
+  const a = R.int(100, 2030), d = R.int(1, 6); R.p = { a, d };
+  const ans = (a + d) ** 2 - a ** 2;
+  return { q: `What is ${a + d}<sup>2</sup> − ${a}<sup>2</sup>?`, a: ans, traps: [d * d, 2 * a + d, d * (2 * a), ans + d].filter(v => v !== ans), hint: "Difference of squares.", sol: `(${a + d} − ${a})(${a + d} + ${a}) = ${d} × ${2 * a + d} = ${commas(ans)}.` };
+}, ({ a, d }) => (a + d) * (a + d) - a * a);
+
+GEN("ds-count", "diff-squares", "amc10", R => {
+  const N = R.pick([20, 30, 40, 50, 60, 100]); R.p = { N };
+  const can = n => { for (let x = 0; x <= n; x++) for (let y = 0; y < x; y++) if (x * x - y * y === n) return true; return false; };
+  const ans = countIf(1, N, can);
+  return { q: `How many of the integers 1, 2, 3, …, ${N} can be written as the difference of two perfect squares (like 7 = 4² − 3²)?`, a: ans, traps: [N - ans, N / 2, ans + Math.floor(N / 4), N].filter(v => v !== ans), hint: "Try small numbers. Which ones fail? (Think about remainders mod 4.)", sol: `Exactly the numbers that are not 2 more than a multiple of 4 work: ${ans}.` };
+}, ({ N }) => countIf(1, N, n => n % 4 !== 2));
+
+GEN("ps-complete", "perfect-squares", "amc8", R => {
+  const k = R.int(2, 12), sgn2 = R.pick([1, -1]); R.p = { k, s: sgn2 };
+  const ans = k * k;
+  return { q: `What value of c makes x<sup>2</sup> ${sgn2 > 0 ? "+" : "−"} ${2 * k}x + c a perfect square?`, a: ans, traps: [2 * k, k, 4 * k * k, k * k + 1].filter(v => v !== ans), hint: "(x + k)² = x² + 2kx + k².", sol: `Half of ${2 * k} is ${k}; c = ${k}² = ${ans}.` };
+}, ({ k }) => k * k);
+
+GEN("ps-sum-sq", "perfect-squares", "amc10", R => {
+  const S = R.int(3, 15), P = R.int(-10, 20); R.p = { S, P };
+  const kind = R.int(0, 1); R.p.kind = kind;
+  const ans = kind ? S * S - 4 * P : S * S - 2 * P;
+  return { q: `If x + y = ${S} and xy = ${m(P)}, what is ${kind ? "(x − y)<sup>2</sup>" : "x<sup>2</sup> + y<sup>2</sup>"}?`, a: ans, traps: [S * S + 2 * P, S * S - P, S * S - 4 * P === ans ? S * S - 2 * P : S * S - 4 * P, S * S].filter(v => v !== ans), min: -Infinity, hint: kind ? "(x − y)² = (x + y)² − 4xy." : "x² + y² = (x + y)² − 2xy.", sol: `${S}² − ${kind ? 4 : 2}(${m(P)}) = ${ans}.` };
+}, ({ S, P, kind }) => kind ? S * S - 4 * P : S * S - 2 * P);
+
+GEN("cu-sum", "cubes", "amc10", R => {
+  const S = R.int(2, 10), P = R.int(-6, 12); R.p = { S, P };
+  const ans = S ** 3 - 3 * P * S;
+  return { q: `If a + b = ${S} and ab = ${m(P)}, what is a<sup>3</sup> + b<sup>3</sup>?`, a: ans, traps: [S ** 3 + 3 * P * S, S ** 3 - P * S, S ** 3, S ** 3 - 3 * P].filter(v => v !== ans), min: -Infinity, hint: "a³ + b³ = (a + b)³ − 3ab(a + b).", sol: `${S}³ − 3(${m(P)})(${S}) = ${S ** 3} − ${3 * P * S} = ${ans}.` };
+}, ({ S, P }) => S ** 3 - 3 * P * S);
+
+GEN("cu-factor-num", "cubes", "amc10", R => {
+  const a = R.int(3, 12), b = R.int(1, a - 1); R.p = { a, b };
+  const N = a ** 3 - b ** 3, ans = a * a + a * b + b * b;
+  return { q: `${N} = ${a}<sup>3</sup> − ${b}<sup>3</sup> = (${a} − ${b}) × k. What is k?`, a: ans, traps: [a * a + b * b, a * a - a * b + b * b, (a + b) ** 2, ans + a].filter(v => v !== ans), hint: "a³ − b³ = (a − b)(a² + ab + b²).", sol: `k = ${a}² + ${a}·${b} + ${b}² = ${ans}.` };
+}, ({ a, b }) => (a ** 3 - b ** 3) / (a - b));
+
+GEN("sf-pairs", "sfft", "amc10", R => {
+  const a = R.int(1, 6), b = R.int(1, 6), k = R.pick([12, 15, 18, 20, 24, 28, 30, 36]); R.p = { a, b, k };
+  const rhs = k - a * b;
+  if (rhs <= 0) return GENS.find(g => g.id === "sf-pairs").fn(R);
+  // xy + bx + ay = k − ab  ⇔ (x + a)(y + b) = k
+  let c = 0; for (const d of divisors(k)) if (d > a && k / d > b) c++;
+  if (c === 0) return GENS.find(g => g.id === "sf-pairs").fn(R);
+  return { q: `How many pairs of positive integers (x, y) satisfy xy + ${b}x + ${a}y = ${rhs}?`, a: c, traps: [numDiv(k), c + 1, Math.max(0, c - 1), numDiv(k) * 2].filter(v => v !== c), hint: `Add ${a * b} to both sides and factor.`, sol: `(x + ${a})(y + ${b}) = ${k}. Factor pairs with the first factor > ${a} and the second > ${b}: ${c}.` };
+}, ({ a, b, k }) => { let c = 0; for (let x = 1; x <= k; x++) for (let y = 1; y <= k; y++) if (x * y + b * x + a * y === k - a * b) c++; return c; });
+
+GEN("sf-value", "sfft", "amc10", R => {
+  const x = R.int(2, 12), y = R.int(2, 12), c = R.int(1, 4); R.p = { x, y, c };
+  const N = x * y + c * x + c * y;
+  // given positive integers with xy + c(x + y) = N and x < y? ask x + y (unique?) — verify uniqueness by brute force
+  const sols = []; for (let p = 1; p <= N; p++) for (let q = p; q <= N; q++) if (p * q + c * p + c * q === N) sols.push(p + q);
+  if (new Set(sols).size !== 1) return GENS.find(g => g.id === "sf-value").fn(R);
+  return { q: `Positive integers x and y satisfy xy + ${c}x + ${c}y = ${N}. What is x + y?`, a: x + y, traps: [x * y, x + y + c, x + y - 1, N / c].filter(v => Number.isInteger(v) && v !== x + y), hint: `Add ${c * c} to both sides and factor.`, sol: `(x + ${c})(y + ${c}) = ${N + c * c}. The only factor pair that works gives x + y = ${x + y}.` };
+}, ({ x, y, c }) => { const N = x * y + c * x + c * y; const s = new Set(); for (let p = 1; p <= N; p++) for (let q = p; q <= N; q++) if (p * q + c * p + c * q === N) s.add(p + q); return [...s][0]; });
+
+GEN("xp-expand", "expansions", "amc8", R => {
+  const a = R.int(1, 5), b = R.int(-7, 7), c = R.int(1, 5), d = R.int(-7, 7); R.p = { a, b, c, d };
+  const ans = a * d + b * c;
+  return { q: `When (${lin(a, b)})(${lin(c, d)}) is multiplied out, what is the coefficient of x?`, a: ans, traps: [a * c, b * d, a * b + c * d, ans + 1].filter(v => v !== ans), min: -Infinity, hint: "Outer + inner.", sol: `${a}·${m(d)} + ${m(b)}·${c} = ${ans}.` };
+}, ({ a, b, c, d }) => a * d + b * c);
+
+GEN("xp-sum-coef", "expansions", "amc10", R => {
+  const a = R.int(1, 4), b = R.int(-3, 3) || 1, n = R.int(3, 8); R.p = { a, b, n };
+  const ans = (a + b) ** n;
+  return { q: `What is the sum of all the coefficients when (${lin(a, b)})<sup>${n}</sup> is multiplied out?`, a: ans, traps: [(a + b) * n, a ** n + b ** n, (a + Math.abs(b)) ** n, 2 ** n].filter(v => v !== ans), min: -Infinity, hint: "Plug in x = 1.", sol: `(${a} + ${m(b)})<sup>${n}</sup> = ${ans}.` };
+}, ({ a, b, n }) => { let p = [1]; for (let i = 0; i < n; i++) { const q = Array(p.length + 1).fill(0); p.forEach((c, j) => { q[j] += c * b; q[j + 1] += c * a; }); p = q; } return p.reduce((s, c) => s + c, 0); });
+
+/* =========================================================
    STORAGE: shared Claude db when available, else this browser
    results: one doc per finished test or lesson check
    opened:  one doc per student+lesson, written the first time a lesson is opened
