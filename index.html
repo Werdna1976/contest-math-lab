@@ -8350,7 +8350,7 @@ function viewProgress() {
   const chaps = CURRICULUM.filter(c => readyLessons(c).length);
   return `
   <section style="display:flex;flex-direction:column;gap:8px"><span class="eyebrow">Progress</span><h1>${who === "All" ? "Everyone" : nameOf(who)}</h1>${storageNote()}
-    <div class="row"><button class="btn ghost" data-act="backup">Save backup</button><label class="btn ghost">Load backup<input type="file" accept=".json,application/json" data-act="restore" hidden></label></div></section>
+    ${store.mode === "shared" ? "" : `<div class="row"><button class="btn ghost" data-act="backup">Save backup</button><label class="btn ghost">Load backup<input type="file" accept=".json,application/json" data-act="restore" hidden></label></div>`}</section>
   <div class="row">${["All", ...STUDENTS].map(s => `<button class="pill" aria-pressed="${s === who}" data-act="pwho" data-s="${s}">${s === "All" ? "All" : nameOf(s)}</button>`).join("")}</div>
   <section class="stats">
     <div class="stat"><div class="v">${tests.length}</div><div class="l">Tests taken</div></div>
