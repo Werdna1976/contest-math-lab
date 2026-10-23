@@ -10,6 +10,7 @@
   --accent:#2F5BD3; --accent-ink:#FFFFFF; --accent-soft:#E4EBFC;
   --hi:#E3AE1B; --hi-soft:#FFF4CF;
   --good:#1E8A57; --good-soft:#DDF3E7; --bad:#C2413A; --bad-soft:#FBE3E1;
+  --t1:#0B7F80; --t1-soft:#D7F1F0; --t2:#B8600E; --t2-soft:#FCEAD5; --t3:#7048C8; --t3-soft:#ECE4FB;
   --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
   --f-body:"Lexend", "Segoe UI", system-ui, sans-serif;
   --f-mono:"JetBrains Mono", Consolas, ui-monospace, monospace;
@@ -18,11 +19,13 @@
   --bg:#0F1422; --grid:#182035; --surface:#161D2E; --ink:#E7EBF5; --muted:#9AA6C2; --line:#2A3349;
   --accent:#7C9BFF; --accent-ink:#0F1422; --accent-soft:#1F2A4A;
   --hi:#E9BC3E; --hi-soft:#3A3218;
+  --t1:#4FD1C5; --t1-soft:#12302F; --t2:#F2A65A; --t2-soft:#3A2814; --t3:#B394FF; --t3-soft:#2A2148;
   --good:#4CC28A; --good-soft:#173528; --bad:#F07A72; --bad-soft:#3F1D1C; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0F1422; --grid:#182035; --surface:#161D2E; --ink:#E7EBF5; --muted:#9AA6C2; --line:#2A3349;
   --accent:#7C9BFF; --accent-ink:#0F1422; --accent-soft:#1F2A4A;
   --hi:#E9BC3E; --hi-soft:#3A3218;
+  --t1:#4FD1C5; --t1-soft:#12302F; --t2:#F2A65A; --t2-soft:#3A2814; --t3:#B394FF; --t3-soft:#2A2148;
   --good:#4CC28A; --good-soft:#173528; --bad:#F07A72; --bad-soft:#3F1D1C; color-scheme:dark}
 
 *{box-sizing:border-box}
@@ -83,8 +86,20 @@ main{max-width:1440px;margin:0 auto;padding-block:28px 64px;padding-left:max(16p
 .chapters{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
 .chap{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px;min-width:0}
 .chap-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
-.chap-n{font-family:var(--f-mono);font-size:.8rem;color:var(--muted)}
+.chap-n{font-family:var(--f-mono);font-size:.8rem;color:var(--muted);white-space:nowrap}
 .grp{font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-top:4px;font-family:var(--f-mono)}
+.tier{font:600 .68rem/1.2 var(--f-mono);letter-spacing:.02em;padding:2px 7px;border-radius:999px;white-space:nowrap;flex:none}
+.tier.t1{background:var(--t1-soft);color:var(--t1)} .tier.t2{background:var(--t2-soft);color:var(--t2)} .tier.t3{background:var(--t3-soft);color:var(--t3)}
+.lessons button.t1{box-shadow:inset 3px 0 0 var(--t1)} .lessons button.t2{box-shadow:inset 3px 0 0 var(--t2)} .lessons button.t3{box-shadow:inset 3px 0 0 var(--t3)}
+.lesson-row.t1{border-left:4px solid var(--t1)} .lesson-row.t2{border-left:4px solid var(--t2)} .lesson-row.t3{border-left:4px solid var(--t3)}
+.lessons .lt{display:flex;align-items:center;gap:6px;min-width:0}
+.tierbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tierbar button{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 14px;font-weight:600;font-size:.88rem;display:flex;gap:8px;align-items:center}
+.tierbar button small{font:500 .75rem var(--f-mono);color:var(--muted)}
+.tierbar button.on{border-color:var(--ink);background:var(--ink);color:var(--surface)} .tierbar button.on small{color:inherit;opacity:.8}
+.tierbar button.t1.on{background:var(--t1);border-color:var(--t1)} .tierbar button.t2.on{background:var(--t2);border-color:var(--t2)} .tierbar button.t3.on{background:var(--t3);border-color:var(--t3)}
+.tierbar button .tdot{width:10px;height:10px;border-radius:50%}
+.tierbar button.on .tdot{background:currentColor!important}
 .lessons{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
 .lessons button{width:100%;text-align:left;background:none;border:0;padding:4px 6px;border-radius:6px;display:flex;justify-content:space-between;gap:8px;font-size:.93rem}
 .lessons button:not(:disabled):hover{background:var(--accent-soft)}
@@ -282,46 +297,56 @@ const LEVEL_ORDER = Object.keys(LEVELS);
    CURRICULUM MAP
    A lesson is "ready" when LESSONS[id] exists (content/*.js).
    ========================================================= */
+/* Chapters run from foundational to advanced. Within a chapter, lessons are
+   sorted by tier (below) so the easier ones come first. */
 const CURRICULUM = [
   { id: "arith", title: "Arithmetic & Number Sense", groups: [
     { title: "Core", lessons: [
       ["order-ops", "Order of operations shortcuts"], ["fractions", "Fractions, decimals & percents"], ["ratios", "Ratios & proportions"],
       ["averages", "Mean, median & mode"], ["mental-math", "Mental math & estimation"], ["units", "Units & conversions"]] } ] },
-  { id: "algebra", title: "Algebra", groups: [
-    { title: "Equations", lessons: [
-      ["expressions", "Simplifying expressions"], ["linear-eq", "Linear equations"], ["systems", "Systems of equations"],
-      ["word-eq", "Turning words into equations"], ["inequalities", "Inequalities & absolute value"]] },
-    { title: "Functions & sequences", lessons: [
-      ["functions", "Functions & graphs"], ["lines", "Slope & lines"], ["quadratics", "Quadratics & Vieta's formulas"], ["sequences", "Arithmetic & geometric sequences"]] } ] },
-  { id: "exp", title: "Exponents & Radicals", groups: [
+  { id: "logic", title: "Logic & Strategy", groups: [
     { title: "Core", lessons: [
-      ["exp-rules", "Exponent rules"], ["exp-zero-neg", "Zero & negative exponents"], ["sci-notation", "Scientific notation"],
-      ["sqrt-simplify", "Simplifying square roots"], ["rationalize", "Rationalizing denominators"], ["compare-powers", "Comparing huge powers"]] } ] },
-  { id: "factor", title: "Factoring & Identities", groups: [
-    { title: "Core", lessons: [
-      ["gcf-factor", "Pulling out common factors"], ["diff-squares", "Difference of squares"], ["perfect-squares", "Perfect-square trinomials"],
-      ["cubes", "Sum & difference of cubes"], ["sfft", "Simon's Favorite Factoring Trick"], ["expansions", "Clever expansions"]] } ] },
-  { id: "nt", title: "Number Theory", groups: [
-    { title: "Primes & divisors", lessons: [
-      ["primes", "Primes & prime factorization"], ["divisibility", "Divisibility rules"], ["num-divisors", "Counting divisors"], ["gcd-lcm", "GCD & LCM"]] },
-    { title: "Remainders & digits", lessons: [
-      ["modular", "Modular arithmetic"], ["units-digit", "Units digits & cycles"], ["bases", "Other number bases"], ["digits", "Digit problems"], ["diophantine", "Integer-solution equations"]] } ] },
-  { id: "rates", title: "Rates, Work & Motion", groups: [
-    { title: "Core", lessons: [
-      ["drt", "Distance = rate × time"], ["avg-speed", "Average speed traps"], ["meeting", "Meeting & catching up"],
-      ["work", "Work rates"], ["mixtures", "Mixtures & percent change"], ["clocks", "Clocks & calendars"]] } ] },
+      ["patterns", "Finding patterns"], ["backwards", "Working backwards"], ["logic-puzzles", "Logic puzzles"],
+      ["parity", "Parity & invariants"], ["organized-lists", "Organized lists & tables"]] } ] },
   { id: "geo-shapes", title: "Geometry: Shapes", groups: [
     { title: "Polygons", lessons: [
       ["polygon-angles", "Polygon angle sums"], ["diagonals", "Diagonals of polygons"], ["triangle-types", "Triangle types"],
       ["quadrilaterals", "The quadrilateral family"], ["symmetry", "Symmetry & regular polygons"]] },
     { title: "Beyond flat shapes", lessons: [
       ["congruent-similar", "Congruent & similar shapes"], ["coordinates", "Coordinate geometry"], ["solids", "3D solids: faces, edges, vertices"]] } ] },
+  { id: "rates", title: "Rates, Work & Motion", groups: [
+    { title: "Core", lessons: [
+      ["drt", "Distance = rate × time"], ["avg-speed", "Average speed traps"], ["meeting", "Meeting & catching up"],
+      ["work", "Work rates"], ["mixtures", "Mixtures & percent change"], ["clocks", "Clocks & calendars"]] } ] },
+  { id: "algebra", title: "Algebra", groups: [
+    { title: "Equations", lessons: [
+      ["expressions", "Simplifying expressions"], ["linear-eq", "Linear equations"], ["systems", "Systems of equations"],
+      ["word-eq", "Turning words into equations"], ["inequalities", "Inequalities & absolute value"]] },
+    { title: "Functions & sequences", lessons: [
+      ["functions", "Functions & graphs"], ["lines", "Slope & lines"], ["quadratics", "Quadratics & Vieta's formulas"], ["sequences", "Arithmetic & geometric sequences"]] } ] },
   { id: "geo-angles", title: "Geometry: Angles & Triangles", groups: [
     { title: "Angles", lessons: [
       ["angle-basics", "Angle basics"], ["parallel-lines", "Parallel lines & transversals"], ["exterior-angle", "Exterior angle theorem"],
       ["angle-chasing", "Angle chasing"], ["clock-angles", "Clock-hand angles"]] },
     { title: "Triangles", lessons: [
       ["pythagorean", "Pythagorean theorem & triples"], ["special-right", "30-60-90 and 45-45-90"], ["similar-triangles", "Similar triangles"], ["triangle-inequality", "Triangle inequality"]] } ] },
+  { id: "nt", title: "Number Theory", groups: [
+    { title: "Primes & divisors", lessons: [
+      ["primes", "Primes & prime factorization"], ["divisibility", "Divisibility rules"], ["num-divisors", "Counting divisors"], ["gcd-lcm", "GCD & LCM"]] },
+    { title: "Remainders & digits", lessons: [
+      ["modular", "Modular arithmetic"], ["units-digit", "Units digits & cycles"], ["bases", "Other number bases"], ["digits", "Digit problems"], ["diophantine", "Integer-solution equations"]] } ] },
+  { id: "exp", title: "Exponents & Radicals", groups: [
+    { title: "Core", lessons: [
+      ["exp-rules", "Exponent rules"], ["exp-zero-neg", "Zero & negative exponents"], ["sci-notation", "Scientific notation"],
+      ["sqrt-simplify", "Simplifying square roots"], ["rationalize", "Rationalizing denominators"], ["compare-powers", "Comparing huge powers"]] } ] },
+  { id: "counting", title: "Counting: Permutations & Combinations", groups: [
+    { title: "Foundations", lessons: [
+      ["mult-principle", "Multiplication principle"], ["permutations", "Permutations"], ["combinations", "Combinations"],
+      ["repeats", "Arranging letters with repeats"], ["casework", "Casework"], ["complementary", "Complementary counting"],
+      ["pascal", "Pascal's triangle & binomial theorem"], ["grid-paths", "Paths on a grid"], ["pie", "Inclusion–exclusion"]] },
+    { title: "Special cases", lessons: [
+      ["stars-bars", "Stars and bars"], ["mcnugget", "Chicken McNugget theorem"], ["pigeonhole", "Pigeonhole principle"],
+      ["circular", "Circular arrangements"], ["derangements", "Derangements"]] } ] },
   { id: "geo-circles", title: "Geometry: Circles", groups: [
     { title: "Core", lessons: [
       ["circle-parts", "Parts of a circle"], ["circumference", "Circumference & arc length"], ["circle-area", "Area & sectors"],
@@ -331,25 +356,29 @@ const CURRICULUM = [
       ["basic-area", "Rectangles, triangles, trapezoids"], ["shaded-area", "Shaded & composite regions"], ["heron", "Heron's formula"], ["picks-shoelace", "Pick's theorem & shoelace"]] },
     { title: "Volume", lessons: [
       ["prisms", "Prisms & cylinders"], ["cones-spheres", "Pyramids, cones & spheres"], ["surface-area", "Surface area"], ["scaling", "Scaling area & volume"]] } ] },
-  { id: "counting", title: "Counting: Permutations & Combinations", groups: [
-    { title: "Foundations", lessons: [
-      ["mult-principle", "Multiplication principle"], ["permutations", "Permutations"], ["combinations", "Combinations"],
-      ["repeats", "Arranging letters with repeats"], ["casework", "Casework"], ["complementary", "Complementary counting"],
-      ["pascal", "Pascal's triangle & binomial theorem"], ["grid-paths", "Paths on a grid"], ["pie", "Inclusion–exclusion"]] },
-    { title: "Special cases", lessons: [
-      ["stars-bars", "Stars and bars"], ["mcnugget", "Chicken McNugget theorem"], ["pigeonhole", "Pigeonhole principle"],
-      ["circular", "Circular arrangements"], ["derangements", "Derangements"]] } ] },
+  { id: "factor", title: "Factoring & Identities", groups: [
+    { title: "Core", lessons: [
+      ["gcf-factor", "Pulling out common factors"], ["diff-squares", "Difference of squares"], ["perfect-squares", "Perfect-square trinomials"],
+      ["cubes", "Sum & difference of cubes"], ["sfft", "Simon's Favorite Factoring Trick"], ["expansions", "Clever expansions"]] } ] },
   { id: "prob", title: "Probability", groups: [
     { title: "Core", lessons: [
       ["prob-basic", "Basic probability"], ["prob-complement", "Complementary probability"], ["independent", "Independent & dependent events"],
       ["conditional", "Conditional probability"], ["expected", "Expected value"], ["geo-prob", "Geometric probability"]] } ] },
-  { id: "logic", title: "Logic & Strategy", groups: [
-    { title: "Core", lessons: [
-      ["patterns", "Finding patterns"], ["backwards", "Working backwards"], ["logic-puzzles", "Logic puzzles"],
-      ["parity", "Parity & invariants"], ["organized-lists", "Organized lists & tables"]] } ] },
 ];
-// normalize [id, title] pairs to objects
-CURRICULUM.forEach(c => c.groups.forEach(g => { g.lessons = g.lessons.map(([id, title]) => ({ id, title })); }));
+/* Tier of each lesson: 1 beginner, 2 intermediate, 3 advanced. This is about the
+   ideas in the lesson, separate from the contest level of its test problems. */
+const TIERS = { 1: "Beginner", 2: "Intermediate", 3: "Advanced" };
+const TIER_OF = {};
+Object.entries({
+  1: "order-ops fractions ratios averages mental-math units patterns backwards organized-lists polygon-angles triangle-types quadrilaterals symmetry drt clocks expressions linear-eq word-eq angle-basics parallel-lines exterior-angle primes divisibility exp-rules mult-principle circle-parts circumference circle-area basic-area prisms prob-basic",
+  2: "logic-puzzles parity diagonals congruent-similar coordinates solids avg-speed meeting work mixtures systems inequalities functions lines sequences angle-chasing clock-angles pythagorean similar-triangles triangle-inequality num-divisors gcd-lcm units-digit digits exp-zero-neg sci-notation sqrt-simplify permutations combinations repeats casework complementary grid-paths pigeonhole shaded-area cones-spheres surface-area scaling gcf-factor diff-squares perfect-squares prob-complement independent expected",
+  3: "quadratics special-right modular bases diophantine rationalize compare-powers pascal pie stars-bars mcnugget circular derangements inscribed-angles tangents power-point heron picks-shoelace cubes sfft expansions conditional geo-prob",
+}).forEach(([t, ids]) => ids.split(" ").forEach(id => { TIER_OF[id] = +t; }));
+// normalize [id, title] pairs to objects, easier tiers first within each group
+CURRICULUM.forEach(c => c.groups.forEach(g => {
+  g.lessons = g.lessons.map(([id, title]) => ({ id, title, tier: TIER_OF[id] || 2 }));
+  g.lessons.sort((a, b) => a.tier - b.tier);
+}));
 
 const LESSONS = {};   // filled by content/*.js
 const BANK = [];      // filled by content/*.js
@@ -6521,7 +6550,7 @@ GEN("ol-goldbach", "organized-lists", "amc8", R => {
    opened:  one doc per student+lesson, written the first time a lesson is opened
    settings: one doc per student, e.g. { maxLevel: "amc8" }
    ========================================================= */
-const LS_KEY = "cml.results.v1", LS_OPEN = "cml.opened.v1", LS_WHO = "cml.student", LS_THEME = "cml.theme", LS_SET = "cml.settings.v1", LS_FMHIDE = "cml.fmhide";
+const LS_KEY = "cml.results.v1", LS_OPEN = "cml.opened.v1", LS_WHO = "cml.student", LS_THEME = "cml.theme", LS_SET = "cml.settings.v1", LS_FMHIDE = "cml.fmhide", LS_TIER = "cml.tier";
 const COMPLETE_AT = 0.8; // best lesson-check score that counts as complete
 const store = {
   mode: "local", db: null, results: [], opened: {}, settings: {}, listeners: [],
@@ -6594,6 +6623,7 @@ const S = {
   test: null, lastResult: null, quizState: {}, progressWho: "All", openAttempt: null,
   showAbove: false, confirmReset: null, testLen: "full",
   fmHide: new Set(store.lsGet(LS_FMHIDE, [])),
+  tier: (() => { const t = +store.lsGet(LS_TIER, 0); return TIERS[t] ? t : 0; })(),   // 0 = all tiers
 };
 const $ = s => document.querySelector(s);
 const app = $("#app");
@@ -6630,6 +6660,11 @@ const capOf = student => LEVELS[store.settings[student]?.maxLevel] ? store.setti
 const levelOK = (student, level) => LEVEL_ORDER.indexOf(level) <= LEVEL_ORDER.indexOf(capOf(student));
 const inLevel = (student, id) => levelOK(student, lessonLevel(id));
 const nameOf = k => (store.settings[k]?.name || "").trim() || k;
+const tierOf = id => lessonMeta(id)?.lesson.tier || 2;
+const tierTag = (id, short = false) => { const t = tierOf(id); return `<span class="tier t${t}" title="${TIERS[t]} lesson">${short ? TIERS[t].slice(0, 3) : TIERS[t]}</span>`; };
+const tierOK = id => !S.tier || tierOf(id) === S.tier;
+/* every ready lesson of one tier, in chapter order: the path a student follows */
+const tierPath = t => CURRICULUM.flatMap(readyLessons).filter(l => l.tier === t);
 const lvlTag = id => `<span class="lvl" title="Lesson level">${LEVELS[lessonLevel(id)].short}</span>`;
 
 function bestQuiz(student, lessonId) {
@@ -6743,22 +6778,34 @@ function statusLegend() {
   return `<div class="row legend">${["ready", "opened", "progress", "complete"].map(s => statusTag({ s, label: { ready: "ready", opened: "opened", progress: "in progress", complete: "complete" }[s] })).join("")}<span class="status">Complete means ${Math.round(COMPLETE_AT * 100)}% or better on the lesson check.</span></div>`;
 }
 
+function tierBar() {
+  const counts = t => { const ls = tierPath(t).filter(l => inLevel(S.student, l.id)); return `${ls.filter(l => lessonStatus(S.student, l.id).s === "complete").length}/${ls.length}`; };
+  return `<div class="tierbar" role="group" aria-label="Show lessons by tier">
+    <button class="${S.tier ? "" : "on"}" data-act="tier" data-t="0">All tiers</button>
+    ${[1, 2, 3].map(t => `<button class="t${t} ${S.tier === t ? "on" : ""}" data-act="tier" data-t="${t}"><span class="tdot" style="background:var(--t${t})"></span>${TIERS[t]}<small>${counts(t)} done</small></button>`).join("")}
+  </div>`;
+}
+
 function viewMap() {
+  const shown = l => (S.showAbove || inLevel(S.student, l.id)) && tierOK(l.id);
+  const chaps = CURRICULUM.filter(c => !S.tier || chapterLessons(c).some(shown));
   return `<section style="display:flex;flex-direction:column;gap:14px">
-    <div class="row" style="justify-content:space-between"><div><span class="eyebrow">Curriculum · ${nameOf(S.student)}</span><h2>All chapters</h2></div>${statusLegend()}</div>
-    <div class="chapters">${CURRICULUM.map((c, ci) => {
-      const p = chapterProgress(S.student, c);
+    <div class="row" style="justify-content:space-between"><div><span class="eyebrow">Curriculum · ${nameOf(S.student)}</span><h2>${S.tier ? `${TIERS[S.tier]} path` : "All chapters"}</h2></div>${statusLegend()}</div>
+    ${tierBar()}
+    <p class="lede" style="margin:0">${S.tier ? `Showing only ${TIERS[S.tier].toLowerCase()} lessons, in chapter order (left to right, then down). The “Next” button after a lesson check follows this path.` : "Chapters run from foundations to advanced topics. Colors mark each lesson’s tier: do the Beginner lessons across all chapters first, then Intermediate, then Advanced."}</p>
+    <div class="chapters">${chaps.map(c => {
+      const ci = CURRICULUM.indexOf(c), p = chapterProgress(S.student, c);
       return `
       <article class="chap">
         <div class="chap-h"><button class="chap-link" data-act="chapter" data-id="${c.id}"><h3>${c.title}</h3></button><span class="chap-n">Ch ${ci + 1}</span></div>
         <div class="meter" title="${p.done} of ${p.total} complete"><span style="width:${(100 * p.done / p.total).toFixed(1)}%"></span><span class="meter-ready" style="width:${(100 * (p.ready - p.done) / p.total).toFixed(1)}%"></span></div>
         ${c.groups.map(g => {
-          const ls = g.lessons.filter(l => S.showAbove || inLevel(S.student, l.id));
+          const ls = g.lessons.filter(shown);
           return ls.length ? `<div class="grp">${g.title}</div><ul class="lessons">${ls.map(l => {
             const st = lessonStatus(S.student, l.id), above = !inLevel(S.student, l.id);
             return st.s === "soon"
               ? `<li><button disabled>${l.title}${statusTag(st)}</button></li>`
-              : `<li><button class="ready ${above ? "above" : ""}" data-act="lesson" data-id="${l.id}">${l.title}${above ? lvlTag(l.id) : ""}${statusTag(st)}</button></li>`;
+              : `<li><button class="ready t${l.tier} ${above ? "above" : ""}" data-act="lesson" data-id="${l.id}"><span class="lt">${l.title}${above ? lvlTag(l.id) : ""}</span><span class="row" style="gap:4px;flex-wrap:nowrap">${S.tier ? "" : tierTag(l.id, true)}${statusTag(st)}</span></button></li>`;
           }).join("")}</ul>` : "";
         }).join("")}
         <button class="fm-tile" data-act="chapter" data-id="${c.id}"><span class="fm-ico" aria-hidden="true">ƒ(x)</span><span><b>Key formulas</b><small>${(FORMULAS[c.id] || []).length} equations · chapter page</small></span><span aria-hidden="true">→</span></button>
@@ -6790,13 +6837,13 @@ function viewChapter() {
   const fs = FORMULAS[c.id] || [];
   return `
   <nav class="crumbs"><button data-act="go" data-v="learn">Learn</button><span>›</span><span>Chapter ${ci + 1}</span></nav>
-  <section style="display:flex;flex-direction:column;gap:8px"><span class="eyebrow">Chapter ${ci + 1} · ${nameOf(S.student)}: ${p.done} of ${p.total} complete</span><h1>${c.title}</h1></section>
+  <section style="display:flex;flex-direction:column;gap:10px"><span class="eyebrow">Chapter ${ci + 1} · ${nameOf(S.student)}: ${p.done} of ${p.total} complete</span><h1>${c.title}</h1>${tierBar()}</section>
   <div class="chap-grid">
     <div style="display:flex;flex-direction:column;gap:18px;min-width:0">
       ${c.groups.map(g => `<section style="display:flex;flex-direction:column;gap:8px"><h3>${g.title}</h3>
-        <div class="lesson-list">${g.lessons.filter(l => S.showAbove || inLevel(S.student, l.id)).map(l => {
+        <div class="lesson-list">${g.lessons.filter(l => (S.showAbove || inLevel(S.student, l.id)) && tierOK(l.id)).map(l => {
           const st = lessonStatus(S.student, l.id), les = LESSONS[l.id], above = !inLevel(S.student, l.id);
-          return `<button class="lesson-row ${above ? "above" : ""}" data-act="lesson" data-id="${l.id}" ${les ? "" : "disabled"}><span><b>${l.title}</b>${les ? `<small>about ${les.minutes} min · ${les.quiz.length}-question check${above ? " · above " + S.student + "'s level" : ""}</small>` : `<small>Not written yet</small>`}</span><span class="row" style="gap:6px">${lvlTag(l.id)}${statusTag(st)}</span></button>`;
+          return `<button class="lesson-row t${l.tier} ${above ? "above" : ""}" data-act="lesson" data-id="${l.id}" ${les ? "" : "disabled"}><span><b>${l.title}</b>${les ? `<small>about ${les.minutes} min · ${les.quiz.length}-question check${above ? " · above " + S.student + "'s level" : ""}</small>` : `<small>Not written yet</small>`}</span><span class="row" style="gap:6px">${tierTag(l.id)}${lvlTag(l.id)}${statusTag(st)}</span></button>`;
         }).join("")}</div></section>`).join("")}
       ${levelNote()}
       ${resetBlock("chapter", c.id, `Reset ${c.title} for ${nameOf(S.student)}`, `This erases ${nameOf(S.student)}'s lesson checks, "opened" marks, and chapter-only tests for ${c.title}. Other chapters and mixed tests stay.`)}
@@ -6866,13 +6913,15 @@ function viewLesson() {
   const score = st.graded ? les.quiz.filter((it, i) => isRight(it, st.answers[i])).length : null;
   const list = chapterLessons(meta.chapter);
   const ready = list.filter(l => LESSONS[l.id]);
-  const next = ready[ready.findIndex(l => l.id === S.lessonId) + 1];
+  // with a tier chosen, "Next" follows that tier's path across chapters
+  const path = S.tier ? tierPath(S.tier).filter(l => inLevel(S.student, l.id)) : ready;
+  const next = path[path.findIndex(l => l.id === S.lessonId) + 1];
   const status = lessonStatus(S.student, S.lessonId);
   return `
   <nav class="crumbs"><button data-act="go" data-v="learn">Learn</button><span>›</span><button data-act="chapter" data-id="${meta.chapter.id}">${meta.chapter.title}</button><span>›</span><span>${meta.group.title}</span></nav>
   <div class="lesson">
     <article class="prose">
-      <div><span class="eyebrow">${meta.chapter.title} · about ${les.minutes} min</span><h1>${les.title}</h1><div class="row" style="margin-top:8px">${lvlTag(S.lessonId)}${statusTag(status)}<span class="status">for ${nameOf(S.student)}${inLevel(S.student, S.lessonId) ? "" : " · above the level set for " + S.student}</span></div></div>
+      <div><span class="eyebrow">${meta.chapter.title} · about ${les.minutes} min</span><h1>${les.title}</h1><div class="row" style="margin-top:8px">${tierTag(S.lessonId)}${lvlTag(S.lessonId)}${statusTag(status)}<span class="status">for ${nameOf(S.student)}${inLevel(S.student, S.lessonId) ? "" : " · above the level set for " + S.student}</span></div></div>
       ${les.body()}
       <h3 id="check">Check yourself</h3>
       <p class="lede">Answer every question, then check. Number answers can be typed as whole numbers, decimals, or fractions like 7/2. Score ${Math.round(COMPLETE_AT * 100)}% or better to mark the lesson complete.</p>
@@ -7213,6 +7262,7 @@ app.addEventListener("click", async e => {
     case "nameclear": store.setSetting(S.student, { name: "" }); toast("Name reset"); break;
     case "setcap": store.setSetting(b.dataset.s, { maxLevel: b.dataset.k }); break;
     case "showabove": S.showAbove = !S.showAbove; render(); break;
+    case "tier": S.tier = +b.dataset.t; store.lsSet(LS_TIER, S.tier); render(); break;
     case "reset": S.confirmReset = { scope: b.dataset.scope, id: b.dataset.id, student: PERSON_SCOPES.includes(b.dataset.scope) ? b.dataset.id : S.student }; render(); break;
     case "resetno": S.confirmReset = null; render(); break;
     case "resetok": if (S.confirmReset) doReset(S.confirmReset); break;
