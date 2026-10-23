@@ -700,11 +700,11 @@ Object.assign(LESSONS, {
       <p><b>Watch for:</b> if the <i>items</i> are different (5 different books), stars and bars does not apply. If the <i>boxes</i> are identical (splitting into piles with no names), it doesn't apply either.</p>
       <p class="lede">Reference: <a href="https://artofproblemsolving.com/wiki/index.php/Ball-and-urn" target="_blank" rel="noopener">AoPS Wiki: Ball-and-urn (stars and bars)</a></p>`,
     quiz: [
-      { q: "In how many ways can 7 identical marbles be placed into 3 different boxes if boxes may be empty?", type: "num", answer: 36, explain: "C(7 + 2, 2) = C(9, 2) = 36." },
-      { q: "How many ordered solutions in <b>positive</b> integers does a + b + c + d = 8 have?", type: "num", answer: 35, explain: "C(8 − 1, 3) = C(7, 3) = 35." },
-      { q: "How many nonnegative integer solutions does x + y + z = 10 have if x ≥ 2?", type: "mc", choices: ["36", "45", "55", "66", "78"], answer: 1, explain: "Let x' = x − 2: x' + y + z = 8 → C(10, 2) = 45." },
+      { q: "In how many ways can 7 identical marbles be placed into 3 different boxes if boxes may be empty?", type: "num", answer: 36, explain: "Line up 7 stars (marbles) and 2 bars (dividers between the 3 boxes). Any arrangement of the 9 symbols is one way: choose where the 2 bars go, C(9, 2) = 36." },
+      { q: "How many ordered solutions in <b>positive</b> integers does a + b + c + d = 8 have?", type: "num", answer: 35, explain: "Line up 8 stars. Each variable must get at least one, so place 3 bars in the 7 gaps between stars: C(7, 3) = 35." },
+      { q: "How many nonnegative integer solutions does x + y + z = 10 have if x ≥ 2?", type: "mc", choices: ["36", "45", "55", "66", "78"], answer: 1, explain: "Give x its 2 first. Then share the remaining 8 freely: x' + y + z = 8. Stars and bars: C(8 + 2, 2) = C(10, 2) = 45." },
       { q: "A bakery sells 3 kinds of bagels. How many different bags of 5 bagels can you buy?", type: "mc", choices: ["10", "15", "21", "35", "125"], answer: 2, explain: "C(5 + 2, 2) = C(7, 2) = 21. (125 = 5³ would count the order bagels were picked, which doesn't matter.)" },
-      { q: "12 identical cookies are shared by 3 children so that each gets at least 2. How many ways?", type: "num", answer: 28, explain: "Give 2 each, then share 6 freely: C(8, 2) = 28." },
+      { q: "12 identical cookies are shared by 3 children so that each gets at least 2. How many ways?", type: "num", answer: 28, explain: "Hand out 2 cookies to each child first (6 used). Share the other 6 freely among 3: C(6 + 2, 2) = C(8, 2) = 28." },
     ],
   },
 
@@ -736,10 +736,10 @@ Object.assign(LESSONS, {
       <p><b>Fun fact:</b> McDonald's once sold nuggets in boxes of 6, 9, and 20. With three box sizes there's no simple formula, but you can check by hand that 43 is the largest impossible order.</p>
       <p class="lede">Reference: <a href="https://artofproblemsolving.com/wiki/index.php/Chicken_McNugget_Theorem" target="_blank" rel="noopener">AoPS Wiki: Chicken McNugget Theorem</a></p>`,
     quiz: [
-      { q: "Plays are worth 4 or 7 points. What is the largest score that is impossible?", type: "num", answer: 17, explain: "4 × 7 − 4 − 7 = 17." },
-      { q: "Using only 4s and 7s, how many positive integers cannot be made?", type: "num", answer: 9, explain: "(3 × 6) ÷ 2 = 9." },
-      { q: "For which pair of box sizes are there <b>infinitely many</b> impossible totals?", type: "mc", choices: ["5 and 7", "4 and 9", "6 and 9", "3 and 10", "7 and 11"], answer: 2, explain: "6 and 9 share the factor 3, so only multiples of 3 are possible." },
-      { q: "With coins worth 5 and 11, what is the largest amount you cannot pay exactly?", type: "num", answer: 39, explain: "55 − 5 − 11 = 39." },
+      { q: "Plays are worth 4 or 7 points. What is the largest score that is impossible?", type: "num", answer: 17, explain: "For two point values a and b with no common factor, the largest impossible total is ab − a − b = 28 − 11 = 17. Check: 18 = 4 + 7 + 7, 19 = 4 × 3 + 7, 20 = 4 × 5, 21 = 7 × 3, and adding 4s covers everything after." },
+      { q: "Using only 4s and 7s, how many positive integers cannot be made?", type: "num", answer: 9, explain: "For a and b with no common factor, (a − 1)(b − 1)/2 totals are impossible: 3 × 6 ÷ 2 = 9. They are 1, 2, 3, 5, 6, 9, 10, 13, 17." },
+      { q: "For which pair of box sizes are there <b>infinitely many</b> impossible totals?", type: "mc", choices: ["5 and 7", "4 and 9", "6 and 9", "3 and 10", "7 and 11"], answer: 2, explain: "6 and 9 are both multiples of 3, so every total is a multiple of 3. Any total like 10, 11, 13, … is impossible, forever." },
+      { q: "With coins worth 5 and 11, what is the largest amount you cannot pay exactly?", type: "num", answer: 39, explain: "5 and 11 share no factor, so the largest impossible amount is 5 × 11 − 5 − 11 = 39." },
       { q: "Using only 3s and 7s, which total is impossible?", type: "mc", choices: ["10", "11", "13", "14", "17"], answer: 1, explain: "11 − 7 = 4 and 11 itself are not multiples of 3. It's also 21 − 3 − 7 = 11, the largest impossible total." },
     ],
   },
@@ -1264,19 +1264,19 @@ Object.assign(LESSONS, {
       <p>Entry k of row n (counting from 0) is C(n, k). Adding the two above is <b>Pascal's rule</b>: C(n, k) = C(n − 1, k − 1) + C(n − 1, k).</p>
       <h3>Expanding (x + y)ⁿ</h3>
       ${rule("Binomial theorem:", "the coefficients of (x + y)ⁿ are row n of Pascal's triangle: the term with xⁿ⁻ᵏ yᵏ has coefficient C(n, k).")}
-      ${ex("Expand (x + 1)⁴.", "Row 4: 1 4 6 4 1, so <b>x⁴ + 4x³ + 6x² + 4x + 1</b>.")}
-      ${ex("Find the coefficient of x²y³ in (x + y)⁵.", "C(5, 3) = <b>10</b>.")}
-      ${ex("Find the coefficient of x² in (2x + 1)⁴.", "The term is C(4, 2)(2x)²(1)² = 6 × 4x² = <b>24</b>x². Don't forget to raise the 2 to the power too.", "trap")}
+      ${ex("Expand (x + 1)⁴.", ["The coefficients of (x + 1)ⁿ are row n of Pascal's triangle. Each entry is the sum of the two above it.", "Rows: 1 / 1 1 / 1 2 1 / 1 3 3 1 / 1 4 6 4 1.", "So (x + 1)⁴ = <b>x⁴ + 4x³ + 6x² + 4x + 1</b>."])}
+      ${ex("Find the coefficient of x²y³ in (x + y)⁵.", ["Expanding (x + y)⁵, each term picks x or y from each of the 5 factors.", "x²y³ means picking y from 3 of the 5 factors: C(5, 3) ways.", "C(5, 3) = <b>10</b>."])}
+      ${ex("Find the coefficient of x² in (2x + 1)⁴.", ["To get x², pick 2x from 2 of the 4 factors and 1 from the other 2.", "Ways to choose: C(4, 2) = 6.", "Each such term is (2x)² × 1² = 4x².", "6 × 4 = <b>24</b>. Forgetting to square the 2 gives 6, a common mistake."], "trap")}
       <h3>Row sums</h3>
       <p>Row n adds to 2ⁿ. That's also the number of subsets of an n-element set, since each subset chooses some number k of elements.</p>
-      ${ex("What is the sum of the coefficients of (3x − 1)⁴?", "Plug in x = 1: (3 − 1)⁴ = <b>16</b>.", "contest style")}
+      ${ex("What is the sum of the coefficients of (3x − 1)⁴?", ["Setting x = 1 turns every term into just its coefficient.", "So the sum of the coefficients is (3 × 1 − 1)⁴ = 2⁴ = <b>16</b>."], "contest style")}
       ${aops("Pascal%27s_Triangle", "Pascal's Triangle")}`,
     quiz: [
-      num("What is the sum of the numbers in row 6 of Pascal's triangle (row 0 is the single 1)?", 64, "2⁶ = 64."),
+      num("What is the sum of the numbers in row 6 of Pascal's triangle (row 0 is the single 1)?", 64, "Row n of Pascal's triangle adds to 2ⁿ. Row 6: 1 + 6 + 15 + 20 + 15 + 6 + 1 = 64."),
       num("What is the coefficient of x³ in (x + 1)⁶?", 20, "C(6, 3) = 20."),
-      num("What is the coefficient of x² in (x + 2)⁵?", 80, "C(5, 2) × 2³ = 10 × 8 = 80."),
-      num("How many subsets does a 7-element set have (including the empty set)?", 128, "2⁷ = 128."),
-      mc("Which equals C(10, 3) + C(10, 4)?", ["C(11, 3)", "C(11, 4)", "C(10, 7)", "C(20, 7)", "C(12, 4)"], 1, "Pascal's rule: C(10, 3) + C(10, 4) = C(11, 4)."),
+      num("What is the coefficient of x² in (x + 2)⁵?", 80, "To get x², choose x from 2 of the 5 factors and 2 from the other 3: C(5, 2) × 2³ = 10 × 8 = 80."),
+      num("How many subsets does a 7-element set have (including the empty set)?", 128, "Each of the 7 elements is either in or out: 2⁷ = 128."),
+      mc("Which equals C(10, 3) + C(10, 4)?", ["C(11, 3)", "C(11, 4)", "C(10, 7)", "C(20, 7)", "C(12, 4)"], 1, "In Pascal's triangle, two neighbors add to the number below them: C(10, 3) + C(10, 4) = C(11, 4)."),
     ],
   },
 
@@ -1314,19 +1314,19 @@ Object.assign(LESSONS, {
       <p>Adding |A| and |B| counts the overlap twice. Subtract it once.</p>
       ${fig(figVenn(), "The overlap sits inside both circles.")}
       ${rule("Two sets:", "|A ∪ B| = |A| + |B| − |A ∩ B|")}
-      ${ex("In a class of 30, 18 play soccer, 15 play basketball, and 8 play both. How many play neither?", "Play at least one: 18 + 15 − 8 = 25. Neither: <b>5</b>.")}
+      ${ex("In a class of 30, 18 play soccer, 15 play basketball, and 8 play both. How many play neither?", ["18 + 15 = 33 counts the 8 who play both twice.", "Subtract them once: 33 − 8 = 25 play at least one sport.", "30 − 25 = <b>5</b> play neither."])}
       <h3>Divisibility counts</h3>
       <p>From 1 to N, the number of multiples of d is ⌊N ÷ d⌋ (round down). Multiples of both 2 and 3 are multiples of 6.</p>
-      ${ex("How many numbers from 1 to 100 are divisible by 2 or 3?", "50 + 33 − 16 = <b>67</b>.")}
+      ${ex("How many numbers from 1 to 100 are divisible by 2 or 3?", ["Multiples of 2: 50. Multiples of 3: 33.", "Multiples of both (that is, of 6) were counted twice: 16 of them.", "50 + 33 − 16 = <b>67</b>."])}
       <h3>Three sets</h3>
       ${rule("Three sets:", "add the singles, subtract the pairs, add back the triple.")}
-      ${ex("How many numbers from 1 to 100 are divisible by 2, 3, or 5?", "Singles: 50 + 33 + 20 = 103. Pairs: ⌊100/6⌋ + ⌊100/10⌋ + ⌊100/15⌋ = 16 + 10 + 6 = 32. Triple: ⌊100/30⌋ = 3. Answer 103 − 32 + 3 = <b>74</b>.", "contest style")}
+      ${ex("How many numbers from 1 to 100 are divisible by 2, 3, or 5?", ["Add the singles: multiples of 2, 3, 5 are 50 + 33 + 20 = 103.", "Numbers in two lists got counted twice. Subtract multiples of 6, 10, 15: 16 + 10 + 6 = 32.", "Multiples of 30 were added 3 times and subtracted 3 times, so they're missing. Add them back: 3.", "103 − 32 + 3 = <b>74</b>."], "contest style")}
       ${aops("Principle_of_Inclusion-Exclusion", "Principle of Inclusion-Exclusion")}`,
     quiz: [
-      num("How many numbers from 1 to 60 are divisible by 3 or 5?", 28, "20 + 12 − 4 = 28."),
-      num("Of 30 students, 18 play soccer, 15 play basketball, and 8 play both. How many play neither?", 5, "30 − (18 + 15 − 8) = 5."),
-      num("How many numbers from 1 to 100 are divisible by neither 2 nor 3?", 33, "100 − 67 = 33."),
-      num("How many numbers from 1 to 100 are divisible by 2, 3, or 5?", 74, "103 − 32 + 3 = 74."),
+      num("How many numbers from 1 to 60 are divisible by 3 or 5?", 28, "Multiples of 3: 20. Of 5: 12. Of both (15): 4, counted twice. 20 + 12 − 4 = 28."),
+      num("Of 30 students, 18 play soccer, 15 play basketball, and 8 play both. How many play neither?", 5, "At least one sport: 18 + 15 − 8 = 25. Neither: 30 − 25 = 5."),
+      num("How many numbers from 1 to 100 are divisible by neither 2 nor 3?", 33, "Divisible by 2 or 3: 50 + 33 − 16 = 67. The rest, 100 − 67 = 33, are divisible by neither."),
+      num("How many numbers from 1 to 100 are divisible by 2, 3, or 5?", 74, "Singles 50 + 33 + 20 = 103. Subtract pairs (6, 10, 15): 16 + 10 + 6 = 32. Add back multiples of 30: 3. 74."),
       mc("How many integers from 1 to 120 share no factor with 30 (other than 1)?", ["24", "32", "40", "48", "64"], 1, "Not divisible by 2, 3, or 5. By inclusion–exclusion (or 120 × ½ × ⅔ × ⅘) that's 32."),
     ],
   },
@@ -1363,20 +1363,20 @@ Object.assign(LESSONS, {
       <p>Around a round table, only who sits next to whom matters. Turning everyone one seat to the left gives the same seating.</p>
       ${fig(figRoundTable(5), "Rotating this picture doesn't change who sits next to whom.")}
       ${rule("Round table:", "n people can be seated in (n − 1)! ways. Seat one person anywhere to fix the rotation, then arrange the rest.")}
-      ${ex("How many ways can 5 people sit at a round table?", "4! = <b>24</b>.")}
+      ${ex("How many ways can 5 people sit at a round table?", ["In a row, 5 people could sit 5! = 120 ways.", "At a round table, turning everyone one seat gives the same seating. Each seating appears in 5 rotations.", "120 ÷ 5 = 24 = 4!. Or: seat one person anywhere, then arrange the other 4 around them: 4! = <b>24</b>."])}
       <h3>Necklaces can flip</h3>
       <p>A bracelet can be turned over, so a seating and its mirror image are the same. Divide by 2 (when n ≥ 3).</p>
-      ${ex("How many different bracelets can be made with 6 different beads?", "5! ÷ 2 = <b>60</b>.")}
+      ${ex("How many different bracelets can be made with 6 different beads?", ["Around a circle, 6 beads can be arranged 5! = 120 ways (fix one bead, arrange the rest).", "A bracelet can also be flipped over, which makes each arrangement match its mirror image.", "120 ÷ 2 = <b>60</b>."])}
       <h3>Restrictions around a table</h3>
-      ${ex("6 people sit at a round table, and Ann and Ben must sit together. How many seatings?", "Glue them: 5 units around a table → 4! = 24. Times 2 for their order: <b>48</b>.")}
-      ${ex("4 men and 4 women sit at a round table alternating. How many seatings?", "Seat one man to fix rotation. Other 3 men: 3! = 6. Women in the 4 gaps: 4! = 24. Total <b>144</b>.", "contest style")}
+      ${ex("6 people sit at a round table, and Ann and Ben must sit together. How many seatings?", ["Glue Ann and Ben into one unit. Now 5 units sit around the table.", "Around a circle: (5 − 1)! = 24 ways.", "Ann and Ben can swap within their unit: × 2 = <b>48</b>."])}
+      ${ex("4 men and 4 women sit at a round table alternating. How many seatings?", ["Seat one man first. That fixes the rotation.", "The other 3 men take every other seat: 3! = 6 ways.", "The 4 women fill the 4 gaps between men: 4! = 24 ways. No more rotations to divide out, since the first man fixed them.", "6 × 24 = <b>144</b>."], "contest style")}
       ${aops("Circular_permutation", "Circular permutation")}`,
     quiz: [
-      num("How many ways can 6 people sit at a round table?", 120, "5! = 120."),
-      num("How many different necklaces (which can be flipped) use 7 different beads?", 360, "6! ÷ 2 = 360."),
-      num("5 people sit at a round table, and two particular people must sit together. How many seatings?", 12, "4 units → 3! = 6, times 2 = 12."),
-      num("4 couples sit at a round table, each couple together. How many seatings?", 96, "4 couple-units → 3! = 6, and each couple has 2 orders: 6 × 2⁴ = 96."),
-      mc("8 people sit at a round table. In how many seatings are Ann and Ben <b>not</b> next to each other?", ["2520", "3600", "4320", "5040", "1440"], 1, "Total 7! = 5040. Together: 6! × 2 = 1440. Not together: 3600."),
+      num("How many ways can 6 people sit at a round table?", 120, "Fix one person's seat to remove rotations, then arrange the other 5: 5! = 120."),
+      num("How many different necklaces (which can be flipped) use 7 different beads?", 360, "Around a circle: 6! = 720. Flipping makes mirror images the same: ÷ 2 = 360."),
+      num("5 people sit at a round table, and two particular people must sit together. How many seatings?", 12, "Glue the pair into one unit: 4 units around a table, 3! = 6. The pair can swap: × 2 = 12."),
+      num("4 couples sit at a round table, each couple together. How many seatings?", 96, "4 couple units around a table: 3! = 6. Each couple can swap seats: 2⁴ = 16. 6 × 16 = 96."),
+      mc("8 people sit at a round table. In how many seatings are Ann and Ben <b>not</b> next to each other?", ["2520", "3600", "4320", "5040", "1440"], 1, "All seatings: 7! = 5040. Ann and Ben together: glue them (7 units, 6! = 720) and swap (× 2) = 1440. Not together: 5040 − 1440 = 3600."),
     ],
   },
 
@@ -1394,15 +1394,15 @@ Object.assign(LESSONS, {
       <p>Check: D(4) = 3 × (2 + 1) = 9. D(5) = 4 × (9 + 2) = 44. ✓ For large n, D(n) is very close to n! ÷ e, so about 37% of all shuffles are derangements.</p>
       <h3>"Exactly k right"</h3>
       <p>Choose which k items are in the right place, then derange the rest.</p>
-      ${ex("4 letters go into 4 addressed envelopes at random. In how many ways is exactly one letter correct?", "Choose the correct one: 4 ways. Derange the other 3: D(3) = 2. Total <b>8</b>.")}
-      ${ex("4 people check their hats. How many ways can the hats be returned so at least one person gets their own?", "All: 24. Nobody: 9. Answer <b>15</b>.", "contest style")}
+      ${ex("4 letters go into 4 addressed envelopes at random. In how many ways is exactly one letter correct?", ["Pick which letter lands correctly: 4 choices.", "The other 3 must all be wrong. For letters A, B, C that's only BCA and CAB: D(3) = 2.", "4 × 2 = <b>8</b>."])}
+      ${ex("4 people check their hats. How many ways can the hats be returned so at least one person gets their own?", ["All ways to hand back 4 hats: 4! = 24.", "Ways where nobody gets their own (derangements): D(4) = 9. You can list them, or use D(n) = (n − 1)(D(n − 1) + D(n − 2)) = 3 × (2 + 1).", "At least one person gets their own: 24 − 9 = <b>15</b>."], "contest style")}
       ${aops("Derangement", "Derangement")}`,
     quiz: [
-      num("What is D(3), the number of derangements of 3 items?", 2, "BCA and CAB."),
-      num("What is D(5)?", 44, "4 × (9 + 2) = 44."),
-      num("5 students get their tests back at random. In how many ways do exactly 2 students get their own test?", 20, "C(5, 2) × D(3) = 10 × 2 = 20."),
-      num("4 people's hats are handed back at random. In how many ways does at least one person get their own hat?", 15, "24 − 9 = 15."),
-      mc("4 people's hats are handed back at random. What is the probability nobody gets their own hat?", ["1/4", "3/8", "1/3", "1/2", "9/16"], 1, "9 ÷ 24 = 3/8."),
+      num("What is D(3), the number of derangements of 3 items?", 2, "Items A, B, C with none in its own spot: BCA and CAB. That's 2."),
+      num("What is D(5)?", 44, "Use D(n) = (n − 1)(D(n − 1) + D(n − 2)). D(5) = 4 × (D(4) + D(3)) = 4 × (9 + 2) = 44."),
+      num("5 students get their tests back at random. In how many ways do exactly 2 students get their own test?", 20, "Choose the 2 who get their own: C(5, 2) = 10. The other 3 must all be wrong: D(3) = 2. 10 × 2 = 20."),
+      num("4 people's hats are handed back at random. In how many ways does at least one person get their own hat?", 15, "All orders: 24. Nobody gets their own: D(4) = 9. 24 − 9 = 15."),
+      mc("4 people's hats are handed back at random. What is the probability nobody gets their own hat?", ["1/4", "3/8", "1/3", "1/2", "9/16"], 1, "D(4) = 9 of the 4! = 24 orders: 9/24 = 3/8."),
     ],
   },
 });
@@ -1598,20 +1598,20 @@ Object.assign(LESSONS, {
       <p>We write 100 ≡ 2 (mod 7), read "100 is congruent to 2 mod 7."</p>
       <h3>Remainders behave</h3>
       ${rule("Key fact:", "to find the remainder of a sum or product, you can replace each number by its remainder first.")}
-      ${ex("What is the remainder when 47 × 53 is divided by 5?", "47 → 2 and 53 → 3. 2 × 3 = 6 → <b>1</b>.")}
+      ${ex("What is the remainder when 47 × 53 is divided by 5?", ["For remainders you can replace each number by its own remainder first.", "47 ÷ 5 leaves 2, and 53 ÷ 5 leaves 3.", "2 × 3 = 6, which leaves <b>1</b> when divided by 5. (Check: 47 × 53 = 2491.)"])}
       <p>Negative remainders are allowed and handy: 99 ≡ −1 (mod 10), so 99⁵ ≡ (−1)⁵ = −1 ≡ 9.</p>
       <h3>Powers and cycles</h3>
       <p>Find a small power that equals 1 (or repeats), then use it to cut a huge exponent down.</p>
-      ${ex("What is the remainder when 2¹⁰⁰ is divided by 7?", "2³ = 8 ≡ 1. 100 = 3 × 33 + 1, so 2¹⁰⁰ = (2³)³³ × 2 ≡ 1 × 2 = <b>2</b>.")}
+      ${ex("What is the remainder when 2¹⁰⁰ is divided by 7?", ["Find a power of 2 that leaves remainder 1: 2³ = 8 = 7 + 1.", "Write 2¹⁰⁰ = (2³)³³ × 2, since 3 × 33 = 99.", "Each 2³ acts like 1, so (2³)³³ acts like 1.", "Remainder 1 × 2 = <b>2</b>."])}
       <h3>Solving with remainders</h3>
-      ${ex("Find the smallest positive n with remainder 2 when divided by 3 and remainder 3 when divided by 5.", "List n ≡ 3 (mod 5): 3, 8, 13, … Check mod 3: 3 → 0, 8 → 2. ✓ <b>n = 8</b>.", "contest style")}
+      ${ex("Find the smallest positive n with remainder 2 when divided by 3 and remainder 3 when divided by 5.", ["List numbers that leave 3 when divided by 5: 3, 8, 13, 18, …", "Check each for remainder 2 when divided by 3. 3 leaves 0. 8 leaves 2. ✓", "<b>n = 8</b>."], "contest style")}
       ${aops("Modular_arithmetic/Introduction", "Modular arithmetic")}`,
     quiz: [
-      num("What is the remainder when 1234 × 5678 is divided by 5?", 2, "4 × 3 = 12, remainder 2."),
-      num("What is the remainder when 3²⁰ is divided by 8?", 1, "3² = 9 ≡ 1, so 3²⁰ = (3²)¹⁰ ≡ 1."),
-      mc("Today is Monday. What day of the week is it 50 days from now?", ["Monday", "Tuesday", "Wednesday", "Saturday", "Sunday"], 1, "50 = 7 × 7 + 1, so one day after Monday."),
-      num("What is the remainder when 2⁵⁰ is divided by 7?", 4, "2³ ≡ 1 and 50 = 48 + 2, so 2⁵⁰ ≡ 2² = 4."),
-      num("What is the smallest positive integer that leaves remainder 2 when divided by 3 and remainder 3 when divided by 5?", 8, "8 = 2·3 + 2 = 1·5 + 3."),
+      num("What is the remainder when 1234 × 5678 is divided by 5?", 2, "Only the last digits matter for remainders mod 5: 1234 leaves 4 and 5678 leaves 3. 4 × 3 = 12, which leaves 2."),
+      num("What is the remainder when 3²⁰ is divided by 8?", 1, "3² = 9 leaves remainder 1 when divided by 8. 3²⁰ = (3²)¹⁰, so it leaves 1¹⁰ = 1."),
+      mc("Today is Monday. What day of the week is it 50 days from now?", ["Monday", "Tuesday", "Wednesday", "Saturday", "Sunday"], 1, "50 days is 7 full weeks plus 1 day. One day after Monday is Tuesday."),
+      num("What is the remainder when 2⁵⁰ is divided by 7?", 4, "2³ = 8 leaves 1. 2⁵⁰ = (2³)¹⁶ × 2², so it leaves 1 × 4 = 4."),
+      num("What is the smallest positive integer that leaves remainder 2 when divided by 3 and remainder 3 when divided by 5?", 8, "Numbers leaving 3 mod 5: 3, 8, 13, … The first that leaves 2 mod 3 is 8."),
     ],
   },
 
@@ -1649,19 +1649,19 @@ Object.assign(LESSONS, {
       ${tbl(["Base", "Place values (right to left)", "Digits"], [["2", "1, 2, 4, 8, 16, 32, …", "0–1"], ["3", "1, 3, 9, 27, 81, …", "0–2"], ["5", "1, 5, 25, 125, …", "0–4"], ["8", "1, 8, 64, 512, …", "0–7"]])}
       <h3>Converting to base 10</h3>
       ${rule("Expand:", "d₃d₂d₁d₀ in base b = d₃b³ + d₂b² + d₁b + d₀")}
-      ${ex("Convert 1011₂ to base 10.", "8 + 0 + 2 + 1 = <b>11</b>.")}
-      ${ex("Convert 212₃ to base 10.", "2 × 9 + 1 × 3 + 2 = <b>23</b>.")}
+      ${ex("Convert 1011₂ to base 10.", ["In base 2 the places are 8, 4, 2, 1 (from left).", "1011₂ = 1 × 8 + 0 × 4 + 1 × 2 + 1 × 1.", "8 + 2 + 1 = <b>11</b>."])}
+      ${ex("Convert 212₃ to base 10.", ["Base 3 places are 9, 3, 1.", "212₃ = 2 × 9 + 1 × 3 + 2 × 1.", "18 + 3 + 2 = <b>23</b>."])}
       <h3>Converting from base 10</h3>
       <p>Subtract the biggest place values you can, or divide by b repeatedly and read the remainders from bottom to top.</p>
-      ${ex("Write 100 in base 7.", "49 goes into 100 twice (98), leaving 2. Then 0 sevens and 2 ones: <b>202₇</b>.")}
-      ${ex("Write 25 in base 2.", "25 = 16 + 8 + 1, so <b>11001₂</b>.")}
-      ${ex("For what base b does 121 in base b equal 144?", "b² + 2b + 1 = (b + 1)² = 144, so b + 1 = 12 and <b>b = 11</b>.", "contest style")}
+      ${ex("Write 100 in base 7.", ["Base 7 places are 49, 7, 1.", "100 ÷ 49 = 2, remainder 2. So the 49s digit is 2.", "The 2 left has 0 sevens and 2 ones.", "<b>202₇</b>. Check: 2 × 49 + 0 + 2 = 100."])}
+      ${ex("Write 25 in base 2.", ["Base 2 places: 16, 8, 4, 2, 1.", "25 = 16 + 8 + 1. Put a 1 in those places and 0 elsewhere.", "<b>11001₂</b>."])}
+      ${ex("For what base b does 121 in base b equal 144?", ["121 in base b means 1 × b² + 2 × b + 1.", "That's (b + 1)².", "(b + 1)² = 144, so b + 1 = 12 and <b>b = 11</b>."], "contest style")}
       ${aops("Number_base", "Number base")}`,
     quiz: [
-      num("What is 11010₂ in base 10?", 26, "16 + 8 + 2 = 26."),
-      num("What is 123₄ in base 10?", 27, "1 × 16 + 2 × 4 + 3 = 27."),
-      mc("What is 50 written in base 3?", ["1212₃", "1221₃", "2112₃", "1122₃", "2211₃"], 0, "50 = 1 × 27 + 2 × 9 + 1 × 3 + 2."),
-      num("In what base b does 25 (base b) equal 17 in base 10?", 6, "2b + 5 = 17, so b = 6."),
+      num("What is 11010₂ in base 10?", 26, "Places 16, 8, 4, 2, 1. 11010₂ has 1s in the 16, 8, and 2 places: 26."),
+      num("What is 123₄ in base 10?", 27, "Base 4 places are 16, 4, 1: 1 × 16 + 2 × 4 + 3 = 27."),
+      mc("What is 50 written in base 3?", ["1212₃", "1221₃", "2112₃", "1122₃", "2211₃"], 0, "Base 3 places are 27, 9, 3, 1. 50 = 1 × 27 + 2 × 9 + 1 × 3 + 2, so 1212₃."),
+      num("In what base b does 25 (base b) equal 17 in base 10?", 6, "25 in base b means 2b + 5. 2b + 5 = 17 gives b = 6."),
       num("How many digits does 100 have when written in base 2?", 7, "64 ≤ 100 &lt; 128, so the highest place is 2⁶: 7 digits."),
     ],
   },
@@ -1698,19 +1698,19 @@ Object.assign(LESSONS, {
       <p>Equations like 3x + 5y = 47 have infinitely many real solutions, but contest problems usually want whole numbers (people, coins, tickets). Those are called Diophantine equations.</p>
       <h3>Find one, then step</h3>
       <p>Use remainders to find which values work, then step. In ax + by = c, adding b to x and subtracting a from y keeps the sum the same.</p>
-      ${ex("How many positive integer solutions does 3x + 5y = 47 have?", "47 − 5y must be a multiple of 3. Try y = 1: 42 ✓ (x = 14). Step y by 3, x by −5: (14, 1), (9, 4), (4, 7). Next would make x negative. <b>3</b> solutions.")}
-      ${ex("Using only 5¢ and 7¢ stamps, how many ways can you make exactly $1.00?", "5x + 7y = 100 needs y to be a multiple of 5: y = 0, 5, 10 gives x = 20, 13, 6. <b>3</b> ways.")}
+      ${ex("How many positive integer solutions does 3x + 5y = 47 have?", ["Try small y until 47 − 5y is a multiple of 3. y = 1: 42 = 3 × 14, so (x, y) = (14, 1).", "To find more, trade: raising y by 3 adds 15, so x must drop by 5 to keep the total.", "(14, 1), (9, 4), (4, 7). The next, (−1, 10), has x negative.", "<b>3</b> solutions."])}
+      ${ex("Using only 5¢ and 7¢ stamps, how many ways can you make exactly $1.00?", ["Write 5x + 7y = 100, with x fives and y sevens.", "100 and 5x are multiples of 5, so 7y must be too. So y is a multiple of 5.", "y = 0: x = 20. y = 5: x = 13. y = 10: x = 6. y = 15 is too many (105).", "<b>3</b> ways."])}
       <h3>When there are none</h3>
       ${rule("Existence:", "ax + by = c has integer solutions only when gcd(a, b) divides c.")}
-      ${ex("Can 4x + 6y = 15 have integer solutions?", "The left side is always even, and 15 is odd. <b>No</b>.")}
-      ${ex("Pens cost $3 and notebooks $5. Mia spends exactly $34 and buys at least one of each. What is the most notebooks she could buy?", "3x + 5y = 34. y must leave 34 − 5y divisible by 3: y = 2 (x = 8) or y = 5 (x = 3). Most notebooks: <b>5</b>.", "contest style")}
+      ${ex("Can 4x + 6y = 15 have integer solutions?", ["4x and 6y are both even, so 4x + 6y is always even.", "15 is odd.", "<b>No</b> integer solutions."])}
+      ${ex("Pens cost $3 and notebooks $5. Mia spends exactly $34 and buys at least one of each. What is the most notebooks she could buy?", ["x pens and y notebooks: 3x + 5y = 34.", "Try each y from the top: y = 6 leaves 4 (no), y = 5 leaves 9 = 3 × 3 (yes, x = 3).", "x = 3 is at least 1, so it's allowed.", "Most notebooks: <b>5</b>."], "contest style")}
       ${aops("Diophantine_equation", "Diophantine equation")}`,
     quiz: [
-      num("How many positive integer solutions does 2x + 3y = 20 have?", 3, "y must be even: y = 2, 4, 6 give x = 7, 4, 1."),
-      num("How many ways can you make exactly 100¢ from 5¢ and 7¢ stamps (using zero of one kind is allowed)?", 3, "y = 0, 5, 10."),
-      num("Pens cost $3 and notebooks $5. Spending exactly $34 on at least one of each, what is the most notebooks you can buy?", 5, "y = 5 notebooks, 3 pens."),
-      num("How many positive integer solutions does x + 2y = 11 have?", 5, "y = 1 to 5 each give a positive x."),
-      mc("How many integer solutions does 4x + 6y = 15 have?", ["0", "1", "2", "3", "Infinitely many"], 0, "gcd(4, 6) = 2 doesn't divide 15."),
+      num("How many positive integer solutions does 2x + 3y = 20 have?", 3, "2x is even and 20 is even, so 3y is even and y is even. y = 2, 4, 6 give x = 7, 4, 1. That's 3."),
+      num("How many ways can you make exactly 100¢ from 5¢ and 7¢ stamps (using zero of one kind is allowed)?", 3, "5x + 7y = 100 forces y to be a multiple of 5. y = 0, 5, 10 give x = 20, 13, 6. That's 3."),
+      num("Pens cost $3 and notebooks $5. Spending exactly $34 on at least one of each, what is the most notebooks you can buy?", 5, "3x + 5y = 34. y = 6 leaves 4 (not a multiple of 3). y = 5 leaves 9, so 3 pens. 5 notebooks."),
+      num("How many positive integer solutions does x + 2y = 11 have?", 5, "x = 11 − 2y must be positive, so y can be 1, 2, 3, 4, 5. That's 5."),
+      mc("How many integer solutions does 4x + 6y = 15 have?", ["0", "1", "2", "3", "Infinitely many"], 0, "4x + 6y is always even, and 15 is odd. No solutions."),
     ],
   },
 });
@@ -1983,25 +1983,25 @@ Object.assign(LESSONS, {
     body: () => `
       <h3>Factoring</h3>
       <p>To factor x² + bx + c, find two numbers that multiply to c and add to b.</p>
-      ${ex("Solve x² − 5x + 6 = 0.", "−2 and −3 multiply to 6 and add to −5: (x − 2)(x − 3) = 0, so <b>x = 2 or 3</b>.")}
+      ${ex("Solve x² − 5x + 6 = 0.", ["Look for two numbers that multiply to +6 and add to −5: −2 and −3.", "So x² − 5x + 6 = (x − 2)(x − 3).", "A product is 0 only if a factor is 0: x − 2 = 0 or x − 3 = 0.", "<b>x = 2 or x = 3</b>."])}
       <h3>The quadratic formula</h3>
       ${rule("Quadratic formula:", "ax² + bx + c = 0 → x = (−b ± √(b² − 4ac)) ÷ 2a")}
       <p>The part under the root, b² − 4ac, is the <b>discriminant</b>. Positive: two real roots. Zero: one root. Negative: no real roots.</p>
-      ${ex("For what k does x² + 6x + k = 0 have exactly one solution?", "36 − 4k = 0 → <b>k = 9</b>. (Then it's (x + 3)².)")}
+      ${ex("For what k does x² + 6x + k = 0 have exactly one solution?", ["A quadratic has exactly one solution when it's a perfect square, so it touches 0 only once.", "x² + 6x + 9 = (x + 3)², so <b>k = 9</b>.", "Same answer from the discriminant: b² − 4ac = 36 − 4k must be 0."])}
       <h3>Vieta's formulas</h3>
       <p>You often don't need the roots, only their sum or product.</p>
       ${rule("Vieta:", "roots r and s of ax² + bx + c satisfy r + s = −b/a and rs = c/a.")}
-      ${ex("r and s are the roots of x² − 7x + 3. Find r² + s².", "r + s = 7, rs = 3. r² + s² = (r + s)² − 2rs = 49 − 6 = <b>43</b>.", "contest style")}
+      ${ex("r and s are the roots of x² − 7x + 3. Find r² + s².", ["Vieta's formulas for x² + bx + c: the roots add to −b and multiply to c. Here r + s = 7 and rs = 3.", "Square the sum: (r + s)² = r² + 2rs + s².", "So r² + s² = (r + s)² − 2rs = 49 − 6 = <b>43</b>. No need to find r and s."], "contest style")}
       <h3>The vertex</h3>
       ${fig(figParabola(), "y = x² − 6x + 5: roots 1 and 5, lowest point halfway between at x = 3.")}
       <p>The vertex is at x = −b/(2a), halfway between the roots. Or complete the square: x² − 6x + 5 = (x − 3)² − 4, so the minimum is −4.</p>
       ${aops("Vieta%27s_formulas", "Vieta's formulas")}`,
     quiz: [
-      num("What is the larger root of x² − x − 12 = 0?", 4, "(x − 4)(x + 3)."),
-      num("What is the sum of the roots of 2x² − 10x + 3 = 0?", 5, "−b/a = 10/2."),
-      num("r and s are the roots of x² − 5x + 2 = 0. What is r² + s²?", 21, "25 − 2(2) = 21."),
-      num("What is the smallest value of x² − 8x + 20?", 4, "(x − 4)² + 4."),
-      mc("For what k does x² + 6x + k = 0 have exactly one real solution?", ["3", "6", "9", "12", "36"], 2, "Discriminant 36 − 4k = 0."),
+      num("What is the larger root of x² − x − 12 = 0?", 4, "Find two numbers that multiply to −12 and add to −1: −4 and 3. (x − 4)(x + 3) = 0 gives x = 4 or −3. The larger is 4."),
+      num("What is the sum of the roots of 2x² − 10x + 3 = 0?", 5, "For ax² + bx + c, the roots add to −b/a = 10/2 = 5."),
+      num("r and s are the roots of x² − 5x + 2 = 0. What is r² + s²?", 21, "r + s = 5 and rs = 2. r² + s² = (r + s)² − 2rs = 25 − 4 = 21."),
+      num("What is the smallest value of x² − 8x + 20?", 4, "Complete the square: x² − 8x + 16 + 4 = (x − 4)² + 4. The square is at least 0, so the minimum is 4."),
+      mc("For what k does x² + 6x + k = 0 have exactly one real solution?", ["3", "6", "9", "12", "36"], 2, "One solution means a perfect square: x² + 6x + 9 = (x + 3)². So k = 9."),
     ],
   },
 
@@ -2188,21 +2188,21 @@ Object.assign(LESSONS, {
     body: () => `
       <h3>One root on the bottom</h3>
       <p>Multiply top and bottom by that root.</p>
-      ${ex("Simplify 6/√3.", "6√3 ÷ 3 = <b>2√3</b>.")}
+      ${ex("Simplify 6/√3.", ["Multiply top and bottom by √3: 6√3 / (√3 × √3).", "√3 × √3 = 3, so it's 6√3 / 3.", "= <b>2√3</b>."])}
       <h3>Conjugates</h3>
       <p>a + √b and a − √b are <b>conjugates</b>. Their product has no root: (a + √b)(a − √b) = a² − b.</p>
-      ${ex("Find (√5 + √3)(√5 − √3).", "5 − 3 = <b>2</b>.")}
-      ${ex("Simplify 1/(√2 + 1).", "Multiply by (√2 − 1)/(√2 − 1): (√2 − 1)/(2 − 1) = <b>√2 − 1</b>.")}
+      ${ex("Find (√5 + √3)(√5 − √3).", ["This is (a + b)(a − b) = a² − b² with a = √5 and b = √3.", "(√5)² − (√3)² = 5 − 3 = <b>2</b>."])}
+      ${ex("Simplify 1/(√2 + 1).", ["Multiply top and bottom by the conjugate, √2 − 1. This is like multiplying by 1.", "Bottom: (√2 + 1)(√2 − 1) = 2 − 1 = 1.", "So the fraction is (√2 − 1)/1 = <b>√2 − 1</b>."])}
       <h3>Telescoping sums</h3>
       <p>Each term 1/(√(n+1) + √n) rationalizes to √(n+1) − √n. Add a run of them and almost everything cancels.</p>
-      ${ex("Find 1/(1 + √2) + 1/(√2 + √3) + … + 1/(√99 + √100).", "(√2 − 1) + (√3 − √2) + … + (√100 − √99) = √100 − 1 = <b>9</b>.", "contest style")}
+      ${ex("Find 1/(1 + √2) + 1/(√2 + √3) + … + 1/(√99 + √100).", ["Rationalize each term: 1/(√n + √(n+1)) = √(n+1) − √n, since the bottom becomes (n + 1) − n = 1.", "The sum becomes (√2 − 1) + (√3 − √2) + ··· + (√100 − √99).", "Everything cancels except −1 and √100.", "√100 − 1 = <b>9</b>."], "contest style")}
       ${aops("Rationalizing_the_denominator", "Rationalizing the denominator")}`,
     quiz: [
-      mc("Simplify 10/√5.", ["√5", "2√5", "5√2", "10√5", "2"], 1, "10√5 ÷ 5."),
-      num("What is (√7 + 2)(√7 − 2)?", 3, "7 − 4."),
-      mc("Simplify 1/(√3 − 1).", ["√3 + 1", "√3 − 1", "(√3 + 1)/2", "(√3 − 1)/2", "2/(√3 + 1)"], 2, "Multiply by (√3 + 1)/(√3 + 1): (√3 + 1)/2."),
-      num("What is (√3 + 1)² + (√3 − 1)²?", 8, "(4 + 2√3) + (4 − 2√3)."),
-      mc("What is 1/(√2 + 1) + 1/(√3 + √2) + 1/(2 + √3)?", ["1", "√2", "2", "√3", "3"], 0, "(√2 − 1) + (√3 − √2) + (2 − √3) = 1."),
+      mc("Simplify 10/√5.", ["√5", "2√5", "5√2", "10√5", "2"], 1, "Multiply top and bottom by √5: 10√5 / 5 = 2√5."),
+      num("What is (√7 + 2)(√7 − 2)?", 3, "(a + b)(a − b) = a² − b²: (√7)² − 2² = 7 − 4 = 3."),
+      mc("Simplify 1/(√3 − 1).", ["√3 + 1", "√3 − 1", "(√3 + 1)/2", "(√3 − 1)/2", "2/(√3 + 1)"], 2, "Multiply top and bottom by √3 + 1. The bottom becomes 3 − 1 = 2, so the answer is (√3 + 1)/2."),
+      num("What is (√3 + 1)² + (√3 − 1)²?", 8, "(√3 + 1)² = 3 + 2√3 + 1 = 4 + 2√3. (√3 − 1)² = 4 − 2√3. The √3 parts cancel: 8."),
+      mc("What is 1/(√2 + 1) + 1/(√3 + √2) + 1/(2 + √3)?", ["1", "√2", "2", "√3", "3"], 0, "Rationalize each: √2 − 1, √3 − √2, 2 − √3. Adding, everything cancels except 2 − 1 = 1."),
     ],
   },
 
@@ -2213,19 +2213,19 @@ Object.assign(LESSONS, {
       <p>You can't compute 3⁴⁰ by hand, but you can still tell whether it's bigger than 2⁶⁰.</p>
       <h3>Match the exponents</h3>
       <p>Pull out a common exponent, then compare bases.</p>
-      ${ex("Which is bigger, 2³⁰ or 3²⁰?", "2³⁰ = (2³)¹⁰ = 8¹⁰ and 3²⁰ = (3²)¹⁰ = 9¹⁰. So <b>3²⁰</b> is bigger.")}
-      ${ex("Order 2⁵⁵, 3⁴⁴, 5³³, 6²² from least to greatest.", "Each exponent is a multiple of 11: 32¹¹, 81¹¹, 125¹¹, 36¹¹. Order: <b>2⁵⁵ &lt; 6²² &lt; 3⁴⁴ &lt; 5³³</b>.", "contest style")}
+      ${ex("Which is bigger, 2³⁰ or 3²⁰?", ["The exponents 30 and 20 share a factor of 10. Rewrite both as something to the 10th power.", "2³⁰ = (2³)¹⁰ = 8¹⁰. 3²⁰ = (3²)¹⁰ = 9¹⁰.", "9 &gt; 8, so <b>3²⁰</b> is bigger."])}
+      ${ex("Order 2⁵⁵, 3⁴⁴, 5³³, 6²² from least to greatest.", ["Every exponent is a multiple of 11, so write each as something to the 11th power.", "2⁵⁵ = (2⁵)¹¹ = 32¹¹. 3⁴⁴ = 81¹¹. 5³³ = 125¹¹. 6²² = 36¹¹.", "Compare the bases: 32 &lt; 36 &lt; 81 &lt; 125.", "<b>2⁵⁵ &lt; 6²² &lt; 3⁴⁴ &lt; 5³³</b>."], "contest style")}
       <h3>Match the bases</h3>
       <p>When the bases are powers of the same number, rewrite them.</p>
-      ${ex("Which is bigger, 4¹⁰ or 8⁷?", "4¹⁰ = 2²⁰ and 8⁷ = 2²¹. <b>8⁷</b>.")}
+      ${ex("Which is bigger, 4¹⁰ or 8⁷?", ["Write both as powers of 2.", "4¹⁰ = (2²)¹⁰ = 2²⁰. 8⁷ = (2³)⁷ = 2²¹.", "2²¹ is bigger, so <b>8⁷</b>."])}
       <p>Rough sizes help too: 2¹⁰ = 1024 ≈ 10³, so 2³⁰ ≈ 10⁹.</p>
       ${aops("Exponent", "Exponent")}`,
     quiz: [
       mc("Which is largest?", ["2⁶⁰", "3⁴⁰", "5²⁰", "6²⁰", "7²⁰"], 1, "2⁶⁰ = 8²⁰ and 3⁴⁰ = 9²⁰. 9²⁰ beats all the others."),
-      mc("Which is smallest: 2¹⁰⁰, 3⁷⁵, 5⁵⁰?", ["2¹⁰⁰", "3⁷⁵", "5⁵⁰", "They're equal", "Can't tell"], 0, "16²⁵, 27²⁵, 25²⁵."),
-      num("For what k is 8ᵏ = 2³⁰?", 10, "2³ᵏ = 2³⁰."),
-      num("What is the smallest positive integer n with 3ⁿ &gt; 1000?", 7, "3⁶ = 729, 3⁷ = 2187."),
-      mc("Let a = 2⁵⁵, b = 3⁴⁴, c = 5³³, d = 6²². Which order is correct?", ["a &lt; b &lt; c &lt; d", "d &lt; a &lt; b &lt; c", "a &lt; b &lt; d &lt; c", "a &lt; d &lt; b &lt; c", "c &lt; b &lt; d &lt; a"], 3, "32¹¹ &lt; 36¹¹ &lt; 81¹¹ &lt; 125¹¹."),
+      mc("Which is smallest: 2¹⁰⁰, 3⁷⁵, 5⁵⁰?", ["2¹⁰⁰", "3⁷⁵", "5⁵⁰", "They're equal", "Can't tell"], 0, "All exponents are multiples of 25: 2¹⁰⁰ = 16²⁵, 3⁷⁵ = 27²⁵, 5⁵⁰ = 25²⁵. 16 is the smallest base."),
+      num("For what k is 8ᵏ = 2³⁰?", 10, "8ᵏ = (2³)ᵏ = 2³ᵏ. 3k = 30, so k = 10."),
+      num("What is the smallest positive integer n with 3ⁿ &gt; 1000?", 7, "Powers of 3: 3, 9, 27, 81, 243, 729, 2187. 3⁶ = 729 is short, 3⁷ = 2187 passes 1000. n = 7."),
+      mc("Let a = 2⁵⁵, b = 3⁴⁴, c = 5³³, d = 6²². Which order is correct?", ["a &lt; b &lt; c &lt; d", "d &lt; a &lt; b &lt; c", "a &lt; b &lt; d &lt; c", "a &lt; d &lt; b &lt; c", "c &lt; b &lt; d &lt; a"], 3, "Write each as an 11th power: a = 32¹¹, b = 81¹¹, c = 125¹¹, d = 36¹¹. So a &lt; d &lt; b &lt; c."),
     ],
   },
 });
@@ -2353,21 +2353,21 @@ Object.assign(LESSONS, {
       <h3>The factorizations</h3>
       ${rule("Cubes:", "a³ + b³ = (a + b)(a² − ab + b²) · a³ − b³ = (a − b)(a² + ab + b²)")}
       <p>Memory aid: the first factor copies the sign; the middle term of the second factor has the opposite sign.</p>
-      ${ex("Factor x³ − 8.", "8 = 2³: <b>(x − 2)(x² + 2x + 4)</b>.")}
-      ${ex("Simplify (10³ − 1) ÷ (10 − 1).", "10² + 10 + 1 = <b>111</b>. (Check: 999 ÷ 9 = 111.)")}
+      ${ex("Factor x³ − 8.", ["a³ − b³ = (a − b)(a² + ab + b²).", "Here a = x and b = 2, since 8 = 2³.", "<b>(x − 2)(x² + 2x + 4)</b>."])}
+      ${ex("Simplify (10³ − 1) ÷ (10 − 1).", ["10³ − 1 = (10 − 1)(10² + 10 + 1) by the difference of cubes.", "Dividing by (10 − 1) leaves 10² + 10 + 1 = <b>111</b>.", "Check: 999 ÷ 9 = 111."])}
       <h3>Cube of a sum</h3>
       <p>(a + b)³ = a³ + 3a²b + 3ab² + b³. The coefficients 1, 3, 3, 1 come from Pascal's triangle.</p>
-      ${ex("Compute 11³.", "(10 + 1)³ = 1000 + 300 + 30 + 1 = <b>1331</b>.")}
+      ${ex("Compute 11³.", ["(a + b)³ = a³ + 3a²b + 3ab² + b³.", "(10 + 1)³ = 1000 + 3 × 100 + 3 × 10 + 1.", "= <b>1331</b>. (It's row 3 of Pascal's triangle, 1 3 3 1.)"])}
       <h3>From a + b and ab</h3>
       ${rule("Shortcut:", "a³ + b³ = (a + b)³ − 3ab(a + b)")}
-      ${ex("a + b = 5 and ab = 6. Find a³ + b³.", "125 − 3 × 6 × 5 = 125 − 90 = <b>35</b>. (Check: a, b = 2, 3 and 8 + 27 = 35.)", "contest style")}
+      ${ex("a + b = 5 and ab = 6. Find a³ + b³.", ["Cube the sum: (a + b)³ = a³ + b³ + 3ab(a + b).", "So a³ + b³ = (a + b)³ − 3ab(a + b) = 125 − 3 × 6 × 5.", "125 − 90 = <b>35</b>. Check: a, b are 2 and 3, and 8 + 27 = 35."], "contest style")}
       ${aops("Sum_of_cubes", "Sum of cubes")}`,
     quiz: [
-      num("a + b = 5 and ab = 6. What is a³ + b³?", 35, "125 − 90."),
-      num("What is 11³?", 1331, "1000 + 300 + 30 + 1."),
-      mc("Factor x³ − 8.", ["(x − 2)³", "(x − 2)(x² + 2x + 4)", "(x − 2)(x² − 2x + 4)", "(x + 2)(x² − 2x + 4)", "(x − 2)(x + 2)²"], 1, "a³ − b³ = (a − b)(a² + ab + b²) with b = 2."),
-      num("What is (10³ − 1) ÷ (10 − 1)?", 111, "100 + 10 + 1."),
-      num("a − b = 2 and ab = 15. What is a³ − b³?", 98, "(a − b)³ + 3ab(a − b) = 8 + 90. (a = 5, b = 3: 125 − 27 = 98.)"),
+      num("a + b = 5 and ab = 6. What is a³ + b³?", 35, "a³ + b³ = (a + b)³ − 3ab(a + b) = 125 − 90 = 35."),
+      num("What is 11³?", 1331, "(10 + 1)³ = 10³ + 3·10² + 3·10 + 1 = 1331."),
+      mc("Factor x³ − 8.", ["(x − 2)³", "(x − 2)(x² + 2x + 4)", "(x − 2)(x² − 2x + 4)", "(x + 2)(x² − 2x + 4)", "(x − 2)(x + 2)²"], 1, "Difference of cubes: a³ − b³ = (a − b)(a² + ab + b²), with a = x and b = 2."),
+      num("What is (10³ − 1) ÷ (10 − 1)?", 111, "10³ − 1 = (10 − 1)(100 + 10 + 1), so the quotient is 111."),
+      num("a − b = 2 and ab = 15. What is a³ − b³?", 98, "a³ − b³ = (a − b)³ + 3ab(a − b) = 8 + 3 × 15 × 2 = 98. Check with a = 5, b = 3: 125 − 27 = 98."),
     ],
   },
 
@@ -2378,20 +2378,20 @@ Object.assign(LESSONS, {
       <h3>The trick</h3>
       <p>An equation like xy + x + y = 23 doesn't factor as it stands. Add the right constant to both sides and it does.</p>
       ${rule("SFFT:", "xy + ax + by = c becomes (x + b)(y + a) = c + ab.")}
-      ${ex("Rewrite xy + x + y = 23.", "Add 1: xy + x + y + 1 = 24, which is <b>(x + 1)(y + 1) = 24</b>.")}
+      ${ex("Rewrite xy + x + y = 23.", ["Notice (x + 1)(y + 1) = xy + x + y + 1.", "The left side is only missing the + 1, so add 1 to both sides.", "<b>(x + 1)(y + 1) = 24</b>."])}
       <h3>Counting solutions</h3>
       <p>Once it's a product equal to a number, list factor pairs.</p>
-      ${ex("How many ordered pairs of positive integers solve xy + x + y = 23?", "(x + 1)(y + 1) = 24 with both factors at least 2: 2×12, 3×8, 4×6, 6×4, 8×3, 12×2. <b>6</b> pairs.")}
-      ${ex("Find positive integers x, y with xy − 2x − 3y = 0 and x as large as possible.", "(x − 3)(y − 2) = 6. Largest x − 3 is 6 (with y − 2 = 1): <b>x = 9</b>, y = 3.")}
+      ${ex("How many ordered pairs of positive integers solve xy + x + y = 23?", ["Factor: (x + 1)(y + 1) = 24.", "x and y are positive, so both factors are at least 2.", "Ordered factor pairs of 24 with both ≥ 2: 2×12, 3×8, 4×6, 6×4, 8×3, 12×2.", "<b>6</b> pairs."])}
+      ${ex("Find positive integers x, y with xy − 2x − 3y = 0 and x as large as possible.", ["(x − 3)(y − 2) = xy − 2x − 3y + 6. Add 6 to both sides to get (x − 3)(y − 2) = 6.", "To make x big, make x − 3 big: 6, with y − 2 = 1.", "<b>x = 9</b>, y = 3. Check: 27 − 18 − 9 = 0. ✓"])}
       <h3>Fractions in disguise</h3>
-      ${ex("How many ordered pairs of positive integers satisfy 1/x + 1/y = 1/2?", "Multiply by 2xy: 2y + 2x = xy → xy − 2x − 2y = 0 → (x − 2)(y − 2) = 4. Pairs (1, 4), (2, 2), (4, 1) give (3, 6), (4, 4), (6, 3). <b>3</b>.", "contest style")}
+      ${ex("How many ordered pairs of positive integers satisfy 1/x + 1/y = 1/2?", ["Clear fractions by multiplying by 2xy: 2y + 2x = xy.", "Rearrange: xy − 2x − 2y = 0. Add 4: (x − 2)(y − 2) = 4.", "Positive factor pairs of 4: 1 × 4, 2 × 2, 4 × 1. (Negative pairs would make x or y too small.)", "They give (3, 6), (4, 4), (6, 3): <b>3</b> pairs."], "contest style")}
       ${aops("Simon%27s_Favorite_Factoring_Trick", "Simon's Favorite Factoring Trick")}`,
     quiz: [
-      num("How many ordered pairs of positive integers satisfy xy + x + y = 11?", 4, "(x + 1)(y + 1) = 12: 2×6, 3×4, 4×3, 6×2."),
-      num("Positive integers x and y satisfy xy − 2x − 3y = 0. What is the largest possible x?", 9, "(x − 3)(y − 2) = 6."),
-      num("What number must be added to xy + 5x + 4y so it factors as (x + 4)(y + 5)?", 20, "(x + 4)(y + 5) = xy + 5x + 4y + 20."),
-      num("A rectangle with whole-number sides has area equal to its perimeter. How many different rectangles (non-congruent) work?", 2, "ab = 2a + 2b → (a − 2)(b − 2) = 4: 3×6 and 4×4."),
-      mc("How many ordered pairs of positive integers satisfy 1/x + 1/y = 1/2?", ["1", "2", "3", "4", "6"], 2, "(x − 2)(y − 2) = 4: (3, 6), (4, 4), (6, 3)."),
+      num("How many ordered pairs of positive integers satisfy xy + x + y = 11?", 4, "Add 1: (x + 1)(y + 1) = 12. Factor pairs with both at least 2: 2×6, 3×4, 4×3, 6×2. That's 4."),
+      num("Positive integers x and y satisfy xy − 2x − 3y = 0. What is the largest possible x?", 9, "Add 6: (x − 3)(y − 2) = 6. Largest x − 3 is 6, so x = 9."),
+      num("What number must be added to xy + 5x + 4y so it factors as (x + 4)(y + 5)?", 20, "Multiply out (x + 4)(y + 5) = xy + 5x + 4y + 20. The missing piece is 20."),
+      num("A rectangle with whole-number sides has area equal to its perimeter. How many different rectangles (non-congruent) work?", 2, "ab = 2a + 2b. Rearrange and add 4: (a − 2)(b − 2) = 4. Pairs 1 × 4 and 2 × 2 give 3 × 6 and 4 × 4."),
+      mc("How many ordered pairs of positive integers satisfy 1/x + 1/y = 1/2?", ["1", "2", "3", "4", "6"], 2, "Multiply by 2xy: xy − 2x − 2y = 0. Add 4: (x − 2)(y − 2) = 4. The pairs 1 × 4, 2 × 2, 4 × 1 give (3, 6), (4, 4), (6, 3)."),
     ],
   },
 
@@ -2401,20 +2401,20 @@ Object.assign(LESSONS, {
     body: () => `
       <h3>Chains of conjugates</h3>
       <p>Multiply by (x − 1) and watch a product collapse one difference of squares at a time.</p>
-      ${ex("Compute (2 + 1)(2² + 1)(2⁴ + 1)(2⁸ + 1).", "Multiply by (2 − 1) = 1: (2 − 1)(2 + 1) = 2² − 1, then (2² − 1)(2² + 1) = 2⁴ − 1, and so on to <b>2¹⁶ − 1 = 65535</b>.")}
+      ${ex("Compute (2 + 1)(2² + 1)(2⁴ + 1)(2⁸ + 1).", ["Multiply by (2 − 1), which is 1, so nothing changes.", "(2 − 1)(2 + 1) = 2² − 1 (difference of squares).", "(2² − 1)(2² + 1) = 2⁴ − 1. Then (2⁴ − 1)(2⁴ + 1) = 2⁸ − 1. Then (2⁸ − 1)(2⁸ + 1) = 2¹⁶ − 1.", "<b>2¹⁶ − 1 = 65,535</b>."])}
       <h3>Three-term squares</h3>
       ${rule("Three terms:", "(a + b + c)² = a² + b² + c² + 2(ab + bc + ca)")}
-      ${ex("a + b + c = 6 and ab + bc + ca = 11. Find a² + b² + c².", "36 − 22 = <b>14</b>.")}
+      ${ex("a + b + c = 6 and ab + bc + ca = 11. Find a² + b² + c².", ["(a + b + c)² = a² + b² + c² + 2(ab + bc + ca).", "36 = a² + b² + c² + 22.", "a² + b² + c² = <b>14</b>."])}
       <h3>Spot the identity</h3>
-      ${ex("Compute 2025² − 2024 × 2026.", "2024 × 2026 = (2025 − 1)(2025 + 1) = 2025² − 1. Answer <b>1</b>.", "contest style")}
-      ${ex("Simplify (x + y)² − (x − y)².", "Difference of squares: (2x)(2y) = <b>4xy</b>.")}
+      ${ex("Compute 2025² − 2024 × 2026.", ["2024 and 2026 are 1 below and 1 above 2025.", "2024 × 2026 = (2025 − 1)(2025 + 1) = 2025² − 1.", "2025² − (2025² − 1) = <b>1</b>."], "contest style")}
+      ${ex("Simplify (x + y)² − (x − y)².", ["Treat it as A² − B² = (A − B)(A + B), with A = x + y and B = x − y.", "A − B = 2y and A + B = 2x.", "(2y)(2x) = <b>4xy</b>."])}
       ${aops("Algebraic_manipulation", "Algebraic manipulation")}`,
     quiz: [
-      num("What is (3 + 1)(3² + 1)(3⁴ + 1)?", 3280, "(3⁸ − 1) ÷ 2 = 6560 ÷ 2. Or 4 × 10 × 82."),
-      num("a + b + c = 10 and a² + b² + c² = 38. What is ab + bc + ca?", 31, "(100 − 38) ÷ 2."),
-      num("What is 1001 × 999?", 999999, "1000² − 1."),
-      mc("What is (x + y)² − (x − y)²?", ["0", "2xy", "4xy", "2x² + 2y²", "4x²"], 2, "(2x)(2y)."),
-      num("What is 2025² − 2024 × 2026?", 1, "2024 × 2026 = 2025² − 1."),
+      num("What is (3 + 1)(3² + 1)(3⁴ + 1)?", 3280, "Direct: 4 × 10 × 82 = 3280. The trick: multiply by (3 − 1) = 2 to telescope to 3⁸ − 1 = 6560, then divide by 2: 3280."),
+      num("a + b + c = 10 and a² + b² + c² = 38. What is ab + bc + ca?", 31, "(a + b + c)² = a² + b² + c² + 2(ab + bc + ca). 100 = 38 + 2(ab + bc + ca), so ab + bc + ca = 31."),
+      num("What is 1001 × 999?", 999999, "(1000 + 1)(1000 − 1) = 1000² − 1 = 999,999."),
+      mc("What is (x + y)² − (x − y)²?", ["0", "2xy", "4xy", "2x² + 2y²", "4x²"], 2, "Difference of squares with A = x + y, B = x − y: (A − B)(A + B) = (2y)(2x) = 4xy."),
+      num("What is 2025² − 2024 × 2026?", 1, "2024 × 2026 = (2025 − 1)(2025 + 1) = 2025² − 1. So the difference is 1."),
     ],
   },
 });
@@ -2639,19 +2639,19 @@ Object.assign(LESSONS, {
       ${rule("Ratios:", "45-45-90 → x : x : x√2 · 30-60-90 → x : x√3 : 2x (short leg, long leg, hypotenuse)")}
       <h3>Where they come from</h3>
       <p>A square's diagonal cuts it into two 45-45-90 triangles. An equilateral triangle's height cuts it into two 30-60-90 triangles.</p>
-      ${ex("Find the diagonal of a square with side 5.", "<b>5√2</b>.")}
-      ${ex("A 30-60-90 triangle has hypotenuse 10. Find its legs.", "Short leg 5, long leg <b>5√3</b>.")}
+      ${ex("Find the diagonal of a square with side 5.", ["The diagonal cuts the square into two 45-45-90 triangles with legs 5.", "In a 45-45-90 triangle the hypotenuse is leg × √2 (from 5² + 5² = 50).", "Diagonal = <b>5√2</b>."])}
+      ${ex("A 30-60-90 triangle has hypotenuse 10. Find its legs.", ["30-60-90 sides are in the ratio 1 : √3 : 2.", "The hypotenuse (the 2) is 10, so the short leg (the 1) is 5.", "The long leg is 5√3. Check: 25 + 75 = 100. ✓"])}
       <h3>Equilateral triangles</h3>
       ${rule("Equilateral, side s:", "height = (√3/2) s · area = (√3/4) s²")}
-      ${ex("Find the area of an equilateral triangle with side 6.", "(√3/4) × 36 = <b>9√3</b>.")}
-      ${ex("Find the area of a regular hexagon with side 2.", "Six equilateral triangles of side 2: 6 × √3 = <b>6√3</b>.", "contest style")}
+      ${ex("Find the area of an equilateral triangle with side 6.", ["Drop a height from the top. It splits the triangle into two 30-60-90 triangles with short leg 3.", "Height = 3√3.", "Area = ½ × 6 × 3√3 = <b>9√3</b>. (The formula (√3/4) × side² gives the same.)"])}
+      ${ex("Find the area of a regular hexagon with side 2.", ["Lines from the center to each corner split a regular hexagon into 6 equilateral triangles of side 2.", "Each has area (√3/4) × 4 = √3.", "6 × √3 = <b>6√3</b>."], "contest style")}
       ${aops("Right_triangle", "Right triangle")}`,
     quiz: [
-      mc("What is the diagonal of a square with side 5?", ["5", "5√2", "5√3", "10", "25"], 1, "45-45-90."),
-      num("A 30-60-90 triangle has short leg 7. How long is the hypotenuse?", 14, "2 × 7."),
-      mc("A 30-60-90 triangle has hypotenuse 10. How long is the longer leg?", ["5", "5√2", "5√3", "10√3", "20"], 2, "Short leg 5, long leg 5√3."),
-      mc("What is the area of an equilateral triangle with side 6?", ["9", "9√3", "18", "18√3", "36√3"], 1, "(√3/4) × 36."),
-      num("A 45-45-90 triangle has hypotenuse 8√2. How long is each leg?", 8, "Divide by √2."),
+      mc("What is the diagonal of a square with side 5?", ["5", "5√2", "5√3", "10", "25"], 1, "The diagonal makes two 45-45-90 triangles, and the hypotenuse is leg × √2: 5√2."),
+      num("A 30-60-90 triangle has short leg 7. How long is the hypotenuse?", 14, "In a 30-60-90 triangle the hypotenuse is twice the short leg: 14."),
+      mc("A 30-60-90 triangle has hypotenuse 10. How long is the longer leg?", ["5", "5√2", "5√3", "10√3", "20"], 2, "Sides go 1 : √3 : 2. Hypotenuse 10 means short leg 5 and long leg 5√3."),
+      mc("What is the area of an equilateral triangle with side 6?", ["9", "9√3", "18", "18√3", "36√3"], 1, "Area of an equilateral triangle = (√3/4) × side² = (√3/4) × 36 = 9√3."),
+      num("A 45-45-90 triangle has hypotenuse 8√2. How long is each leg?", 8, "Hypotenuse = leg × √2, so leg = 8√2 ÷ √2 = 8."),
     ],
   },
 
@@ -2865,17 +2865,17 @@ Object.assign(LESSONS, {
       ${rule("Inscribed angle:", "½ × the arc it cuts off. All inscribed angles on the same arc are equal.")}
       <h3>Angles in a semicircle</h3>
       <p>A diameter cuts off a 180° arc, so any angle inscribed in a semicircle is 90°.</p>
-      ${ex("AB is a diameter and C is on the circle with angle CAB = 35°. Find angle ABC.", "Angle ACB = 90°. So ABC = 180 − 90 − 35 = <b>55°</b>.")}
+      ${ex("AB is a diameter and C is on the circle with angle CAB = 35°. Find angle ABC.", ["An angle inscribed in a semicircle is 90°, so angle ACB = 90°.", "The triangle's angles add to 180: angle ABC = 180 − 90 − 35 = <b>55°</b>."])}
       <h3>Cyclic quadrilaterals</h3>
       <p>If all four corners of a quadrilateral lie on a circle, opposite angles cut off arcs that make the whole circle. So they add to 180°.</p>
-      ${ex("ABCD is inscribed in a circle with angle A = 75°. Find angle C.", "180 − 75 = <b>105°</b>.")}
+      ${ex("ABCD is inscribed in a circle with angle A = 75°. Find angle C.", ["Opposite angles of a quadrilateral inscribed in a circle add to 180°. (Together they cut off the whole circle, 360°, and each is half its arc.)", "180 − 75 = <b>105°</b>."])}
       ${aops("Inscribed_angle", "Inscribed angle")}`,
     quiz: [
-      num("A central angle is 100°. What is an inscribed angle on the same arc?", 50, "Half."),
-      num("What is an angle inscribed in a semicircle, in degrees?", 90, "Half of 180°."),
-      num("Quadrilateral ABCD is inscribed in a circle and angle A = 75°. What is angle C?", 105, "Opposite angles add to 180°."),
-      num("An inscribed angle cuts off an arc of 140°. How big is the angle?", 70, "Half the arc."),
-      mc("Triangle ABC is inscribed in a circle with AB a diameter. Angle A = 35°. What is angle B?", ["35°", "45°", "55°", "65°", "90°"], 2, "C = 90°, so B = 55°."),
+      num("A central angle is 100°. What is an inscribed angle on the same arc?", 50, "An inscribed angle is half the central angle on the same arc: 100 ÷ 2 = 50."),
+      num("What is an angle inscribed in a semicircle, in degrees?", 90, "A semicircle is a 180° arc, and an inscribed angle is half its arc: 90°."),
+      num("Quadrilateral ABCD is inscribed in a circle and angle A = 75°. What is angle C?", 105, "Opposite angles of a cyclic quadrilateral add to 180°: 180 − 75 = 105."),
+      num("An inscribed angle cuts off an arc of 140°. How big is the angle?", 70, "An inscribed angle is half its arc: 140 ÷ 2 = 70."),
+      mc("Triangle ABC is inscribed in a circle with AB a diameter. Angle A = 35°. What is angle B?", ["35°", "45°", "55°", "65°", "90°"], 2, "AB is a diameter, so angle C is 90°. B = 180 − 90 − 35 = 55°."),
     ],
   },
 
@@ -2885,21 +2885,21 @@ Object.assign(LESSONS, {
     body: () => `
       <h3>Tangent meets radius at 90°</h3>
       ${fig(figTangent(), "Radius ⟂ tangent, and the two tangents from P are equal.")}
-      ${ex("Point P is 13 from the center of a circle of radius 5. How long is the tangent from P?", "Right triangle with hypotenuse 13 and leg 5: <b>12</b>.")}
+      ${ex("Point P is 13 from the center of a circle of radius 5. How long is the tangent from P?", ["A tangent meets the radius at a right angle.", "So the center, the touch point, and P form a right triangle: hypotenuse 13 (center to P), one leg 5 (radius).", "Tangent = √(169 − 25) = √144 = <b>12</b>."])}
       <h3>Equal tangents</h3>
       ${rule("Two-tangent rule:", "the two tangent segments from an outside point to a circle are equal.")}
       <p>This gives the "Pitot" rule for a quadrilateral drawn around a circle: AB + CD = BC + DA.</p>
       <h3>Circles inside triangles</h3>
       <p>The circle touching all three sides of a triangle is the <b>incircle</b>; its radius is the inradius r.</p>
       ${rule("Inradius:", "Area = r × s, where s is half the perimeter. For a right triangle, r = (a + b − c) ÷ 2.")}
-      ${ex("Find the inradius of a 3-4-5 triangle.", "Area 6, s = 6, so r = <b>1</b>. Or (3 + 4 − 5) ÷ 2 = 1.", "contest style")}
+      ${ex("Find the inradius of a 3-4-5 triangle.", ["Area = r × s, where s is half the perimeter. (Split the triangle into 3 triangles from the incenter, each with height r.)", "Area = ½ × 3 × 4 = 6. s = (3 + 4 + 5)/2 = 6.", "r = 6 ÷ 6 = <b>1</b>. For a right triangle, r = (a + b − c)/2 also works: (3 + 4 − 5)/2 = 1."], "contest style")}
       ${aops("Tangent_line", "Tangent line")}`,
     quiz: [
-      num("Point P is 10 units from the center of a circle with radius 6. How long is a tangent segment from P?", 8, "√(100 − 36)."),
-      num("Tangent segments PA and PB are drawn from P to a circle. PA = 7. What is PB?", 7, "Equal tangents."),
-      num("What angle (in degrees) does a tangent make with the radius at the point of contact?", 90, "Always perpendicular."),
-      num("What is the inradius of a right triangle with sides 3, 4, 5?", 1, "(3 + 4 − 5) ÷ 2."),
-      mc("Quadrilateral ABCD is drawn around a circle (each side touches it). AB = 8, BC = 10, CD = 12. What is DA?", ["6", "8", "10", "12", "14"], 2, "AB + CD = BC + DA → 20 = 10 + DA."),
+      num("Point P is 10 units from the center of a circle with radius 6. How long is a tangent segment from P?", 8, "The tangent, the radius (6), and the line to the center (10) make a right triangle: √(100 − 36) = 8."),
+      num("Tangent segments PA and PB are drawn from P to a circle. PA = 7. What is PB?", 7, "Two tangent segments from the same point to a circle are always equal, so PB = 7."),
+      num("What angle (in degrees) does a tangent make with the radius at the point of contact?", 90, "A tangent is always perpendicular to the radius at the point where it touches: 90°."),
+      num("What is the inradius of a right triangle with sides 3, 4, 5?", 1, "For a right triangle, r = (leg + leg − hypotenuse)/2 = (3 + 4 − 5)/2 = 1. Or area 6 ÷ half-perimeter 6 = 1."),
+      mc("Quadrilateral ABCD is drawn around a circle (each side touches it). AB = 8, BC = 10, CD = 12. What is DA?", ["6", "8", "10", "12", "14"], 2, "Each corner has two equal tangent pieces, so opposite sides add up the same: AB + CD = BC + DA. 8 + 12 = 10 + DA, so DA = 10."),
     ],
   },
 
@@ -2910,21 +2910,21 @@ Object.assign(LESSONS, {
       <p>All three rules below say the same thing: from a point P, the product of the two distances along any line through the circle is the same number.</p>
       <h3>Crossing chords</h3>
       ${rule("Chords:", "if chords AB and CD cross at P, then PA × PB = PC × PD.")}
-      ${ex("Two chords cross. One is cut into 3 and 8; the other has one piece 4. Find the other piece.", "3 × 8 = 4 × x → <b>x = 6</b>.")}
+      ${ex("Two chords cross. One is cut into 3 and 8; the other has one piece 4. Find the other piece.", ["When two chords cross, the products of their pieces are equal.", "3 × 8 = 4 × x, so 24 = 4x.", "<b>x = 6</b>."])}
       <h3>Secants from outside</h3>
       ${rule("Secants:", "from outside point P, PA × PB = PC × PD, where A, C are the near points and B, D the far points.")}
-      ${ex("From P, one secant has PA = 4 and PB = 9. Another has PC = 3. Find PD.", "36 = 3 × PD → <b>PD = 12</b>.")}
+      ${ex("From P, one secant has PA = 4 and PB = 9. Another has PC = 3. Find PD.", ["For two secants from the same point P: near distance × far distance is the same for both.", "PA × PB = 4 × 9 = 36.", "PC × PD = 36, so 3 × PD = 36 and <b>PD = 12</b>."])}
       <h3>Tangent and secant</h3>
       ${rule("Tangent:", "PT² = PA × PB")}
-      ${ex("A tangent from P has length 6. A secant from P meets the circle first at distance 4. How far is the far point?", "36 = 4 × PB → PB = <b>9</b>, so the chord inside is 5.")}
-      ${ex("A chord is bisected by a diameter at right angles. The halves are 6 and 6, and the diameter is cut into 3 and x. Find the diameter.", "6 × 6 = 3x → x = 12. Diameter <b>15</b>.", "contest style")}
+      ${ex("A tangent from P has length 6. A secant from P meets the circle first at distance 4. How far is the far point?", ["For a tangent and a secant from P: tangent² = near × far.", "6² = 36 = 4 × PB.", "PB = <b>9</b>. The part inside the circle is 9 − 4 = 5."])}
+      ${ex("A chord is bisected by a diameter at right angles. The halves are 6 and 6, and the diameter is cut into 3 and x. Find the diameter.", ["The chord and the diameter cross, so the products of their pieces are equal.", "6 × 6 = 3 × x, so x = 12.", "Diameter = 3 + 12 = <b>15</b>."], "contest style")}
       ${aops("Power_of_a_point", "Power of a point")}`,
     quiz: [
-      num("Two chords cross. One is cut into pieces 3 and 8. The other has one piece of 4. How long is its other piece?", 6, "24 = 4x."),
-      num("A tangent from P has length 6. A secant from P has near distance 4. What is the far distance?", 9, "36 = 4 × PB."),
-      num("A chord is cut by a perpendicular diameter into halves 6 and 6. The diameter is split into 3 and x. How long is the diameter?", 15, "36 = 3x → x = 12, so 3 + 12."),
-      num("From P, secant 1 has PA = 4, PB = 9. Secant 2 has PC = 3. What is PD?", 12, "36 = 3 × PD."),
-      mc("From P, a secant meets the circle at distances 2 and 8. How long is a tangent from P?", ["2", "3", "4", "5", "6"], 2, "PT² = 16."),
+      num("Two chords cross. One is cut into pieces 3 and 8. The other has one piece of 4. How long is its other piece?", 6, "Crossing chords: 3 × 8 = 4 × x, so x = 6."),
+      num("A tangent from P has length 6. A secant from P has near distance 4. What is the far distance?", 9, "Tangent² = near × far: 36 = 4 × PB, so PB = 9."),
+      num("A chord is cut by a perpendicular diameter into halves 6 and 6. The diameter is split into 3 and x. How long is the diameter?", 15, "Crossing chords: 6 × 6 = 3 × x, so x = 12. Diameter 3 + 12 = 15."),
+      num("From P, secant 1 has PA = 4, PB = 9. Secant 2 has PC = 3. What is PD?", 12, "Two secants from P: 4 × 9 = 3 × PD, so PD = 12."),
+      mc("From P, a secant meets the circle at distances 2 and 8. How long is a tangent from P?", ["2", "3", "4", "5", "6"], 2, "Tangent² = near × far = 2 × 8 = 16, so the tangent is 4."),
     ],
   },
 });
@@ -3056,21 +3056,21 @@ Object.assign(LESSONS, {
     body: () => `
       <h3>Area from three sides</h3>
       ${rule("Heron's formula:", "s = (a + b + c) ÷ 2, then Area = √(s(s − a)(s − b)(s − c)).")}
-      ${ex("Find the area of a triangle with sides 5, 5, 6.", "s = 8. √(8 × 3 × 3 × 2) = √144 = <b>12</b>. (Check: height 4 onto base 6.)")}
+      ${ex("Find the area of a triangle with sides 5, 5, 6.", ["Heron: area = √(s(s − a)(s − b)(s − c)), with s half the perimeter.", "s = (5 + 5 + 6)/2 = 8. s − a, s − b, s − c = 3, 3, 2.", "√(8 × 3 × 3 × 2) = √144 = <b>12</b>.", "Check: the height to the base 6 is √(25 − 9) = 4, and ½ × 6 × 4 = 12."])}
       <h3>The 13-14-15 triangle</h3>
       <p>This one appears constantly. It's two right triangles glued together: 5-12-13 and 9-12-15, sharing the height 12.</p>
-      ${ex("Find the area of the triangle with sides 13, 14, 15.", "s = 21. √(21 × 8 × 7 × 6) = √7056 = <b>84</b>.")}
+      ${ex("Find the area of the triangle with sides 13, 14, 15.", ["s = (13 + 14 + 15)/2 = 21.", "s − a, s − b, s − c = 8, 7, 6.", "Factor instead of multiplying out: 21 × 8 × 7 × 6 = (3 × 7) × 2³ × 7 × (2 × 3) = 2⁴ × 3² × 7².", "√(2⁴ × 3² × 7²) = 2² × 3 × 7 = <b>84</b>."])}
       <h3>Finding heights</h3>
       <p>Once you have the area, any height is 2 × Area ÷ base.</p>
-      ${ex("Find the height to side 14 in the 13-14-15 triangle.", "2 × 84 ÷ 14 = <b>12</b>.")}
-      ${ex("Find the area of a triangle with sides 10, 17, 21.", "s = 24. √(24 × 14 × 7 × 3) = √7056 = <b>84</b>.", "contest style")}
+      ${ex("Find the height to side 14 in the 13-14-15 triangle.", ["Area = ½ × base × height.", "84 = ½ × 14 × h.", "h = 168 ÷ 14 = <b>12</b>."])}
+      ${ex("Find the area of a triangle with sides 10, 17, 21.", ["s = (10 + 17 + 21)/2 = 24.", "s − a, s − b, s − c = 14, 7, 3.", "24 × 14 × 7 × 3 = 7056, and √7056 = <b>84</b>."], "contest style")}
       ${aops("Heron%27s_Formula", "Heron's Formula")}`,
     quiz: [
-      num("What is the area of a triangle with sides 13, 14, 15?", 84, "s = 21: √(21·8·7·6)."),
-      num("What is the area of a triangle with sides 5, 5, 6?", 12, "s = 8: √(8·3·3·2)."),
-      num("What is the area of a triangle with sides 9, 10, 17?", 36, "s = 18: √(18·9·8·1) = √1296."),
-      num("In the 13-14-15 triangle, how long is the height to the side of length 14?", 12, "2 × 84 ÷ 14."),
-      mc("What is the area of a triangle with sides 10, 17, 21?", ["60", "64", "72", "80", "84"], 4, "s = 24: √(24·14·7·3) = 84."),
+      num("What is the area of a triangle with sides 13, 14, 15?", 84, "s = 21, and s − a, s − b, s − c = 8, 7, 6. √(21 × 8 × 7 × 6) = √7056 = 84."),
+      num("What is the area of a triangle with sides 5, 5, 6?", 12, "s = 8, and the differences are 3, 3, 2. √(8 × 3 × 3 × 2) = √144 = 12."),
+      num("What is the area of a triangle with sides 9, 10, 17?", 36, "s = 18, and the differences are 9, 8, 1. √(18 × 9 × 8 × 1) = √1296 = 36."),
+      num("In the 13-14-15 triangle, how long is the height to the side of length 14?", 12, "Area 84 = ½ × 14 × h, so h = 168 ÷ 14 = 12."),
+      mc("What is the area of a triangle with sides 10, 17, 21?", ["60", "64", "72", "80", "84"], 4, "s = 24, and the differences are 14, 7, 3. √(24 × 14 × 7 × 3) = √7056 = 84."),
     ],
   },
 
@@ -3084,18 +3084,18 @@ Object.assign(LESSONS, {
       ${fig(figPick(), "Triangle (0,0), (6,0), (0,4): 7 interior points (blue).")}
       <h3>Boundary points</h3>
       <p>A segment from (x₁, y₁) to (x₂, y₂) passes through gcd(|Δx|, |Δy|) + 1 grid points, ends included. Adding up the edges of a polygon, each corner gets counted twice, so B = sum of the gcd's.</p>
-      ${ex("How many grid points are strictly inside the triangle (0,0), (6,0), (0,4)?", "Area 12. B = gcd(6,0) + gcd(6,4) + gcd(0,4) = 6 + 2 + 4 = 12. So 12 = I + 6 − 1 and <b>I = 7</b>.", "contest style")}
+      ${ex("How many grid points are strictly inside the triangle (0,0), (6,0), (0,4)?", ["Pick's theorem: Area = I + B/2 − 1, with I the inside points and B the boundary points.", "Area = ½ × 6 × 4 = 12.", "Boundary points on each side = gcd of its x-change and y-change: 6 (bottom), 4 (left), gcd(6, 4) = 2 (slanted). B = 12.", "12 = I + 6 − 1, so <b>I = 7</b>."], "contest style")}
       <h3>The shoelace formula</h3>
       <p>List the corners in order around the shape and repeat the first one at the end. Multiply diagonally down-right and subtract the products going up-right.</p>
       ${rule("Shoelace:", "Area = ½ |(x₁y₂ − x₂y₁) + (x₂y₃ − x₃y₂) + … + (xₙy₁ − x₁yₙ)|")}
-      ${ex("Find the area of the triangle (0, 0), (4, 1), (1, 3).", "(0·1 − 4·0) + (4·3 − 1·1) + (1·0 − 0·3) = 0 + 11 + 0. Area <b>11/2</b>.")}
+      ${ex("Find the area of the triangle (0, 0), (4, 1), (1, 3).", ["Shoelace: list the corners in order and, for each neighbor pair, compute x₁y₂ − x₂y₁.", "(0, 0) → (4, 1): 0 × 1 − 4 × 0 = 0. (4, 1) → (1, 3): 4 × 3 − 1 × 1 = 11. (1, 3) → (0, 0): 0.", "Add and halve: 11 ÷ 2 = <b>11/2</b>."])}
       ${aops("Pick%27s_Theorem", "Pick's Theorem")}`,
     quiz: [
-      num("A lattice polygon has 10 interior points and 8 boundary points. What is its area?", 13, "10 + 4 − 1."),
-      num("What is the area of the triangle with vertices (1, 1), (5, 2), (2, 6)? (Decimal OK.)", 9.5, "Shoelace: |−3 + 26 − 4| ÷ 2 = 19/2."),
-      num("What is the area of the quadrilateral (0, 0), (4, 0), (5, 3), (1, 4)? (Decimal OK.)", 14.5, "Shoelace: (0 + 12 + 17 + 0) ÷ 2."),
-      num("A lattice polygon has area 7 and 6 boundary points. How many interior points?", 5, "7 = I + 3 − 1."),
-      mc("How many lattice points lie strictly inside the triangle (0, 0), (6, 0), (0, 4)?", ["3", "4", "5", "6", "7"], 4, "B = 12, area 12: I = 12 − 6 + 1."),
+      num("A lattice polygon has 10 interior points and 8 boundary points. What is its area?", 13, "Pick's theorem: Area = I + B/2 − 1 = 10 + 8/2 − 1 = 13."),
+      num("What is the area of the triangle with vertices (1, 1), (5, 2), (2, 6)? (Decimal OK.)", 9.5, "Shoelace pairs: 1·2 − 5·1 = −3, 5·6 − 2·2 = 26, 2·1 − 1·6 = −4. Sum 19, halved: 9.5."),
+      num("What is the area of the quadrilateral (0, 0), (4, 0), (5, 3), (1, 4)? (Decimal OK.)", 14.5, "Shoelace pairs: 0, 4·3 − 5·0 = 12, 5·4 − 1·3 = 17, 0. Sum 29, halved: 14.5."),
+      num("A lattice polygon has area 7 and 6 boundary points. How many interior points?", 5, "Pick: 7 = I + 6/2 − 1, so I = 5."),
+      mc("How many lattice points lie strictly inside the triangle (0, 0), (6, 0), (0, 4)?", ["3", "4", "5", "6", "7"], 4, "Area 12. Boundary points 6 + 4 + 2 = 12. Pick: 12 = I + 6 − 1, so I = 7."),
     ],
   },
 
@@ -3743,19 +3743,19 @@ Object.assign(LESSONS, {
     body: () => `
       <h3>Shrink the sample space</h3>
       ${rule("P(A given B):", "only look at outcomes where B happened, then ask how many of those are A.")}
-      ${ex("Roll a die. Given it's even, P(it's 6)?", "Even outcomes: 2, 4, 6. One is 6: <b>1/3</b>.")}
-      ${ex("Two coins. Given at least one head, P(both heads)?", "Remaining outcomes: HH, HT, TH. Answer <b>1/3</b>, not 1/2.", "trap")}
-      ${ex("Two dice. Given the sum is 8, P(both are 4)?", "Sum 8 has 5 outcomes; one is (4,4): <b>1/5</b>.")}
+      ${ex("Roll a die. Given it's even, P(it's 6)?", ["“Given it's even” shrinks the possibilities to 2, 4, 6.", "One of those three is 6.", "P = <b>1/3</b>."])}
+      ${ex("Two coins. Given at least one head, P(both heads)?", ["Two coins: HH, HT, TH, TT, all equally likely.", "“At least one head” rules out only TT. Three outcomes remain.", "One of them is HH: <b>1/3</b>, not 1/2."], "trap")}
+      ${ex("Two dice. Given the sum is 8, P(both are 4)?", ["Sum 8: (2, 6), (3, 5), (4, 4), (5, 3), (6, 2). Five outcomes.", "Only (4, 4) is both 4s.", "P = <b>1/5</b>."])}
       <h3>Two-step problems</h3>
       <p>Draw a tree. Multiply along branches, then divide the branch you want by all branches that fit what you saw.</p>
-      ${ex("Bag A: 2 red, 1 blue. Bag B: 1 red, 3 blue. Pick a bag at random, draw a marble: red. P(it was bag A)?", "Red from A: ½ × 2/3 = 1/3. Red from B: ½ × 1/4 = 1/8. So (1/3) ÷ (1/3 + 1/8) = <b>8/11</b>.", "contest style")}
+      ${ex("Bag A: 2 red, 1 blue. Bag B: 1 red, 3 blue. Pick a bag at random, draw a marble: red. P(it was bag A)?", ["Chance of picking A and then red: ½ × 2/3 = 1/3.", "Chance of picking B and then red: ½ × 1/4 = 1/8.", "Total chance of red: 1/3 + 1/8 = 11/24.", "Of that, the part from A: (1/3) ÷ (11/24) = 8/24 × 24/11 = <b>8/11</b>."], "contest style")}
       ${aops("Conditional_probability", "Conditional probability")}`,
     quiz: [
-      num("Roll a die. Given the result is even, what is the probability it is 6?", "1/3", "Only 2, 4, 6 remain."),
-      num("A family has two children and at least one is a girl. What is the probability both are girls?", "1/3", "GG, GB, BG remain."),
-      num("Roll two dice. Given the sum is 8, what is the probability both show 4?", "1/5", "5 outcomes have sum 8."),
-      num("60% of a class play soccer and 30% play both soccer and piano. Given a student plays soccer, what is the percent chance they play piano?", 50, "30 ÷ 60.", "%"),
-      mc("A card is drawn from a deck. Given it is a face card (J, Q, or K), what is the probability it is a king?", ["1/3", "1/4", "1/12", "1/13", "4/13"], 0, "4 kings out of 12 face cards."),
+      num("Roll a die. Given the result is even, what is the probability it is 6?", "1/3", "Given even, only 2, 4, 6 are possible. One of the three is 6: 1/3."),
+      num("A family has two children and at least one is a girl. What is the probability both are girls?", "1/3", "Two children: GG, GB, BG, BB. At least one girl rules out BB, leaving 3. Only GG is both girls: 1/3."),
+      num("Roll two dice. Given the sum is 8, what is the probability both show 4?", "1/5", "Sum 8: (2, 6), (3, 5), (4, 4), (5, 3), (6, 2). One of the five is (4, 4): 1/5."),
+      num("60% of a class play soccer and 30% play both soccer and piano. Given a student plays soccer, what is the percent chance they play piano?", 50, "Among soccer players (60%), half also play piano (30%): 30 ÷ 60 = 50%.", "%"),
+      mc("A card is drawn from a deck. Given it is a face card (J, Q, or K), what is the probability it is a king?", ["1/3", "1/4", "1/12", "1/13", "4/13"], 0, "There are 12 face cards and 4 are kings: 4/12 = 1/3."),
     ],
   },
 
@@ -3790,20 +3790,20 @@ Object.assign(LESSONS, {
     body: () => `
       <h3>Length and area instead of counting</h3>
       <p>When a point is chosen “at random” from a segment or region, probability = favorable size ÷ total size.</p>
-      ${ex("A point is picked on a segment from 0 to 10. P(it's greater than 7)?", "Length 3 of 10: <b>3/10</b>.")}
-      ${ex("A point is picked in a square of side 4. P(it's inside the inscribed circle)?", "π × 2² ÷ 16 = <b>π/4</b>.")}
+      ${ex("A point is picked on a segment from 0 to 10. P(it's greater than 7)?", ["Probability on a segment = good length ÷ total length.", "Greater than 7 is the piece from 7 to 10, length 3.", "3/10."])}
+      ${ex("A point is picked in a square of side 4. P(it's inside the inscribed circle)?", ["Probability = good area ÷ total area.", "The circle fits inside, so its radius is 2: area 4π. The square's area is 16.", "4π/16 = <b>π/4</b>."])}
       <h3>Two random numbers</h3>
       <p>Two numbers chosen from [0, 1] make one random point in the unit square. Then shade the region where the condition holds.</p>
       ${fig(figUnitSquare(), "x + y < ½ is a triangle with legs ½: area 1/8.")}
-      ${ex("x and y are random in [0, 1]. P(x + y < ½)?", "Triangle area ½ × ½ × ½ = <b>1/8</b>.")}
-      ${ex("Two friends each arrive at a random time from 1:00 to 2:00 and wait 15 minutes. P(they meet)?", "In the unit square they meet when |x − y| ≤ ¼. The two corner triangles where they miss have total area (¾)² = 9/16, so <b>7/16</b>.", "classic")}
+      ${ex("x and y are random in [0, 1]. P(x + y < ½)?", ["Picture (x, y) as a random point in the 1 × 1 square.", "x + y &lt; ½ is the corner triangle below the line from (½, 0) to (0, ½).", "Its area is ½ × ½ × ½ = 1/8, and the square's area is 1. P = <b>1/8</b>."])}
+      ${ex("Two friends each arrive at a random time from 1:00 to 2:00 and wait 15 minutes. P(they meet)?", ["Measure time in hours after 1:00. Each arrival is a random number from 0 to 1, so the pair is a point in a 1 × 1 square.", "They meet if their times differ by at most ¼ hour: |x − y| ≤ ¼. That's a band along the diagonal.", "They miss in two corner triangles, each with legs ¾: area ½ × ¾ × ¾ = 9/32 each, 9/16 together.", "P(meet) = 1 − 9/16 = <b>7/16</b>."], "classic")}
       ${aops("Geometric_probability", "Geometric probability")}`,
     quiz: [
-      num("A point is chosen on a segment from 0 to 10. What is the probability it is greater than 7?", "3/10", "Length 3 out of 10."),
-      num("A dart lands at random on a 10 × 10 board that has a 4 × 5 red rectangle. What is P(red)?", "1/5", "20 ÷ 100."),
-      num("x is chosen at random from 0 to 2. What is the probability that x² < 1?", "1/2", "x must be less than 1."),
-      num("A bus comes at a random time between 8:00 and 8:30. You arrive at 8:10 and wait until 8:25. What is the probability you catch it?", "1/2", "15 good minutes out of 30."),
-      mc("A point is chosen in a square of side 2. What is the probability it is within 1 unit of the center?", ["π/4", "π/2", "1/4", "π/8", "1/2"], 0, "Circle of area π inside a square of area 4."),
+      num("A point is chosen on a segment from 0 to 10. What is the probability it is greater than 7?", "3/10", "The good part is 7 to 10, length 3, out of 10: 3/10."),
+      num("A dart lands at random on a 10 × 10 board that has a 4 × 5 red rectangle. What is P(red)?", "1/5", "Red area 4 × 5 = 20 out of 100: 1/5."),
+      num("x is chosen at random from 0 to 2. What is the probability that x² < 1?", "1/2", "x² &lt; 1 means x &lt; 1 (x is positive). That's 1 of the 2 units: 1/2."),
+      num("A bus comes at a random time between 8:00 and 8:30. You arrive at 8:10 and wait until 8:25. What is the probability you catch it?", "1/2", "You catch it if it comes between 8:10 and 8:25, which is 15 of the 30 minutes: 1/2."),
+      mc("A point is chosen in a square of side 2. What is the probability it is within 1 unit of the center?", ["π/4", "π/2", "1/4", "π/8", "1/2"], 0, "Points within 1 of the center form a circle of area π. The square has area 4: π/4."),
     ],
   },
 });
