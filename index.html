@@ -7873,24 +7873,23 @@ function viewHome() {
   return `
   <section class="hero">
     <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
-      <span class="eyebrow">Math Kangaroo → AMC 8 → AMC 10</span>
-      <h1>Learn it in small pieces. Then prove it under the clock.</h1>
-      <p class="lede">Short lessons with worked examples and a quick check at the end, plus timed practice tests at four contest levels. Pick who's working at the top right so scores land in the right place.</p>
+      <span class="eyebrow">Math Kangaroo · AMC 8 · AMC 10</span>
+      <h1>Competition Math Training</h1>
       <div class="row"><button class="btn primary" data-act="go" data-v="learn">Start a lesson</button><button class="btn" data-act="go" data-v="setup">Take a practice test</button><button class="btn ghost" data-act="go" data-v="formulas">Formula sheet</button></div>
       ${storageNote()}
     </div>
     <div class="hero-fig" aria-hidden="true">${figDiagonals(7, 0, 240)}</div>
   </section>
   <section class="doors">
-    <button class="door" data-act="go" data-v="learn"><span class="k">Learn</span><h3>${nameOf(S.student)}: ${done} of ${ready} lessons complete</h3><p>${capOf(S.student) === "amc10" ? `All ${ready} lessons` : `${ready} lessons up to ${LEVELS[capOf(S.student)].short}`}. Each has pictures, examples, and a short check.</p></button>
-    <button class="door" data-act="go" data-v="setup"><span class="k">Test prep</span><h3>${BANK.filter(b => levelOK(S.student, b.level)).length} problems + ${GENS.filter(g => levelOK(S.student, g.level)).length} generators</h3><p>Timed tests at MK 5/6, MK 7/8, AMC 8, and AMC 10 level. One hint per problem, graded at the end.</p></button>
-    <button class="door" data-act="go" data-v="progress"><span class="k">Progress</span><h3>${lastTest ? `${nameOf(S.student)}'s last test: ${lastTest.correct}/${lastTest.total}` : `${mine.length} saved results for ${nameOf(S.student)}`}</h3><p>Scores, time, hints, and every missed question, grouped by student.</p></button>
+    <button class="door" data-act="go" data-v="learn"><span class="k">Learn</span><h3>${nameOf(S.student)}: ${done} of ${ready} lessons complete</h3><p>${capOf(S.student) === "amc10" ? `All ${ready} lessons` : `${ready} lessons up to ${LEVELS[capOf(S.student)].short}`}</p></button>
+    <button class="door" data-act="go" data-v="setup"><span class="k">Test prep</span><h3>${BANK.filter(b => levelOK(S.student, b.level)).length} problems + ${GENS.filter(g => levelOK(S.student, g.level)).length} generators</h3><p>MK 5/6 · MK 7/8 · AMC 8 · AMC 10</p></button>
+    <button class="door" data-act="go" data-v="progress"><span class="k">Progress</span><h3>${lastTest ? `${nameOf(S.student)}'s last test: ${lastTest.correct}/${lastTest.total}` : `${mine.length} saved results for ${nameOf(S.student)}`}</h3><p>Scores · time · hints · missed questions</p></button>
   </section>
   ${viewMap()}`;
 }
 
 function statusLegend() {
-  return `<div class="row legend">${["ready", "opened", "progress", "complete"].map(s => statusTag({ s, label: { ready: "ready", opened: "opened", progress: "in progress", complete: "complete" }[s] })).join("")}<span class="status">Complete means ${Math.round(COMPLETE_AT * 100)}% or better on the lesson check.</span></div>`;
+  return `<div class="row legend">${["ready", "opened", "progress", "complete"].map(s => statusTag({ s, label: { ready: "ready", opened: "opened", progress: "in progress", complete: "complete" }[s] })).join("")}<span class="status">complete = ${Math.round(COMPLETE_AT * 100)}%+</span></div>`;
 }
 
 function tierBar() {
@@ -7907,7 +7906,6 @@ function viewMap() {
   return `<section style="display:flex;flex-direction:column;gap:14px">
     <div class="row" style="justify-content:space-between"><div><span class="eyebrow">Curriculum · ${nameOf(S.student)}</span><h2>${S.tier ? `${TIERS[S.tier]} path` : "All chapters"}</h2></div>${statusLegend()}</div>
     ${tierBar()}
-    <p class="lede" style="margin:0">${S.tier ? `Showing only ${TIERS[S.tier].toLowerCase()} lessons, in chapter order (left to right, then down). The “Next” button after a lesson check follows this path.` : "Chapters run from foundations to advanced topics. Colors mark each lesson’s tier: do the Beginner lessons across all chapters first, then Intermediate, then Advanced."}</p>
     <div class="chapters">${chaps.map(c => {
       const ci = CURRICULUM.indexOf(c), p = chapterProgress(S.student, c);
       return `
@@ -7931,15 +7929,14 @@ function viewMap() {
 
 function levelNote() {
   const cap = capOf(S.student);
-  if (cap === "amc10") return `<p class="lede">Showing every lesson for ${nameOf(S.student)}. <button class="linkbtn" data-act="go" data-v="profile">Set a target level</button> to hide harder material.</p>`;
+  if (cap === "amc10") return `<p class="status">Level: all · <button class="linkbtn" data-act="go" data-v="profile">Set target level</button></p>`;
   const hidden = CURRICULUM.flatMap(readyLessons).filter(l => !inLevel(S.student, l.id)).length;
-  return `<p class="lede">Showing lessons up to <b>${LEVELS[cap].short}</b> for ${nameOf(S.student)}${hidden ? `; ${hidden} harder ${hidden === 1 ? "lesson is" : "lessons are"} ${S.showAbove ? "shown faded" : "hidden"}` : ""}.
-    ${hidden ? `<button class="linkbtn" data-act="showabove">${S.showAbove ? "Hide them" : "Show them anyway"}</button> · ` : ""}<button class="linkbtn" data-act="go" data-v="profile">Change level</button></p>`;
+  return `<p class="status">Level: up to <b>${LEVELS[cap].short}</b>${hidden ? ` · ${hidden} ${S.showAbove ? "faded" : "hidden"}` : ""} ·
+    ${hidden ? `<button class="linkbtn" data-act="showabove">${S.showAbove ? "Hide" : "Show"}</button> · ` : ""}<button class="linkbtn" data-act="go" data-v="profile">Change level</button></p>`;
 }
 
 function viewLearn() {
-  return `<section style="display:flex;flex-direction:column;gap:8px"><span class="eyebrow">Learn</span><h1>Pick a lesson</h1>
-    <p class="lede">Each lesson shows where ${nameOf(S.student)} stands. Open a chapter page for its key formulas.</p>${levelNote()}</section>
+  return `<section style="display:flex;flex-direction:column;gap:8px"><span class="eyebrow">Learn</span><h1>Lessons</h1>${levelNote()}</section>
     ${viewMap()}`;
 }
 
@@ -7965,7 +7962,7 @@ function viewChapter() {
     </div>
     <aside class="panel fm-panel">
       <h2><span class="fm-ico" aria-hidden="true">ƒ(x)</span> Key formulas</h2>
-      ${fs.length ? formulaList(fs) : `<p class="status">Formulas appear here as lessons are written.</p>`}
+      ${fs.length ? formulaList(fs) : `<p class="status">No formulas yet.</p>`}
       <button class="btn ghost small" data-act="go" data-v="formulas">Full formula sheet →</button>
     </aside>
   </div>`;
@@ -7976,8 +7973,7 @@ function viewFormulas() {
   const shown = chaps.filter(c => !S.fmHide.has(c.id));
   const core = shown.flatMap(c => FORMULAS[c.id].filter(f => f.core).map(f => ({ ...f, ch: c.title })));
   return `
-  <section style="display:flex;flex-direction:column;gap:8px"><span class="eyebrow">Reference</span><h1>Formula sheet</h1>
-    <p class="lede">The test-day list is what to know cold before an AMC or Kangaroo. Below it, every chapter's full list. Turn chapters off to shorten both.</p></section>
+  <section style="display:flex;flex-direction:column;gap:8px"><span class="eyebrow">Reference</span><h1>Formula sheet</h1></section>
   <nav class="jumpbar" aria-label="Formula sheet controls">
     <div class="row"><span class="lab">Show</span>${chaps.map(c => `<button class="pill ${S.fmHide.has(c.id) ? "off" : ""}" aria-pressed="${!S.fmHide.has(c.id)}" data-act="fmtoggle" data-id="${c.id}">${c.title}</button>`).join("")}
       <button class="linkbtn" data-act="fmall">All</button><button class="linkbtn" data-act="fmnone">None</button></div>
@@ -8039,7 +8035,7 @@ function viewLesson() {
       <div><span class="eyebrow">${meta.chapter.title} · about ${les.minutes} min</span><h1>${les.title}</h1><div class="row" style="margin-top:8px">${tierTag(S.lessonId)}${lvlTag(S.lessonId)}${statusTag(status)}<span class="status">for ${nameOf(S.student)}${inLevel(S.student, S.lessonId) ? "" : " · above the level set for " + S.student}</span></div></div>
       ${les.body()}
       <h3 id="check">Check yourself</h3>
-      <p class="lede">Answer every question, then check. Number answers can be typed as whole numbers, decimals, or fractions like 7/2. Score ${Math.round(COMPLETE_AT * 100)}% or better to mark the lesson complete.</p>
+      <p class="status">Fractions OK (7/2) · ${Math.round(COMPLETE_AT * 100)}% to complete</p>
       ${quizHTML(S.lessonId, les.quiz, st)}
       <div class="row">
         ${st.graded
@@ -8098,17 +8094,14 @@ function viewProfile() {
   const mine = store.results.filter(r => r.student === k);
   const nTests = mine.filter(r => r.kind === "test").length, nChecks = mine.filter(r => r.kind === "quiz").length;
   return `
-  <section style="display:flex;flex-direction:column;gap:8px"><span class="eyebrow">Setup</span><h1>${nameOf(k)}'s setup</h1>
-    <p class="lede">Settings apply to whoever is picked under “Who” at the top. Switch people there to set up someone else.</p></section>
+  <section style="display:flex;flex-direction:column;gap:8px"><span class="eyebrow">Setup</span><h1>${nameOf(k)}'s setup</h1></section>
   <section class="panel" style="display:flex;flex-direction:column;gap:10px">
     <h3>Name</h3>
     <form class="row" data-form="name"><input class="numin pname" id="pname" maxlength="24" value="${nameOf(k).replace(/"/g, "&quot;")}" aria-label="Display name"><button class="btn primary" type="submit">Save name</button>
       ${nameOf(k) !== k ? `<button class="btn ghost" type="button" data-act="nameclear">Back to “${k}”</button>` : ""}</form>
-    <p class="status">Changing the name keeps all saved scores.</p>
   </section>
   <section class="panel" style="display:flex;flex-direction:column;gap:10px">
     <h3>Target test level</h3>
-    <p class="lede">Lessons and practice tests above this level are hidden for ${nameOf(k)}, so the work matches where they are.</p>
     <div class="levels">${LEVEL_ORDER.map(lv => `<button class="level" aria-pressed="${cap === lv}" data-act="setcap" data-s="${k}" data-k="${lv}"><span class="t">${LEVELS[lv].short}</span><span class="d">${lv === "amc10" ? "Everything" : `Up to ${LEVELS[lv].short}`}</span><span class="d mono">${CURRICULUM.flatMap(readyLessons).filter(l => LEVEL_ORDER.indexOf(lessonLevel(l.id)) <= LEVEL_ORDER.indexOf(lv)).length} lessons</span></button>`).join("")}</div>
   </section>
   <section class="panel" style="display:flex;flex-direction:column;gap:12px">
@@ -8165,7 +8158,7 @@ function viewSetup() {
   const chaps = CURRICULUM.filter(c => BANK.some(b => lessonMeta(b.topic)?.chapter.id === c.id));
   return `
   <section style="display:flex;flex-direction:column;gap:8px"><span class="eyebrow">Test prep</span><h1>Timed practice test</h1>
-    <p class="lede">Questions are graded together when you submit. You get one hint per problem, and hints are recorded. The clock runs at real contest pace.</p></section>
+    <p class="status">1 hint per problem · graded on submit · contest timing</p></section>
   <section style="display:flex;flex-direction:column;gap:12px">
     <h3>Choose a level</h3>
     <div class="levels">${Object.entries(LEVELS).map(([k, v]) => {
@@ -8185,7 +8178,7 @@ function viewSetup() {
   <section class="panel" style="display:flex;flex-direction:column;gap:12px">
     <h2>${lv.name} · ${TEST_LENGTHS[S.testLen]}</h2>
     <p><b class="mono">${n}</b> questions · <b class="mono">${fmtTime(limit)}</b> time limit${S.testLen === "full" && n < lv.count ? ` <span class="status">(only ${n} problems match; time scaled to fit)</span>` : ""}${topped ? ` <span class="status">(includes some ${LEVELS[prevLevel(S.level)].short} problems)</span>` : ""} · taken by <b>${nameOf(S.student)}</b></p>
-    ${n ? "" : `<p class="status">No problems at this level for this chapter yet. Pick another chapter or level.</p>`}
+    ${n ? "" : `<p class="status">No problems at this level for this chapter.</p>`}
     <div class="row"><button class="btn primary" data-act="start" ${n ? "" : "disabled"}>Start test</button>${storageNote()}</div>
   </section>`;
 }
@@ -8286,7 +8279,6 @@ function viewProgress() {
   return `
   <section style="display:flex;flex-direction:column;gap:8px"><span class="eyebrow">Progress</span><h1>${who === "All" ? "Everyone" : nameOf(who)}</h1>${storageNote()}</section>
   <div class="row">${["All", ...STUDENTS].map(s => `<button class="pill" aria-pressed="${s === who}" data-act="pwho" data-s="${s}">${s === "All" ? "All" : nameOf(s)}</button>`).join("")}</div>
-  <p class="status">Names, target levels, and resets live on each person's <button class="linkbtn" data-act="go" data-v="profile">Setup page</button>.</p>
   <section class="stats">
     <div class="stat"><div class="v">${tests.length}</div><div class="l">Tests taken</div></div>
     <div class="stat"><div class="v">${avg === null ? "–" : avg + "%"}</div><div class="l">Average test score</div></div>
@@ -8305,7 +8297,7 @@ function viewProgress() {
         const detail = open ? `<tr><td colspan="6"><div class="miss">${r.missed?.length ? `<b>Missed:</b><ol>${r.missed.map(m => `<li>${m.q}<br>Answered: ${m.your ?? "blank"} · Correct: ${m.correct}${m.hint ? " · hint used" : ""}</li>`).join("")}</ol>` : "No misses. Perfect score."}${r.timedOut ? "<p>Time ran out on this test.</p>" : ""}</div></td></tr>` : "";
         return row + detail;
       }).join("")}
-    </tbody></table></div>` : `<p class="empty">No saved results yet${who === "All" ? "" : " for " + who}. Finish a lesson check or a practice test and it shows up here.</p>`}
+    </tbody></table></div>` : `<p class="empty">No saved results yet${who === "All" ? "" : " for " + who}.</p>`}
   </section>
   <section class="panel" style="display:flex;flex-direction:column;gap:10px">
     <div class="row" style="justify-content:space-between"><h3>Lesson status</h3>${statusLegend()}</div>
@@ -8313,7 +8305,7 @@ function viewProgress() {
       ${chaps.map(c => `<tr class="chap-row"><td colspan="${people.length + 1}">${c.title}</td></tr>${readyLessons(c).map(l => `<tr><td><button class="linkish" data-act="lesson" data-id="${l.id}">${l.title}</button> ${lvlTag(l.id)}</td>${people.map(p => `<td>${inLevel(p, l.id) ? statusTag(lessonStatus(p, l.id)) : `<span class="status">above level</span>`}</td>`).join("")}</tr>`).join("")}`).join("")}
     </tbody></table></div>
   </section>
-  ${who === "All" ? `<p class="status">To reset someone's progress, pick their name above. Single lessons and chapters can be reset from their own pages.</p>`
+  ${who === "All" ? ""
     : `<section class="panel" style="display:flex;flex-direction:column;gap:10px"><h3>Start over</h3>
       ${resetBlock("all", who, `Reset all of ${nameOf(who)}'s progress`, `Erase every test, lesson check, and "opened" mark for ${nameOf(who)}? Their name and level stay.`)}</section>`}`;
 }
