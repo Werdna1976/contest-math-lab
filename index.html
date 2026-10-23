@@ -492,7 +492,9 @@ const nPr = (n, r) => r > n ? 0 : fact(n) / fact(n - r);
 const isPrime = n => { if (n < 2) return false; for (let d = 2; d * d <= n; d++) if (n % d === 0) return false; return true; };
 const divisors = n => { const d = []; for (let i = 1; i <= n; i++) if (n % i === 0) d.push(i); return d; };
 const fr = (num, den) => { if (den < 0) { num = -num; den = -den; } const g = gcd(num, den) || 1; num /= g; den /= g; return den === 1 ? String(num) : `${num}/${den}`; };
-const commas = n => Number.isInteger(n) && Math.abs(n) >= 10000 ? n.toLocaleString("en-US") : String(n);
+const commas = n => (Number.isInteger(n) && Math.abs(n) >= 10000 ? n.toLocaleString("en-US") : String(n)).replace(/^-/, "−");
+/* "a" or "an" before a number written in digits: an 8, an 11, an 18, an 80 */
+const aN = n => /^(8|11$|18$|11\d\d$|18\d\d$)/.test(String(n)) ? "An" : "A";
 
 /* Build 5 choices with the answer at a uniformly random position.
    Numbers: choices are sorted (contest style), so the position is set by how many
@@ -4943,6 +4945,492 @@ GEN("xp-sum-coef", "expansions", "amc10", R => {
 }, ({ a, b, n }) => { let p = [1]; for (let i = 0; i < n; i++) { const q = Array(p.length + 1).fill(0); p.forEach((c, j) => { q[j] += c * b; q[j + 1] += c * a; }); p = q; } return p.reduce((s, c) => s + c, 0); });
 
 /* =========================================================
+   GENERATORS: Geometry (shapes, angles, circles, area & volume)
+   ========================================================= */
+const piF = v => v === 1 ? "π" : `${commas(v)}π`;
+const deg = v => `${v}°`;
+const TRIPLES = [[3, 4, 5], [5, 12, 13], [8, 15, 17], [7, 24, 25], [20, 21, 29], [9, 40, 41]];
+const triple = (R, maxScale = 4) => { const t = R.pick(TRIPLES), k = R.int(1, t[2] > 13 ? 2 : maxScale); return t.map(x => x * k); };
+const hyp = (a, b) => Math.sqrt(a * a + b * b);
+const heron = (a, b, c) => { const s = (a + b + c) / 2; return Math.sqrt(s * (s - a) * (s - b) * (s - c)); };
+const shoelace = pts => Math.abs(pts.reduce((s, [x, y], i) => { const [u, v] = pts[(i + 1) % pts.length]; return s + x * v - u * y; }, 0)) / 2;
+const RN = [3, 4, 5, 6, 8, 9, 10, 12, 15, 18, 20, 24, 30, 36];   // n with 360/n an integer
+const cl = x => Math.round(x * 1e9) / 1e9;   // tidy float noise in checks
+const again = id => R => GENS.find(g => g.id === id).fn(R);
+
+/* =========================================================
+   Shapes
+   ========================================================= */
+GEN("pg-sum", "polygon-angles", "mk56", R => {
+  const n = R.int(5, 20); R.p = { n };
+  const ans = 180 * (n - 2);
+  return { q: `What is the sum of the interior angles of a polygon with ${n} sides?`, a: ans, traps: [180 * n, 180 * (n - 1), 360 * (n - 2), 90 * (n - 2), 360].filter(v => v !== ans), fmt: v => deg(commas(v)), step: 180, hint: "A polygon with n sides splits into n − 2 triangles from one vertex.", sol: `(${n} − 2) × 180° = ${commas(ans)}°.` };
+}, ({ n }) => deg(commas(Math.round(n * (180 - 360 / n)))));
+
+GEN("pg-regular", "polygon-angles", "mk78", R => {
+  const n = R.pick(RN), kind = R.int(0, 1); R.p = { n, kind };
+  const ans = kind ? 360 / n : 180 - 360 / n;
+  return { q: `What is the measure of each ${kind ? "exterior" : "interior"} angle of a regular polygon with ${n} sides?`, a: ans, traps: [kind ? 180 - 360 / n : 360 / n, 180 * (n - 2), 180 / n, ans + 10].filter(v => v !== ans && v < 1000), fmt: deg, hint: "The exterior angles of any polygon add to 360°.", sol: kind ? `360° ÷ ${n} = ${ans}°.` : `Each exterior angle is 360° ÷ ${n} = ${360 / n}°, so each interior angle is 180° − ${360 / n}° = ${ans}°.` };
+}, ({ n, kind }) => deg(kind ? 360 / n : (180 * (n - 2)) / n));
+
+GEN("pg-find-n", "polygon-angles", "amc8", R => {
+  const n = R.pick(RN.filter(x => x > 4)), A = 180 - 360 / n; R.p = { A };
+  return { q: `Each interior angle of a regular polygon measures ${A}°. How many sides does it have?`, a: n, traps: [Math.round(360 / A), Math.round(A / 10), n + 2, n - 1, 2 * n].filter(v => v !== n && v > 2), hint: "Look at the exterior angle instead.", sol: `Each exterior angle is 180° − ${A}° = ${180 - A}°, and 360 ÷ ${180 - A} = ${n}.` };
+}, ({ A }) => { for (let n = 3; n < 400; n++) if (180 * (n - 2) === A * n) return n; });
+
+GEN("pg-missing", "polygon-angles", "mk78", R => {
+  const n = R.int(5, 8), S = 180 * (n - 2), known = []; let rest = S;
+  for (let i = 0; i < n - 1; i++) { const v = R.int(100, 165); known.push(v); rest -= v; }
+  if (rest < 40 || rest > 175) return again("pg-missing")(R);
+  R.p = { n, known };
+  return { q: `${aN(n)} ${n}-sided polygon has angles ${known.map(deg).join(", ")}, and one more angle x. What is x?`, a: rest, traps: [rest + 180, 360 * (n - 1) - known.reduce((s, v) => s + v, 0), rest - 180, rest + 360].filter(v => v > 0 && v !== rest), fmt: deg, hint: `First find the total: (${n} − 2) × 180°.`, sol: `Total ${S}°; ${S} − ${S - rest} = ${rest}°.` };
+}, ({ n, known }) => deg(180 * (n - 2) - known.reduce((s, v) => s + v, 0)));
+
+GEN("dg-count", "diagonals", "mk78", R => {
+  const n = R.int(5, 24); R.p = { n };
+  const ans = n * (n - 3) / 2;
+  return { q: `How many diagonals does a convex polygon with ${n} sides have?`, a: ans, traps: [n * (n - 3), n * (n - 1) / 2, n - 3, (n - 2) * (n - 3) / 2].filter(v => v !== ans), hint: "Each vertex connects to n − 3 others by a diagonal, and each diagonal gets counted from both ends.", sol: `${n}(${n} − 3) ÷ 2 = ${ans}.` };
+}, ({ n }) => { let c = 0; for (let i = 0; i < n; i++) for (let j = i + 2; j < n; j++) if (!(i === 0 && j === n - 1)) c++; return c; });
+
+GEN("dg-sides", "diagonals", "amc8", R => {
+  const n = R.int(6, 30); R.p = { D: n * (n - 3) / 2 };
+  return { q: `A convex polygon has ${R.p.D} diagonals. How many sides does it have?`, a: n, traps: [n + 1, n - 1, n + 3, Math.round(Math.sqrt(2 * R.p.D))].filter(v => v !== n), hint: "Solve n(n − 3)/2 = D. Guess and check near √(2D).", sol: `${n}(${n - 3})/2 = ${R.p.D}, so n = ${n}.` };
+}, ({ D }) => { for (let n = 3; ; n++) if (n * (n - 3) / 2 === D) return n; });
+
+GEN("dg-vertex", "diagonals", "mk56", R => {
+  const n = R.int(5, 30), kind = R.int(0, 1); R.p = { n, kind };
+  const ans = kind ? n - 2 : n - 3;
+  return { q: kind ? `Drawing every diagonal from one vertex of a ${n}-sided convex polygon splits it into how many triangles?` : `How many diagonals can be drawn from one vertex of a ${n}-sided convex polygon?`, a: ans, traps: [n - 1, n, n - 3, n - 2, n * (n - 3) / 2].filter(v => v !== ans), hint: "A vertex can't connect to itself or its two neighbors by a diagonal.", sol: kind ? `${n - 3} diagonals make ${n - 2} triangles.` : `${n} − 3 = ${ans}.` };
+}, ({ n, kind }) => kind ? n - 2 : n - 3);
+
+GEN("tt-isosceles", "triangle-types", "mk56", R => {
+  const V = 2 * R.int(10, 80), kind = R.int(0, 1); R.p = { V, kind };
+  if (kind) { const b = (180 - V) / 2; return { q: `An isosceles triangle has base angles of ${b}°. What is its vertex angle?`, a: V, traps: [180 - b, 180 - 2 * V > 0 ? 180 - 2 * V : V + 20, b, 90 - b].filter(v => v > 0 && v !== V), fmt: deg, hint: "The two base angles are equal.", sol: `180° − 2 × ${b}° = ${V}°.` }; }
+  const ans = (180 - V) / 2;
+  return { q: `The vertex angle of an isosceles triangle is ${V}°. What is each base angle?`, a: ans, traps: [180 - V, V / 2, 90 - V / 4, ans + 10].filter(v => v > 0 && v !== ans), fmt: deg, hint: "The two base angles are equal and the three angles add to 180°.", sol: `(180° − ${V}°) ÷ 2 = ${ans}°.` };
+}, ({ V, kind }) => deg(kind ? V : (180 - V) / 2));
+
+GEN("tt-perimeter-count", "triangle-types", "amc10", R => {
+  const P = R.int(9, 36); R.p = { P };
+  let ans = 0; for (let a = 1; a <= P; a++) for (let b = a; b <= P; b++) { const c = P - a - b; if (c >= b && a + b > c) ans++; }
+  return { q: `How many non-congruent triangles with integer side lengths have perimeter ${P}?`, a: ans, traps: [ans + 1, ans - 1, ans * 2, Math.round(P * P / 48)].filter(v => v >= 0 && v !== ans), hint: "List sides a ≤ b ≤ c with a + b > c. The longest side must be less than half the perimeter.", sol: `Listing a ≤ b ≤ c with c < ${P / 2} gives ${ans}.` };
+}, ({ P }) => { const s = new Set(); for (let a = 1; a < P; a++) for (let b = 1; b < P; b++) { const c = P - a - b; if (c > 0 && a + b > c && a + c > b && b + c > a) s.add([a, b, c].sort((x, y) => x - y).join()); } return s.size; });
+
+GEN("tt-obtuse", "triangle-types", "amc10", R => {
+  const a = R.int(4, 15), b = R.int(a, 18); R.p = { a, b };
+  const ans = countIf(b - a + 1, a + b - 1, c => c * c > a * a + b * b || b * b > a * a + c * c);
+  return { q: `A triangle has sides ${a}, ${b}, and c, where c is an integer. For how many values of c is the triangle obtuse?`, a: ans, traps: [2 * a - 1, ans + 1, ans - 1, countIf(b - a + 1, a + b - 1, c => c * c > a * a + b * b)].filter(v => v >= 0 && v !== ans), hint: "The triangle is obtuse when the square of the longest side is more than the sum of the other two squares. Either b or c can be the longest side.", sol: `Check c from ${b - a + 1} to ${a + b - 1}: ${ans} values make it obtuse.` };
+}, ({ a, b }) => { let n = 0; for (let c = 1; c < 50; c++) { const s = [a, b, c].sort((x, y) => x - y); if (s[0] + s[1] > s[2] && s[2] ** 2 > s[0] ** 2 + s[1] ** 2) n++; } return n; });
+
+GEN("qd-parallelogram", "quadrilaterals", "mk56", R => {
+  const A = R.int(35, 85), x = R.int(0, 1); R.p = { A, x };
+  const ans = x ? A : 180 - A;
+  return { q: `In parallelogram ABCD, angle A is ${A}°. What is angle ${x ? "C" : "B"}?`, a: ans, traps: [x ? 180 - A : A, 90 - A > 0 ? 90 - A : 360 - A, 360 - 2 * A, 2 * A].filter(v => v !== ans && v > 0), fmt: deg, hint: "Opposite angles are equal, and neighboring angles add to 180°.", sol: x ? `C is opposite A, so it's ${A}°.` : `B is next to A, so it's 180° − ${A}° = ${ans}°.` };
+}, ({ A, x }) => deg(x ? A : 180 - A));
+
+GEN("qd-rhombus", "quadrilaterals", "amc8", R => {
+  const [p, q, s] = triple(R, 3), kind = R.int(0, 1); R.p = { p, q, kind };
+  const ans = kind ? 2 * p * q : 4 * s;
+  return { q: `A rhombus has diagonals of length ${2 * p} and ${2 * q}. What is its ${kind ? "area" : "perimeter"}?`, a: ans, traps: kind ? [4 * p * q, p * q, 4 * s, 2 * (p + q) * 2] : [4 * (p + q), 2 * (p + q), 2 * s, s * s].filter(v => v !== ans), hint: "The diagonals of a rhombus cut each other in half at right angles.", sol: kind ? `Area = ${2 * p} × ${2 * q} ÷ 2 = ${ans}.` : `Each side is the hypotenuse of a ${p}-${q} right triangle: ${s}. Perimeter 4 × ${s} = ${ans}.` };
+}, ({ p, q, kind }) => kind ? 2 * p * q : 4 * hyp(p, q));
+
+GEN("qd-trapezoid", "quadrilaterals", "mk78", R => {
+  const a = R.int(4, 30), b = a + 2 * R.int(1, 10), kind = R.int(0, 1); R.p = { a, b, kind };
+  if (kind) return { q: `The midsegment of a trapezoid is ${(a + b) / 2} and one base is ${a}. What is the other base?`, a: b, traps: [(a + b) / 2 - a, (a + b) / 2 + a, a + b, b - a].filter(v => v > 0 && v !== b), hint: "The midsegment is the average of the two bases.", sol: `2 × ${(a + b) / 2} − ${a} = ${b}.` };
+  return { q: `A trapezoid has bases ${a} and ${b}. How long is the segment joining the midpoints of its legs?`, a: (a + b) / 2, traps: [a + b, b - a, (b - a) / 2, b].filter(v => v !== (a + b) / 2), hint: "The midsegment is the average of the two bases.", sol: `(${a} + ${b}) ÷ 2 = ${(a + b) / 2}.` };
+}, ({ a, b, kind }) => kind ? b : (a + b) / 2);
+
+GEN("sy-rotation", "symmetry", "mk56", R => {
+  const n = R.pick(RN), kind = R.int(0, 1); R.p = { n, kind };
+  const ans = kind ? n : 360 / n;
+  return { q: kind ? `How many lines of symmetry does a regular polygon with ${n} sides have?` : `What is the smallest positive angle you can turn a regular ${n}-sided polygon about its center so it lands exactly on itself?`, a: ans, traps: kind ? [n / 2, 2 * n, n - 1, n - 2] : [180 / n, 180 - 360 / n, 360, 720 / n], fmt: kind ? undefined : deg, hint: "A regular n-gon has n-fold symmetry.", sol: kind ? `A regular ${n}-gon has ${n} lines of symmetry.` : `360° ÷ ${n} = ${ans}°.` };
+}, ({ n, kind }) => kind ? n : deg(360 / n));
+
+GEN("sy-star", "symmetry", "amc8", R => {
+  const n = R.pick([5, 6, 8, 9, 10, 12]), ext = 360 / n, tip = 180 - 2 * ext; R.p = { n };
+  if (tip <= 0) return again("sy-star")(R);
+  return { q: `Extend every side of a regular ${n}-gon until neighboring extended sides meet, forming a ${n}-pointed star. What is the angle at each point of the star?`, a: tip, traps: [ext, 180 - ext, 2 * ext, 180 - tip / 2].filter(v => v > 0 && v !== tip), fmt: deg, hint: "Each point is a small isosceles triangle sitting on one side. Its base angles are exterior angles of the polygon.", sol: `Base angles are ${ext}° each, so the tip is 180° − 2 × ${ext}° = ${tip}°.` };
+}, ({ n }) => deg(180 - 720 / n));
+
+GEN("cs-side", "congruent-similar", "mk78", R => {
+  const s = [R.int(2, 9), R.int(2, 9), R.int(2, 9)].sort((x, y) => x - y), k = R.pick([2, 3, 4, 5]), i = R.int(0, 2), j = (i + 1 + R.int(0, 1)) % 3; R.p = { s, k, i, j };
+  if (s[0] + s[1] <= s[2] || s[i] === s[j]) return again("cs-side")(R);
+  const ans = s[j] * k;
+  return { q: `Triangle ABC has sides ${s.join(", ")}. A similar triangle has its side matching the ${s[i]} equal to ${s[i] * k}. What is the side matching the ${s[j]}?`, a: ans, traps: [s[j] + s[i] * (k - 1), s[j] * k * k, s[j] + k, s[i] * k + s[j] - s[i]].filter(v => v !== ans), hint: "Similar shapes scale every length by the same factor.", sol: `The scale factor is ${s[i] * k} ÷ ${s[i]} = ${k}, so ${s[j]} × ${k} = ${ans}.` };
+}, ({ s, k, i, j }) => s[j] * (s[i] * k) / s[i]);
+
+GEN("cs-area", "congruent-similar", "amc8", R => {
+  const p = R.int(1, 4), q = R.int(p + 1, 7), A = p * p * R.int(2, 12); R.p = { p, q, A };
+  if (gcd(p, q) !== 1) return again("cs-area")(R);
+  const ans = A * q * q / (p * p);
+  return { q: `Two similar polygons have corresponding sides in the ratio ${p} : ${q}. The smaller one has area ${A}. What is the area of the larger one?`, a: ans, traps: [A * q / p, A * q ** 3 / p ** 3, A + q * q - p * p, A * (q - p + 1)].filter(v => Number.isInteger(v) && v !== ans), hint: "Areas scale by the square of the length ratio.", sol: `${A} × (${q}/${p})² = ${ans}.` };
+}, ({ p, q, A }) => cl(A * (q / p) ** 2));
+
+GEN("co-distance", "coordinates", "mk78", R => {
+  const [a, b, c] = triple(R, 3), x = R.int(-8, 8), y = R.int(-8, 8), sx = R.pick([1, -1]), sy = R.pick([1, -1]); R.p = { x, y, x2: x + sx * a, y2: y + sy * b };
+  return { q: `What is the distance between (${m(x)}, ${m(y)}) and (${m(x + sx * a)}, ${m(y + sy * b)})?`, a: c, traps: [a + b, c + 1, Math.abs(a - b) || c + 2, a * b / 2].filter(v => Number.isInteger(v) && v !== c), hint: "Make a right triangle with horizontal and vertical legs.", sol: `Legs ${a} and ${b}, so √(${a * a} + ${b * b}) = ${c}.` };
+}, ({ x, y, x2, y2 }) => hyp(x2 - x, y2 - y));
+
+GEN("co-triangle-area", "coordinates", "amc8", R => {
+  const P = [[R.int(-6, 6), R.int(-6, 6)], [R.int(-6, 6), R.int(-6, 6)], [R.int(-6, 6), R.int(-6, 6)]]; R.p = { P };
+  const ans = shoelace(P); if (ans < 3) return again("co-triangle-area")(R);
+  return { q: `What is the area of the triangle with vertices ${P.map(([x, y]) => `(${m(x)}, ${m(y)})`).join(", ")}?`, a: ans, traps: [2 * ans, ans + 0.5, ans - 0.5, ans + 1].filter(v => v > 0 && v !== ans), step: 1, hint: "Draw a box around the triangle and subtract the right triangles at its corners, or use the shoelace formula.", sol: `Shoelace: area = ${ans}.` };
+}, ({ P }) => { const [[ax, ay], [bx, by], [cx, cy]] = P; return Math.abs((bx - ax) * (cy - ay) - (by - ay) * (cx - ax)) / 2; });
+
+GEN("co-midpoint", "coordinates", "mk56", R => {
+  const x1 = R.int(-10, 10), y1 = R.int(-10, 10), mx = R.int(-8, 8), my = R.int(-8, 8); R.p = { x1, y1, mx, my };
+  const x2 = 2 * mx - x1, y2 = 2 * my - y1, ans = x2 + y2;
+  return { q: `M(${m(mx)}, ${m(my)}) is the midpoint of segment AB, where A = (${m(x1)}, ${m(y1)}). What is the sum of the coordinates of B?`, a: ans, traps: [mx + my, (x1 + mx) + (y1 + my), mx + my - x1 - y1 + 2, ans + 2].filter(v => Number.isInteger(v) && v !== ans), min: -Infinity, hint: "B is as far past M as A is before it.", sol: `B = (${m(x2)}, ${m(y2)}), so the sum is ${ans}.` };
+}, ({ x1, y1, mx, my }) => (2 * mx - x1) + (2 * my - y1));
+
+GEN("so-prism", "solids", "mk78", R => {
+  const n = R.int(3, 20), shape = R.int(0, 1), ask = R.int(0, 2); R.p = { n, shape, ask };
+  const V = shape ? n + 1 : 2 * n, E = shape ? 2 * n : 3 * n, F = shape ? n + 1 : n + 2, ans = [V, E, F][ask];
+  return { q: `How many ${["vertices", "edges", "faces"][ask]} does a ${shape ? "pyramid" : "prism"} with a ${n}-sided base have?`, a: ans, traps: [V, E, F, n, 2 * n + 2, 3 * n + 1].filter(v => v !== ans), hint: shape ? "A pyramid has one base plus an apex joined to every base vertex." : "A prism has two copies of the base joined by side faces.", sol: `V = ${V}, E = ${E}, F = ${F} (check: ${V} − ${E} + ${F} = 2).` };
+}, ({ n, shape, ask }) => { const V = shape ? n + 1 : 2 * n, F = shape ? n + 1 : n + 2, E = V + F - 2; return [V, E, F][ask]; });
+
+GEN("so-painted", "solids", "amc8", R => {
+  const n = R.int(3, 8), k = R.int(0, 3); R.p = { n, k };
+  const ans = [(n - 2) ** 3, 6 * (n - 2) ** 2, 12 * (n - 2), 8][k];
+  return { q: `${aN(n)} ${n} × ${n} × ${n} cube is painted on the outside and cut into unit cubes. How many unit cubes have exactly ${["no", "one", "two", "three"][k]} painted face${k === 1 ? "" : "s"}?`, a: ans, traps: [(n - 2) ** 3, 6 * (n - 2) ** 2, 12 * (n - 2), 8, 6 * n * n, 12 * n].filter(v => v !== ans), hint: "Corners have 3 painted faces, edges (not corners) have 2, face centers have 1, and the hidden core has 0.", sol: `${["Core: (n − 2)³", "Face centers: 6(n − 2)²", "Edges: 12(n − 2)", "Corners: 8"][k]} = ${ans}.` };
+}, ({ n, k }) => { let c = 0; for (let x = 0; x < n; x++) for (let y = 0; y < n; y++) for (let z = 0; z < n; z++) if ([x, y, z].filter(v => v === 0 || v === n - 1).length === k) c++; return c; });
+
+/* =========================================================
+   Angles & triangles
+   ========================================================= */
+GEN("an-comp-supp", "angle-basics", "mk56", R => {
+  const x = R.int(5, 85), kind = R.int(0, 2); R.p = { x, kind };
+  const ans = [90 - x, 180 - x, 90 + x][kind];
+  return { q: kind === 2 ? `What is the supplement of the complement of a ${x}° angle?` : `What is the ${kind ? "supplement" : "complement"} of a ${x}° angle?`, a: ans, traps: [90 - x, 180 - x, 90 + x, 360 - x, 270 - x].filter(v => v !== ans), fmt: deg, hint: "Complements add to 90°. Supplements add to 180°.", sol: kind === 2 ? `Complement: ${90 - x}°. Its supplement: ${90 + x}°.` : `${kind ? 180 : 90}° − ${x}° = ${ans}°.` };
+}, ({ x, kind }) => deg([90 - x, 180 - x, 180 - (90 - x)][kind]));
+
+GEN("an-ratio", "angle-basics", "mk78", R => {
+  const [p, q] = R.pick([[1, 2], [1, 3], [1, 5], [2, 3], [3, 7], [4, 5], [1, 4], [5, 7], [2, 7], [3, 5], [7, 11], [1, 9]]), tot = R.pick([90, 180]); R.p = { p, q, tot };
+  if (tot % (p + q)) return again("an-ratio")(R);
+  const ans = tot * q / (p + q);
+  return { q: `Two ${tot === 90 ? "complementary" : "supplementary"} angles are in the ratio ${p} : ${q}. What is the larger angle?`, a: ans, traps: [tot * p / (p + q), tot / q * p, ans + tot / (p + q), tot - ans / 2].filter(v => Number.isInteger(v) && v !== ans && v > 0), fmt: deg, hint: `Split ${tot}° into ${p + q} equal parts.`, sol: `${tot}° ÷ ${p + q} = ${tot / (p + q)}°, times ${q} = ${ans}°.` };
+}, ({ p, q, tot }) => deg(tot * q / (p + q)));
+
+GEN("pl-transversal", "parallel-lines", "mk56", R => {
+  const x = R.int(25, 155), kind = R.int(0, 2); R.p = { x, kind };
+  if (x === 90) return again("pl-transversal")(R);
+  const ans = kind === 1 ? 180 - x : x;
+  return { q: `Two parallel lines are cut by a transversal. One angle is ${x}°. What is its ${["alternate interior", "same-side (co-interior)", "corresponding"][kind]} angle?`, a: ans, traps: [180 - x, x, 90 - x > 0 ? 90 - x : x - 90, 360 - x, 2 * x > 180 ? 2 * x - 180 : 2 * x].filter(v => v !== ans && v > 0), fmt: deg, hint: "Alternate interior and corresponding angles are equal; same-side interior angles add to 180°.", sol: kind === 1 ? `They add to 180°: ${ans}°.` : `They're equal: ${ans}°.` };
+}, ({ x, kind }) => deg(kind === 1 ? 180 - x : x));
+
+GEN("pl-bend", "parallel-lines", "amc8", R => {
+  const a = R.int(20, 70), b = R.int(20, 70); R.p = { a, b };
+  return { q: `In the figure (not to scale), lines ℓ and m are parallel and P lies between them. Segment PA meets ℓ at a ${a}° angle and segment PB meets m at a ${b}° angle, both measured on the side where P bends. What is angle APB?`, a: a + b, traps: [180 - a - b, Math.abs(a - b) || 90, 360 - a - b, 180 - a + b].filter(v => v !== a + b && v > 0), fmt: deg, hint: "Draw a third line through P parallel to ℓ and m.", sol: `The new parallel line splits angle APB into ${a}° and ${b}° (alternate interior angles), so ${a + b}°.`, fig: () => svg(260, 140, seg(10, 20, 250, 20) + seg(10, 120, 250, 120) + seg(80, 20, 170, 70) + seg(170, 70, 60, 120) + dot(170, 70) + txt(182, 74, "P") + txt(70, 14, "A") + txt(50, 136, "B") + txt(240, 14, "ℓ") + txt(240, 136, "m")) };
+}, ({ a, b }) => deg(a + b));
+
+GEN("ex-exterior", "exterior-angle", "mk78", R => {
+  const a = R.int(25, 80), b = R.int(25, 80), kind = R.int(0, 1); R.p = { a, b, kind };
+  if (kind) return { q: `An exterior angle of a triangle is ${a + b}°. One of the two interior angles not next to it is ${a}°. What is the other one?`, a: b, traps: [180 - a - b, 180 - (a + b) + a, a + b - 90 > 0 ? a + b - 90 : b + 10, 180 - b].filter(v => v > 0 && v !== b), fmt: deg, hint: "An exterior angle equals the sum of the two remote interior angles.", sol: `${a + b}° − ${a}° = ${b}°.` };
+  return { q: `Two angles of a triangle are ${a}° and ${b}°. What is the exterior angle at the third vertex?`, a: a + b, traps: [180 - a - b, 360 - a - b, 180 - a, 180 - b].filter(v => v > 0 && v !== a + b), fmt: deg, hint: "An exterior angle equals the sum of the two remote interior angles.", sol: `${a}° + ${b}° = ${a + b}°.` };
+}, ({ a, b, kind }) => deg(kind ? b : 180 - (180 - a - b)));
+
+GEN("ac-ratio", "angle-chasing", "mk78", R => {
+  const t = R.pick([[1, 2, 3], [2, 3, 4], [1, 2, 6], [3, 4, 5], [1, 3, 5], [2, 3, 7], [1, 4, 7], [4, 5, 9], [5, 6, 7], [1, 1, 4], [2, 5, 11], [7, 8, 9]]), big = R.int(0, 1); R.p = { t, big };
+  const S = t.reduce((s, v) => s + v, 0); if (180 % S) return again("ac-ratio")(R);
+  const ans = 180 / S * (big ? t[2] : t[0]);
+  return { q: `The angles of a triangle are in the ratio ${t.join(" : ")}. What is the ${big ? "largest" : "smallest"} angle?`, a: ans, traps: [180 / S * t[1], 180 / S * (big ? t[0] : t[2]), 360 / S * (big ? t[2] : t[0]), 180 / t.length].filter(v => v !== ans), fmt: deg, hint: `Split 180° into ${S} equal parts.`, sol: `180° ÷ ${S} = ${180 / S}°, times ${big ? t[2] : t[0]} = ${ans}°.` };
+}, ({ t, big }) => deg(180 * (big ? Math.max(...t) : Math.min(...t)) / t.reduce((s, v) => s + v, 0)));
+
+GEN("ac-algebra", "angle-chasing", "amc8", R => {
+  const x = R.int(12, 26), b = R.int(-10, 20), c = 180 - 6 * x - b; R.p = { b, c };
+  if (3 * x + c < 10 || 2 * x + b < 10) return again("ac-algebra")(R);
+  const ans = Math.max(x, 2 * x + b, 3 * x + c);
+  const t = (k, v) => v ? `(${k}x ${v < 0 ? "−" : "+"} ${Math.abs(v)})°` : `${k}x°`;
+  return { q: `The angles of a triangle are x°, ${t(2, b)}, and ${t(3, c)}. What is the largest angle?`, a: ans, traps: [x, 2 * x + b, 3 * x + c, 180 - ans, ans + 6].filter(v => v > 0 && v !== ans), fmt: deg, hint: "Add the three angles and set the sum to 180°.", sol: `6x ${b + c < 0 ? "−" : "+"} ${Math.abs(b + c)} = 180, so x = ${x}. The angles are ${x}°, ${2 * x + b}°, ${3 * x + c}°.` };
+}, ({ b, c }) => { const x = (180 - b - c) / 6; return deg(Math.max(x, 2 * x + b, 3 * x + c)); });
+
+GEN("ck-angle", "clock-angles", "mk78", R => {
+  const h = R.int(1, 12), mm = 2 * R.int(0, 29); R.p = { h, mm };
+  let d = Math.abs(30 * (h % 12) - 5.5 * mm); if (d > 180) d = 360 - d;
+  const naive = (() => { let e = Math.abs(30 * (h % 12) - 6 * mm); return e > 180 ? 360 - e : e; })();
+  return { q: `What is the smaller angle between the hour and minute hands of a clock at ${h}:${String(mm).padStart(2, "0")}?`, a: d, traps: [naive, 360 - d, Math.abs(d - mm / 2), d + 15].filter(v => v !== d && v >= 0 && v <= 360), fmt: deg, hint: "The minute hand moves 6° per minute. The hour hand moves 0.5° per minute.", sol: `Hour hand at ${30 * (h % 12) + mm / 2}°, minute hand at ${6 * mm}°; the gap is ${d}°.` };
+}, ({ h, mm }) => { const H = (h % 12) * 30 + mm * 0.5, M = mm * 6; let d = Math.abs(H - M) % 360; return deg(Math.min(d, 360 - d)); });
+
+GEN("ck-overlap", "clock-angles", "amc10", R => {
+  const k = R.int(1, 10); R.p = { k };
+  // hands overlap at 720k/11 minutes after 12:00
+  const tot = 720 * k / 11, H = Math.floor(tot / 60), mins = tot - 60 * H;
+  const ans = Math.round(mins * 11);   // minutes past the hour, as elevenths
+  return { q: `Between ${H}:00 and ${H + 1}:00 there is one moment when the hour and minute hands point exactly the same way. How many minutes after ${H}:00 is it?`, a: fr(ans, 11), traps: [fr(ans + 11, 11), fr(5 * H, 1), fr(ans - 1, 11), fr(60 * H, 11), fr(ans + 1, 11)], hint: "The minute hand gains 5.5° per minute on the hour hand.", sol: `At ${H}:00 the minute hand is ${30 * H}° behind. It catches up in ${30 * H} ÷ 5.5 = ${fr(60 * H, 11)} minutes.` };
+}, ({ k }) => { const tot = 720 * k / 11, H = Math.floor(tot / 60); return fr(60 * H, 11); });
+
+GEN("py-hyp", "pythagorean", "mk56", R => {
+  const [a, b, c] = triple(R, 5), kind = R.int(0, 1); R.p = { a, b, c, kind };
+  if (kind) return { q: `A right triangle has hypotenuse ${c} and one leg ${a}. How long is the other leg?`, a: b, traps: [c - a, c + a, Math.round(Math.sqrt(c * c + a * a)), b + 1].filter(v => v !== b && v > 0), hint: "a² + b² = c².", sol: `√(${c * c} − ${a * a}) = √${b * b} = ${b}.` };
+  return { q: `A right triangle has legs ${a} and ${b}. How long is the hypotenuse?`, a: c, traps: [a + b, c + 1, c - 1, Math.round((a + b) / 1.5)].filter(v => v !== c), hint: "a² + b² = c².", sol: `√(${a * a} + ${b * b}) = √${c * c} = ${c}.` };
+}, ({ a, b, c, kind }) => kind ? Math.sqrt(c * c - a * a) : hyp(a, b));
+
+GEN("py-ladder", "pythagorean", "amc8", R => {
+  const [L, A, B] = R.pick([[25, [7, 24], [15, 20]], [10, [6, 8], [6, 8]], [50, [14, 48], [30, 40]], [65, [25, 60], [33, 56]], [65, [16, 63], [39, 52]], [85, [36, 77], [40, 75]], [85, [13, 84], [51, 68]]]);
+  if (A[0] === B[0]) return again("py-ladder")(R);
+  R.p = { L, d1: A[0], d2: B[0] };
+  return { q: `${aN(L)} ${L}-foot ladder leans against a wall with its foot ${A[0]} feet from the wall. The top slides down ${A[1] - B[1]} feet. How far does the foot slide out?`, a: B[0] - A[0], traps: [A[1] - B[1], B[0], A[1] - B[1] + 1, Math.round(hyp(A[1] - B[1], A[0]))].filter(v => v !== B[0] - A[0] && v > 0), hint: "Find the top's height before and after, then use the Pythagorean theorem twice.", sol: `Top starts at ${A[1]} and ends at ${B[1]}. New foot distance √(${L * L} − ${B[1] * B[1]}) = ${B[0]}, so it slides ${B[0] - A[0]} feet.` };
+}, ({ L, d1, d2 }) => { const h2 = Math.sqrt(L * L - d1 * d1) - (Math.sqrt(L * L - d1 * d1) - Math.sqrt(L * L - d2 * d2)); return Math.round(Math.sqrt(L * L - h2 * h2)) - d1; });
+
+GEN("py-box-diag", "pythagorean", "amc10", R => {
+  const [a, b, c, d] = R.pick([[1, 2, 2, 3], [2, 3, 6, 7], [1, 4, 8, 9], [4, 4, 7, 9], [2, 6, 9, 11], [6, 6, 7, 11], [3, 4, 12, 13], [2, 10, 11, 15], [1, 12, 12, 17], [8, 9, 12, 17]]), k = R.int(1, 3); R.p = { a: a * k, b: b * k, c: c * k };
+  return { q: `A box measures ${a * k} × ${b * k} × ${c * k}. How long is the diagonal from one corner to the opposite corner, through the inside of the box?`, a: d * k, traps: [(a + b + c) * k, Math.round(hyp(b, c) * k), (d + 1) * k, c * k + a * k].filter(v => v !== d * k), hint: "The space diagonal is √(a² + b² + c²).", sol: `√(${(a * k) ** 2} + ${(b * k) ** 2} + ${(c * k) ** 2}) = ${d * k}.` };
+}, ({ a, b, c }) => Math.sqrt(a * a + b * b + c * c));
+
+GEN("sr-306090", "special-right", "mk78", R => {
+  const s = R.int(2, 15), kind = R.int(0, 1); R.p = { s, kind };
+  if (kind) return { q: `In a 30-60-90 triangle, the hypotenuse is ${2 * s}. How long is the side opposite the 30° angle?`, a: s, traps: [2 * s, 4 * s, s + 1, Math.round(s * 1.7)].filter(v => v !== s), hint: "Sides are in the ratio 1 : √3 : 2.", sol: `Half the hypotenuse: ${s}.` };
+  return { q: `In a 30-60-90 triangle, the longer leg is ${s}√3. How long is the hypotenuse?`, a: 2 * s, traps: [s, 3 * s, s + 3, 2 * s + 2].filter(v => v !== 2 * s), hint: "Sides are in the ratio 1 : √3 : 2.", sol: `Short leg ${s}, hypotenuse ${2 * s}.` };
+}, ({ s, kind }) => kind ? s : 2 * s);
+
+GEN("sr-square-diag", "special-right", "amc8", R => {
+  const d = 2 * R.int(2, 12), kind = R.int(0, 1); R.p = { d, kind };
+  if (kind) return { q: `A square has side length ${d / 2}√2. How long is its diagonal?`, a: d, traps: [d / 2, d * 2, d + 2, d / 2 + 2].filter(v => v !== d), hint: "The diagonal of a square is side × √2.", sol: `${d / 2}√2 × √2 = ${d}.` };
+  return { q: `A square has a diagonal of length ${d}. What is its area?`, a: d * d / 2, traps: [d * d, d * d / 4, 2 * d, d * d / 2 + d].filter(v => v !== d * d / 2), hint: "A square is a rhombus: area = d₁d₂/2.", sol: `${d} × ${d} ÷ 2 = ${d * d / 2}.` };
+}, ({ d, kind }) => kind ? d : d * d / 2);
+
+GEN("sr-equilateral", "special-right", "amc10", R => {
+  const s = 2 * R.int(1, 10), kind = R.int(0, 1); R.p = { s, kind };
+  const k = s * s / 4;
+  if (kind) return { q: `An equilateral triangle has area ${k}√3. What is its perimeter?`, a: 3 * s, traps: [s, 3 * k, 6 * s, 3 * Math.round(Math.sqrt(k))].filter(v => v !== 3 * s), hint: "Area of an equilateral triangle = (√3/4)s².", sol: `s²/4 = ${k}, so s = ${s} and the perimeter is ${3 * s}.` };
+  return { q: `An equilateral triangle has side ${s}. Its height is h√3. What is h?`, a: s / 2, traps: [s, s / 4 * 3, s * 2, s / 2 + 1].filter(v => v !== s / 2 && Number.isInteger(v)), hint: "The height splits it into two 30-60-90 triangles.", sol: `Height = (${s}/2)√3 = ${s / 2}√3.` };
+}, ({ s, kind }) => kind ? 3 * Math.sqrt(4 * (s * s / 4)) : s / 2);
+
+GEN("st-shadow", "similar-triangles", "mk78", R => {
+  const h = R.int(3, 8), sh = R.int(2, 9), k = R.int(3, 12); R.p = { h, sh, k };
+  if (h === sh) return again("st-shadow")(R);
+  return { q: `${aN(h)} ${h}-foot post casts a ${sh}-foot shadow. At the same moment a tree casts ${aN(sh * k).toLowerCase()} ${sh * k}-foot shadow. How tall is the tree?`, a: h * k, traps: [sh * k * sh / h, sh * k + h - sh, h + sh * k, h * k + sh].filter(v => Number.isInteger(v) && v !== h * k), hint: "Height and shadow are in the same ratio for both.", sol: `${h}/${sh} = x/${sh * k}, so x = ${h * k}.` };
+}, ({ h, sh, k }) => cl(h * (sh * k) / sh));
+
+GEN("st-parallel", "similar-triangles", "amc8", R => {
+  const a = R.int(2, 9), b = R.int(1, 9), c = a * R.int(1, 5); R.p = { a, b, c };
+  if (c * (a + b) % a) return again("st-parallel")(R);
+  const ans = c * (a + b) / a;
+  return { q: `In triangle ABC, D is on AB and E is on AC with DE parallel to BC. If AD = ${a}, DB = ${b}, and DE = ${c}, what is BC?`, a: ans, traps: [c * (a + b) / b, c + b, c * b / a, c * 2].filter(v => Number.isInteger(v) && v !== ans), hint: "Triangle ADE is similar to triangle ABC. Compare AD to AB, not to DB.", sol: `AB = ${a + b}, so BC = ${c} × ${a + b}/${a} = ${ans}.`, fig: () => svg(220, 150, poly([[110, 15], [20, 135], [200, 135]], { fill: "none" }) + seg(65, 75, 155, 75, { c: "var(--accent)" }) + txt(110, 10, "A") + txt(10, 145, "B") + txt(210, 145, "C") + txt(55, 75, "D") + txt(166, 75, "E")) };
+}, ({ a, b, c }) => cl(c / a * (a + b)));
+
+GEN("ti-third", "triangle-inequality", "mk78", R => {
+  const a = R.int(2, 20), b = R.int(2, 20); R.p = { a, b };
+  const ans = a + b - 1 - Math.abs(a - b);
+  return { q: `Two sides of a triangle are ${a} and ${b}. How many integers could be the length of the third side?`, a: ans, traps: [a + b - 1, ans + 1, ans + 2, a + b - Math.abs(a - b)].filter(v => v !== ans), hint: "The third side must be more than the difference and less than the sum.", sol: `It's between ${Math.abs(a - b)} and ${a + b}, not inclusive: ${ans} integers.` };
+}, ({ a, b }) => countIf(1, 100, c => a + b > c && a + c > b && b + c > a));
+
+GEN("ti-perimeter", "triangle-inequality", "amc8", R => {
+  const a = R.int(3, 25), b = R.int(3, 25), big = R.int(0, 1); R.p = { a, b, big };
+  const ans = big ? 2 * (a + b) - 1 : a + b + Math.abs(a - b) + 1;
+  return { q: `A triangle has sides ${a}, ${b}, and an integer third side. What is the ${big ? "largest" : "smallest"} possible perimeter?`, a: ans, traps: [2 * (a + b), a + b + Math.abs(a - b), big ? a + b + Math.abs(a - b) + 1 : 2 * (a + b) - 1, ans + 2].filter(v => v !== ans), hint: "The third side must be more than the difference and less than the sum.", sol: `Third side ${big ? a + b - 1 : Math.abs(a - b) + 1}, so the perimeter is ${ans}.` };
+}, ({ a, b, big }) => { const ok = range(1, 100).filter(c => a + b > c && a + c > b && b + c > a); return a + b + (big ? Math.max(...ok) : Math.min(...ok)); });
+
+/* =========================================================
+   Circles
+   ========================================================= */
+GEN("ci-chord", "circle-parts", "amc8", R => {
+  const [a, b, c] = triple(R, 3), kind = R.int(0, 1); R.p = { a, b, c, kind };
+  if (kind) return { q: `A chord of length ${2 * b} is ${a} units from the center of a circle. What is the circle's radius?`, a: c, traps: [a + b, 2 * b, c + 1, Math.round(hyp(a, 2 * b))].filter(v => v !== c), hint: "The perpendicular from the center bisects the chord.", sol: `Half the chord is ${b}; √(${a * a} + ${b * b}) = ${c}.` };
+  return { q: `A circle has radius ${c}. A chord is ${a} units from the center. How long is the chord?`, a: 2 * b, traps: [b, 2 * (c - a), c + a, 2 * c - a].filter(v => v !== 2 * b), hint: "The perpendicular from the center bisects the chord.", sol: `Half the chord is √(${c * c} − ${a * a}) = ${b}, so the chord is ${2 * b}.` };
+}, ({ a, b, c, kind }) => kind ? hyp(a, b) : 2 * Math.sqrt(c * c - a * a));
+
+GEN("ci-diameter", "circle-parts", "mk56", R => {
+  const r = R.int(2, 20), kind = R.int(0, 2); R.p = { r, kind };
+  const giv = [`area ${piF(r * r)}`, `circumference ${piF(2 * r)}`, `diameter ${2 * r}`][kind], ans = kind === 2 ? r : 2 * r;
+  return { q: `A circle has ${giv}. What is its ${kind === 2 ? "radius" : "diameter"}?`, a: ans, traps: [r * r, r, 4 * r, 2 * r, r / 2].filter(v => v !== ans && Number.isInteger(v)), hint: "Area = πr², circumference = 2πr = πd.", sol: kind === 2 ? `Half of ${2 * r}: ${r}.` : `The radius is ${r}, so the diameter is ${2 * r}.` };
+}, ({ r, kind }) => kind === 2 ? r : 2 * r);
+
+GEN("cf-arc", "circumference", "mk78", R => {
+  const r = R.int(2, 18), th = R.pick([30, 40, 45, 60, 72, 90, 120, 135, 150, 180, 240, 270, 300]); R.p = { r, th };
+  const n = 2 * r * th, ans = n / 360;
+  if (!Number.isInteger(ans)) return again("cf-arc")(R);
+  return { q: `What is the length of a ${th}° arc on a circle of radius ${r}?`, a: ans, traps: [r * r * th / 360, 2 * ans, ans / 2, th / 360 * r].filter(v => Number.isInteger(v) && v > 0 && v !== ans), fmt: piF, hint: "Arc length = (angle/360) × 2πr.", sol: `${th}/360 × ${2 * r}π = ${piF(ans)}.` };
+}, ({ r, th }) => piF(cl(th / 360 * 2 * r)));
+
+GEN("cf-wheel", "circumference", "amc8", R => {
+  const d = R.pick([14, 20, 21, 24, 26, 28, 30]), n = R.int(5, 60), kind = R.int(0, 1); R.p = { d, n, kind };
+  if (kind) return { q: `A wheel with diameter ${d} inches rolls ${commas(d * n)}π inches. How many full turns does it make?`, a: n, traps: [2 * n, Math.round(n / 2), n * d, n + 1].filter(v => v !== n), hint: "One turn rolls one circumference.", sol: `Circumference ${d}π; ${commas(d * n)}π ÷ ${d}π = ${n}.` };
+  return { q: `A wheel with diameter ${d} inches makes ${n} full turns. How far does it roll, in inches?`, a: d * n, traps: [d * n * 2, d * n / 2, d * d * n / 4, d * n + d].filter(v => Number.isInteger(v) && v !== d * n), fmt: piF, hint: "One turn rolls one circumference, πd.", sol: `${n} × ${d}π = ${piF(d * n)}.` };
+}, ({ d, n, kind }) => kind ? n : piF(d * n));
+
+GEN("ca-area", "circle-area", "mk56", R => {
+  const r = R.int(2, 15), kind = R.int(0, 1); R.p = { r, kind };
+  const giv = kind ? `diameter ${2 * r}` : `radius ${r}`;
+  return { q: `What is the area of a circle with ${giv}?`, a: r * r, traps: [2 * r, 4 * r * r, r, r * r * 2].filter(v => v !== r * r), fmt: piF, hint: "Area = πr².", sol: `π × ${r}² = ${piF(r * r)}.` };
+}, ({ r }) => piF(r * r));
+
+GEN("ca-sector", "circle-area", "mk78", R => {
+  const r = R.int(2, 18), th = R.pick([30, 40, 45, 60, 72, 90, 120, 135, 144, 150, 180, 240, 270]); R.p = { r, th };
+  const ans = r * r * th / 360; if (!Number.isInteger(ans)) return again("ca-sector")(R);
+  return { q: `What is the area of a ${th}° sector of a circle with radius ${r}?`, a: ans, traps: [2 * r * th / 360, r * r, ans * 2, r * th / 360].filter(v => Number.isInteger(v) && v > 0 && v !== ans), fmt: piF, hint: "Sector area = (angle/360) × πr².", sol: `${th}/360 × ${r * r}π = ${piF(ans)}.` };
+}, ({ r, th }) => piF(cl(th / 360 * r * r)));
+
+GEN("ca-ring", "circle-area", "amc8", R => {
+  const r = R.int(1, 10), R2 = R.int(r + 1, 15), kind = R.int(0, 1); R.p = { r, R2, kind };
+  if (kind) { const k = R.int(2, 4); R.p.k = k; return { q: `The radius of a circle is multiplied by ${k}. Its area is multiplied by what?`, a: k * k, traps: [k, 2 * k, k ** 3, k * k + 1].filter(v => v !== k * k), hint: "Area depends on r².", sol: `(${k}r)² = ${k * k}r².` }; }
+  const ans = R2 * R2 - r * r;
+  return { q: `Two circles share a center. Their radii are ${r} and ${R2}. What is the area of the ring between them?`, a: ans, traps: [(R2 - r) ** 2, R2 * R2 + r * r, 2 * (R2 - r), ans + 1].filter(v => v > 0 && v !== ans), fmt: piF, hint: "Big circle minus small circle.", sol: `${R2 * R2}π − ${r * r}π = ${piF(ans)}.` };
+}, ({ r, R2, kind, k }) => kind ? k * k : piF(R2 * R2 - r * r));
+
+GEN("ia-inscribed", "inscribed-angles", "mk78", R => {
+  const arc = 2 * R.int(15, 85), kind = R.int(0, 1); R.p = { arc, kind };
+  if (kind) return { q: `An inscribed angle measures ${arc / 2}°. What is the central angle that cuts off the same arc?`, a: arc, traps: [arc / 4, 180 - arc / 2, arc / 2, 360 - arc].filter(v => v > 0 && v !== arc), fmt: deg, hint: "An inscribed angle is half the central angle on the same arc.", sol: `2 × ${arc / 2}° = ${arc}°.` };
+  return { q: `An arc of a circle measures ${arc}°. What is an inscribed angle that cuts off that arc?`, a: arc / 2, traps: [arc, 180 - arc / 2, 360 - arc, arc / 4].filter(v => v > 0 && v !== arc / 2), fmt: deg, hint: "An inscribed angle is half its arc.", sol: `${arc}° ÷ 2 = ${arc / 2}°.` };
+}, ({ arc, kind }) => deg(kind ? arc : arc / 2));
+
+GEN("ia-cyclic", "inscribed-angles", "amc8", R => {
+  const x = R.int(30, 150), kind = R.int(0, 1); R.p = { x, kind };
+  if (x === 90) return again("ia-cyclic")(R);
+  if (kind) return { q: `Triangle ABC is inscribed in a circle with AB a diameter. If angle A is ${x % 90 || 45}°, what is angle B?`, a: 90 - (x % 90 || 45), traps: [x % 90 || 45, 180 - (x % 90 || 45), 90, 2 * (x % 90 || 45)].filter(v => v !== 90 - (x % 90 || 45)), fmt: deg, hint: "An angle inscribed in a semicircle is a right angle.", sol: `C = 90°, so B = 90° − ${x % 90 || 45}° = ${90 - (x % 90 || 45)}°.` };
+  return { q: `ABCD is inscribed in a circle and angle A is ${x}°. What is angle C?`, a: 180 - x, traps: [x, 360 - x, 90 - x > 0 ? 90 - x : x - 90, 2 * x > 180 ? 2 * x - 180 : 2 * x].filter(v => v !== 180 - x && v > 0), fmt: deg, hint: "Opposite angles of a cyclic quadrilateral add to 180°.", sol: `180° − ${x}° = ${180 - x}°.` };
+}, ({ x, kind }) => deg(kind ? 90 - (x % 90 || 45) : 180 - x));
+
+GEN("tg-length", "tangents", "amc8", R => {
+  const [a, b, c] = triple(R, 3), kind = R.int(0, 1); R.p = { a, b, c, kind };
+  if (kind) return { q: `A point is ${c} units from the center of a circle with radius ${a}. How long is a tangent segment from the point to the circle?`, a: b, traps: [c - a, c + a, b + 1, Math.round(hyp(a, c))].filter(v => v !== b), hint: "The radius to the point of tangency is perpendicular to the tangent.", sol: `√(${c * c} − ${a * a}) = ${b}.` };
+  return { q: `A tangent segment from point P to a circle has length ${b}. The circle's radius is ${a}. How far is P from the center?`, a: c, traps: [a + b, b - a > 0 ? b - a : a - b + 1, c + 1, c - 1].filter(v => v !== c && v > 0), hint: "Radius, tangent and the line to the center form a right triangle.", sol: `√(${a * a} + ${b * b}) = ${c}.` };
+}, ({ a, b, c, kind }) => kind ? Math.sqrt(c * c - a * a) : hyp(a, b));
+
+GEN("tg-two", "tangents", "mk78", R => {
+  const x = R.int(2, 12), a = R.int(1, 9), c = R.int(2, 4); R.p = { x, a, c };
+  const b = c * x - (x + a); if (b < 1) return again("tg-two")(R);
+  const ans = x + a;
+  return { q: `From point P, two tangents touch a circle at A and B. PA = x + ${a} and PB = ${c}x − ${b}. What is PA?`, a: ans, traps: [x, 2 * ans, ans + c, c * x].filter(v => v !== ans && v > 0), hint: "Two tangents from the same point are equal.", sol: `x + ${a} = ${c}x − ${b} gives x = ${x}, so PA = ${ans}.` };
+}, ({ a, c, x }) => { const b = c * x - (x + a); return (a + b) / (c - 1) + a; });
+
+GEN("tg-angle", "tangents", "amc8", R => {
+  const P = R.int(20, 160); R.p = { P };
+  return { q: `Two tangents from P touch a circle with center O at A and B. Angle APB is ${P}°. What is angle AOB?`, a: 180 - P, traps: [P, 2 * P > 180 ? 360 - 2 * P : 2 * P, 90 - P / 2, 360 - P].filter(v => v !== 180 - P && v > 0 && Number.isInteger(v)), fmt: deg, hint: "Angles OAP and OBP are 90°. Quadrilateral OAPB adds to 360°.", sol: `360° − 90° − 90° − ${P}° = ${180 - P}°.` };
+}, ({ P }) => deg(360 - 180 - P));
+
+GEN("pp-chords", "power-point", "amc8", R => {
+  const N = R.pick([12, 18, 20, 24, 30, 36, 40, 48, 60]), ds = divisors(N).filter(d => d > 1 && d < N), a = R.pick(ds), c = R.pick(ds); R.p = { N, a, c };
+  if (a === c) return again("pp-chords")(R);
+  const b = N / a, d = N / c;
+  return { q: `Chords AB and CD meet at P inside a circle. AP = ${a}, PB = ${b}, and CP = ${c}. What is PD?`, a: d, traps: [a + b - c, c * b / a, a * b - c, d + 1].filter(v => Number.isInteger(v) && v > 0 && v !== d), hint: "AP · PB = CP · PD.", sol: `${a} × ${b} = ${c} × PD, so PD = ${d}.` };
+}, ({ N, a, c }) => (a * (N / a)) / c);
+
+GEN("pp-secant", "power-point", "amc10", R => {
+  const a = R.int(2, 12), k = R.int(2, 6), t2 = a * a * k; R.p = { a, k };
+  const t = isqrt(t2); if (t === null) return again("pp-secant")(R);
+  const whole = t2 / a, ins = whole - a;
+  return { q: `From point P outside a circle, a tangent touches the circle at T, and a secant meets the circle at A and then B, with PA = ${a} and AB = ${ins}. What is PT?`, a: t, traps: [Math.round(Math.sqrt(a * ins)), a + ins, Math.round((a + whole) / 2), t + 1].filter(v => v !== t && v > 0), hint: "PT² = PA · PB (outside part times whole secant).", sol: `PT² = ${a} × ${whole} = ${t2}, so PT = ${t}.` };
+}, ({ a, k }) => Math.sqrt(a * (a * k)));
+
+/* =========================================================
+   Area & volume
+   ========================================================= */
+GEN("ar-basic", "basic-area", "mk56", R => {
+  const kind = R.int(0, 2), b = R.int(3, 20), h = R.int(2, 16), b2 = R.int(2, 18); R.p = { kind, b, h, b2 };
+  if (kind === 0) return { q: `A triangle has base ${2 * b} and height ${h}. What is its area?`, a: b * h, traps: [2 * b * h, b * h / 2, 2 * b + h, b + h].filter(v => Number.isInteger(v) && v !== b * h), hint: "Triangle area = ½ × base × height.", sol: `½ × ${2 * b} × ${h} = ${b * h}.` };
+  if (kind === 1) { const A = (b + b2) * h; return { q: `A trapezoid has bases ${b} and ${b2} and height ${2 * h}. What is its area?`, a: A, traps: [2 * A, b * b2 * h, (b + b2) * 2 * h + 1, b * 2 * h].filter(v => v !== A), hint: "Trapezoid area = average of bases × height.", sol: `(${b} + ${b2}) ÷ 2 × ${2 * h} = ${A}.` }; }
+  return { q: `A rectangle has perimeter ${2 * (b + h)} and one side ${b}. What is its area?`, a: b * h, traps: [b * (b + h), 2 * (b + h), b * (2 * h), b * b].filter(v => v !== b * h), hint: "Half the perimeter is length + width.", sol: `The other side is ${b + h} − ${b} = ${h}; area ${b * h}.` };
+}, ({ kind, b, h, b2 }) => [2 * b * h / 2, (b + b2) / 2 * 2 * h, b * h][kind]);
+
+GEN("ar-frame", "shaded-area", "mk78", R => {
+  const W = R.int(8, 30), H = R.int(8, 30), w = R.int(1, 3); R.p = { W, H, w };
+  const ans = W * H - (W - 2 * w) * (H - 2 * w);
+  return { q: `${aN(W)} ${W} × ${H} picture frame has a border ${w} unit${w > 1 ? "s" : ""} wide all the way around. What is the area of the border?`, a: ans, traps: [W * H - (W - w) * (H - w), 2 * w * (W + H), ans + 4 * w * w, (W - 2 * w) * (H - 2 * w)].filter(v => v !== ans), hint: "Outer rectangle minus inner rectangle. The inner one is 2w shorter in each direction.", sol: `${W * H} − ${W - 2 * w} × ${H - 2 * w} = ${ans}.` };
+}, ({ W, H, w }) => { let c = 0; for (let x = 0; x < W; x++) for (let y = 0; y < H; y++) if (x < w || y < w || x >= W - w || y >= H - w) c++; return c; });
+
+GEN("ar-square-circle", "shaded-area", "amc8", R => {
+  const r = R.int(2, 10), kind = R.int(0, 1); R.p = { r, kind };
+  if (kind) { const S = 2 * r * r, a = `${r * r}π − ${S}`; return { q: `A square is inscribed in a circle of radius ${r}. What is the area inside the circle but outside the square?`, a, traps: [`${r * r}π − ${4 * r * r}`, `${4 * r * r} − ${r * r}π`, `${r * r}π − ${r * r}`, `${2 * r * r}π − ${S}`, `${r * r}π − ${2 * r}`], hint: "The square's diagonal is the circle's diameter.", sol: `Square area = (${2 * r})² ÷ 2 = ${S}. Circle area ${r * r}π. Difference: ${a}.` }; }
+  const a = `${4 * r * r} − ${r * r}π`;
+  return { q: `A circle of radius ${r} is inscribed in a square. What is the area inside the square but outside the circle?`, a, traps: [`${r * r} − ${r * r}π`, `${4 * r * r} − ${2 * r}π`, `${r * r}π − ${4 * r * r}`, `${4 * r * r} − ${4 * r * r}π`, `${2 * r * r} − ${r * r}π`], hint: "The square's side is the circle's diameter.", sol: `Square ${4 * r * r}, circle ${r * r}π: ${a}.` };
+}, ({ r, kind }) => kind ? `${r * r}π − ${2 * r * r}` : `${4 * r * r} − ${r * r}π`);
+
+GEN("he-heron", "heron", "amc8", R => {
+  const [a, b, c] = R.pick([[13, 14, 15], [5, 5, 6], [5, 5, 8], [10, 13, 13], [9, 10, 17], [13, 20, 21], [7, 15, 20], [11, 13, 20], [6, 25, 29], [10, 17, 21], [17, 25, 28], [13, 13, 24]]), k = R.int(1, 2); R.p = { a: a * k, b: b * k, c: c * k };
+  const ans = Math.round(heron(a * k, b * k, c * k));
+  return { q: `What is the area of a triangle with sides ${a * k}, ${b * k}, and ${c * k}?`, a: ans, traps: [a * b * k * k / 2, ans * 2, ans + (a + b + c) * k / 2, Math.round(ans / 2)].filter(v => Number.isInteger(v) && v !== ans), hint: "Heron: s = half the perimeter; area = √(s(s − a)(s − b)(s − c)).", sol: `s = ${(a + b + c) * k / 2}; area = ${ans}.` };
+}, ({ a, b, c }) => { // drop an altitude onto c and solve for its foot
+  const x = (a * a - b * b + c * c) / (2 * c), h = Math.sqrt(a * a - x * x); return Math.round(c * h / 2); });
+
+GEN("he-altitude", "heron", "amc10", R => {
+  const [a, b, c] = R.pick([[13, 14, 15], [10, 13, 13], [13, 20, 21], [5, 5, 6], [5, 5, 8], [17, 25, 28], [13, 13, 24], [9, 10, 17]]); R.p = { a, b, c };
+  const A = Math.round(heron(a, b, c)), sides = [a, b, c].filter(s => (2 * A) % s === 0);
+  const s = R.pick(sides); R.p.s = s;
+  return { q: `A triangle has sides ${a}, ${b}, and ${c}. How long is the altitude to the side of length ${s}?`, a: 2 * A / s, traps: [A / s, A, 2 * A / s + 1, Math.round(Math.sqrt(a * b) / 2)].filter(v => Number.isInteger(v) && v !== 2 * A / s), hint: "Find the area with Heron's formula, then area = ½ × side × altitude.", sol: `Area ${A}, so altitude = 2 × ${A} ÷ ${s} = ${2 * A / s}.` };
+}, ({ a, b, c, s }) => cl(2 * heron(a, b, c) / s));
+
+GEN("pk-picks", "picks-shoelace", "amc8", R => {
+  const I = R.int(0, 30), B = 2 * R.int(2, 15); R.p = { I, B };
+  const ans = I + B / 2 - 1;
+  return { q: `A polygon drawn on dot paper has ${I} dots strictly inside it and ${B} dots on its boundary. What is its area?`, a: ans, traps: [I + B, I + B / 2, I + B / 2 + 1, I + B - 1].filter(v => v !== ans), hint: "Pick's theorem: A = I + B/2 − 1.", sol: `${I} + ${B / 2} − 1 = ${ans}.` };
+}, ({ I, B }) => I + B / 2 - 1);
+
+GEN("pk-shoelace", "picks-shoelace", "amc10", R => {
+  const x1 = R.int(1, 8), x2 = R.int(1, 8), y1 = R.int(1, 8), y2 = R.int(1, 8), ox = R.int(-3, 3), oy = R.int(-3, 3);
+  const P = [[ox + x1, oy], [ox, oy + y1], [ox - x2, oy], [ox, oy - y2]]; R.p = { P };
+  const ans = (x1 + x2) * (y1 + y2) / 2;
+  return { q: `What is the area of the quadrilateral with vertices ${P.map(([x, y]) => `(${m(x)}, ${m(y)})`).join(", ")}?`, a: ans, traps: [2 * ans, (x1 + x2) * (y1 + y2), ans + 1, ans - 1].filter(v => v > 0 && v !== ans), step: 1, hint: "Its diagonals are perpendicular. Area = d₁d₂/2. (Or use the shoelace formula.)", sol: `Diagonals ${x1 + x2} and ${y1 + y2}: area ${ans}.` };
+}, ({ P }) => shoelace(P));
+
+GEN("vo-box", "prisms", "mk56", R => {
+  const l = R.int(2, 12), w = R.int(2, 10), h = R.int(2, 10), kind = R.int(0, 1); R.p = { l, w, h, kind };
+  if (kind) return { q: `A box has volume ${l * w * h}, length ${l}, and width ${w}. What is its height?`, a: h, traps: [l * w, h + 1, l * w * h / l, l + w].filter(v => v !== h), hint: "Volume = length × width × height.", sol: `${l * w * h} ÷ (${l} × ${w}) = ${h}.` };
+  return { q: `What is the volume of a ${l} × ${w} × ${h} box?`, a: l * w * h, traps: [2 * (l * w + l * h + w * h), l + w + h, l * w * h * 2, l * w + h].filter(v => v !== l * w * h), hint: "Volume = length × width × height.", sol: `${l} × ${w} × ${h} = ${l * w * h}.` };
+}, ({ l, w, h, kind }) => kind ? h : l * w * h);
+
+GEN("vo-water", "prisms", "amc8", R => {
+  const l = R.int(4, 12), w = R.int(4, 12), L = R.int(2, 10), W = R.int(2, 10), H2 = R.int(2, 12); R.p = { l, w, L, W, H2 };
+  const h = L * W * H2 / (l * w); if (!Number.isInteger(h) || l * w === L * W) return again("vo-water")(R);
+  return { q: `Water fills a ${l} × ${w} tank to a depth of ${h}. All of it is poured into an empty ${L} × ${W} tank (base measurements). How deep is the water now?`, a: H2, traps: [h, Math.round(h * l / L), H2 + 1, Math.round(h * L * W / (l * w))].filter(v => v > 0 && v !== H2), hint: "The volume of water stays the same.", sol: `Volume ${l * w * h}; ${l * w * h} ÷ ${L * W} = ${H2}.` };
+}, ({ l, w, L, W, H2 }) => cl(l * w * (L * W * H2 / (l * w)) / (L * W)));
+
+GEN("vo-cylinder", "prisms", "mk78", R => {
+  const r = R.int(1, 10), h = R.int(2, 15); R.p = { r, h };
+  return { q: `What is the volume of a cylinder with radius ${r} and height ${h}?`, a: r * r * h, traps: [2 * r * h, 2 * r * r * h, r * h, (2 * r) ** 2 * h].filter(v => v !== r * r * h), fmt: piF, hint: "Volume = πr²h.", sol: `π × ${r * r} × ${h} = ${piF(r * r * h)}.` };
+}, ({ r, h }) => piF(r * r * h));
+
+GEN("vo-cone", "cones-spheres", "amc8", R => {
+  const r = R.int(1, 12), h = 3 * R.int(1, 6), kind = R.int(0, 1); R.p = { r, h, kind };
+  if (kind) { const s = r * 3, V = s * s * h / 3; return { q: `A pyramid has a square base with side ${s} and height ${h}. What is its volume?`, a: V, traps: [s * s * h, s * s * h / 2, V * 2, s * h].filter(v => v !== V), hint: "Pyramid volume = ⅓ × base area × height.", sol: `⅓ × ${s * s} × ${h} = ${V}.` }; }
+  return { q: `What is the volume of a cone with radius ${r} and height ${h}?`, a: r * r * h / 3, traps: [r * r * h, r * h, 2 * r * r * h / 3, r * r * h / 2].filter(v => Number.isInteger(v) && v !== r * r * h / 3), fmt: piF, hint: "Cone volume = ⅓πr²h.", sol: `⅓ × π × ${r * r} × ${h} = ${piF(r * r * h / 3)}.` };
+}, ({ r, h, kind }) => kind ? (3 * r) ** 2 * h / 3 : piF(r * r * h / 3));
+
+GEN("vo-sphere", "cones-spheres", "amc8", R => {
+  const r = R.pick([3, 6, 9, 12]), kind = R.int(0, 1), r2 = R.int(1, 15); R.p = { r, kind, r2 };
+  if (kind) return { q: `What is the surface area of a sphere with radius ${r2}?`, a: 4 * r2 * r2, traps: [r2 * r2, 2 * r2 * r2, 4 * r2 ** 3 / 3, 4 * r2].filter(v => Number.isInteger(v) && v !== 4 * r2 * r2), fmt: piF, hint: "Surface area = 4πr².", sol: `4π × ${r2 * r2} = ${piF(4 * r2 * r2)}.` };
+  const V = 4 * r ** 3 / 3;
+  return { q: `What is the volume of a sphere with radius ${r}?`, a: V, traps: [4 * r * r, r ** 3, 4 * r ** 3, V / 2].filter(v => Number.isInteger(v) && v !== V), fmt: piF, hint: "Volume = (4/3)πr³.", sol: `(4/3)π × ${r ** 3} = ${piF(V)}.` };
+}, ({ r, kind, r2 }) => piF(kind ? 4 * r2 * r2 : cl(4 / 3 * r ** 3)));
+
+GEN("su-box", "surface-area", "mk78", R => {
+  const l = R.int(2, 12), w = R.int(2, 10), h = R.int(1, 10); R.p = { l, w, h };
+  const ans = 2 * (l * w + l * h + w * h);
+  return { q: `What is the surface area of a ${l} × ${w} × ${h} box?`, a: ans, traps: [l * w * h, l * w + l * h + w * h, ans + 2 * l * w, 6 * l * w].filter(v => v !== ans), hint: "Three pairs of matching rectangles.", sol: `2(${l * w} + ${l * h} + ${w * h}) = ${ans}.` };
+}, ({ l, w, h }) => { let s = 0; for (const [a, b] of [[l, w], [l, h], [w, h]]) s += 2 * a * b; return s; });
+
+GEN("su-cylinder", "surface-area", "amc8", R => {
+  const r = R.int(1, 10), h = R.int(1, 15); R.p = { r, h };
+  const ans = 2 * r * r + 2 * r * h;
+  return { q: `What is the total surface area of a closed cylinder with radius ${r} and height ${h}?`, a: ans, traps: [2 * r * h, r * r + 2 * r * h, r * r * h, 2 * r * r + r * h].filter(v => v !== ans), fmt: piF, hint: "Two circles plus a rectangle that wraps around (width 2πr, height h).", sol: `2π(${r * r}) + 2π(${r})(${h}) = ${piF(ans)}.` };
+}, ({ r, h }) => piF(2 * r * (r + h)));
+
+GEN("su-cut-cube", "surface-area", "amc10", R => {
+  const n = R.int(2, 6), s = R.int(1, 3); R.p = { n, s };
+  const big = 6 * (n * s) ** 2, small = n ** 3 * 6 * s * s;
+  return { q: `A cube with edge ${n * s} is cut into ${n ** 3} identical smaller cubes. By how much does the total surface area increase?`, a: small - big, traps: [small, big, small - big / 2, (n ** 3 - 1) * s * s].filter(v => v !== small - big), hint: "Find the total surface area of all the small cubes, then subtract the original.", sol: `Small cubes: ${n ** 3} × 6 × ${s * s} = ${small}. Original: ${big}. Increase ${small - big}.` };
+}, ({ n, s }) => { const cuts = 3 * (n - 1), face = (n * s) ** 2; return cuts * 2 * face; });
+
+GEN("sc-area", "scaling", "mk78", R => {
+  const A = R.int(3, 30), k = R.pick([2, 3, 4, 5, 10]), kind = R.int(0, 1); R.p = { A, k, kind };
+  const ans = kind ? A * k ** 3 : A * k * k;
+  return { q: kind ? `Every edge of a solid with volume ${A} is multiplied by ${k}. What is the new volume?` : `Every side of a shape with area ${A} is multiplied by ${k}. What is the new area?`, a: ans, traps: [A * k, A * k * k, A * k ** 3, A + k].filter(v => v !== ans), hint: "Areas scale by k², volumes by k³.", sol: `${A} × ${k}${kind ? "³" : "²"} = ${commas(ans)}.` };
+}, ({ A, k, kind }) => A * k ** (kind ? 3 : 2));
+
+GEN("sc-ratio", "scaling", "amc8", R => {
+  const p = R.int(1, 3), q = R.int(p + 1, 5), V = p ** 3 * R.int(1, 8); R.p = { p, q, V };
+  if (gcd(p, q) !== 1) return again("sc-ratio")(R);
+  const ans = V * q ** 3 / p ** 3;
+  return { q: `Two similar cones have heights ${p} : ${q}. The smaller has volume ${V}. What is the volume of the larger?`, a: ans, traps: [V * q / p, V * q * q / (p * p), V + q ** 3 - p ** 3, ans * 2].filter(v => Number.isInteger(v) && v !== ans), hint: "Volumes scale by the cube of the length ratio.", sol: `${V} × (${q}/${p})³ = ${ans}.` };
+}, ({ p, q, V }) => cl(V * (q / p) ** 3));
+
+GEN("sc-percent", "scaling", "amc10", R => {
+  const p = R.pick([10, 20, 30, 50, 100]), kind = R.int(0, 1); R.p = { p, kind };
+  const e = kind ? 3 : 2, ans = ((100 + p) ** e - 100 ** e) / 100 ** (e - 1);
+  return { q: `Every edge of a ${kind ? "cube" : "square"} grows by ${p}%. By what percent does its ${kind ? "volume" : "area"} grow?`, a: ans, traps: [p * e, p, p * p / 100 + p, ans + 10].filter(v => v !== ans), fmt: v => `${+v.toFixed(1)}%`, hint: `Multiply by (1 + ${p / 100})${kind ? "³" : "²"}.`, sol: `${(1 + p / 100).toFixed(1)}${kind ? "³" : "²"} = ${(1 + ans / 100).toFixed(3).replace(/0+$/, "")}, an increase of ${+ans.toFixed(1)}%.` };
+}, ({ p, kind }) => `${+((Math.pow(1 + p / 100, kind ? 3 : 2) - 1) * 100).toFixed(1)}%`);
+
+/* =========================================================
    STORAGE: shared Claude db when available, else this browser
    results: one doc per finished test or lesson check
    opened:  one doc per student+lesson, written the first time a lesson is opened
@@ -5393,19 +5881,25 @@ function genPool(level, chap) {
   return GENS.filter(g => g.level === level && inChap(g.topic, chap));
 }
 /* A test draws from hand-written problems and generators together, using each source
-   once before any repeats. Hand-written choices are shuffled so the right letter is random. */
+   once before any repeats. Hand-written choices are shuffled so the right letter is random.
+   If a chapter is short at this level, it is topped up from the level just below. */
+const prevLevel = level => LEVEL_ORDER[LEVEL_ORDER.indexOf(level) - 1];
+const capacity = (level, chap) => level ? testPool(level, chap).length + GEN_REPEATS * genPool(level, chap).length : 0;
+const poolSize = (level, chap) => capacity(level, chap) + capacity(prevLevel(level), chap);
+function drawFrom(level, chap, k) {
+  if (!level || k <= 0) return [];
+  const gens = genPool(level, chap), list = shuffle([...testPool(level, chap).map(b => ({ b })), ...gens.map(g => ({ g }))]).slice(0, k);
+  const gs = shuffle(gens);
+  for (let i = 0; list.length < k && i < gs.length * (GEN_REPEATS - 1); i++) list.push({ g: gs[i % gs.length] });
+  return list;
+}
 function drawTest(level, chap, n) {
-  const sources = shuffle([...testPool(level, chap).map(b => ({ b })), ...genPool(level, chap).map(g => ({ g }))]);
-  const out = [];
-  for (let i = 0; i < n && sources.length; i++) {
-    const s = sources[i % sources.length];
-    if (s.g) out.push(genProblem(s.g));
-    else {
-      const perm = shuffle(s.b.choices.map((_, j) => j));
-      out.push({ ...s.b, choices: perm.map(j => s.b.choices[j]), answer: perm.indexOf(s.b.answer) });
-    }
-  }
-  return out;
+  const main = drawFrom(level, chap, n), sources = shuffle([...main, ...drawFrom(prevLevel(level), chap, n - main.length)]);
+  return sources.map(s => {
+    if (s.g) return genProblem(s.g);
+    const perm = shuffle(s.b.choices.map((_, j) => j));
+    return { ...s.b, choices: perm.map(j => s.b.choices[j]), answer: perm.indexOf(s.b.answer) };
+  });
 }
 function testShape(levelKey, poolSize) {
   const lv = LEVELS[levelKey];
@@ -5418,7 +5912,7 @@ function testShape(levelKey, poolSize) {
 function viewSetup() {
   if (!levelOK(S.student, S.level)) S.level = capOf(S.student);
   const pool = testPool(S.level, S.testChapter), gp = genPool(S.level, S.testChapter);
-  const { n, limit } = testShape(S.level, pool.length + GEN_REPEATS * gp.length), lv = LEVELS[S.level];
+  const { n, limit } = testShape(S.level, poolSize(S.level, S.testChapter)), lv = LEVELS[S.level], topped = n > capacity(S.level, S.testChapter);
   const chaps = CURRICULUM.filter(c => BANK.some(b => lessonMeta(b.topic)?.chapter.id === c.id));
   return `
   <section style="display:flex;flex-direction:column;gap:8px"><span class="eyebrow">Test prep</span><h1>Timed practice test</h1>
@@ -5441,14 +5935,14 @@ function viewSetup() {
   </section>
   <section class="panel" style="display:flex;flex-direction:column;gap:12px">
     <h2>${lv.name} · ${TEST_LENGTHS[S.testLen]}</h2>
-    <p><b class="mono">${n}</b> questions · <b class="mono">${fmtTime(limit)}</b> time limit${S.testLen === "full" && n < lv.count ? ` <span class="status">(only ${n} problems match; time scaled to fit)</span>` : ""} · taken by <b>${nameOf(S.student)}</b></p>
+    <p><b class="mono">${n}</b> questions · <b class="mono">${fmtTime(limit)}</b> time limit${S.testLen === "full" && n < lv.count ? ` <span class="status">(only ${n} problems match; time scaled to fit)</span>` : ""}${topped ? ` <span class="status">(includes some ${LEVELS[prevLevel(S.level)].short} problems)</span>` : ""} · taken by <b>${nameOf(S.student)}</b></p>
     ${n ? "" : `<p class="status">No problems at this level for this chapter yet. Pick another chapter or level.</p>`}
     <div class="row"><button class="btn primary" data-act="start" ${n ? "" : "disabled"}>Start test</button>${storageNote()}</div>
   </section>`;
 }
 
 function startTest() {
-  const { n, limit } = testShape(S.level, testPool(S.level, S.testChapter).length + GEN_REPEATS * genPool(S.level, S.testChapter).length);
+  const { n, limit } = testShape(S.level, poolSize(S.level, S.testChapter));
   const pool = drawTest(S.level, S.testChapter, n);
   S.test = { level: S.level, len: S.testLen, student: S.student, qs: pool, answers: {}, hints: {}, cur: 0, start: Date.now(), limit, done: false, confirming: false };
   go("test");
