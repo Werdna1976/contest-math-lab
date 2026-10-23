@@ -167,6 +167,9 @@ main{max-width:1440px;margin:0 auto;padding-block:28px 64px;padding-left:max(16p
 .fig figcaption{font-size:.85rem;color:var(--muted);text-align:center}
 .fig svg{max-width:100%;height:auto}
 .ex{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.trick{background:var(--hi-soft);border-left:4px solid var(--hi);border-radius:0 10px 10px 0;padding:12px 16px;display:flex;flex-direction:column;gap:4px}
+.trick .lbl{font-family:var(--f-mono);font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.trick b{font-family:var(--f-display)}
 .ex .lbl{font-family:var(--f-mono);font-size:.75rem;color:var(--accent);text-transform:uppercase;letter-spacing:.06em}
 .ex details summary{cursor:pointer;color:var(--accent);font-weight:500}
 .ex details[open] summary{margin-bottom:6px}
@@ -391,6 +394,7 @@ CURRICULUM.forEach(c => c.groups.forEach(g => {
 }));
 
 const LESSONS = {};   // filled by content/*.js
+const TRICKS = {};    // lessonId -> [{at: section heading, t: name, h: html}]; shown at the end of that section
 const BANK = [];      // filled by content/*.js
 const FORMULAS = {};  // chapterId -> [{name, eq, note?, core?}]  core:true = also on the test-day sheet
 
@@ -785,6 +789,455 @@ BANK.push(
   { id: "a10-6", level: "amc10", topic: "mcnugget", q: "How many pairs of integers (a, b) with 1 < a < b and gcd(a, b) = 1 have 23 as the largest number not expressible as ax + by with x, y ≥ 0?", choices: ["2", "3", "4", "5", "6"], answer: 2, hint: "ab − a − b = 23 can be rewritten as (a − 1)(b − 1) = 24.", solution: "(a − 1, b − 1) ∈ {(1,24), (2,12), (3,8), (4,6)} → (2,25), (3,13), (4,9), (5,7). All coprime: 4 pairs." },
   { id: "a10-7", level: "amc10", topic: "diagonals", q: "How many triangles have all three vertices at vertices of a regular decagon, but share no side with the decagon?", choices: ["40", "50", "60", "70", "80"], answer: 1, hint: "Start with C(10, 3) triangles. Subtract those using exactly one decagon side and those using two.", solution: "Total 120. Two sides (three consecutive vertices): 10. Exactly one side: 10 sides × 6 non-adjacent third vertices = 60. 120 − 10 − 60 = 50." },
 );
+
+/* =========================================================
+   Memory tricks: Beginner lessons
+   Each entry lands at the end of the section named in `at`.
+   ========================================================= */
+Object.assign(TRICKS, {
+  "order-ops": [
+    { at: "The order", t: "PEMDAS: “Please Excuse My Dear Aunt Sally.”", h: "Parentheses, Exponents, Multiply/Divide, Add/Subtract. Read it as P · E · MD · AS: M and D are partners, and so are A and S. Partners tie, so you go left to right. 24 ÷ 4 × 3 = 6 × 3 = 18." },
+    { at: "Group to save work", t: "Hunt for 10s and 100s.", h: "Before adding a list, look for pairs that make a round number. 37 + 46 + 63 = (37 + 63) + 46 = 100 + 46 = 146. You may reorder and regroup + and × freely, but never − or ÷." },
+    { at: "Pairing tricks", t: "First plus last, times the number of pairs.", h: "1 + 2 + ··· + 100: pair 1 with 100, 2 with 99, and so on. Each pair makes 101 and there are 50 pairs, so 101 × 50 = 5050." },
+  ],
+  "fractions": [
+    { at: "Three names for one number", t: "Eighths go up by 12.5.", h: "1/8 = 12.5%, 2/8 = 25%, 3/8 = 37.5%, 4/8 = 50%, 5/8 = 62.5%. Also know 1/3 ≈ 33.3%, 1/5 = 20%, 1/6 ≈ 16.7%." },
+    { at: "“Of” means multiply", t: "Of = ×, is = =, what = x.", h: "“What is 20% of 35?” becomes x = 0.20 × 35 = 7." },
+    { at: "Percent off and percent of", t: "Percents can swap.", h: "x% of y = y% of x. 8% of 25 is hard, but 25% of 8 = 2 is easy, and they are equal. Also, 25% off means you pay 75%, so multiply by 0.75 once." },
+  ],
+  "ratios": [
+    { at: "Parts of a whole", t: "Add the ratio to get the parts.", h: "Boys : girls = 3 : 5 means 8 equal parts. Find one part (total ÷ 8) first, then multiply." },
+    { at: "Scaling", t: "Cross-multiply (the butterfly).", h: "a/b = c/d means a × d = b × c. Draw wings from a to d and from b to c." },
+    { at: "Chaining ratios", t: "Match the middle.", h: "a:b = 2:3 and b:c = 4:5. Make both b's the same (12): a:b = 8:12, b:c = 12:15, so a:b:c = 8:12:15." },
+  ],
+  "averages": [
+    { at: "Mean is really a sum", t: "Mean × count = sum.", h: "Think of the mean as leveling stacks of blocks so everyone has the same. Whenever a problem gives an average, turn it into a total first." },
+    { at: "Median and mode", t: "MEDian = MIDdle, MOde = MOst.", h: "The median strip runs down the middle of the road. The mode is the value that shows up the most. Range = highest − lowest." },
+    { at: "Changing the data", t: "A new score pulls the mean by its gap, shared out.", h: "Average 80 on 4 tests, then a 90: the new score is 10 above, shared among 5 tests, so the mean rises by 10 ÷ 5 = 2, to 82." },
+  ],
+  "mental-math": [
+    { at: "Round and fix", t: "Round, multiply, fix.", h: "99 × 7: do 100 × 7 = 700, then take back one 7: 693." },
+    { at: "Friendly numbers", t: "× 5 is × 10 ÷ 2, × 25 is × 100 ÷ 4.", h: "48 × 25 = 4800 ÷ 4 = 1200. For × 11 with two digits, split the digits and put their sum in the middle: 36 × 11 = 3(9)6 = 396. If the sum is 10 or more, carry: 57 × 11 = 5(12)7 = 627." },
+    { at: "Squares and near-squares", t: "Ending in 5: times the next number, then 25.", h: "65²: 6 × 7 = 42, then write 25: 4225." },
+    { at: "Estimating", t: "Check the size and the last digit.", h: "37 × 43 must be near 40 × 40 = 1600 and must end in 1 (7 × 3 = 21). That rules out most wrong choices fast." },
+  ],
+  "units": [
+    { at: "Multiply by 1", t: "Units cancel like numbers.", h: "Write each conversion as a fraction equal to 1, with the unit you want to get rid of on the opposite side. 3 ft × (12 in / 1 ft) = 36 in." },
+    { at: "Square and cubic units", t: "Square it for area, cube it for volume.", h: "1 yd = 3 ft, so 1 yd² = 3² = 9 ft² and 1 yd³ = 3³ = 27 ft³." },
+    { at: "Speeds", t: "“Sixty, eighty-eight.” And a mile is “five tomatoes.”", h: "60 mph = 88 ft/s (halve both: 30 mph = 44 ft/s). A mile is 5280 feet, which sounds like “five-two-eight-oh,” or five tomatoes." },
+  ],
+  "patterns": [
+    { at: "Counting a list", t: "Last minus first, plus one.", h: "12 through 40 has 40 − 12 + 1 = 29 numbers. Fence posts work the same way: 10 sections of fence need 11 posts." },
+    { at: "Arithmetic sequences", t: "Term n is n − 1 steps away.", h: "To get from term 1 to term 20 you take 19 steps, so term 20 = first + 19 × difference." },
+    { at: "Repeating cycles", t: "Use the remainder.", h: "In a cycle of length 4, item 50 matches item 50 ÷ 4 = 12 remainder 2, so it is the 2nd item. Remainder 0 means the last item of the cycle." },
+    { at: "Growing shapes", t: "Make a table: stage, count, change.", h: "If the change is the same every time, the count is first + (stage − 1) × change." },
+  ],
+  "backwards": [
+    { at: "Undo the steps", t: "Shoes off before socks.", h: "You put socks on first and shoes second, so you take them off in the reverse order. Undo the last step first, and use the opposite operation: + becomes −, × becomes ÷." },
+    { at: "Fractions of what's left", t: "Undo “spent 1/3” by dividing by 2/3.", h: "If 1/3 is spent, 2/3 is left. To go back, divide what's left by 2/3 (same as × 3/2)." },
+    { at: "Doubling", t: "Halve your way back.", h: "Something doubles every day and is full on day 30. Going back one day halves it, so it was half full on day 29." },
+  ],
+  "organized-lists": [
+    { at: "Fix the biggest piece first", t: "Biggest first, then step down.", h: "List with the largest part as big as it can be, then make it one smaller each row. Nothing gets skipped or counted twice." },
+    { at: "Coins and tickets", t: "Quarters first, pennies last.", h: "Fix the number of the biggest coin, then the next biggest. Pennies just fill whatever is left, so they never need their own column." },
+    { at: "Triangles", t: "The two short sides must beat the long one.", h: "Sides 3, 4, 8 fail because 3 + 4 = 7 is not more than 8." },
+  ],
+  "polygon-angles": [
+    { at: "Why (n − 2) × 180°", t: "Every extra side adds 180°.", h: "Triangle 180°, quadrilateral 360°, pentagon 540°, hexagon 720°. From one corner you can cut the shape into n − 2 triangles." },
+    { at: "One angle of a regular polygon", t: "Exterior first, then 180 minus.", h: "Hexagon: exterior = 360 ÷ 6 = 60°, so interior = 180 − 60 = 120°. Much faster than (6 − 2) × 180 ÷ 6." },
+    { at: "Exterior angles add to 360°", t: "Walk around the fence.", h: "Walking around any polygon, you turn at each corner and end facing the way you started: one full turn, 360°." },
+  ],
+  "triangle-types": [
+    { at: "Naming by sides", t: "EQUIlateral = all EQUal, ISOsceles = two equal legs.", h: "Scalene sides are all different. “Iso” means same, like the two legs of a person." },
+    { at: "Naming by angles", t: "Acute is “a cute little angle.”", h: "Acute: all angles under 90°. Right: one 90°. Obtuse: one angle over 90°, “wide open.”" },
+    { at: "The c² test", t: "Compare c² with a² + b².", h: "Using the longest side c: c² smaller → acute, equal → right, bigger → obtuse. A big c² means the angle across from it had to open wide." },
+    { at: "Isosceles angle facts", t: "Equal sides face equal angles.", h: "The two angles at the base (across from the equal sides) match." },
+  ],
+  "quadrilaterals": [
+    { at: "The family tree", t: "A square is the overachiever.", h: "A square is a rectangle (four right angles) and a rhombus (four equal sides). Every square is a rectangle, but not every rectangle is a square." },
+    { at: "What the diagonals do", t: "Rectangle → Equal, Rhombus → Right angle.", h: "Rectangle diagonals are the same length. Rhombus diagonals cross at 90°. A square gets both. All parallelograms' diagonals cut each other in half." },
+    { at: "Angles in quadrilaterals", t: "Four corners, 360°.", h: "Any quadrilateral splits into two triangles: 2 × 180° = 360°." },
+  ],
+  "symmetry": [
+    { at: "Line symmetry", t: "Regular n-gon: n mirror lines.", h: "A regular hexagon has 6 lines of symmetry. A circle has infinitely many." },
+    { at: "Rotational symmetry", t: "Turns of 360 ÷ n.", h: "A regular pentagon looks the same after turns of 72°, 144°, …: 360 ÷ 5 = 72." },
+    { at: "Inside a regular hexagon", t: "A hexagon is six equilateral triangles.", h: "Draw lines from the center to each corner. Every triangle has all sides equal to the hexagon's side." },
+    { at: "Which shapes tile", t: "Corners must add to 360°.", h: "Triangles (6 × 60°), squares (4 × 90°) and hexagons (3 × 120°) fit. A pentagon's 108° doesn't divide 360, so pentagons leave gaps." },
+  ],
+  "drt": [
+    { at: "The one formula", t: "D = R × T: “DiRT.”", h: "Or draw a triangle with D on top and R, T on the bottom. Cover the one you want: D = R × T, R = D ÷ T, T = D ÷ R." },
+    { at: "Watch the units", t: "Minutes are fractions of an hour.", h: "20 min = 1/3 hr, 45 min = 3/4 hr. Convert before you multiply by a speed in mph." },
+    { at: "Long objects", t: "The front has to travel the whole thing plus itself.", h: "A 200 m train fully crossing a 600 m bridge travels 800 m." },
+  ],
+  "clocks": [
+    { at: "How fast the hands move", t: "Minute hand 6° a minute, hour hand ½°.", h: "Minute hand: 360° in 60 min. Hour hand: 30° per hour, so ½° per minute." },
+    { at: "Angle formula", t: "|30H − 5.5M|", h: "“Thirty H minus five and a half M.” At 3:20: |90 − 110| = 20°. If you get more than 180°, subtract from 360°." },
+    { at: "Days of the week", t: "Every 7 days repeats. And use your knuckles.", h: "100 days after Monday: 100 = 14 × 7 + 2, so Wednesday. Count months across your knuckles: knuckles are 31 days, valleys are 30 (or February)." },
+  ],
+  "expressions": [
+    { at: "Like terms", t: "Apples with apples.", h: "3x and 5x combine. 3x and 5x² don't: same letter, different power." },
+    { at: "Distributing (watch the minus)", t: "Draw the rainbow.", h: "Draw an arc from the outside number to every term inside. A minus in front is a −1 that hits every term: −(x − 3) = −x + 3." },
+    { at: "A useful square", t: "FOIL, and don't forget the middle.", h: "(a + b)(c + d): First, Outer, Inner, Last. So (a + b)² = a² + 2ab + b², never just a² + b²." },
+  ],
+  "linear-eq": [
+    { at: "Undo in reverse order", t: "SADMEP: PEMDAS backwards.", h: "To solve, undo + and − first, then × and ÷. Keep the scale balanced: whatever you do to one side, do to the other." },
+    { at: "Clearing fractions", t: "Multiply every term by the common denominator.", h: "x/2 + x/3 = 5 → multiply by 6: 3x + 2x = 30." },
+    { at: "Consecutive numbers", t: "Call the middle one n.", h: "n − 1, n, n + 1 add to 3n. The sum ÷ count is the middle number." },
+    { at: "No solution or every solution", t: "If the x's vanish, read what's left.", h: "True (5 = 5): every number works. False (5 = 7): no number works." },
+  ],
+  "word-eq": [
+    { at: "A translation table", t: "Is → =, of → ×, per → ÷.", h: "“Less than” flips the order: “5 less than x” is x − 5, not 5 − x." },
+    { at: "Age problems", t: "The age gap never changes.", h: "If Mom is 28 years older now, she was 28 years older ten years ago and will be 28 years older forever." },
+    { at: "Coin and ticket problems", t: "Count in cents.", h: "Value = how many × value of each. 7 dimes = 70 cents. Working in cents avoids decimals." },
+  ],
+  "angle-basics": [
+    { at: "Kinds of angles", t: "Acute is “a cute” little angle.", h: "Acute < 90° < obtuse < 180°. Right is exactly 90°, straight is exactly 180°." },
+    { at: "Complements and supplements", t: "C before S, 90 before 180.", h: "Complement = Corner (90°). Supplement = Straight line (180°). C comes before S in the alphabet, and 90 comes before 180." },
+    { at: "Vertical angles and full turns", t: "X marks equal angles.", h: "In an X, the angles across from each other are equal. Neighbors add to 180°." },
+  ],
+  "parallel-lines": [
+    { at: "Eight angles, two sizes", t: "Small or big, nothing else.", h: "Every angle is either the small one or the big one, and small + big = 180°." },
+    { at: "Which pairs match", t: "Look for the letters Z, F, and C.", h: "Z shape: alternate angles, equal. F shape: corresponding angles, equal. C (or U) shape: co-interior angles, add to 180°." },
+    { at: "The bent-line trick", t: "The bend is the sum.", h: "A path that bends between two parallel lines: the angle at the bend equals the two angles where it meets the lines, added." },
+  ],
+  "exterior-angle": [
+    { at: "The theorem", t: "Outside = the two far insides.", h: "An exterior angle equals the sum of the two interior angles that aren't next to it." },
+  ],
+  "primes": [
+    { at: "What a prime is", t: "1 is not prime, 2 is the only even prime.", h: "Primes under 50: 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47 (fifteen of them)." },
+    { at: "Testing for primes", t: "Stop at the square root.", h: "For 91, only test primes up to √91 ≈ 9.5: 2, 3, 5, 7. And 91 = 7 × 13. Watch the fakes: 51 = 3 × 17, 57 = 3 × 19, 91 = 7 × 13." },
+  ],
+  "divisibility": [
+    { at: "The quick rules", t: "3 and 9: add the digits. 4: last two. 8: last three.", h: "2 and 5: last digit. 11: alternate + and − across the digits (1-2-1 → 1 − 2 + 1 = 0, so 121 works)." },
+    { at: "Combining rules", t: "Split into pieces that share nothing.", h: "12 = 3 × 4, so test 3 and 4. Don't use 2 and 6: they overlap, and 18 passes both but isn't divisible by 12." },
+  ],
+  "exp-rules": [
+    { at: "The rules", t: "Multiply → add, divide → subtract, power → multiply.", h: "x³ · x⁴ = x⁷. x⁷ ÷ x³ = x⁴. (x³)⁴ = x¹². Each rule drops the operation down one level." },
+    { at: "Same base, then compare exponents", t: "Rewrite everything with the smallest base.", h: "4 = 2², 8 = 2³, 16 = 2⁴, 32 = 2⁵. So 8ˣ = 32 becomes 2³ˣ = 2⁵, and 3x = 5." },
+  ],
+  "mult-principle": [
+    { at: "Steps multiply", t: "AND → multiply.", h: "A shirt AND pants AND shoes: 4 × 3 × 2 = 24 outfits." },
+    { at: "\"Or\" adds", t: "OR → add.", h: "A sandwich OR a salad: 5 + 3 = 8 choices, as long as nothing is on both lists." },
+    { at: "Fill the hardest spot first", t: "Pickiest seat first.", h: "If the first digit can't be 0, fill it first (9 choices), then the easier spots." },
+  ],
+  "circle-parts": [
+    { at: "The vocabulary", t: "Diameter goes all the way across.", h: "Diameter = 2 × radius. A chord is any segment with both ends on the circle; the diameter is the longest chord." },
+    { at: "Chords and the center", t: "Drop a line from the center and find the right triangle.", h: "The line from the center that hits a chord at 90° cuts it in half. The radius is the hypotenuse." },
+  ],
+  "circumference": [
+    { at: "Circumference", t: "“Cherry pie's delicious”: C = πd.", h: "Or C = 2πr. Both say the same thing, since d = 2r." },
+    { at: "Arc length", t: "Arc = slice of the crust.", h: "Arc length = (angle ÷ 360) × circumference. A 90° arc is 1/4 of the way around." },
+    { at: "Rolling wheels", t: "One turn rolls one circumference.", h: "A wheel of diameter 2 ft moves 2π ft forward each turn." },
+  ],
+  "circle-area": [
+    { at: "Area of a circle", t: "“Apple pies are too”: A = πr².", h: "Pairs with “cherry pie's delicious” (C = πd). Area always uses the radius squared." },
+    { at: "Sectors", t: "A sector is a slice of pizza.", h: "Sector area = (angle ÷ 360) × πr². A 60° slice is 1/6 of the pizza." },
+    { at: "Rings and leftovers", t: "Big minus small.", h: "Ring area = πR² − πr². Find each whole area, then subtract." },
+  ],
+  "basic-area": [
+    { at: "Rectangles and parallelograms", t: "Height means straight up.", h: "Height is measured at 90° to the base, like measuring how tall you are standing straight, not leaning." },
+    { at: "Triangles", t: "A triangle is half a rectangle.", h: "Area = ½ × base × height. Copy the triangle, flip it, and the two make a parallelogram." },
+    { at: "Trapezoids", t: "Average the bases, times the height.", h: "Area = (b₁ + b₂) ÷ 2 × h." },
+  ],
+  "prisms": [
+    { at: "Base times height", t: "A stack of slices.", h: "Any prism or cylinder is a stack of copies of its base, so V = (base area) × height." },
+    { at: "Cylinders", t: "A stack of coins.", h: "V = πr²h: the area of one coin times how tall the stack is." },
+    { at: "Water problems", t: "Rise × base = what went in.", h: "Drop an object in a tank: the water's rise times the tank's base area equals the object's volume." },
+  ],
+  "prob-basic": [
+    { at: "Count, then divide", t: "What you want ÷ everything that can happen.", h: "Probability is always between 0 (never) and 1 (always)." },
+    { at: "Two dice", t: "36 outcomes, and 7 is king.", h: "The ways to roll sums 2 through 12 go 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1, a pyramid. Sum 7 has 6 ways, so P = 6/36 = 1/6." },
+  ],
+});
+
+/* =========================================================
+   Memory tricks: Intermediate and Advanced lessons
+   Each entry lands at the end of the section named in `at`.
+   ========================================================= */
+Object.assign(TRICKS, {
+  /* ---------- Intermediate ---------- */
+  "logic-puzzles": [
+    { at: "Ordering clues", t: "Draw a line, then place names.", h: "Put each clue on a number line as you read it. For “who has which” puzzles, make a grid and mark ✗ for every “not.”" },
+    { at: "Knights and knaves", t: "Nobody can say “I am a knave.”", h: "A knight would be lying, and a knave would be telling the truth. Either way it's impossible, so that sentence is a giveaway." },
+    { at: "Venn diagrams", t: "Fill the middle first.", h: "Start with the overlap, then work outward. Total = only A + only B + both + neither." },
+  ],
+  "parity": [
+    { at: "Odd and even", t: "Odd + odd = even.", h: "Even ± anything keeps that thing's parity. A product is odd only when every factor is odd. A sum is odd when it has an odd number of odd terms." },
+    { at: "Coloring", t: "Checkerboard it.", h: "A domino always covers one black and one white square. If a board has unequal black and white counts, dominoes can't cover it." },
+    { at: "Invariants", t: "Find what never changes.", h: "If every move keeps something the same (a parity, a total, a remainder), compare the start and the goal. If they differ, it can't be done." },
+  ],
+  "diagonals": [
+    { at: "Counting from one corner", t: "Not me, not my two neighbors: n − 3.", h: "From one corner you can reach every corner except itself and the two next to it." },
+    { at: "The formula", t: "Halve it because each diagonal has two ends.", h: "Hexagon: 6 × 3 ÷ 2 = 9 diagonals. Check: a square has 4 × 1 ÷ 2 = 2." },
+  ],
+  "congruent-similar": [
+    { at: "Triangle congruence tests", t: "SSS, SAS, ASA, AAS work. SSA and AAA don't.", h: "AAA only proves same shape, not same size. SSA can make two different triangles." },
+    { at: "Areas scale by k²", t: "1, 2, 3: length, area, volume.", h: "Scale lengths by k: lengths × k, areas × k², volumes × k³. Double the sides → 4 times the area." },
+  ],
+  "coordinates": [
+    { at: "Distance", t: "Distance is Pythagoras in disguise.", h: "Run = change in x, rise = change in y, distance = √(run² + rise²). (1, 2) to (4, 6): √(9 + 16) = 5." },
+    { at: "Midpoint", t: "Midpoint = average.", h: "Average the x's and average the y's." },
+    { at: "Reflections", t: "The axis you flip over keeps its coordinate.", h: "Over the x-axis, x stays and y changes sign. Over the y-axis, y stays and x changes sign. Over y = x, swap them." },
+  ],
+  "solids": [
+    { at: "Euler's formula", t: "V − E + F = 2.", h: "Or V + F = E + 2. Cube: 8 + 6 = 12 + 2." },
+    { at: "Painted cubes", t: "Corners 8, edges 12(n − 2), faces 6(n − 2)², inside (n − 2)³.", h: "Corners get 3 painted faces, edge cubes 2, face cubes 1, inside cubes 0. Peel one layer off and the inside is an (n − 2) cube." },
+  ],
+  "avg-speed": [
+    { at: "Why you can't average the speeds", t: "Total distance ÷ total time. Always.", h: "You spend more time at the slow speed, so the average leans toward the slow one." },
+    { at: "The 2ab/(a + b) shortcut", t: "Same distance both ways: 2ab/(a + b).", h: "Out at 30 and back at 60: 2 × 30 × 60 ÷ 90 = 40 mph, not 45." },
+  ],
+  "meeting": [
+    { at: "Toward each other", t: "Toward → add the speeds.", h: "50 mph and 40 mph toward each other close the gap at 90 mph." },
+    { at: "Chasing", t: "Same direction → subtract the speeds.", h: "The gap closes at the difference: 60 mph chasing 45 mph gains 15 miles each hour." },
+  ],
+  "work": [
+    { at: "Rates add, times don't", t: "Add rates, never times.", h: "A paints a room in 3 hours (1/3 per hour), B in 6 hours (1/6). Together: 1/3 + 1/6 = 1/2 per hour, so 2 hours." },
+    { at: "Finding one worker's time", t: "Two workers: product over sum.", h: "Together time = ab ÷ (a + b). 3 and 6 hours: 18 ÷ 9 = 2 hours." },
+  ],
+  "mixtures": [
+    { at: "Track the pure stuff", t: "Follow the salt, not the water.", h: "Write amount of pure stuff = percent × total for each container. Mixing adds the pure amounts." },
+    { at: "Adding water or adding juice", t: "Water changes the total, not the juice.", h: "Adding water: the juice amount stays fixed. Evaporating water works the same way." },
+  ],
+  "systems": [
+    { at: "Elimination", t: "Line up, then add or subtract to kill a letter.", h: "Scale one equation so a variable has matching (or opposite) numbers first." },
+    { at: "Add everything", t: "Symmetric equations? Add them all.", h: "a + b = 5, b + c = 7, a + c = 8 add to 2(a + b + c) = 20, so a + b + c = 10. Then subtract each equation." },
+  ],
+  "inequalities": [
+    { at: "Solving inequalities", t: "Negative × or ÷ flips the sign.", h: "−2x < 6 → x > −3. The alligator mouth always opens toward the bigger side." },
+    { at: "Absolute value is distance", t: "|x − a| < b: within b of a.", h: "|x − 3| < 5 means x is less than 5 away from 3: −2 < x < 8." },
+  ],
+  "functions": [
+    { at: "Function notation", t: "f is a machine.", h: "f(5) means drop 5 in and read what comes out. Replace every x with 5." },
+    { at: "Composition", t: "Inside first, like nested boxes.", h: "f(g(2)): open the inner box g(2) first, then feed that answer to f." },
+  ],
+  "lines": [
+    { at: "Slope", t: "Rise over run: you rise before you run.", h: "Slope = change in y ÷ change in x. Uphill left to right is positive." },
+    { at: "Slope-intercept form", t: "y = mx + b: b is where you begin.", h: "b is the y-intercept, where the line crosses the y-axis. m is the slope." },
+    { at: "Parallel and perpendicular", t: "Perpendicular: flip it and change the sign.", h: "Parallel lines share a slope. Perpendicular slopes multiply to −1: 2/3 pairs with −3/2." },
+  ],
+  "sequences": [
+    { at: "Counting terms", t: "(Last − first) ÷ step + 1.", h: "7, 11, …, 99: (99 − 7) ÷ 4 + 1 = 24 terms." },
+    { at: "Adding them up", t: "Average of first and last, times how many.", h: "The pairing trick from the first lesson: 7 + 11 + ··· + 99 = (7 + 99) ÷ 2 × 24 = 1272." },
+    { at: "Geometric sequences", t: "Arithmetic adds, geometric multiplies.", h: "Term n = first × rⁿ⁻¹. 3, 6, 12, …: term 6 = 3 × 2⁵ = 96." },
+  ],
+  "angle-chasing": [
+    { at: "The method", t: "Write every angle on the picture.", h: "Three rules do most of the work: a triangle is 180°, a straight line is 180°, and around a point is 360°." },
+    { at: "Isosceles triangles everywhere", t: "Equal sides → equal base angles.", h: "Radii in a circle and equal tick marks both tell you a triangle is isosceles." },
+  ],
+  "clock-angles": [
+    { at: "The formula", t: "|30H − 5.5M|", h: "The minute hand gains 5.5° per minute on the hour hand (6° − ½°)." },
+    { at: "When do the hands overlap?", t: "Every 12/11 hours.", h: "That is 65 5/11 minutes. They overlap 11 times in 12 hours, not 12." },
+  ],
+  "pythagorean": [
+    { at: "The theorem", t: "a² + b² = c², with c across from the right angle.", h: "c is always the longest side, the hypotenuse." },
+    { at: "Triples to memorize", t: "3-4-5, 5-12-13, 8-15-17, 7-24-25.", h: "And their multiples: 6-8-10, 9-12-15, 10-24-26. Spotting one saves the square root." },
+    { at: "In 3D", t: "Box diagonal: √(a² + b² + c²).", h: "Just Pythagoras twice. A 3 × 4 × 12 box has diagonal √(9 + 16 + 144) = 13." },
+  ],
+  "similar-triangles": [
+    { at: "AA similarity", t: "Two matching angles is enough.", h: "The third angle has to match too, since all three add to 180°." },
+    { at: "A parallel line inside a triangle", t: "Small over big = small over big.", h: "A line parallel to one side cuts off a small triangle similar to the big one. Write the ratios in the same order every time." },
+  ],
+  "triangle-inequality": [
+    { at: "The rule", t: "The two short sides must beat the long one.", h: "Only check the two shortest against the longest; the other checks pass automatically." },
+    { at: "Range for the third side", t: "Between the difference and the sum.", h: "Sides 5 and 9: the third side is between 4 and 14, not equal to either." },
+  ],
+  "num-divisors": [
+    { at: "Divisors from the factorization", t: "Add 1 to each exponent, then multiply.", h: "72 = 2³ · 3², so (3 + 1)(2 + 1) = 12 divisors." },
+    { at: "Perfect squares", t: "Only squares have an odd count.", h: "Divisors come in pairs (2 × 18 = 36), except the square root, which pairs with itself (6 × 6)." },
+  ],
+  "gcd-lcm": [
+    { at: "Greatest common divisor", t: "GCD: smaller exponent of each shared prime.", h: "24 = 2³ · 3, 36 = 2² · 3², so GCD = 2² · 3 = 12." },
+    { at: "Least common multiple", t: "LCM: bigger exponent of every prime.", h: "LCM(24, 36) = 2³ · 3² = 72." },
+    { at: "GCD × LCM = a × b", t: "12 × 72 = 24 × 36.", h: "Both equal 864. Know one of GCD or LCM and you get the other." },
+    { at: "Word problems", t: "Together again → LCM. Equal groups → GCD.", h: "Buses that meet up again use the LCM. Cutting things into the biggest equal pieces uses the GCD." },
+  ],
+  "units-digit": [
+    { at: "The cycles", t: "Cycles of 4 or less.", h: "2: 2, 4, 8, 6. 3: 3, 9, 7, 1. 7: 7, 9, 3, 1. 8: 8, 4, 2, 6. 4: 4, 6. 9: 9, 1. And 0, 1, 5, 6 never change. Use the exponent's remainder ÷ 4; remainder 0 means the 4th." },
+    { at: "Factorial sums", t: "From 5! on, every factorial ends in 0.", h: "So 1! + 2! + ··· + 100! ends in the same digit as 1 + 2 + 6 + 24 = 33: a 3." },
+  ],
+  "digits": [
+    { at: "Write the number with letters", t: "“ab” means 10a + b.", h: "A three-digit “abc” is 100a + 10b + c." },
+    { at: "Reversals", t: "Difference is 9s, sum is 11s.", h: "ab − ba = 9(a − b). ab + ba = 11(a + b). 73 − 37 = 36 = 9 × 4." },
+  ],
+  "exp-zero-neg": [
+    { at: "Why a⁰ = 1", t: "Divide by the base each step down.", h: "2³ = 8, 2² = 4, 2¹ = 2, 2⁰ = 1, 2⁻¹ = 1/2. Each step down halves." },
+    { at: "Negative means flip", t: "Negative exponent → flip, not negative.", h: "2⁻³ = 1/8, a positive number. (2/3)⁻² = (3/2)² = 9/4." },
+    { at: "Fractional exponents", t: "The root is at the bottom, like a plant's roots.", h: "8^(2/3): the 3 underneath means cube root, the 2 on top means square. ∛8 = 2, then 2² = 4." },
+  ],
+  "sci-notation": [
+    { at: "The form", t: "Big → positive exponent, small → negative.", h: "Count how many places the decimal moves. 4,500 = 4.5 × 10³. 0.0045 = 4.5 × 10⁻³." },
+    { at: "How many digits?", t: "Exponent + 1.", h: "a × 10ᵏ with 1 ≤ a < 10 has k + 1 digits. 2⁵ × 5⁸ = 10⁵ × 5³ = 125 × 10⁵ has 8 digits." },
+  ],
+  "sqrt-simplify": [
+    { at: "Pull out perfect squares", t: "Know squares to 15² = 225.", h: "4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144, 169, 196, 225. Find the biggest one that divides: √72 = √36 · √2 = 6√2." },
+    { at: "Adding radicals", t: "Only like radicals combine.", h: "3√2 + 5√2 = 8√2, like 3 apples + 5 apples. √2 + √3 stays as it is." },
+    { at: "Estimating roots", t: "Trap it between neighbors.", h: "√50 is between √49 = 7 and √64 = 8, very close to 7." },
+  ],
+  "permutations": [
+    { at: "Choosing in order", t: "P for Position, C for Committee.", h: "Order matters (president, VP, treasurer) → permutation. Order doesn't (a 3-person committee) → combination." },
+    { at: "Glue: keeping people together", t: "Glue them, then shuffle inside.", h: "Treat the pair as one block, arrange the blocks, then multiply by 2! for the pair's own order." },
+    { at: "Apart = total − together", t: "Apart is total minus together.", h: "Counting “never next to each other” directly is hard; counting “together” is easy." },
+  ],
+  "combinations": [
+    { at: "When order doesn't matter", t: "Choosing who's in = choosing who's out.", h: "C(10, 8) = C(10, 2) = 45. Always use the smaller one." },
+    { at: "Handshakes", t: "Handshakes = C(n, 2) = n(n − 1)/2.", h: "Each person shakes n − 1 hands, but each handshake has two people, so halve it." },
+  ],
+  "repeats": [
+    { at: "Why we divide", t: "Divide by the factorial of each repeat.", h: "MISSISSIPPI: 11 letters, I × 4, S × 4, P × 2, so 11! ÷ (4! · 4! · 2!)." },
+  ],
+  "casework": [
+    { at: "Split, count, add", t: "Cases must not overlap and must cover everything.", h: "Check: would any item fit in two cases? Is any item left out?" },
+  ],
+  "complementary": [
+    { at: "Count the opposite", t: "Hard to count? Count what you don't want.", h: "Wanted = total − unwanted. Look for the words “at least” and “not.”" },
+    { at: "\"At least one\"", t: "At least one = total − none.", h: "3-digit numbers with at least one 7: 900 − 8 · 9 · 9 = 900 − 648 = 252." },
+  ],
+  "grid-paths": [
+    { at: "Paths are words", t: "R's and U's: choose where the R's go.", h: "4 right and 3 up is a 7-letter word with 4 R's: C(7, 4) = 35 paths." },
+    { at: "Through a point", t: "Through a point → multiply.", h: "Paths to the point × paths from the point." },
+    { at: "Avoiding a point", t: "Avoid = total − through.", h: "Same complement idea as “at least one.”" },
+  ],
+  "pigeonhole": [
+    { at: "Think worst case", t: "Worst case, plus one.", h: "To be sure of 2 socks of one color with 3 colors: worst case you grab one of each (3), so 4 socks." },
+  ],
+  "shaded-area": [
+    { at: "Subtract", t: "Whole minus the holes.", h: "Find the area of the big shape, then subtract the unshaded pieces." },
+    { at: "Rearrange", t: "Slide pieces before you calculate.", h: "Shaded pieces often move and fit together into a simple shape, like a half-square or a full circle." },
+  ],
+  "cones-spheres": [
+    { at: "One third", t: "Pointy shapes are 1/3.", h: "A cone is 1/3 of its cylinder, a pyramid is 1/3 of its prism: V = ⅓ × base × height." },
+    { at: "Spheres", t: "Volume ⁴⁄₃πr³, surface 4πr².", h: "Surface = 4 great circles (4 × πr²). Volume has the cube because volume is 3-dimensional." },
+  ],
+  "surface-area": [
+    { at: "Add up the faces", t: "Unfold it.", h: "Picture the net (the box flattened out) and add the face areas. A box: 2(lw + lh + wh)." },
+    { at: "Curved surfaces", t: "Cylinder = two lids + a label.", h: "The label unrolls into a rectangle: height × circumference. Total 2πr² + 2πrh." },
+  ],
+  "scaling": [
+    { at: "Three different powers", t: "1, 2, 3: length, area, volume.", h: "Scale by k: length × k, area × k², volume × k³. A model at 1/10 scale needs 1/100 the paint (area) and 1/1000 the clay (volume)." },
+    { at: "Partly filled cones", t: "Half the height is only 1/8 the volume.", h: "A cone filled to half its height holds (1/2)³ = 1/8 of the full amount." },
+  ],
+  "gcf-factor": [
+    { at: "Powers with the same base", t: "Pull out the smallest power.", h: "2¹⁰ + 2⁸ = 2⁸(2² + 1) = 2⁸ × 5." },
+    { at: "Grouping", t: "Pair up, factor, look for a match.", h: "xy + 3x + 2y + 6 = x(y + 3) + 2(y + 3) = (x + 2)(y + 3)." },
+  ],
+  "diff-squares": [
+    { at: "The identity", t: "a² − b² = sum × difference.", h: "(a + b)(a − b). It only works for minus; a² + b² does not factor." },
+    { at: "Mental math", t: "Two numbers equally far from a round one.", h: "48 × 52 = (50 − 2)(50 + 2) = 2500 − 4 = 2496." },
+  ],
+  "perfect-squares": [
+    { at: "Squaring a sum", t: "Square the first, twice the product, square the last.", h: "(x + 5)² = x² + 10x + 25. The middle term is the one people forget." },
+    { at: "Completing the square", t: "Half the middle number, squared.", h: "x² + 6x: half of 6 is 3, 3² = 9, so x² + 6x + 9 = (x + 3)²." },
+  ],
+  "prob-complement": [
+    { at: "“At least one” means flip it", t: "P(at least one) = 1 − P(none).", h: "Three coins, at least one head: 1 − 1/8 = 7/8." },
+  ],
+  "independent": [
+    { at: "Multiply when independent", t: "AND → multiply, OR → add.", h: "Add only when the outcomes can't both happen." },
+    { at: "Without replacement", t: "The bottom drops by one each draw.", h: "2 red from 5 red and 3 blue: 5/8 × 4/7. Both the count and the total went down." },
+  ],
+  "expected": [
+    { at: "The long-run average", t: "Value × chance, then add.", h: "A die: (1 + 2 + 3 + 4 + 5 + 6) ÷ 6 = 3.5. Expected values don't have to be possible outcomes." },
+    { at: "Waiting times", t: "Chance p → wait 1/p tries.", h: "Rolling until a 6 takes 6 rolls on average. Flipping until heads takes 2." },
+  ],
+
+  /* ---------- Advanced ---------- */
+  "quadratics": [
+    { at: "The quadratic formula", t: "Sing it to “Pop Goes the Weasel.”", h: "“x equals negative b, plus or minus the square root, of b squared minus four a c, all over two a.”" },
+    { at: "Vieta's formulas", t: "Sum flips the sign, product keeps it.", h: "For x² + bx + c: roots add to −b and multiply to c. For ax² + bx + c, divide by a first." },
+    { at: "The vertex", t: "x = −b ÷ 2a: the formula without the ±.", h: "The vertex sits halfway between the roots, which is −b/2a." },
+  ],
+  "special-right": [
+    { at: "The two shapes", t: "1-1-√2 and 1-√3-2.", h: "45-45-90: legs equal, hypotenuse × √2. 30-60-90: hypotenuse is double the short leg, and the √3 goes with the 60° (both have a 3)." },
+    { at: "Equilateral triangles", t: "Height = (√3/2) × side.", h: "Cutting an equilateral triangle in half makes two 30-60-90 triangles. Area = (√3/4) × side²." },
+  ],
+  "modular": [
+    { at: "Clock arithmetic", t: "Mod is a clock.", h: "Mod 12 is a regular clock: 15 o'clock is 3. Any number can be swapped for its remainder." },
+    { at: "Remainders behave", t: "Reduce first, then compute.", h: "Remainder of 1001 × 1003 ÷ 10: just use 1 × 3 = 3. Works for +, −, and ×, not ÷." },
+    { at: "Powers and cycles", t: "Look for a remainder of 1 or −1.", h: "2³ = 8 ≡ 1 (mod 7), so 2¹⁰⁰ = 2⁹⁹ · 2 ≡ 1 · 2 = 2 (mod 7)." },
+  ],
+  "bases": [
+    { at: "Place value in base b", t: "Places are 1, b, b², b³ from the right.", h: "In base b, digits go from 0 to b − 1. Base 2 uses only 0 and 1." },
+    { at: "Converting from base 10", t: "Divide, keep remainders, read bottom up.", h: "13 to base 2: 13 → 6 r1 → 3 r0 → 1 r1 → 0 r1. Read up: 1101." },
+  ],
+  "diophantine": [
+    { at: "Find one, then step", t: "Step x by b, y by a, opposite ways.", h: "For ax + by = c (with a, b sharing no factor), from one solution add b to x and subtract a from y to get the next." },
+    { at: "When there are none", t: "The GCD must divide the right side.", h: "6x + 9y = 10 has no integer solutions: the left side is always a multiple of 3." },
+  ],
+  "rationalize": [
+    { at: "Conjugates", t: "Same numbers, flip the middle sign.", h: "Multiply 1/(3 + √2) by (3 − √2)/(3 − √2). The bottom becomes 9 − 2 = 7, a difference of squares." },
+    { at: "Telescoping sums", t: "Most of it cancels.", h: "1/(√(n + 1) + √n) = √(n + 1) − √n. Add a run of them and only the first and last survive." },
+  ],
+  "compare-powers": [
+    { at: "Match the exponents", t: "Make the exponents equal, then compare bases.", h: "2³⁰⁰ vs 3²⁰⁰: 8¹⁰⁰ vs 9¹⁰⁰, so 3²⁰⁰ wins." },
+    { at: "Match the bases", t: "Or make the bases equal and compare exponents.", h: "4¹⁰ vs 8⁷: 2²⁰ vs 2²¹, so 8⁷ wins." },
+  ],
+  "pascal": [
+    { at: "Building the triangle", t: "Each entry is the sum of the two above it.", h: "Row 4: 1, 4, 6, 4, 1. Each row reads the same forward and backward." },
+    { at: "Row sums", t: "Row n adds to 2ⁿ.", h: "Each item is either in or out of a subset: 2 choices, n times." },
+  ],
+  "pie": [
+    { at: "Two sets", t: "Add both, subtract the overlap.", h: "|A or B| = |A| + |B| − |A and B|. The overlap got counted twice." },
+    { at: "Three sets", t: "Add singles, subtract pairs, add back the triple.", h: "In, out, in: the signs alternate as the groups get bigger." },
+  ],
+  "stars-bars": [
+    { at: "The picture", t: "Choose where the bars go.", h: "n identical things into k boxes: n stars and k − 1 bars in a row. C(n + k − 1, k − 1)." },
+    { at: "Every box gets at least one", t: "Hand out one each first.", h: "Give every box its minimum, then share what's left with the boxes-may-be-empty formula." },
+  ],
+  "mcnugget": [
+    { at: "The theorem", t: "ab − a − b.", h: "With box sizes a and b that share no factor, the largest amount you can't buy is ab − a − b. For 3 and 5: 15 − 3 − 5 = 7." },
+    { at: "Counting the gaps", t: "Half of (a − 1)(b − 1).", h: "3 and 5: (2 × 4) ÷ 2 = 4 impossible amounts: 1, 2, 4, 7." },
+  ],
+  "circular": [
+    { at: "Rotations are the same", t: "Sit one person down first.", h: "Fix one person's seat; everyone else is placed relative to them: (n − 1)!." },
+    { at: "Necklaces can flip", t: "Flip → divide by 2 again.", h: "A bracelet can be turned over, so (n − 1)! ÷ 2." },
+  ],
+  "derangements": [
+    { at: "Small cases", t: "1, 0, 1, 2, 9, 44, 265.", h: "Derangements of 1 through 7 items. Memorize up to 44 (n = 5)." },
+    { at: "The recursion", t: "!n = (n − 1)(!(n − 1) + !(n − 2)).", h: "!5 = 4 × (9 + 2) = 44. For big n, about n! ÷ e (≈ 37% of all orders)." },
+  ],
+  "inscribed-angles": [
+    { at: "Half the central angle", t: "Inscribed angle = half the arc.", h: "The corner on the circle sees the arc at half the angle the center does." },
+    { at: "Angles in a semicircle", t: "Diameter → right angle.", h: "Any triangle with a diameter as one side and its third corner on the circle has a 90° angle at that corner." },
+    { at: "Cyclic quadrilaterals", t: "Opposite angles add to 180°.", h: "Together they see the whole circle (360°), and each is half its arc." },
+  ],
+  "tangents": [
+    { at: "Tangent meets radius at 90°", t: "See a tangent? Draw the radius.", h: "The right angle at the touch point almost always sets up Pythagoras." },
+    { at: "Equal tangents", t: "Ice cream cone.", h: "Two tangents from one outside point are the same length, like the two sides of a cone holding a scoop." },
+    { at: "Circles inside triangles", t: "Area = r × s.", h: "Inradius × half the perimeter. So r = area ÷ s." },
+  ],
+  "power-point": [
+    { at: "Crossing chords", t: "Part × part = part × part.", h: "Two chords crossing inside: the two pieces of one multiply to the same as the two pieces of the other." },
+    { at: "Secants from outside", t: "Outside × whole = outside × whole.", h: "Measure from the outside point to the near edge, and to the far edge." },
+    { at: "Tangent and secant", t: "Tangent² = outside × whole.", h: "A tangent is a secant whose outside and whole parts are the same length." },
+  ],
+  "heron": [
+    { at: "Area from three sides", t: "s is the semiperimeter (half the perimeter).", h: "Area = √(s(s − a)(s − b)(s − c)). Find s first, then the three gaps." },
+    { at: "The 13-14-15 triangle", t: "13-14-15 → area 84.", h: "The height to 14 is 12, splitting it into 5-12-13 and 9-12-15. Worth memorizing; it appears often." },
+  ],
+  "picks-shoelace": [
+    { at: "Pick's theorem", t: "Inside + half the border − 1.", h: "A = I + B/2 − 1. Only for shapes with every corner on a grid point." },
+    { at: "The shoelace formula", t: "Criss-cross, subtract, halve.", h: "List the corners in order, repeat the first at the end. Multiply down-right diagonals, then up-right ones, subtract the sums, take half." },
+  ],
+  "cubes": [
+    { at: "The factorizations", t: "SOAP: Same, Opposite, Always Positive.", h: "a³ ± b³ = (a ± b)(a² ∓ ab + b²). The first sign is the Same, the second is the Opposite, the last is Always Positive." },
+    { at: "From a + b and ab", t: "a³ + b³ = (a + b)³ − 3ab(a + b).", h: "If a + b = 5 and ab = 6: 125 − 90 = 35." },
+  ],
+  "sfft": [
+    { at: "The trick", t: "Add the product of the two numbers to both sides.", h: "xy + 3x + 2y = 10: add 6 to get (x + 2)(y + 3) = 16, then list factor pairs of 16." },
+  ],
+  "expansions": [
+    { at: "Chains of conjugates", t: "Sneak in (a − b) and watch it collapse.", h: "(2 + 1)(2² + 1)(2⁴ + 1): multiply by (2 − 1) = 1 and each step doubles the power: 2⁸ − 1 = 255." },
+    { at: "Three-term squares", t: "(a + b + c)² = squares + twice every pair.", h: "a² + b² + c² + 2(ab + bc + ca)." },
+  ],
+  "conditional": [
+    { at: "Shrink the sample space", t: "“Given” shrinks the world.", h: "P(A given B) = P(A and B) ÷ P(B). Throw out every outcome where B didn't happen and count again." },
+  ],
+  "geo-prob": [
+    { at: "Length and area instead of counting", t: "Good region ÷ whole region.", h: "Use lengths on a line and areas in a square, instead of counting outcomes." },
+    { at: "Two random numbers", t: "Two random numbers → a point in a square.", h: "Pick x and y between 0 and 1, plot (x, y), and shade where the condition holds. The shaded area is the probability." },
+  ],
+});
 
 /* =========================================================
    CHAPTER: Geometry: Shapes  (polygon-angles + diagonals live in 00-original.js)
@@ -8133,6 +8586,17 @@ function isRight(it, ans) {
   return Math.abs(parseNum(ans) - parseNum(it.answer)) < 1e-6;
 }
 
+// memory tricks (TRICKS) go at the end of the section they belong to
+function withTricks(id, html) {
+  for (const k of TRICKS[id] || []) {
+    const box = `<div class="trick"><span class="lbl">Remember it</span><div><b>${k.t}</b> ${k.h}</div></div>`;
+    const at = html.indexOf(`<h3>${k.at}</h3>`);
+    const nx = at < 0 ? -1 : html.indexOf("<h3", at + 4);
+    html = nx < 0 ? html + box : html.slice(0, nx) + box + html.slice(nx);
+  }
+  return html;
+}
+
 function viewLesson() {
   const les = LESSONS[S.lessonId], meta = lessonMeta(S.lessonId);
   const st = S.quizState[S.lessonId] ||= { answers: {}, graded: false };
@@ -8148,7 +8612,7 @@ function viewLesson() {
   <div class="lesson">
     <article class="prose">
       <div><span class="eyebrow">${meta.chapter.title} · about ${les.minutes} min</span><h1>${les.title}</h1><div class="row" style="margin-top:8px">${tierTag(S.lessonId)}${lvlTag(S.lessonId)}${statusTag(status)}<span class="status">for ${nameOf(S.student)}${inLevel(S.student, S.lessonId) ? "" : " · above the level set for " + S.student}</span></div></div>
-      ${les.body()}
+      ${withTricks(S.lessonId, les.body())}
       <h3 id="check">Check yourself</h3>
       <p class="status">Fractions OK (7/2) · ${Math.round(COMPLETE_AT * 100)}% to complete</p>
       ${quizHTML(S.lessonId, les.quiz, st)}
