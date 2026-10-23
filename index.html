@@ -6668,6 +6668,179 @@ GEN("cc-date", "clocks", "amc8", R => {
   const n = Math.round((Date.UTC(2023, mo, day) - Date.UTC(2023, 0, 1)) / 864e5); return DAYS[(d0 + n) % 7]; });
 
 /* =========================================================
+   GENERATORS: Arithmetic, Rates, harder problem types (AMC 8 / AMC 10)
+   ========================================================= */
+
+/* ---- order of operations & shortcuts ---- */
+GEN("ooh-diff-squares", "order-ops", "amc8", R => {
+  const a = R.pick([100, 200, 500, 1000, 2000]), d = R.int(1, 9); R.p = { a, d };
+  const ans = 4 * a * d;
+  return { q: `Compute ${commas(a + d)}<sup>2</sup> − ${commas(a - d)}<sup>2</sup>.`, a: ans, traps: [2 * a * d, 2 * d * d, 4 * d * d, 2 * a, ans + 4 * d * d].filter(v => v !== ans), hint: "x² − y² = (x − y)(x + y).", sol: `(${a + d} − ${a - d})(${a + d} + ${a - d}) = ${2 * d} × ${2 * a} = ${commas(ans)}.` };
+}, ({ a, d }) => (a + d) ** 2 - (a - d) ** 2);
+
+GEN("ooh-even-odd", "order-ops", "amc8", R => {
+  const n = R.int(10, 99); R.p = { n };
+  return { q: `Compute (2 + 4 + 6 + ⋯ + ${2 * n}) ÷ (1 + 3 + 5 + ⋯ + ${2 * n - 1}).`, a: fr(n + 1, n), traps: frTraps(n + 1, n, [fr(n, n - 1), fr(2 * n, 2 * n - 1), "1", "2"]), hint: "Each even number is 1 more than the odd number before it.", sol: `The top is n(n + 1) = ${n * (n + 1)} and the bottom is n² = ${n * n}, so the ratio is ${fr(n + 1, n)}.` };
+}, ({ n }) => { let e = 0, o = 0; for (let k = 1; k <= n; k++) { e += 2 * k; o += 2 * k - 1; } return fr(e, o); });
+
+/* ---- fractions, decimals & percents ---- */
+GEN("fph-repeating", "fractions", "amc8", R => {
+  const ab = R.int(10, 98); R.p = { ab };
+  if (ab % 11 === 0) return again("fph-repeating")(R);
+  const g = gcd(ab, 99), n = ab / g, d = 99 / g, s = String(ab);
+  return { q: `The repeating decimal 0.${s}${s}${s}… is written as a fraction in lowest terms. What is the sum of its numerator and denominator?`, a: n + d, traps: [ab + 99, ab + 100, n + d + 1, d === 99 ? ab + 90 : ab + 99 - 1, n * d].filter(v => v !== n + d), hint: "A two-digit block repeating forever is that block over 99.", sol: `0.${s}… = ${ab}/99 = ${fr(ab, 99)}, and ${n} + ${d} = ${n + d}.` };
+}, ({ ab }) => { let D = 1; while ((ab * D) % 99) D++; return ab * D / 99 + D; });
+
+GEN("fph-up-down-same", "fractions", "amc8", R => {
+  const p = R.pick([10, 20, 30, 40, 50, 60]), up = R.int(0, 1); R.p = { p, up };
+  const ans = p * p / 100;
+  return { q: `A price is ${up ? "raised" : "cut"} by ${p}% and then ${up ? "cut" : "raised"} by ${p}%. By what percent is the final price lower than the original?`, a: ans, fmt: v => `${m(v)}%`, traps: [0, p / 10, 2 * p / 10, p / 2, p].filter(v => v !== ans), hint: "Multiply the two factors.", sol: `(1 ${up ? "+" : "−"} ${p / 100})(1 ${up ? "−" : "+"} ${p / 100}) = 1 − ${(p / 100) ** 2}, a drop of ${m(ans)}%.` };
+}, ({ p, up }) => `${m(Math.round((1 - (1 + (up ? 1 : -1) * p / 100) * (1 - (up ? 1 : -1) * p / 100)) * 1e8) / 1e6)}%`);
+
+/* ---- ratios ---- */
+GEN("rah-join", "ratios", "amc8", R => {
+  const a = R.int(1, 5), b = R.int(a + 1, 7), t = R.int(3, 12), k = R.int(2, 20); R.p = { a, b, t, k };
+  if (gcd(a, b) !== 1) return again("rah-join")(R);
+  const g = gcd(a * t + k, b * t), c = (a * t + k) / g, d = b * t / g;
+  if (d === 1 || c === a) return again("rah-join")(R);
+  R.p.c = c; R.p.d = d;
+  const ans = (a + b) * t;
+  return { q: `The ratio of boys to girls in a club is ${a} : ${b}. After ${k} more boys join, the ratio becomes ${c} : ${d}. How many members did the club have before the new boys joined?`, a: ans, traps: [ans + k, b * t, a * t, (c + d) * gcd(a * t + k, b * t), ans - k].filter(v => v > 0 && v !== ans), hint: `Call the numbers ${a}x boys and ${b}x girls. The girls don't change.`, sol: `(${a}x + ${k}) : ${b}x = ${c} : ${d} gives x = ${t}, so there were ${ans} members.` };
+}, ({ a, b, k, c, d }) => { for (let x = 1; x < 500; x++) if ((a * x + k) * d === c * b * x) return (a + b) * x; });
+
+GEN("rah-mix", "ratios", "amc10", R => {
+  const [a1, b1] = R.pick([[1, 2], [1, 3], [2, 3], [1, 4], [3, 5], [1, 1], [2, 5]]), [a2, b2] = R.pick([[1, 2], [1, 3], [2, 3], [1, 4], [3, 5], [1, 1], [3, 4]]); R.p = { a1, b1, a2, b2 };
+  if (a1 * b2 === a2 * b1) return again("rah-mix")(R);
+  const J = a1 * (a2 + b2) + a2 * (a1 + b1), W = b1 * (a2 + b2) + b2 * (a1 + b1), g = gcd(J, W), rs = (x, y) => { const h = gcd(x, y); return `${x / h} : ${y / h}`; };
+  const ans = rs(J, W);
+  return { q: `Two equal-sized jars are full of juice and water. In the first, juice : water is ${a1} : ${b1}. In the second, it is ${a2} : ${b2}. Both jars are poured into a big bowl. What is the ratio of juice to water in the bowl?`, a: ans, traps: [rs(a1 + a2, b1 + b2), rs(a1 * a2, b1 * b2), rs(W, J), rs(J + g, W), rs(J, W + g), rs(a1 + b2, b1 + a2)].filter(x => x !== ans), hint: "Equal volumes, not equal parts. Find the fraction of juice in each jar.", sol: `Juice fractions ${fr(a1, a1 + b1)} and ${fr(a2, a2 + b2)}; water fractions ${fr(b1, a1 + b1)} and ${fr(b2, a2 + b2)}. Add each and compare: ${ans}.` };
+}, ({ a1, b1, a2, b2 }) => { const L = (a1 + b1) * (a2 + b2), J = a1 * L / (a1 + b1) + a2 * L / (a2 + b2), W = 2 * L - J, h = gcd(J, W); return `${J / h} : ${W / h}`; });
+
+/* ---- averages ---- */
+GEN("avh-max-largest", "averages", "amc8", R => {
+  const M = R.int(8, 20), D = R.int(3, M), dist = R.int(0, 1); R.p = { M, D, dist };
+  const ans = dist ? 5 * M - 1 - 2 - D - (D + 1) : 5 * M - 2 - 2 * D;
+  if (ans <= D + dist) return again("avh-max-largest")(R);
+  return { q: `Five ${dist ? "different " : ""}positive integers have mean ${M} and median ${D}. What is the largest possible value of the largest one?`, a: ans, traps: [5 * M - D, 5 * M - 2 * D, ans + 1, ans - 1, ans + 2].filter(v => v !== ans), hint: "Make the other four numbers as small as the rules allow.", sol: `The smallest choices are ${dist ? `1, 2, ${D}, ${D + 1}` : `1, 1, ${D}, ${D}`}, leaving ${5 * M} − ${dist ? 1 + 2 + D + D + 1 : 2 + 2 * D} = ${ans}.` };
+}, ({ M, D, dist }) => { let best = 0; for (let a = 1; a <= D; a++) for (let b = a + dist; b <= D - dist; b++) for (let d = D + dist; d <= 5 * M; d++) { const e = 5 * M - a - b - D - d; if (e >= d + dist) best = Math.max(best, e); } return best; });
+
+GEN("avh-two-groups", "averages", "amc8", R => {
+  const a = R.int(60, 80), b = R.int(a + 5, 95), p = R.int(1, 5), q = R.int(1, 5); R.p = { a, b, p, q };
+  if (p === q || gcd(p, q) !== 1) return again("avh-two-groups")(R);
+  const N = a * p + b * q, D = p + q;
+  return { q: `In a class, the morning section averaged ${a} on a test and the afternoon section averaged ${b}. The ratio of morning students to afternoon students is ${p} : ${q}. What is the average score of all the students?`, a: fr(N, D), traps: frTraps(N, D, [fr(a + b, 2), fr(a * q + b * p, D), String(Math.round(N / D) + 1)]), hint: "Weight each average by the size of its group.", sol: `(${p}·${a} + ${q}·${b}) / ${D} = ${fr(N, D)}.` };
+}, ({ a, b, p, q }) => { let s = 0, n = 0; for (let i = 0; i < p; i++) { s += a; n++; } for (let i = 0; i < q; i++) { s += b; n++; } return fr(s, n); });
+
+/* ---- mental math ---- */
+GEN("mmh-power-minus", "mental-math", "amc8", R => {
+  const n = R.int(8, 40), k = R.int(11, 99); R.p = { n, k };
+  const tail = 100 - k, ans = 9 * (n - 2) + digitSum(tail);
+  return { q: `What is the sum of the digits of 10<sup>${n}</sup> − ${k}?`, a: ans, traps: [9 * n, 9 * (n - 1) + digitSum(tail), 9 * (n - 2), ans + 9, digitSum(k) + 9 * (n - 2)].filter(v => v !== ans), hint: "Try a small case: 10⁴ − 37 = 9963.", sol: `It is ${n - 2} nines followed by ${String(tail).padStart(2, "0")}, so the digit sum is 9·${n - 2} + ${digitSum(tail)} = ${ans}.` };
+}, ({ n, k }) => String(10n ** BigInt(n) - BigInt(k)).split("").reduce((s, c) => s + +c, 0));
+
+GEN("mmh-telescope", "mental-math", "amc8", R => {
+  const n = R.int(5, 60); R.p = { n };
+  return { q: `Compute 1/(1·2) + 1/(2·3) + 1/(3·4) + ⋯ + 1/(${n}·${n + 1}).`, a: fr(n, n + 1), traps: frTraps(n, n + 1, [fr(1, n + 1), fr(n - 1, n), fr(n + 1, n + 2), fr(1, 2)]), hint: "1/(k(k + 1)) = 1/k − 1/(k + 1).", sol: `Everything cancels except 1 − 1/${n + 1} = ${fr(n, n + 1)}.` };
+}, ({ n }) => { let N = 0, D = 1; for (let k = 1; k <= n; k++) { N = N * k * (k + 1) + D; D = D * k * (k + 1); const g = gcd(N, D); N /= g; D /= g; } return fr(N, D); });
+
+/* ---- units ---- */
+GEN("unh-cubic", "units", "amc8", R => {
+  const kind = R.int(0, 1), c = R.int(2, 12); R.p = { kind, c };
+  const [big, small, f] = kind ? ["cubic yards", "cubic feet", 3] : ["cubic feet", "cubic inches", 12], ans = c * f ** 3;
+  return { q: `How many ${small} are in ${c} ${big}?`, a: ans, traps: [c * f, c * f * f, c * f * 3, ans / f * 2].filter(v => v !== ans), hint: `A cube 1 ${big.split(" ")[1].replace(/s$/, "")} on a side is ${f} × ${f} × ${f} in the smaller unit.`, sol: `${c} × ${f}³ = ${c} × ${f ** 3} = ${commas(ans)}.` };
+}, ({ kind, c }) => c * (kind ? 3 : 12) ** 3);
+
+GEN("unh-mph-fps", "units", "amc8", R => {
+  const k = R.int(1, 6), v = 15 * k, rev = R.int(0, 1); R.p = { v, rev };
+  if (rev) return { q: `A ball travels ${22 * k} feet per second. What is its speed in miles per hour? (1 mile = 5,280 feet)`, a: v, traps: [22 * k * 60, Math.round(22 * k * 3600 / 1000), 22 * k, 2 * v].filter(v2 => v2 !== v), hint: "Multiply by 3,600 seconds per hour, then divide by 5,280 feet per mile.", sol: `${22 * k} × 3,600 ÷ 5,280 = ${v} mph.` };
+  return { q: `A car travels ${v} miles per hour. How many feet per second is that? (1 mile = 5,280 feet)`, a: 22 * k, traps: [v * 88, Math.round(v * 5280 / 60), v, 11 * k, 44 * k].filter(x => x !== 22 * k && x < 10000), hint: "Feet per hour, then divide by 3,600.", sol: `${v} × 5,280 ÷ 3,600 = ${22 * k} ft/s.` };
+}, ({ v, rev }) => rev ? Math.round(v * 22 / 15 * 3600 / 5280) : v * 5280 / 3600);
+
+/* ---- distance = rate × time ---- */
+GEN("drh-train-bridge", "drt", "amc8", R => {
+  const v = R.pick([10, 12, 15, 20, 25, 30]), t = R.int(20, 60), L = R.int(2, 8) * 25; R.p = { v, t, L };
+  const B = v * t - L;
+  if (B <= L) return again("drh-train-bridge")(R);
+  return { q: `A train ${L} meters long travels at ${v} meters per second. How many seconds pass from the moment its front reaches a ${commas(B)}-meter bridge until its back leaves the bridge?`, a: t, traps: [B / v, L / v, (B - L) / v, t + 5].filter(x => Number.isInteger(x) && x !== t), hint: "The front of the train travels the bridge length plus the train length.", sol: `(${B} + ${L}) ÷ ${v} = ${t} seconds.` };
+}, ({ v, t, L }) => (v * t - L + L) / v);
+
+GEN("drh-escalator", "drt", "amc10", R => {
+  const c = R.int(6, 30), ds = divisors(c * c).filter(d => d < c); R.p = { c };
+  const d = R.pick(ds), a = c + d, b = c + c * c / d; R.p = { a, b };
+  return { q: `Ana walks up a stopped escalator in ${a} seconds. When the escalator runs and she stands still, it carries her up in ${b} seconds. How many seconds does it take if she walks up the moving escalator?`, a: c, traps: [Math.round((a + b) / 2), Math.abs(b - a), Math.round(Math.min(a, b) / 2), Math.round(a * b / (a + b)) + 1].filter(x => x > 0 && x !== c), hint: "Add rates, not times: she covers 1/" + a + " of it per second, the escalator 1/" + b + ".", sol: `1/${a} + 1/${b} = 1/${c}, so ${c} seconds.` };
+}, ({ a, b }) => a * b / (a + b));
+
+/* ---- average speed ---- */
+GEN("ash-needed", "avg-speed", "amc8", R => {
+  let v1, v2, V; do { v1 = R.int(2, 12) * 5; v2 = R.int(2, 18) * 5; V = 2 * v1 * v2 / (v1 + v2); } while (!Number.isInteger(V) || v1 === v2); R.p = { v1, V };
+  return { q: `A cyclist rides the first half of a trip at ${v1} mph. How fast must she ride the second half so her average speed for the whole trip is ${V} mph?`, a: v2, traps: [2 * V - v1, V, Math.round((V + v1) / 2), v2 + 5].filter(x => x > 0 && x !== v2), hint: "Average speed is total distance over total time. Pick a convenient trip length.", sol: `Half-trips at ${v1} and ${v2} mph give 2·${v1}·${v2}/(${v1} + ${v2}) = ${V}. The answer is ${v2} mph, not ${2 * V - v1}.` };
+}, ({ v1, V }) => Math.round(1 / (2 / V - 1 / v1)));
+
+GEN("ash-three-legs", "avg-speed", "amc10", R => {
+  let s; do { s = R.distinct(3, 2, 30).map(x => x * 5).sort((x, y) => x - y); } while (!Number.isInteger(3 * s[0] * s[1] * s[2] / (s[0] * s[1] + s[1] * s[2] + s[0] * s[2]))); R.p = { s };
+  const ans = 3 * s[0] * s[1] * s[2] / (s[0] * s[1] + s[1] * s[2] + s[0] * s[2]);
+  return { q: `A runner covers three equal-length stretches at ${s[0]}, ${s[1]}, and ${s[2]} km/h. What is her average speed for the whole run, in km/h?`, a: ans, traps: [Math.round((s[0] + s[1] + s[2]) / 3), s[1], ans + 2, ans - 2].filter(x => x > 0 && x !== ans), hint: "Pick a length for each stretch that all three speeds divide.", sol: `Total time for stretches of length d: d(1/${s[0]} + 1/${s[1]} + 1/${s[2]}). Average = 3d ÷ that = ${ans}.` };
+}, ({ s }) => { const L = s[0] * s[1] * s[2], T = L / s[0] + L / s[1] + L / s[2]; return 3 * L / T; });
+
+/* ---- meeting & catching up ---- */
+GEN("meh-head-start", "meeting", "amc8", R => {
+  const a = R.int(3, 8) * 5, d = R.int(1, 4) * 5, h = R.int(1, 3); R.p = { a, b: a + d, h };
+  const b = a + d, ans = b * a * h / d;
+  if (!Number.isInteger(ans)) return again("meh-head-start")(R);
+  return { q: `A truck leaves a depot at ${a} mph. ${h} hour${h > 1 ? "s" : ""} later a car leaves the same depot along the same road at ${b} mph. How many miles from the depot does the car catch the truck?`, a: ans, traps: [a * h, b * h, ans - a * h, a * h / d * a, ans + b].filter(x => Number.isInteger(x) && x > 0 && x !== ans), hint: "The car closes the gap at the difference of the speeds.", sol: `Head start ${a * h} miles, closed at ${d} mph in ${a * h / d} hours; the car has gone ${b} × ${a * h / d} = ${ans} miles.` };
+}, ({ a, b, h }) => { for (let t = 0.001; ; t += 0.001) if (b * t >= a * (t + h) - 1e-9) return Math.round(b * t); });
+
+GEN("meh-laps", "meeting", "amc10", R => {
+  const a = R.int(2, 8), b = R.int(a + 1, 12), L = R.pick([400, 600, 800, 1200]), T = R.pick([12, 15, 20, 30, 60]); R.p = { a, b, L, T };
+  const vA = a * 20, vB = b * 20, ans = Math.floor((vA + vB) * T / L);
+  return { q: `Two runners start at the same spot on a ${L}-meter circular track and run in opposite directions at ${vA} and ${vB} meters per minute. How many times do they pass each other in the first ${T} minutes (not counting the start)?`, a: ans, traps: [Math.floor((vB - vA) * T / L), ans + 1, ans - 1, Math.floor(vB * T / L)].filter(x => x >= 0 && x !== ans), hint: "Together they cover one full lap between meetings.", sol: `Combined they cover ${vA + vB} m per minute, so ${(vA + vB) * T} m in ${T} minutes: ${ans} full laps, ${ans} meetings.` };
+}, ({ a, b, L, T }) => { let n = 0; const vA = a * 20, vB = b * 20; for (let s = 1; s <= T * 100; s++) { const t = s / 100, before = Math.floor((vA + vB) * (t - 0.01) / L + 1e-9), now = Math.floor((vA + vB) * t / L + 1e-9); if (now > before) n++; } return n; });
+
+/* ---- work ---- */
+GEN("woh-drain", "work", "amc8", R => {
+  const t = R.int(4, 30), ds = divisors(t * t).filter(d => d < t && t * (t - d) % d === 0); const d = R.pick(ds); R.p = { a: t - d, b: t * (t - d) / d };
+  const a = t - d, b = t * (t - d) / d;
+  if (a < 2 || a === b) return again("woh-drain")(R);
+  return { q: `A faucet fills a tub in ${a} minutes. The open drain empties a full tub in ${b} minutes. With the faucet on and the drain open, how many minutes does it take to fill the empty tub?`, a: t, traps: [b - a, Math.round(a * b / (a + b)), a + b, Math.round((a + b) / 2)].filter(x => x > 0 && x !== t), hint: "Subtract the drain's rate from the faucet's rate.", sol: `1/${a} − 1/${b} = 1/${t}, so ${t} minutes.` };
+}, ({ a, b }) => Math.round(a * b / (b - a)));
+
+GEN("woh-then-alone", "work", "amc8", R => {
+  let a, b, k, rest; do { a = R.int(4, 20); b = R.int(4, 20); k = R.int(1, 5); rest = a * (1 - k / a - k / b); } while (!(rest > 0) || Math.abs(rest - Math.round(rest)) > 1e-9 || a === b); R.p = { a, b, k };
+  const ans = Math.round(rest);
+  return { q: `Pat can paint a fence alone in ${a} days, and Sam can in ${b} days. They paint together for ${k} day${k > 1 ? "s" : ""}, then Sam leaves. How many more days does Pat need to finish?`, a: ans, traps: [a - k, Math.round(a * b / (a + b)), ans + k, ans + 1].filter(x => x > 0 && x !== ans), hint: "Find what fraction is done after the days together.", sol: `Together they do ${k}(1/${a} + 1/${b}) = ${fr(k * (a + b), a * b)} of it. The remaining ${fr(a * b - k * (a + b), a * b)} takes Pat ${ans} days.` };
+}, ({ a, b, k }) => { const N = a * b - k * (a + b); return N * a / (a * b); });
+
+/* ---- mixtures ---- */
+GEN("mxh-dry", "mixtures", "amc8", R => {
+  const [p, q] = R.pick([[99, 98], [98, 96], [99, 97], [95, 90], [90, 80], [96, 92], [99, 95]]), W = R.int(1, 9) * 100; R.p = { p, q, W };
+  const ans = W * (100 - p) / (100 - q);
+  if (!Number.isInteger(ans)) return again("mxh-dry")(R);
+  return { q: `${W} pounds of cucumbers are ${p}% water. After some water evaporates, they are ${q}% water. What do they weigh now, in pounds?`, a: ans, traps: [W - W * (p - q) / 100, W * q / p, W / 2 === ans ? W * 0.98 : W / 2, W - (p - q)].filter(x => Number.isInteger(x) && x > 0 && x !== ans), hint: "The non-water part doesn't change.", sol: `The dry part is ${100 - p}% of ${W} = ${W * (100 - p) / 100} pounds. Now that's ${100 - q}% of the total: ${ans} pounds.` };
+}, ({ p, q, W }) => Math.round(W * (100 - p) / (100 - q) * 1e6) / 1e6);
+
+GEN("mxh-dilute", "mixtures", "amc8", R => {
+  const t = R.pick([5, 10, 15, 20, 25]), s = R.pick([20, 25, 30, 40, 50, 60]), A = R.int(1, 8) * 10; R.p = { t, s, A };
+  if (s <= t) return again("mxh-dilute")(R);
+  const ans = A * s / t - A;
+  if (!Number.isInteger(ans)) return again("mxh-dilute")(R);
+  return { q: `A ${A}-liter tank holds a solution that is ${s}% salt. How many liters of pure water must be added to make it ${t}% salt?`, a: ans, traps: [A * s / t, A * (s - t) / 100, A * (s - t) / s, ans / 2].filter(x => Number.isInteger(x) && x > 0 && x !== ans), hint: "The amount of salt stays the same.", sol: `Salt: ${A * s / 100} L. That must be ${t}% of the new total ${A * s / t} L, so add ${ans} L.` };
+}, ({ t, s, A }) => A * s / 100 / (t / 100) - A);
+
+/* ---- clocks & calendars ---- */
+GEN("clh-month-day", "clocks", "amc8", R => {
+  const x = R.int(0, 10), y = R.int(x + 1, 11), d = R.int(0, 6); R.p = { x, y, d };
+  let days = 0; for (let i = x; i < y; i++) days += MDAYS[i];
+  const ans = DAYS[(d + days) % 7];
+  return { q: `In a year that is not a leap year, ${MONTHS[x]} 1 is a ${DAYS[d]}. What day of the week is ${MONTHS[y]} 1?`, a: ans, traps: [1, 6, 2, 5].map(k => DAYS[(d + days + k) % 7]), hint: "Count the days between, then only the remainder mod 7 matters.", sol: `There are ${days} days from ${MONTHS[x]} 1 to ${MONTHS[y]} 1, and ${days} mod 7 = ${days % 7}, so it's a ${ans}.` };
+}, ({ x, y, d }) => { const dt = new Date(Date.UTC(2023, x, 1)), off = (new Date(Date.UTC(2023, y, 1)) - dt) / 864e5; return DAYS[(d + off) % 7]; });
+
+GEN("clh-angle", "clocks", "amc8", R => {
+  const h = R.int(1, 11), mm = R.int(1, 59); R.p = { h, mm };
+  let a = Math.abs(30 * h - 5.5 * mm); if (a > 180) a = 360 - a;
+  return { q: `What is the smaller angle between the hour and minute hands of a clock at ${h}:${String(mm).padStart(2, "0")}?`, a, fmt: v => `${m(v)}°`, min: 0, max: 180, step: 0.5 * R.pick([5, 7, 9]), traps: [Math.abs(30 * h - 6 * mm) % 360 > 180 ? 360 - Math.abs(30 * h - 6 * mm) % 360 : Math.abs(30 * h - 6 * mm) % 360, 360 - a > 180 ? a + 15 : 360 - a, Math.abs(a - 15)].filter(x => x !== a && x >= 0 && x <= 180), hint: "The hour hand moves too: half a degree per minute.", sol: `Minute hand at ${6 * mm}°, hour hand at ${30 * h} + ${mm}/2 = ${m(30 * h + mm / 2)}°. The difference is ${m(a)}°.` };
+}, ({ h, mm }) => { const M = 6 * mm, H = (30 * h + 0.5 * mm) % 360; let d = Math.abs(M - H); return d > 180 ? 360 - d : d; });
+
+/* =========================================================
    GENERATORS: Probability, Logic & Problem Solving
    ========================================================= */
 /* probabilities can't exceed 1 */
@@ -6845,6 +7018,165 @@ GEN("ol-goldbach", "organized-lists", "amc8", R => {
   const c = countIf(2, N / 2, p => isPrime(p) && isPrime(N - p));
   return { q: `In how many ways can ${N} be written as the sum of two primes? (Order doesn't matter.)`, a: c, traps: [c + 1, c * 2, Math.max(0, c - 1), c + 2].filter(v => v !== c), hint: "Check each prime up to half of the number.", sol: `Checking primes up to ${N / 2}: ${c} way${c === 1 ? "" : "s"}.` };
 }, ({ N }) => { let c = 0; for (let a = 2; a <= N; a++) for (let b = a; b <= N; b++) if (a + b === N && divisors(a).length === 2 && divisors(b).length === 2) c++; return c; });
+
+/* =========================================================
+   GENERATORS: Probability, Logic, harder problem types (AMC 8 / AMC 10)
+   ========================================================= */
+/* walk every outcome of k draws from 0..n-1 (n^k of them) */
+const eachTuple = (n, k, f) => { const t = Array(k).fill(0); for (;;) { f(t); let i = k - 1; while (i >= 0 && ++t[i] === n) t[i--] = 0; if (i < 0) return; } };
+const pT = (N, D, extra) => { const n = N / gcd(N, D), d = D / gcd(N, D); return [...new Set([...frTraps(n, d, extra), fr(n, d + 2), fr(n + 1, d + 2), fr(Math.max(1, n - 1), d + 1), fr(d - n || 1, d), fr(n, d + 3), fr(n + 1, d + 3), fr(2 * n + 1, 2 * d + 3)])].filter(x => le1(x) && x !== "0" && x !== fr(n, d)); };
+
+/* ---- basic probability ---- */
+const PBH_TESTS = [p => p % 3 === 0, p => p % 4 === 0, p => p % 6 === 0, p => Number.isInteger(Math.sqrt(p)), p => p % 5 === 0, p => p > 12, p => p % 12 === 0, p => p % 2 === 1];
+const PBH_WORDS = ["a multiple of 3", "a multiple of 4", "a multiple of 6", "a perfect square", "a multiple of 5", "greater than 12", "a multiple of 12", "odd"];
+GEN("pbh-dice-product", "prob-basic", "amc8", R => {
+  const kind = R.int(0, 7); R.p = { kind };
+  const test = PBH_TESTS[kind];
+  const c = DICE2.filter(([a, b]) => test(a * b)).length;
+  return { q: `Two fair dice are rolled. What is the probability that the product of the numbers is ${PBH_WORDS[kind]}?`, a: fr(c, 36), traps: pT(c, 36, [fr(36 - c, 36), fr(c, 21), fr(c + 2, 36)]), hint: "Make a 6 × 6 table, or count the complement.", sol: `${c} of the 36 outcomes work: ${fr(c, 36)}.` };
+}, ({ kind }) => { let c = 0; for (let a = 1; a <= 6; a++) for (let b = 1; b <= 6; b++) { const p = a * b; if ([p % 3 === 0, p % 4 === 0, p % 6 === 0, Math.round(Math.sqrt(p)) ** 2 === p, p % 5 === 0, p > 12, p % 12 === 0, p % 2 === 1][kind]) c++; } return fr(c, 36); });
+
+GEN("pbh-committee", "prob-basic", "amc8", R => {
+  const b = R.int(3, 7), g = R.int(3, 7), k = R.int(3, 4), j = R.int(1, k - 1); R.p = { b, g, k, j };
+  const N = nCr(g, j) * nCr(b, k - j), D = nCr(b + g, k);
+  return { q: `A committee of ${k} is picked at random from ${b} boys and ${g} girls. What is the probability that it has exactly ${j} girl${j > 1 ? "s" : ""}?`, a: fr(N, D), traps: pT(N, D, [fr(nCr(g, j), D), fr(j, k), fr(g, b + g), fr(N, D * 2)]), hint: "Choose the girls and the boys separately, then multiply.", sol: `C(${g}, ${j}) × C(${b}, ${k - j}) = ${N} committees out of C(${b + g}, ${k}) = ${D}: ${fr(N, D)}.` };
+}, ({ b, g, k, j }) => { let c = 0, t = 0; for (let s = 0; s < 1 << (b + g); s++) { let n = 0, gi = 0; for (let i = 0; i < b + g; i++) if (s >> i & 1) { n++; if (i < g) gi++; } if (n === k) { t++; if (gi === j) c++; } } return fr(c, t); });
+
+/* ---- complements ---- */
+GEN("pch-match", "prob-complement", "amc10", R => {
+  const N = R.int(4, 10), k = R.int(2, Math.min(4, N - 1)); R.p = { N, k };
+  const D = N ** k, distinct = nPr(N, k), c = D - distinct;
+  return { q: `${k} friends each pick a whole number from 1 to ${N} at random. What is the probability that at least two of them pick the same number?`, a: fr(c, D), traps: pT(c, D, [fr(distinct, D), fr(nCr(k, 2), N), fr(1, N), fr(k - 1, N)]), hint: "Find the chance that all the picks are different first.", sol: `All different: ${N}·${N - 1}${k > 2 ? "⋯" : ""} / ${N}<sup>${k}</sup> = ${fr(distinct, D)}. So the answer is ${fr(c, D)}.` };
+}, ({ N, k }) => { let c = 0, t = 0; eachTuple(N, k, a => { t++; if (new Set(a).size < k) c++; }); return fr(c, t); });
+
+GEN("pch-draw-one", "prob-complement", "amc8", R => {
+  const r = R.int(2, 6), b = R.int(3, 8), k = R.int(2, 3); R.p = { r, b, k };
+  const D = nCr(r + b, k), none = nCr(b, k), c = D - none;
+  return { q: `A box has ${r} red and ${b} blue pens. ${k} pens are taken out at random, all at once. What is the probability that at least one is red?`, a: fr(c, D), traps: pT(c, D, [fr(none, D), fr(k * r, r + b), fr(r, r + b), fr(c, D * 2)]), hint: "The complement is \"all blue\".", sol: `P(all blue) = C(${b}, ${k}) / C(${r + b}, ${k}) = ${fr(none, D)}, so the answer is ${fr(c, D)}.` };
+}, ({ r, b, k }) => { let c = 0, t = 0; for (let s = 0; s < 1 << (r + b); s++) { let n = 0, red = 0; for (let i = 0; i < r + b; i++) if (s >> i & 1) { n++; if (i < r) red++; } if (n === k) { t++; if (red) c++; } } return fr(c, t); });
+
+/* ---- independent & dependent ---- */
+GEN("inh-first-to", "independent", "amc10", R => {
+  const k = R.int(1, 4), m3 = R.int(2, 3); R.p = { k, m3 };
+  const what = ["a 6", "a 5 or 6", "an even number", "a number greater than 2"][k - 1], N = 6 ** (m3 - 1) * k, D = 6 ** m3 - (6 - k) ** m3;
+  return { q: `${m3 === 2 ? "Amy and Ben take" : "Amy, Ben, and Cal take"} turns rolling a fair die, Amy first. The first person to roll ${what} wins. What is the probability that Amy wins?`, a: fr(N, D), traps: pT(N, D, [fr(k, 6), fr(1, m3), fr(D - N, D), fr(N - 1, D), fr(N + 1, D)]), hint: `After everyone misses once, the game starts over. So P = p + (1 − p)<sup>${m3}</sup>·P.`, sol: `With p = ${fr(k, 6)}: P = p / (1 − (1 − p)<sup>${m3}</sup>) = ${fr(N, D)}.` };
+}, ({ k, m3 }) => { const p = k / 6; let v = 0, q = 1; for (let t = 0; t < 2000; t++) { if (t % m3 === 0) v += q * p; q *= 1 - p; } for (let d = 1; d <= 216; d++) { const n = Math.round(v * d); if (Math.abs(n / d - v) < 1e-12) return fr(n, d); } });
+
+GEN("inh-series", "independent", "amc10", R => {
+  const [a, b] = R.pick([[1, 3], [2, 3], [1, 4], [3, 4], [2, 5], [3, 5]]); R.p = { a, b };
+  const N = a * a * (3 * b - 2 * a), D = b ** 3;
+  return { q: `The Hawks beat the Owls in any single game with probability ${a}/${b}. They play a best-of-three series (first to win 2 games). What is the probability that the Hawks win the series?`, a: fr(N, D), traps: pT(N, D, [fr(a * a, b * b), fr(a, b), fr(2 * a * a * (b - a), D), fr(a * a * (2 * b - a), D)]), hint: "The Hawks win in two games (WW) or in three (WLW or LWW).", sol: `(${a}/${b})² + 2·(${a}/${b})²·(${b - a}/${b}) = ${fr(N, D)}.` };
+}, ({ a, b }) => { let N = 0; eachTuple(2, 3, t => { if (t[0] + t[1] + t[2] >= 2) N += t.reduce((pr, x) => pr * (x ? a : b - a), 1); }); return fr(N, b ** 3); });
+
+/* ---- conditional ---- */
+GEN("cnh-coins", "conditional", "amc10", R => {
+  const n = R.int(1, 4), f = R.int(1, 3); R.p = { n, f };
+  const N = 2 ** n, D = 2 ** n + f;
+  return { q: `A bag holds ${f} fair coin${f > 1 ? "s" : ""} and one coin with heads on both sides. A coin is picked at random and flipped ${n} time${n > 1 ? "s" : ""}. It comes up heads every time. What is the probability it is the two-headed coin?`, a: fr(N, D), traps: pT(N, D, [fr(1, f + 1), fr(1, 2), fr(N - 1, D), fr(f, D)]), hint: "Compare how likely \"all heads\" is under each kind of coin, weighted by how many of each there are.", sol: `Two-headed: 1 × 1 = 1 way-weight; fair coins: ${f} × (1/2)<sup>${n}</sup>. So ${N}/(${N} + ${f}) = ${fr(N, D)}.` };
+}, ({ n, f }) => { let c = 0, t = 0; for (let coin = 0; coin <= f; coin++) eachTuple(2, n, fl => { const heads = coin === f || fl.every(x => x === 1); if (heads) { t++; if (coin === f) c++; } }); return fr(c * 1, t); });
+
+GEN("cnh-boxes", "conditional", "amc10", R => {
+  const a = R.int(1, 5), b = R.int(1, 5), c = R.int(1, 5), d = R.int(1, 5); R.p = { a, b, c, d };
+  if (a * (c + d) === c * (a + b)) return again("cnh-boxes")(R);
+  const N = a * (c + d), D = a * (c + d) + c * (a + b);
+  return { q: `Box A has ${a} red and ${b} blue balls. Box B has ${c} red and ${d} blue balls. A box is chosen by a fair coin flip, then a ball is drawn from it. The ball is red. What is the probability it came from Box A?`, a: fr(N, D), traps: pT(N, D, [fr(a, a + c), fr(a, a + b), fr(1, 2), fr(a + c, a + b + c + d)]), hint: "P(A and red) ÷ P(red).", sol: `P(A and red) = ½·${fr(a, a + b)}, P(B and red) = ½·${fr(c, c + d)}. Ratio: ${fr(N, D)}.` };
+}, ({ a, b, c, d }) => { const L = (a + b) * (c + d); let red = 0, redA = 0; for (let i = 0; i < a + b; i++) if (i < a) { red += L / (a + b); redA += L / (a + b); } for (let i = 0; i < c + d; i++) if (i < c) red += L / (c + d); return fr(redA, red); });
+
+/* ---- expected value ---- */
+GEN("evh-hh", "expected", "amc10", R => {
+  const n = R.int(3, 12), kind = R.int(0, 1); R.p = { n, kind };
+  return { q: `A fair coin is flipped ${n} times. What is the expected number of times that ${kind ? "a head is immediately followed by a tail" : "two heads in a row appear (HHH counts as two)"}?`, a: fr(n - 1, 4), traps: [fr(n, 4), fr(n - 1, 2), fr(n - 2, 4), fr(n, 2), fr(n - 1, 8)].filter(x => x !== fr(n - 1, 4)), hint: "There are " + (n - 1) + " neighboring pairs. Each one works with probability 1/4. Expected values add.", sol: `${n - 1} pairs × 1/4 = ${fr(n - 1, 4)}.` };
+}, ({ n, kind }) => { let s = 0; eachTuple(2, n, t => { for (let i = 0; i + 1 < n; i++) if (t[i] === 1 && t[i + 1] === (kind ? 0 : 1)) s++; }); return fr(s, 2 ** n); });
+
+GEN("evh-distinct", "expected", "amc10", R => {
+  const k = R.int(2, 5), sd = R.pick([4, 6, 8]); R.p = { k, sd };
+  const N = sd ** k - (sd - 1) ** k, D = sd ** (k - 1);
+  return { q: `${k} fair ${sd}-sided dice (numbered 1 to ${sd}) are rolled. What is the expected number of different numbers that show? (For example, 3, 3, 4${k > 3 ? ", 4" : ""}${k > 4 ? ", 1" : ""} shows ${k > 4 ? 3 : 2} different numbers.)`, a: fr(N, D), traps: [fr(N + sd ** (k - 2), D), String(k), fr(k + 1, 2), fr(N, sd ** k), fr(sd * k, sd + 1), fr(N - sd ** (k - 2), D)].filter(x => x !== fr(N, D)), hint: "For each face, find the chance it shows up at least once. Add those chances.", sol: `Each face appears with probability 1 − (${sd - 1}/${sd})<sup>${k}</sup>; ${sd} faces: ${sd}(1 − (${sd - 1}/${sd})<sup>${k}</sup>) = ${fr(N, D)}.` };
+}, ({ k, sd }) => { let s = 0; eachTuple(sd, k, t => { s += new Set(t).size; }); return fr(s, sd ** k); });
+
+/* ---- geometric probability ---- */
+GEN("gph2-meet", "geo-prob", "amc10", R => {
+  const w = R.pick([5, 10, 12, 15, 20, 30, 40]); R.p = { w };
+  const N = 3600 - (60 - w) ** 2, D = 3600;
+  return { q: `Two friends each arrive at a café at a random time between 1:00 and 2:00. Each waits ${w} minutes for the other and then leaves. What is the probability they meet?`, a: fr(N, D), traps: pT(N, D, [fr(w, 60), fr(2 * w, 60), fr((60 - w) ** 2, D), fr(w * w, D)]), hint: "Plot the two arrival times as a point in a 60 × 60 square. They meet when the times differ by at most " + w + ".", sol: `The miss region is two triangles that together make a ${60 - w} × ${60 - w} square. 1 − (${60 - w}/60)² = ${fr(N, D)}.` };
+}, ({ w }) => { let g2 = 0; for (let i = 0; i < 60; i++) { const x = i + 0.5; g2 += 2 * (Math.min(60, x + w) - Math.max(0, x - w)); } return fr(g2, 7200); });
+
+GEN("gph2-sum", "geo-prob", "amc10", R => {
+  const [cn, cd] = R.pick([[1, 2], [1, 3], [2, 3], [3, 4], [4, 3], [3, 2], [5, 4], [5, 3]]), kind = R.int(0, 1); R.p = { cn, cd, kind };
+  const area = cn <= cd ? [cn * cn, 2 * cd * cd] : [2 * cd * cd - (2 * cd - cn) ** 2, 2 * cd * cd], N = kind ? area[1] - area[0] : area[0], D = area[1];
+  return { q: `Two numbers x and y are each chosen at random between 0 and 1. What is the probability that x + y is ${kind ? "greater" : "less"} than ${fr(cn, cd)}?`, a: fr(N, D), traps: pT(N, D, [fr(cn, 2 * cd), fr(D - N, D), fr(cn * cn, cd * cd), fr(cn, cd)].filter(x => x !== fr(N, D))), hint: "Draw the unit square and the line x + y = " + fr(cn, cd) + ".", sol: `The region below the line has area ${fr(area[0], area[1])}${kind ? `, so the region above has ${fr(N, D)}` : ""}.` };
+}, ({ cn, cd, kind }) => { const S = 2 * cd; let g = 0; for (let i = 0; i < S; i++) g += Math.min(2 * S, Math.max(0, 4 * cn - 2 * i - 1)); return fr(kind ? 2 * S * S - g : g, 2 * S * S); });
+
+/* =========================================================
+   Logic & problem solving
+   ========================================================= */
+/* ---- patterns ---- */
+GEN("pth-1223", "patterns", "amc8", R => {
+  const N = R.int(30, 400); R.p = { N };
+  let k = 1; while (k * (k + 1) / 2 < N) k++;
+  return { q: `The sequence 1, 2, 2, 3, 3, 3, 4, 4, 4, 4, … lists each whole number n exactly n times. What is the ${N}th term?`, a: k, traps: [k - 1, k + 1, Math.round(Math.sqrt(N)), Math.round(N / 2) > 40 ? k + 2 : Math.round(N / 2)].filter(x => x > 0 && x !== k), hint: "The last n appears at position 1 + 2 + ⋯ + n.", sol: `${k - 1} ends at position ${(k - 1) * k / 2} and ${k} ends at ${k * (k + 1) / 2}, so term ${N} is ${k}.` };
+}, ({ N }) => { const a = []; for (let n = 1; a.length < N; n++) for (let i = 0; i < n; i++) a.push(n); return a[N - 1]; });
+
+GEN("pth-decimal-sum", "patterns", "amc8", R => {
+  const [d, blk] = R.pick([[7, "142857"], [13, "076923"], [37, "027"], [27, "037"], [41, "02439"]]), N = R.int(20, 120); R.p = { d, N };
+  const L = blk.length, full = Math.floor(N / L), ds = blk.split("").reduce((s, c) => s + +c, 0), part = blk.slice(0, N % L).split("").reduce((s, c) => s + +c, 0), ans = full * ds + part;
+  return { q: `What is the sum of the first ${N} digits after the decimal point in 1/${d} = 0.${blk}${blk}…?`, a: ans, traps: [full * ds, (full + 1) * ds, ans + +blk[N % L], ans - 1].filter(x => x !== ans), hint: `The block ${blk} repeats. How many full blocks fit in ${N} digits?`, sol: `${full} full blocks (each summing to ${ds}) plus the first ${N % L} digit${N % L === 1 ? "" : "s"} of the next (${part}): ${ans}.` };
+}, ({ d, N }) => { let r = 1, s = 0; for (let i = 0; i < N; i++) { r *= 10; s += Math.floor(r / d); r %= d; } return s; });
+
+/* ---- working backwards ---- */
+GEN("bwh-half-plus", "backwards", "amc8", R => {
+  const k = R.int(3, 5), h = R.int(1, 3), r = R.int(1, 6); R.p = { k, h, r };
+  let x = r; for (let i = 0; i < k; i++) x = 2 * (x + h);
+  return { q: `A farmer sells eggs at ${k} stops. At each stop she sells half the eggs she has left, plus ${h} more. After the last stop she has ${r} egg${r > 1 ? "s" : ""} left. How many eggs did she start with?`, a: x, traps: [r * 2 ** k, x - 2 * h, x + 2 * h, (r + h) * 2 ** k - h].filter(v => v > 0 && v !== x), hint: "Undo each stop: add " + h + ", then double.", sol: `Working back from ${r}: add ${h} and double, ${k} times, giving ${x}.` };
+}, ({ k, h, r }) => { for (let s = 1; s < 100000; s++) { let e = s, ok = true; for (let i = 0; i < k; i++) { if (e % 2) { ok = false; break; } e = e / 2 - h; if (e < 0) { ok = false; break; } } if (ok && e === r) return s; } });
+
+GEN("bwh-shares", "backwards", "amc8", R => {
+  const p = R.int(3, 6), q = R.int(3, 6), c = R.int(2, 9); R.p = { p, q, c };
+  const T = c * p * q / ((p - 1) * (q - 1));
+  if (!Number.isInteger(T) || T % p || (T - T / p) % q) return again("bwh-shares")(R);
+  return { q: `Ann takes 1/${p} of a pile of stickers. Bo takes 1/${q} of what is left. Cy gets the remaining ${c}. How many stickers were in the pile?`, a: T, traps: [c * p * q / 2, c * (p + q), T - c, T + p].filter(x => Number.isInteger(x) && x > 0 && x !== T), hint: "After Ann, " + fr(p - 1, p) + " is left. After Bo, " + fr(q - 1, q) + " of that.", sol: `${c} = (${fr(p - 1, p)})(${fr(q - 1, q)}) × pile, so the pile is ${T}.` };
+}, ({ p, q, c }) => { for (let t = 1; t < 10000; t++) { if (t % p) continue; const a = t - t / p; if (a % q) continue; if (a - a / q === c) return t; } });
+
+/* ---- logic puzzles ---- */
+GEN("lph-ties", "logic-puzzles", "amc8", R => {
+  const n = R.int(4, 9), G = n * (n - 1) / 2, t = R.int(1, G - 1); R.p = { n, T: 3 * G - t };
+  return { q: `${n} teams play a tournament where every pair of teams plays once. A win is worth 3 points, a tie 1 point to each team, a loss 0. The teams scored ${3 * G - t} points in all. How many games ended in a tie?`, a: t, traps: [G - t, Math.round((3 * G - t) / 2) - G, t + 1, Math.abs(2 * G - t)].filter(x => x > 0 && x !== t), hint: `There were ${G} games. A decided game gives out 3 points; a tie gives out only 2.`, sol: `If no games tied, the total would be 3 × ${G} = ${3 * G}. Each tie removes 1 point, so ${3 * G} − ${3 * G - t} = ${t} ties.` };
+}, ({ n, T }) => { const G = n * (n - 1) / 2; for (let t = 0; t <= G; t++) if (3 * (G - t) + 2 * t === T) return t; });
+
+GEN("lph-couples", "logic-puzzles", "amc8", R => {
+  const n = R.int(3, 10); R.p = { n };
+  const ans = nCr(2 * n, 2) - n;
+  return { q: `${n} married couples are at a party. Everyone shakes hands once with everyone else except their own spouse. How many handshakes happen?`, a: ans, traps: [nCr(2 * n, 2), 2 * n * (2 * n - 2), ans - n, n * (2 * n - 2)].filter(x => x !== ans), hint: `Each of the ${2 * n} people shakes ${2 * n - 2} hands. Each handshake involves two people.`, sol: `${2 * n} × ${2 * n - 2} / 2 = ${ans}.` };
+}, ({ n }) => { let c = 0; for (let i = 0; i < 2 * n; i++) for (let j = i + 1; j < 2 * n; j++) if ((i >> 1) !== (j >> 1)) c++; return c; });
+
+/* ---- parity & invariants ---- */
+GEN("pih-erase", "parity", "amc8", R => {
+  const n = R.int(8, 40), c = R.int(1, 3); R.p = { n, c };
+  const ans = n * (n + 1) / 2 - c * (n - 1);
+  return { q: `The numbers 1, 2, 3, …, ${n} are written on a board. A move is to erase two numbers a and b and write a + b − ${c}. After ${n - 1} moves one number is left. What is it?`, a: ans, traps: [n * (n + 1) / 2, ans - c, ans + c, n * (n + 1) / 2 - c * n].filter(x => x !== ans), hint: "What happens to the total of all the numbers on each move?", sol: `Each move lowers the total by ${c}. Start ${n * (n + 1) / 2}, ${n - 1} moves: ${ans}.` };
+}, ({ n, c }) => { let a = range(1, n); while (a.length > 1) { const i = Math.floor(Math.random() * a.length), x = a.splice(i, 1)[0], j = Math.floor(Math.random() * a.length), y = a.splice(j, 1)[0]; a.push(x + y - c); } return a[0]; });
+
+GEN("pih-flip", "parity", "amc10", R => {
+  const n = R.int(5, 15), k = R.int(2, n - 1); R.p = { n, k };
+  const best = flipBFS(n, k);
+  if (best < 0) return again("pih-flip")(R);
+  return { q: `${n} coins lie heads up in a row. A move is to turn over exactly ${k} different coins. What is the fewest moves needed to make every coin tails up?`, a: best, traps: [Math.ceil(n / k), Math.ceil(n / k) + 1, best + 1, best - 1, n].filter(x => x > 0 && x !== best), hint: "Track only how many coins are heads. Each move changes that count by an amount with the same parity as " + k + ".", sol: `Searching move counts in order, the first that works is ${best}.` };
+}, ({ n, k }) => flipBFS(n, k));
+function flipBFS(n, k) { const dist = Array(n + 1).fill(-1); dist[n] = 0; const Q = [n]; while (Q.length) { const h = Q.shift(); for (let j = 0; j <= k; j++) { if (j > h || k - j > n - h) continue; const nh = h - j + (k - j); if (dist[nh] < 0) { dist[nh] = dist[h] + 1; Q.push(nh); } } } return dist[0]; }
+
+/* ---- organized lists ---- */
+GEN("olh-stairs", "organized-lists", "amc8", R => {
+  const n = R.int(6, 12), big = R.int(2, 3); R.p = { n, big };
+  const ways = [1]; for (let i = 1; i <= n; i++) { ways[i] = 0; for (let s = 1; s <= big; s++) if (i - s >= 0) ways[i] += ways[i - s]; }
+  return { q: `You climb a staircase of ${n} steps, taking ${big === 2 ? "1 or 2" : "1, 2, or 3"} steps at a time. In how many different ways can you reach the top?`, a: ways[n], traps: [ways[n - 1], ways[n] + ways[n - 2], 2 ** (n - 1), n * big, ways[n] - 1].filter(x => x > 0 && x !== ways[n]), hint: "The number of ways to reach step k is the sum of the ways to reach the few steps just below it.", sol: `Build up step by step: ${ways.slice(1).join(", ")}. The answer is ${ways[n]}.` };
+}, ({ n, big }) => { let c = 0; const go = r => { if (r === 0) { c++; return; } for (let s = 1; s <= big && s <= r; s++) go(r - s); }; go(n); return c; });
+
+GEN("olh-dice-product", "organized-lists", "amc10", R => {
+  const P = R.pick([12, 18, 24, 30, 36, 48, 60, 72]); R.p = { P };
+  let c = 0; for (let a = 1; a <= 6; a++) for (let b = 1; b <= 6; b++) for (let d = 1; d <= 6; d++) if (a * b * d === P) c++;
+  let u = 0; for (let a = 1; a <= 6; a++) for (let b = a; b <= 6; b++) for (let d = b; d <= 6; d++) if (a * b * d === P) u++;
+  return { q: `Three dice, colored red, white, and blue, are rolled. In how many of the 216 outcomes is the product of the three numbers ${P}?`, a: c, traps: [u, c + u, c - 1, c + 3, 2 * u].filter(x => x > 0 && x !== c), hint: "List the unordered triples first, then count how many orders each has.", sol: `Count the arrangements of each triple with product ${P}: ${c} outcomes.` };
+}, ({ P }) => { let c = 0; eachTuple(6, 3, t => { if ((t[0] + 1) * (t[1] + 1) * (t[2] + 1) === P) c++; }); return c; });
 
 /* =========================================================
    STORAGE: shared Claude db when available, else this browser
