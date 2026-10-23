@@ -4339,6 +4339,31 @@ BANK.push(
 );
 
 /* =========================================================
+   Hand-written hard problems, round 6
+   ========================================================= */
+BANK.push(
+  H("h6-qd1", "amc10", "quadrilaterals", "A square and a rhombus both have side 10. The rhombus has a 60° angle. What is the ratio of the rhombus's area to the square's area?", ["1/2", "√2/2", "√3/2", "3/4", "√3"], "√3/2", "The rhombus is two equilateral triangles.", "Rhombus: 2 × (√3/4) × 100 = 50√3. Square: 100. Ratio √3/2."),
+  H("h6-sy1", "amc8", "symmetry", "A regular polygon looks the same after turning it 90° and also after turning it 120°. What is the fewest sides it can have?", ["6", "7", "8", "12", "24"], "12", "A regular n-gon has turn symmetry for multiples of 360°/n.", "90° needs n to be a multiple of 4, and 120° needs a multiple of 3. The least is 12."),
+  H("h6-ci1", "amc10", "circular", "Four couples sit at a round table, and each couple sits together. Rotations of a seating count as the same. How many seatings are possible?", ["48", "96", "192", "384", "768"], "96", "Treat each couple as one block, then let partners swap.", "4 blocks around a table: 3! = 6. Each couple can swap: 2⁴ = 16. Total 96."),
+  H("h6-le1", "amc8", "linear-eq", "The equation 3(x − 2) = 2(x + k) has solution x = 10. What is k?", ["1", "2", "3", "4", "6"], "2", "Plug in x = 10.", "3 × 8 = 2(10 + k) gives 24 = 20 + 2k, k = 2."),
+  H("h6-sn1", "amc10", "sci-notation", "What is (3.2 × 10<sup>8</sup>) ÷ (8 × 10<sup>−3</sup>) in scientific notation?", ["4 × 10<sup>4</sup>", "4 × 10<sup>5</sup>", "4 × 10<sup>10</sup>", "4 × 10<sup>11</sup>", "2.56 × 10<sup>6</sup>"], "4 × 10<sup>10</sup>", "Divide the front numbers and subtract the exponents.", "0.4 × 10<sup>11</sup> = 4 × 10<sup>10</sup>."),
+  H("h6-sq1", "amc10", "sqrt-simplify", "What is √12 · √27 + √75 ÷ √3?", ["13", "18", "23", "25", "30"], "23", "Combine under one root before simplifying.", "√324 + √25 = 18 + 5 = 23."),
+  H("h6-ra1", "amc10", "rationalize", "(√5 + 1)/(√5 − 1) = a + b√5 for rational numbers a and b. What is a + b?", ["1", "3/2", "2", "5/2", "3"], "2", "Multiply the top and bottom by √5 + 1.", "(√5 + 1)²/4 = (6 + 2√5)/4 = 3/2 + (1/2)√5. a + b = 2."),
+  H("h6-cp1", "amc10", "compare-powers", "Which list is in order from smallest to largest?", ["2<sup>100</sup>, 3<sup>75</sup>, 5<sup>50</sup>", "2<sup>100</sup>, 5<sup>50</sup>, 3<sup>75</sup>", "3<sup>75</sup>, 2<sup>100</sup>, 5<sup>50</sup>", "5<sup>50</sup>, 2<sup>100</sup>, 3<sup>75</sup>", "5<sup>50</sup>, 3<sup>75</sup>, 2<sup>100</sup>"], "2<sup>100</sup>, 5<sup>50</sup>, 3<sup>75</sup>", "Write each as something to the 25th power.", "16²⁵, 27²⁵, 25²⁵. So 2¹⁰⁰ &lt; 5⁵⁰ &lt; 3⁷⁵."),
+  H("h6-ps1", "amc8", "perfect-squares", "How many perfect squares are strictly between 100 and 1000?", ["20", "21", "22", "30", "31"], "21", "Find the smallest and largest square roots that fit.", "11² = 121 up to 31² = 961: 31 − 11 + 1 = 21."),
+  H("h6-cu1", "amc8", "cubes", "What is the smallest positive integer n that makes 72n a perfect cube?", ["2", "3", "6", "9", "24"], "3", "Factor 72 into primes.", "72 = 2³ · 3². One more 3 makes 2³ · 3³ = 216 = 6³."),
+  H("h6-sf1", "amc10", "sfft", "How many ordered pairs of positive integers (a, b) satisfy 1/a + 1/b = 1/4?", ["3", "4", "5", "6", "8"], "5", "Clear fractions: ab − 4a − 4b = 0. Add 16 and factor.", "(a − 4)(b − 4) = 16 has 5 positive factor pairs: (1, 16), (2, 8), (4, 4), (8, 2), (16, 1)."),
+
+  H("h6-ac1", "amc10", "angle-chasing", "In triangle ABC, angle A = 40°. The bisectors of the exterior angles at B and C meet at point E. What is angle BEC?", ["50°", "60°", "70°", "80°", "110°"], "70°", "Each exterior angle is 180° minus the interior one. E takes half of each.", "Angle EBC + angle ECB = ½(360 − B − C) = ½(180 + A) = 110°. So BEC = 70°, which is 90 − A/2."),
+  H("h6-ab1", "amc8", "angle-basics", "An angle is 30° less than twice its supplement. What is the angle?", ["70°", "100°", "110°", "120°", "130°"], "110°", "Write x = 2(180 − x) − 30.", "3x = 330, so x = 110°."),
+  H("h6-pl1", "amc10", "parallel-lines", "A transversal cuts two parallel lines. The bisectors of the two interior angles on the same side of the transversal meet at P. What is the angle at P?", ["45°", "60°", "80°", "90°", "100°"], "90°", "The two interior angles add to 180°.", "Half of each adds to 90°, so the third angle of the triangle at P is 180 − 90 = 90°."),
+  H("h6-ea1", "amc8", "exterior-angle", "Each interior angle of a regular polygon is 4 times each exterior angle. How many sides does it have?", ["8", "9", "10", "12", "15"], "10", "Interior + exterior = 180°.", "5 × exterior = 180, exterior = 36°, and 360/36 = 10 sides."),
+  H("h6-cf1", "amc10", "circumference", "A circle's radius is increased so that its circumference grows by 6π. Its area grows by 39π. What was the original radius?", ["3", "4", "5", "6", "8"], "5", "A circumference increase of 6π means the radius grows by 3.", "π(r + 3)² − πr² = π(6r + 9) = 39π gives r = 5."),
+  H("h6-pp1", "amc10", "power-point", "From point P outside a circle, one line meets the circle at A then B, with PA = 4 and AB = 5. Another line meets the circle at C then D, with PC = 3. What is CD?", ["6", "8", "9", "12", "15"], "9", "PA × PB = PC × PD, using whole lengths from P.", "4 × 9 = 36 = 3 × PD, so PD = 12 and CD = 12 − 3 = 9."),
+  H("h6-sa1", "amc8", "shaded-area", "A circle is inscribed in a 4 × 4 square, and a smaller square is inscribed in the circle. What is the area inside the circle but outside the small square?", ["4π − 8", "4π − 4", "16 − 4π", "2π", "8 − 2π"], "4π − 8", "The small square's diagonal is the circle's diameter.", "Circle: r = 2, area 4π. Small square: diagonal 4, area 8. Answer 4π − 8."),
+);
+
+/* =========================================================
    GENERATORS: Counting
    ========================================================= */
 
