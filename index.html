@@ -4401,6 +4401,45 @@ BANK.push(
 );
 
 /* =========================================================
+   Hand-written hard problems, round 8
+   ========================================================= */
+BANK.push(
+  H("h8-in1", "amc10", "independent", "Two fair dice are rolled, one red and one blue. What is the probability that the red die is even and the sum is 7?", ["1/36", "1/12", "1/6", "1/4", "1/2"], "1/12", "List the pairs with sum 7 and an even red die.", "(2, 5), (4, 3), (6, 1): 3 of 36 = 1/12. (Here the events are independent: 1/2 × 1/6.)"),
+  H("h8-gp1", "amc8", "geo-prob", "A point is chosen at random inside a 6 × 6 square. What is the probability that it is less than 3 units from the square's center?", ["1/4", "π/9", "π/6", "π/4", "3/4"], "π/4", "The good region is a circle of radius 3.", "9π ÷ 36 = π/4."),
+  H("h8-pt1", "amc8", "patterns", "The letters A B C D repeat forever, and below them the digits 1 2 3 4 5 repeat forever. A is above 1 in position 1. In what position is A above 1 next?", ["9", "20", "21", "40", "41"], "21", "The letters repeat every 4, the digits every 5.", "LCM(4, 5) = 20, so it happens again at position 21."),
+  H("h8-bw1", "amc10", "backwards", "Four kids share a bag of candy. Each in turn takes half of what is left plus half a candy, always whole candies. After the fourth kid, the bag is empty. How many candies were in the bag?", ["7", "15", "16", "31", "32"], "15", "If y is left after a kid, there were 2y + 1 before.", "0 → 1 → 3 → 7 → 15."),
+  H("h8-lp1", "amc10", "logic-puzzles", "One of Ana, Bea, Cam, and Dee ate the cookie. Ana: \"Bea did it.\" Bea: \"Dee did it.\" Cam: \"I didn't.\" Dee: \"Bea is lying.\" Exactly one of them tells the truth. Who ate the cookie?", ["Ana", "Bea", "Cam", "Dee", "Can't be decided"], "Cam", "Bea and Dee contradict each other, so exactly one of them is truthful.", "So Ana and Cam both lie. Cam lying means Cam did it. Check: Ana false, Bea false, Dee true: one truth."),
+  H("h8-ol1", "amc8", "organized-lists", "How many different rectangles with whole-number sides have area 36? (A 4 × 9 and a 9 × 4 count once.)", ["4", "5", "6", "9", "10"], "5", "List factor pairs of 36.", "1 × 36, 2 × 18, 3 × 12, 4 × 9, 6 × 6: 5."),
+
+  H("h8-pa1", "amc10", "polygon-angles", "For how many values of n ≥ 3 is each interior angle of a regular n-gon a whole number of degrees?", ["18", "20", "22", "24", "26"], "22", "The exterior angle 360/n must be a whole number.", "n must divide 360, which has 24 divisors. Drop 1 and 2: 22."),
+  H("h8-dg1", "amc8", "diagonals", "A convex polygon has 35 diagonals. How many sides does it have?", ["8", "9", "10", "11", "12"], "10", "Diagonals = n(n − 3)/2.", "n(n − 3) = 70 = 10 × 7, so n = 10."),
+  H("h8-mc1", "amc10", "mcnugget", "A country has only 5¢ and 7¢ coins. What is the largest amount that can't be paid exactly?", ["17", "19", "23", "29", "35"], "23", "For coprime a and b, the answer is ab − a − b.", "35 − 5 − 7 = 23. (Check: 24 = 10 + 14, 25, 26 = 5 + 21, 27 = 20 + 7, 28 = 28, and then add 5s.)"),
+  H("h8-tt1", "amc8", "triangle-types", "A triangle has sides 7, 8, and 9. What kind of triangle is it?", ["Acute", "Right", "Obtuse", "Isosceles", "Impossible"], "Acute", "Compare the longest side squared with the sum of the other two squares.", "81 &lt; 49 + 64 = 113, so every angle is acute."),
+  H("h8-qd1", "amc10", "quadrilaterals", "A rectangle is 8 by 6. How far is a corner from the diagonal that doesn't pass through it?", ["4", "4.8", "5", "6", "7"], "4.8", "Use the area of the triangle two ways.", "Diagonal 10. Triangle area 24 = ½ × 10 × h gives h = 4.8."),
+  H("h8-sy1", "amc8", "symmetry", "How many letters of the word MATH (in capital block letters) have a vertical line of symmetry?", ["0", "1", "2", "3", "4"], "4", "Imagine folding each letter down the middle.", "M, A, T, and H all fold onto themselves: 4."),
+  H("h8-cs1", "amc8", "congruent-similar", "Two similar triangles have areas 12 and 75. A side of the smaller one is 4. How long is the matching side of the larger?", ["6", "8", "10", "12.5", "25"], "10", "The area ratio is the square of the side ratio.", "75/12 = 25/4, so the side ratio is 5/2. 4 × 5/2 = 10."),
+  H("h8-co1", "amc8", "coordinates", "How far apart are the points (−3, 7) and (9, −1)?", ["4√13", "8√2", "12", "√80", "20"], "4√13", "Use the Pythagorean theorem on the differences.", "√(12² + 8²) = √208 = 4√13."),
+  H("h8-so1", "amc8", "solids", "A prism has 30 vertices. How many edges does it have?", ["30", "45", "47", "60", "90"], "45", "A prism with an n-gon base has 2n vertices and 3n edges.", "n = 15, edges = 45."),
+
+  H("h8-mp1", "amc8", "mult-principle", "How many three-digit numbers have only odd digits?", ["100", "125", "150", "250", "500"], "125", "Each digit has 5 choices.", "5 × 5 × 5 = 125."),
+  H("h8-cb1", "amc8", "combinations", "A committee of 2 boys and 2 girls is chosen from 6 boys and 5 girls. How many committees are possible?", ["100", "150", "165", "300", "330"], "150", "Choose the boys and the girls separately.", "C(6, 2) × C(5, 2) = 15 × 10 = 150."),
+  H("h8-cb2", "amc10", "combinations", "Ten points lie in a plane. Four of them are on one line, and no other three are on a line. How many different lines pass through at least two of the points?", ["37", "39", "40", "42", "45"], "40", "C(10, 2) counts the line through the 4 collinear points too many times.", "45 pairs, but the C(4, 2) = 6 pairs on one line all give the same line: 45 − 6 + 1 = 40."),
+  H("h8-rp1", "amc10", "repeats", "In how many arrangements of MISSISSIPPI are all four S's together?", ["420", "840", "1680", "3360", "34650"], "840", "Glue the S's into one block.", "Arrange M, I, I, I, I, P, P, and the SSSS block: 8!/(4! · 2!) = 840."),
+  H("h8-cm1", "amc10", "complementary", "How many 4-letter strings (from A–Z) have at least one repeated letter?", ["58,500", "98,176", "100,000", "358,800", "456,976"], "98,176", "Count the strings with all different letters.", "26⁴ − 26 · 25 · 24 · 23 = 456,976 − 358,800 = 98,176."),
+  H("h8-gp2", "amc10", "grid-paths", "Moving one unit right or up at a time, how many paths go from (0, 0) to (3, 3) without ever going above the line y = x?", ["5", "6", "10", "14", "20"], "5", "These are counted by Catalan numbers.", "List them, or use C(6, 3)/4 = 5."),
+  H("h8-pi1", "amc8", "pie", "How many integers from 1 to 60 are multiples of 4 or of 6?", ["15", "20", "22", "25", "30"], "20", "Multiples of both are multiples of 12.", "15 + 10 − 5 = 20."),
+  H("h8-ci1", "amc8", "circular", "Three boys and three girls sit at a round table, alternating boy, girl, boy, girl. Rotations count as the same seating. How many seatings are there?", ["6", "12", "36", "72", "144"], "12", "Seat the boys first, then fill the gaps.", "Boys around the table: 2! = 2. Girls into the 3 gaps: 3! = 6. Total 12."),
+  H("h8-de1", "amc10", "derangements", "Four letters are put into four envelopes at random. What is the probability that exactly one letter is in the right envelope?", ["1/6", "1/4", "1/3", "3/8", "1/2"], "1/3", "Pick which letter is right, then the other 3 must all be wrong.", "4 × D(3) = 4 × 2 = 8 of the 24 orders: 1/3."),
+  H("h8-nd1", "amc10", "num-divisors", "What is the smallest positive integer with exactly 10 positive divisors?", ["48", "80", "96", "162", "512"], "48", "10 = 10 or 2 × 5, so the form is p⁹ or p⁴q.", "2⁴ × 3 = 48 beats 2⁹ = 512."),
+  H("h8-nd2", "amc8", "num-divisors", "How many of the positive divisors of 360 are odd?", ["4", "6", "8", "12", "24"], "6", "Odd divisors are divisors of the odd part of 360.", "360 = 2³ · 45, and 45 = 3² · 5 has 3 × 2 = 6 divisors."),
+
+  H("h8-ex1", "amc10", "expressions", "If x/y = 3/4, what is (x + y)/(x − y)?", ["−7", "−1/7", "1/7", "7/4", "7"], "−7", "Let x = 3k and y = 4k.", "7k/(−k) = −7."),
+  H("h8-le1", "amc10", "linear-eq", "The equations 2x + ay = 6 and 4x + 8y = c describe the same line. What is a + c?", ["8", "12", "16", "20", "24"], "16", "One equation must be a multiple of the other.", "Doubling the first gives 4x + 2ay = 12, so a = 4 and c = 12. Sum 16."),
+  H("h8-sy2", "amc8", "systems", "x + y + z = 6, x − y = 1, and y − z = 1. What is xyz?", ["0", "2", "4", "6", "8"], "6", "Write x and z in terms of y.", "x = y + 1 and z = y − 1, so 3y = 6, y = 2. xyz = 3 × 2 × 1 = 6."),
+  H("h8-iq1", "amc10", "inequalities", "What is the largest integer n with n² &lt; 5n + 14?", ["5", "6", "7", "8", "14"], "6", "Factor n² − 5n − 14.", "(n − 7)(n + 2) &lt; 0 means −2 &lt; n &lt; 7, so n = 6."),
+);
+
+/* =========================================================
    GENERATORS: Counting
    ========================================================= */
 
