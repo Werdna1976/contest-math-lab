@@ -4440,6 +4440,43 @@ BANK.push(
 );
 
 /* =========================================================
+   Hand-written hard problems, round 9
+   ========================================================= */
+BANK.push(
+  H("h9-ph1", "amc8", "pigeonhole", "A bag has 5 red, 5 blue, and 5 green marbles. What is the fewest you must draw, without looking, to be sure of getting two marbles of different colors?", ["2", "3", "4", "6", "11"], "6", "The worst luck is drawing one color as long as possible.", "You could draw all 5 of one color. The 6th must be different."),
+  H("h9-we1", "amc8", "word-eq", "A father is 4 times as old as his son. In 20 years he will be twice as old as his son. How old is the son now?", ["5", "8", "10", "12", "15"], "10", "Write both ages in 20 years.", "4s + 20 = 2(s + 20) gives 2s = 20, s = 10."),
+  H("h9-ln1", "amc10", "lines", "A line is perpendicular to y = 2x + 1 and passes through (4, 3). Where does it cross the x-axis?", ["x = 2", "x = 6", "x = 8", "x = 10", "x = 12"], "x = 10", "Perpendicular slopes multiply to −1.", "Slope −1/2. From (4, 3), dropping 3 in y means moving 6 right in x: (10, 0)."),
+  H("h9-sq1", "amc8", "sequences", "What is 1 + 3 + 5 + ⋯ + 39?", ["380", "390", "400", "410", "420"], "400", "The sum of the first n odd numbers is n².", "There are 20 odd numbers from 1 to 39: 20² = 400."),
+  H("h9-er1", "amc10", "exp-rules", "If 3<sup>x+2</sup> − 3<sup>x</sup> = 216, what is x?", ["2", "3", "4", "5", "6"], "3", "Factor out 3<sup>x</sup>.", "3<sup>x</sup>(9 − 1) = 216, so 3<sup>x</sup> = 27 and x = 3."),
+  H("h9-ez1", "amc8", "exp-zero-neg", "What is (2<sup>−2</sup> · 2<sup>5</sup>)<sup>−1</sup>?", ["1/128", "1/8", "1/4", "8", "128"], "1/8", "Combine the inside first.", "2<sup>−2+5</sup> = 2³ = 8, and 8<sup>−1</sup> = 1/8."),
+  H("h9-sn1", "amc8", "sci-notation", "Light travels about 3 × 10<sup>5</sup> km per second. About how far does it go in one hour?", ["1.08 × 10<sup>8</sup> km", "1.8 × 10<sup>8</sup> km", "3.6 × 10<sup>8</sup> km", "1.08 × 10<sup>9</sup> km", "1.08 × 10<sup>10</sup> km"], "1.08 × 10<sup>9</sup> km", "An hour is 3600 = 3.6 × 10³ seconds.", "3 × 3.6 = 10.8, and 10<sup>5</sup> × 10<sup>3</sup> = 10<sup>8</sup>. 10.8 × 10<sup>8</sup> = 1.08 × 10<sup>9</sup>."),
+  H("h9-ss1", "amc8", "sqrt-simplify", "What is √(2<sup>6</sup> · 3<sup>4</sup>)?", ["36", "48", "72", "96", "144"], "72", "Halve each exponent.", "2³ · 3² = 8 · 9 = 72."),
+  H("h9-ra1", "amc10", "rationalize", "Which equals 6/(√7 − 1)?", ["1 − √7", "√7 − 1", "(√7 + 1)/6", "√7 + 1", "6√7 + 6"], "√7 + 1", "Multiply the top and bottom by √7 + 1.", "6(√7 + 1)/(7 − 1) = √7 + 1."),
+  H("h9-cp1", "amc8", "compare-powers", "Which is larger, 2<sup>30</sup> or 3<sup>20</sup>?", ["2<sup>30</sup>", "3<sup>20</sup>", "They are equal", "It depends on rounding", "They can't be compared"], "3<sup>20</sup>", "Write both as something to the 10th power.", "2³⁰ = 8¹⁰ and 3²⁰ = 9¹⁰, so 3²⁰ is larger."),
+  H("h9-gf1", "amc10", "gcf-factor", "Which number is a root of both x² + 7x + 12 = 0 and x² + 2x − 8 = 0?", ["−4", "−3", "−2", "2", "4"], "−4", "Factor both.", "(x + 3)(x + 4) and (x + 4)(x − 2) share x = −4."),
+  H("h9-ds1", "amc8", "diff-squares", "Compute 53 × 47.", ["2391", "2481", "2491", "2501", "2591"], "2491", "Both are 3 away from 50.", "(50 + 3)(50 − 3) = 2500 − 9 = 2491."),
+  H("h9-ps1", "amc8", "perfect-squares", "For what positive k is x² + kx + 49 a perfect square, like (x + a)²?", ["7", "14", "24.5", "49", "98"], "14", "(x + a)² = x² + 2ax + a².", "a² = 49 gives a = 7, so k = 2a = 14."),
+  H("h9-cu1", "amc10", "cubes", "What is 1³ + 2³ + 3³ + ⋯ + 10³?", ["2025", "3025", "3125", "3600", "5050"], "3025", "The sum of the first n cubes is (1 + 2 + ⋯ + n)².", "55² = 3025."),
+  H("h9-sf1", "amc10", "sfft", "Positive integers x and y satisfy xy = 2x + 3y + 3. What is the sum of all possible values of x?", ["13", "18", "22", "25", "31"], "22", "Move everything to one side, then add 6 to factor.", "(x − 3)(y − 2) = 9 gives x − 3 = 1, 3, or 9, so x = 4, 6, 12. Sum 22."),
+  H("h9-xp1", "amc10", "expansions", "What is the constant term when (x + 1/x)<sup>6</sup> is expanded?", ["6", "15", "20", "30", "64"], "20", "The x's cancel when you pick x three times and 1/x three times.", "C(6, 3) = 20."),
+
+  H("h9-pl1", "amc8", "parallel-lines", "A transversal crosses two parallel lines. One of the 8 angles formed is 4 times another. What is the smaller of those two angles?", ["30°", "36°", "40°", "45°", "60°"], "36°", "The angles take only two values, and they add to 180°.", "x + 4x = 180, x = 36°."),
+  H("h9-ea1", "amc10", "exterior-angle", "Each exterior angle of a regular polygon is 24°. How many diagonals does it have?", ["75", "90", "105", "120", "135"], "90", "360 ÷ exterior angle gives the number of sides.", "n = 15, and 15 × 12 / 2 = 90."),
+  H("h9-ac1", "amc8", "angle-chasing", "In triangle ABC, AB = AC and angle A = 40°. The bisector of angle B meets AC at D. What is angle ADB?", ["75°", "95°", "105°", "110°", "115°"], "105°", "Base angles are 70°, so angle ABD is 35°.", "In triangle ABD: 180 − 40 − 35 = 105°."),
+  H("h9-ck1", "amc8", "clock-angles", "What is the smaller angle between the clock hands at 10:15?", ["135°", "140°", "142.5°", "145°", "150°"], "142.5°", "The hour hand has moved a quarter of the way from 10 to 11.", "Hour hand at 300 + 7.5 = 307.5°, minute hand at 90°. Difference 217.5°, so the smaller angle is 142.5°."),
+  H("h9-py1", "amc8", "pythagorean", "A rectangle has a diagonal of 25 and one side of 7. What is its area?", ["84", "150", "168", "175", "336"], "168", "Find the other side first.", "√(625 − 49) = 24. Area 7 × 24 = 168."),
+  H("h9-sr1", "amc8", "special-right", "An isosceles right triangle has area 50. How long is its hypotenuse?", ["5√2", "10", "10√2", "20", "50"], "10√2", "Area = ½ × leg².", "Legs 10, hypotenuse 10√2."),
+  H("h9-st1", "amc10", "similar-triangles", "In triangle ABC, AB = 12. A line parallel to BC cuts the triangle into two pieces of equal area. How far from A does it cross AB?", ["6", "4√3", "6√2", "8", "9"], "6√2", "The small triangle has half the area, so its sides are 1/√2 as long.", "12/√2 = 6√2."),
+  H("h9-ti1", "amc10", "triangle-inequality", "How many different triangles have whole-number sides that are each at most 5? (Congruent triangles count once.)", ["15", "18", "20", "22", "35"], "22", "List a ≤ b ≤ c ≤ 5 with a + b &gt; c.", "Counting by longest side c = 1, 2, 3, 4, 5 gives 1 + 2 + 4 + 6 + 9 = 22."),
+  H("h9-cp2", "amc10", "circle-parts", "A circle has radius 13. Two parallel chords of lengths 10 and 24 lie on opposite sides of the center. How far apart are they?", ["7", "12", "17", "19", "24"], "17", "Find each chord's distance from the center.", "Chord 10 is √(169 − 25) = 12 away. Chord 24 is √(169 − 144) = 5 away. Opposite sides: 17."),
+  H("h9-cf1", "amc8", "circumference", "A bicycle wheel has diameter 26 inches. How many feet does the bike travel in 30 turns of the wheel?", ["26π", "65π", "78π", "130π", "780π"], "65π", "One turn moves 26π inches.", "30 × 26π = 780π inches = 65π feet."),
+  H("h9-ca1", "amc10", "circle-area", "What is the area of the circle inscribed in an equilateral triangle with side 6?", ["π", "2π", "3π", "4π", "12π"], "3π", "The inradius is a third of the height.", "Height 3√3, inradius √3, area 3π."),
+  H("h9-ia1", "amc10", "inscribed-angles", "The vertices of a triangle split its circumscribed circle into three arcs in the ratio 2 : 3 : 4. What is the largest angle of the triangle?", ["60°", "70°", "80°", "90°", "100°"], "80°", "Each angle is half the arc opposite it.", "Arcs 80°, 120°, 160°. The largest angle is half of 160°: 80°."),
+  H("h9-tg1", "amc10", "tangents", "Circles of radius 3 and 5 touch each other on the outside. How long is a common external tangent segment between the two points of tangency?", ["8", "4√2", "√34", "2√15", "2√17"], "2√15", "The centers are 8 apart. Make a right triangle with leg 5 − 3.", "√(8² − 2²) = √60 = 2√15."),
+  H("h9-pp1", "amc8", "power-point", "Chords AB and CD cross at P. AP = 6, PB = 4, and CD = 11. How long is the shorter piece of CD?", ["2", "3", "4", "5", "8"], "3", "AP × PB = CP × PD.", "x(11 − x) = 24 gives x = 3 or 8. The shorter piece is 3."),
+);
+
+/* =========================================================
    GENERATORS: Counting
    ========================================================= */
 
