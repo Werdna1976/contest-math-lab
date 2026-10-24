@@ -1768,8 +1768,8 @@ Object.assign(LESSONS, {
     quiz: [
       num("How many right/up paths go 3 right and 3 up?", 20, "6 moves, 3 of them up. Choose which 3: 6 × 5 × 4 ÷ 6 = 20."),
       num("How many right/up paths go 5 right and 2 up?", 21, "7 moves, 2 of them up. Choose which 2: 7 × 6 ÷ 2 = 21."),
-      num("How many right/up paths from (0, 0) to (4, 4) pass through (2, 2)?", 36, "6 paths reach (2, 2) and 6 paths go from there to (4, 4). 6 × 6 = 36."),
-      num("How many right/up paths from (0, 0) to (4, 4) avoid (2, 2)?", 34, "All paths: C(8, 4) = 70. Through (2, 2): 36. 70 − 36 = 34."),
+      num("How many right/up paths from (0, 0) to (5, 3) pass through (2, 1)?", 30, "3 paths reach (2, 1) (C(3, 1) = 3). From (2, 1) to (5, 3) is 3 rights and 2 ups: C(5, 2) = 10. 3 × 10 = 30."),
+      num("How many right/up paths from (0, 0) to (3, 3) avoid (1, 1)?", 8, "All paths: C(6, 3) = 20. Through (1, 1): 2 ways to get there and C(4, 2) = 6 ways on, so 12. 20 − 12 = 8."),
       mc("Using unit steps in +x, +y, or +z, how many paths go from (0, 0, 0) to (1, 2, 3)?", ["6", "20", "36", "60", "720"], 3, "Each path is an arrangement of XYYZZZ: 6! ÷ (1! × 2! × 3!) = 720 ÷ 12 = 60."),
     ],
   },
@@ -1840,7 +1840,7 @@ Object.assign(LESSONS, {
       ${ex("4 men and 4 women sit at a round table alternating. How many seatings?", ["Seat one man first. That fixes the rotation.", "The other 3 men take every other seat: 3! = 6 ways.", "The 4 women fill the 4 gaps between men: 4! = 24 ways. No more rotations to divide out, since the first man fixed them.", "6 × 24 = <b>144</b>."], "contest style")}
       ${aops("Circular_permutation", "Circular permutation")}`,
     quiz: [
-      num("How many ways can 6 people sit at a round table?", 120, "Fix one person's seat to remove rotations, then arrange the other 5: 5! = 120."),
+      num("How many ways can 7 people sit at a round table?", 720, "Fix one person's seat to remove rotations, then arrange the other 6: 6! = 720."),
       num("How many different necklaces (which can be flipped) use 7 different beads?", 360, "Around a circle: 6! = 720. Flipping makes mirror images the same: ÷ 2 = 360."),
       num("5 people sit at a round table, and two particular people must sit together. How many seatings?", 12, "Glue the pair into one unit: 4 units around a table, 3! = 6. The pair can swap: × 2 = 12."),
       num("4 couples sit at a round table, each couple together. How many seatings?", 96, "4 couple units around a table: 3! = 6. Each couple can swap seats: 2⁴ = 16. 6 × 16 = 96."),
@@ -2103,7 +2103,7 @@ Object.assign(LESSONS, {
       num("What is the units digit of 2¹⁰?", 4, "2¹⁰ = 1024. Or: 10 ÷ 4 leaves 2, second entry of 2, 4, 8, 6."),
       num("What is the units digit of 3²⁰²⁵?", 3, "2025 ÷ 4 leaves 1: first entry of 3, 9, 7, 1."),
       num("What is the units digit of 3¹⁰?", 9, "Powers of 3 end in 3, 9, 7, 1, repeating. 10 ÷ 4 leaves 2: second entry, 9."),
-      num("What is the units digit of 1! + 2! + 3! + … + 100!?", 3, "From 5! on, every factorial contains 2 × 5 = 10, so it ends in 0. 1 + 2 + 6 + 24 = 33, so the units digit is 3."),
+      num("What is the units digit of 2! + 4! + 6! + … + 50!?", 6, "From 5! on, every factorial contains 2 × 5 = 10, so it ends in 0. Only 2! + 4! = 2 + 24 = 26 matters, so the units digit is 6."),
       mc("What is the units digit of 13⁴¹ × 17⁴²?", ["1", "3", "5", "7", "9"], 3, "3⁴¹ ends in 3 (41 leaves 1). 7⁴² ends in 9 (42 leaves 2). 3 × 9 = 27, so 7."),
     ],
   },
@@ -2178,7 +2178,7 @@ Object.assign(LESSONS, {
       num("How many ways can you make exactly 100¢ from 5¢ and 7¢ stamps (using zero of one kind is allowed)?", 3, "5x + 7y = 100 forces y to be a multiple of 5. y = 0, 5, 10 give x = 20, 13, 6. That's 3."),
       num("Pens cost $4 and notebooks $7. Spending exactly $50 on at least one of each, what is the most notebooks you can buy?", 6, "4x + 7y = 50. y = 7 leaves 1 (not a multiple of 4). y = 6 leaves 8, so 2 pens. 6 notebooks."),
       num("How many positive integer solutions does x + 2y = 11 have?", 5, "x = 11 − 2y must be positive, so y can be 1, 2, 3, 4, 5. That's 5."),
-      mc("How many integer solutions does 4x + 6y = 15 have?", ["0", "1", "2", "3", "Infinitely many"], 0, "4x + 6y is always even, and 15 is odd. No solutions."),
+      mc("How many integer solutions does 6x + 9y = 20 have?", ["0", "1", "2", "3", "Infinitely many"], 0, "6x + 9y is always a multiple of 3, and 20 is not. No solutions."),
     ],
   },
 });
@@ -2362,7 +2362,7 @@ Object.assign(LESSONS, {
     quiz: [
       num("A mom is 4 times as old as her son. In 20 years she'll be twice as old as he is. How old is the son now?", 10, "Son s, mom 4s. In 20 years: 4s + 20 = 2(s + 20) = 2s + 40. Subtract 2s and 20: 2s = 20, so s = 10."),
       num("15 coins, all dimes and quarters, are worth $2.55. How many are quarters?", 7, "With q quarters, there are 15 − q dimes. Value: 25q + 10(15 − q) = 255. That's 150 + 15q = 255, so 15q = 105 and q = 7."),
-      num("A number increased by 20% is 72. What is the number?", 60, "Increasing by 20% means multiplying by 1.2: 1.2x = 72, so x = 72 ÷ 1.2 = 60."),
+      num("A number increased by 25% is 90. What is the number?", 72, "Increasing by 25% means multiplying by 1.25: 1.25x = 90, so x = 90 ÷ 1.25 = 72."),
       num("Kid tickets cost $5 and adult tickets $8. 40 tickets were sold for $257. How many were kid tickets?", 21, "With k kid tickets there are 40 − k adult tickets. 5k + 8(40 − k) = 257 gives 320 − 3k = 257, so 3k = 63 and k = 21."),
       mc("Two numbers add to 30. One is 6 more than twice the other. What is the larger number?", ["8", "12", "18", "22", "24"], 3, "Call the smaller x; the other is 2x + 6. Together 3x + 6 = 30, so x = 8. The larger is 2(8) + 6 = 22."),
     ],
@@ -2413,9 +2413,9 @@ Object.assign(LESSONS, {
     quiz: [
       num("If f(x) = 3x − 4, what is f(6)?", 14, "f(6) = 3 × 6 − 4 = 18 − 4 = 14."),
       num("f(x) = x² + 1 and g(x) = 2x. What is f(g(2))?", 17, "Inside first: g(2) = 4. Then f(4) = 4² + 1 = 17."),
-      num("f(x) = 3x − 2. For what x is f(x) = 25?", 9, "3x − 2 = 25, so 3x = 27 and x = 9."),
+      num("f(x) = 4x − 3. For what x is f(x) = 25?", 7, "4x − 3 = 25, so 4x = 28 and x = 7."),
       num("f(1) = 5 and f(n + 1) = f(n) + 4 for every n. What is f(12)?", 49, "From f(1) to f(12) is 11 steps of +4: 5 + 44 = 49."),
-      mc("f(x) = 1/(1 − x). What is f(f(f(3)))?", ["−1/2", "2/3", "1", "3", "Undefined"], 3, "f(3) = 1/(−2) = −1/2. f(−1/2) = 1/(3/2) = 2/3. f(2/3) = 1/(1/3) = 3."),
+      mc("f(x) = 1/(1 + x). What is f(f(f(1)))?", ["1/2", "2/3", "3/5", "5/8", "1"], 2, "f(1) = 1/2. f(1/2) = 1/(3/2) = 2/3. f(2/3) = 1/(5/3) = 3/5."),
     ],
   },
 
@@ -2439,7 +2439,7 @@ Object.assign(LESSONS, {
     quiz: [
       num("What is the slope of the line through (2, 5) and (6, 13)?", 2, "Rise 13 − 5 = 8, run 6 − 2 = 4. Slope 8 ÷ 4 = 2."),
       num("A line has slope 3 and passes through (1, 4). What is its y-intercept?", 1, "Use y = 3x + b and plug in (1, 4): 4 = 3 + b, so b = 1."),
-      num("What is the area of the triangle formed by 3x + 4y = 24 and the two axes?", 24, "Set y = 0: 3x = 24, x = 8. Set x = 0: 4y = 24, y = 6. The triangle has legs 8 and 6: ½ × 8 × 6 = 24."),
+      num("What is the area of the triangle formed by 5x + 2y = 20 and the two axes?", 20, "Set y = 0: 5x = 20, x = 4. Set x = 0: 2y = 20, y = 10. The triangle has legs 4 and 10: ½ × 4 × 10 = 20."),
       mc("What is the slope of a line perpendicular to y = 3x − 2?", ["3", "−3", "1/3", "−1/3", "1"], 3, "Perpendicular slopes multiply to −1, so 3 × m = −1 and m = −1/3."),
       num("For what k are (2, 3), (4, 9), and (6, k) on one line?", 15, "Slope from (2, 3) to (4, 9) is 6/2 = 3. From x = 4 to x = 6 is 2 more, so y rises 6: k = 15."),
     ],
@@ -2570,11 +2570,11 @@ Object.assign(LESSONS, {
       ${ex("2ᵃ × 4ᵇ = 8⁵ for positive integers a and b. How many pairs (a, b)?", ["Write everything as powers of 2: 4ᵇ = 2²ᵇ and 8⁵ = (2³)⁵ = 2¹⁵.", "Multiplying powers adds exponents: 2ᵃ × 2²ᵇ = 2ᵃ⁺²ᵇ. So a + 2b = 15.", "a = 15 − 2b must be positive, so b can be 1, 2, …, 7 (b = 7 gives a = 1).", "That's <b>7 pairs</b>."], "contest style")}
       ${aops("Exponent", "Exponent")}`,
     quiz: [
-      num("2³ × 2⁴ = 2ᵏ. What is k?", 7, "Multiplying powers of the same base adds the exponents: 2³ × 2⁴ = 2³⁺⁴ = 2⁷. (It's 3 twos times 4 twos, which is 7 twos.)"),
+      num("3⁵ × 3⁶ = 3ᵏ. What is k?", 11, "Multiplying powers of the same base adds the exponents: 3⁵ × 3⁶ = 3⁵⁺⁶ = 3¹¹. (It's 5 threes times 6 threes, which is 11 threes.)"),
       num("What is (3²)³ ÷ 3⁴?", 9, "A power of a power multiplies exponents: (3²)³ = 3⁶. Dividing subtracts them: 3⁶ ÷ 3⁴ = 3² = 9."),
       num("Solve 2ˣ = 64.", 6, "Double up from 2: 2, 4, 8, 16, 32, 64. That's 2⁶, so x = 6."),
       num("Solve 4ˣ = 8³. (Decimals or fractions are fine.)", 4.5, "4ˣ = (2²)ˣ = 2²ˣ and 8³ = (2³)³ = 2⁹. So 2x = 9 and x = 4.5."),
-      mc("What is 2¹⁰ + 2¹⁰?", ["2²⁰", "2¹¹", "4¹⁰", "4²⁰", "2¹⁰⁰"], 1, "2¹⁰ + 2¹⁰ is two copies of 2¹⁰, which is 2 × 2¹⁰ = 2¹¹. Adding powers does not add exponents; 2²⁰ would be 2¹⁰ × 2¹⁰."),
+      mc("What is 3⁸ + 3⁸ + 3⁸?", ["3²⁴", "3⁹", "9⁸", "9²⁴", "3⁶⁴"], 1, "3⁸ + 3⁸ + 3⁸ is three copies of 3⁸, which is 3 × 3⁸ = 3⁹. Adding powers does not add exponents."),
     ],
   },
 
@@ -2595,9 +2595,9 @@ Object.assign(LESSONS, {
       ${aops("Exponent", "Exponent")}`,
     quiz: [
       num("What is 5⁰ + 2⁻¹?", 1.5, "Anything (except 0) to the power 0 is 1. 2⁻¹ = 1/2. So 1 + 1/2 = 1.5."),
-      num("What is (1/2)⁻³?", 8, "The negative exponent flips 1/2 to 2. Then 2³ = 8."),
-      num("What is 27^(2/3)?", 9, "Cube root first: ∛27 = 3. Then square: 3² = 9."),
-      num("What is 16^(−1/2)? (Decimal or fraction.)", 0.25, "The ½ means square root (4), and the minus sign means flip: 1/4 = 0.25."),
+      num("What is (2/3)⁻²? (Decimal or fraction.)", 2.25, "The negative exponent flips 2/3 to 3/2. Then (3/2)² = 9/4 = 2.25."),
+      num("What is 64^(2/3)?", 16, "Cube root first: ∛64 = 4. Then square: 4² = 16."),
+      num("What is 25^(−1/2)? (Decimal or fraction.)", 0.2, "The ½ means square root (5), and the minus sign means flip: 1/5 = 0.2."),
       mc("What is (3⁻¹ + 6⁻¹)⁻¹?", ["1/2", "2", "9", "1/9", "1/18"], 1, "3⁻¹ + 6⁻¹ = 1/3 + 1/6 = 1/2. The outer −1 flips it to 2."),
     ],
   },
@@ -2643,8 +2643,8 @@ Object.assign(LESSONS, {
       ${aops("Square_root", "Square root")}`,
     quiz: [
       mc("What is √72 in simplest form?", ["4√2", "6√2", "8√3", "3√6", "12√2"], 1, "72 = 36 × 2, and √36 = 6. So √72 = 6√2."),
-      num("What is √12 × √3?", 6, "√12 × √3 = √(12 × 3) = √36 = 6."),
-      mc("What is √50 + √18?", ["4√2", "8√2", "√68", "2√17", "15√2"], 1, "√50 = 5√2 and √18 = 3√2. Like terms add: 8√2."),
+      num("What is √8 × √2?", 4, "√8 × √2 = √(8 × 2) = √16 = 4."),
+      mc("What is √75 + √12?", ["3√3", "7√3", "√87", "5√3", "10√3"], 1, "√75 = 5√3 and √12 = 2√3. Like terms add: 7√3."),
       num("What is √(2¹⁰)?", 32, "Square root halves the exponent: √(2¹⁰) = 2⁵ = 32."),
       num("How many integers lie strictly between √5 and √150?", 10, "√5 is a bit over 2, and √150 is a bit over 12 (12² = 144, 13² = 169). The integers between are 3 through 12: 10 of them."),
     ],
@@ -2693,7 +2693,7 @@ Object.assign(LESSONS, {
       mc("Which is smallest: 2¹⁰⁰, 3⁷⁵, 5⁵⁰?", ["2¹⁰⁰", "3⁷⁵", "5⁵⁰", "They're equal", "Can't tell"], 0, "All exponents are multiples of 25: 2¹⁰⁰ = 16²⁵, 3⁷⁵ = 27²⁵, 5⁵⁰ = 25²⁵. 16 is the smallest base."),
       num("For what k is 8ᵏ = 2³⁰?", 10, "8ᵏ = (2³)ᵏ = 2³ᵏ. 3k = 30, so k = 10."),
       num("What is the smallest positive integer n with 3ⁿ &gt; 1000?", 7, "Powers of 3: 3, 9, 27, 81, 243, 729, 2187. 3⁶ = 729 is short, 3⁷ = 2187 passes 1000. n = 7."),
-      mc("Let a = 2⁵⁵, b = 3⁴⁴, c = 5³³, d = 6²². Which order is correct?", ["a &lt; b &lt; c &lt; d", "d &lt; a &lt; b &lt; c", "a &lt; b &lt; d &lt; c", "a &lt; d &lt; b &lt; c", "c &lt; b &lt; d &lt; a"], 3, "Write each as an 11th power: a = 32¹¹, b = 81¹¹, c = 125¹¹, d = 36¹¹. So a &lt; d &lt; b &lt; c."),
+      mc("Let a = 2⁶⁰, b = 3⁴⁰, c = 5²⁰. Which order is correct?", ["a &lt; b &lt; c", "c &lt; a &lt; b", "c &lt; b &lt; a", "a &lt; c &lt; b", "b &lt; a &lt; c"], 1, "Write each as a 20th power: a = 8²⁰, b = 9²⁰, c = 5²⁰. So c &lt; a &lt; b."),
     ],
   },
 });
@@ -2760,7 +2760,7 @@ Object.assign(LESSONS, {
       ${aops("Factoring", "Factoring")}`,
     quiz: [
       num("2²⁰ + 2²⁰ + 2²⁰ + 2²⁰ = 2ᵏ. What is k?", 22, "Four copies of 2²⁰ is 4 × 2²⁰ = 2² × 2²⁰ = 2²². So k = 22."),
-      num("What is 17 × 23 + 17 × 77?", 1700, "Factor out 17: 17 × (23 + 77) = 17 × 100 = 1700."),
+      num("What is 13 × 37 + 13 × 63?", 1300, "Factor out 13: 13 × (37 + 63) = 13 × 100 = 1300."),
       mc("Factor xy + 5x + 2y + 10.", ["(x + 5)(y + 2)", "(x + 2)(y + 5)", "(x + 10)(y + 1)", "(xy + 10)", "(x + 1)(y + 10)"], 1, "Group: x(y + 5) + 2(y + 5). Factor out (y + 5): (x + 2)(y + 5)."),
       num("2¹⁰ − 2⁹ = 2ᵏ. What is k?", 9, "2¹⁰ = 2 × 2⁹, so 2¹⁰ − 2⁹ = 2⁹(2 − 1) = 2⁹. k = 9."),
       num("What is (5⁷ + 5⁶) ÷ 5⁶?", 6, "5⁷ + 5⁶ = 5⁶(5 + 1) = 6 × 5⁶. Dividing by 5⁶ leaves 6."),
@@ -2785,7 +2785,7 @@ Object.assign(LESSONS, {
       num("What is 51² − 49²?", 200, "(51 − 49)(51 + 49) = 2 × 100 = 200."),
       num("What is 98 × 102?", 9996, "Both are 2 from 100: (100 − 2)(100 + 2) = 100² − 2² = 9996."),
       num("x² − y² = 56 and x − y = 4. What is x?", 9, "(x − y)(x + y) = 56 and x − y = 4, so x + y = 14. Adding: 2x = 18, x = 9."),
-      num("How many pairs of positive integers (x, y) satisfy x² − y² = 45?", 3, "(x − y)(x + y) = 45 = 1 × 45, 3 × 15, or 5 × 9. These give (23, 22), (9, 6), and (7, 2)."),
+      num("How many pairs of positive integers (x, y) satisfy x² − y² = 63?", 3, "(x − y)(x + y) = 63 = 1 × 63, 3 × 21, or 7 × 9. These give (32, 31), (12, 9), and (8, 1)."),
       mc("What is 2024² − 2023²?", ["1", "2023", "4047", "4048", "4049"], 2, "(2024 − 2023)(2024 + 2023) = 1 × 4047 = 4047."),
     ],
   },
@@ -2806,10 +2806,10 @@ Object.assign(LESSONS, {
       ${ex("Find the smallest value of x² + 6x + 14.", ["Half of 6 is 3, and 3² = 9. Split 14 into 9 + 5: x² + 6x + 9 + 5.", "x² + 6x + 9 = (x + 3)². So the expression is (x + 3)² + 5.", "A square is never negative, and it's 0 when x = −3.", "The smallest value is <b>5</b>."], "contest style")}
       ${aops("Completing_the_square", "Completing the square")}`,
     quiz: [
-      num("What is 99²?", 9801, "(100 − 1)² = 10000 − 200 + 1 = 9801."),
+      num("What is 98²?", 9604, "(100 − 2)² = 10000 − 400 + 4 = 9604."),
       num("a + b = 9 and ab = 14. What is a² + b²?", 53, "a² + b² = (a + b)² − 2ab = 81 − 28 = 53."),
       num("a + b = 11 and ab = 24. What is (a − b)²?", 25, "(a − b)² = (a + b)² − 4ab = 121 − 96 = 25."),
-      mc("For what k is x² − 10x + k a perfect square?", ["5", "10", "20", "25", "100"], 3, "Half of −10 is −5, and (−5)² = 25. (x − 5)² = x² − 10x + 25."),
+      mc("For what k is x² − 14x + k a perfect square?", ["7", "14", "28", "49", "196"], 3, "Half of −14 is −7, and (−7)² = 49. (x − 7)² = x² − 14x + 49."),
       num("What is the smallest value of x² − 10x + 32?", 7, "x² − 10x + 32 = (x − 5)² + 7. The square is at least 0, so the minimum is 7."),
     ],
   },
@@ -2832,7 +2832,7 @@ Object.assign(LESSONS, {
       ${aops("Sum_of_cubes", "Sum of cubes")}`,
     quiz: [
       num("a + b = 4 and ab = 3. What is a³ + b³?", 28, "a³ + b³ = (a + b)³ − 3ab(a + b) = 64 − 36 = 28."),
-      num("What is 11³?", 1331, "(10 + 1)³ = 10³ + 3·10² + 3·10 + 1 = 1331."),
+      num("What is 21³?", 9261, "(20 + 1)³ = 20³ + 3·20² + 3·20 + 1 = 8000 + 1200 + 60 + 1 = 9261."),
       mc("Factor x³ − 27.", ["(x − 3)³", "(x − 3)(x² + 3x + 9)", "(x − 3)(x² − 3x + 9)", "(x + 3)(x² − 3x + 9)", "(x − 3)(x + 3)²"], 1, "Difference of cubes: a³ − b³ = (a − b)(a² + ab + b²), with a = x and b = 3."),
       num("What is (10⁴ − 1) ÷ (10 − 1)?", 1111, "10⁴ − 1 = (10 − 1)(1000 + 100 + 10 + 1), so the quotient is 1111."),
       num("a − b = 2 and ab = 15. What is a³ − b³?", 98, "a³ − b³ = (a − b)³ + 3ab(a − b) = 8 + 3 × 15 × 2 = 98. Check with a = 5, b = 3: 125 − 27 = 98."),
@@ -2881,7 +2881,7 @@ Object.assign(LESSONS, {
       num("What is (3 + 1)(3² + 1)(3⁴ + 1)?", 3280, "Direct: 4 × 10 × 82 = 3280. The trick: multiply by (3 − 1) = 2 to telescope to 3⁸ − 1 = 6560, then divide by 2: 3280."),
       num("a + b + c = 10 and a² + b² + c² = 38. What is ab + bc + ca?", 31, "(a + b + c)² = a² + b² + c² + 2(ab + bc + ca). 100 = 38 + 2(ab + bc + ca), so ab + bc + ca = 31."),
       num("What is 1001 × 999?", 999999, "(1000 + 1)(1000 − 1) = 1000² − 1 = 999,999."),
-      mc("What is (x + y)² − (x − y)²?", ["0", "2xy", "4xy", "2x² + 2y²", "4x²"], 2, "Difference of squares with A = x + y, B = x − y: (A − B)(A + B) = (2y)(2x) = 4xy."),
+      mc("What is (a + 2b)² − (a − 2b)²?", ["0", "4ab", "8ab", "2a² + 8b²", "8b²"], 2, "Difference of squares with A = a + 2b, B = a − 2b: (A − B)(A + B) = (4b)(2a) = 8ab."),
       num("What is 2024² − 2021 × 2027?", 9, "2021 × 2027 = (2024 − 3)(2024 + 3) = 2024² − 9. So the difference is 9."),
     ],
   },
@@ -2974,7 +2974,7 @@ Object.assign(LESSONS, {
     quiz: [
       num("What is the supplement of 128°?", 52, "Supplementary angles add to 180°: 180 − 128 = 52."),
       num("What is the complement of 37°?", 53, "Complementary angles add to 90°: 90 − 37 = 53."),
-      num("Two lines cross. One angle is 70°. What is an angle next to it?", 110, "Neighboring angles form a straight line, so they add to 180°: 180 − 70 = 110."),
+      num("Two lines cross. One angle is 55°. What is an angle next to it?", 125, "Neighboring angles form a straight line, so they add to 180°: 180 − 55 = 125."),
       num("An angle's supplement is 3 times its complement. What is the angle?", 45, "Supplement 180 − x, complement 90 − x. 180 − x = 3(90 − x) = 270 − 3x. Add 3x and subtract 180: 2x = 90, x = 45."),
       mc("Five angles around a point are 50°, 60°, 70°, 80°, and x°. What is x?", ["70", "80", "90", "100", "110"], 3, "Angles all the way around a point add to 360°. The four given add to 260°, so x = 360 − 260 = 100."),
     ],
@@ -2998,7 +2998,7 @@ Object.assign(LESSONS, {
       num("A transversal crosses two parallel lines. One angle is 72°. What is its corresponding angle?", 72, "Corresponding angles sit in the same position at each crossing, and with parallel lines they're equal: 72°."),
       num("Same setup. What is the same-side interior partner of a 72° angle?", 108, "Same-side interior angles add to 180° when the lines are parallel: 180 − 72 = 108."),
       num("Alternate interior angles measure (2x + 30)° and (5x − 15)°. What is x?", 15, "Alternate interior angles are equal: 2x + 30 = 5x − 15. So 45 = 3x and x = 15."),
-      num("A bent path between two parallel lines makes angles of 40° and 35° with them. What is the bend angle?", 75, "Draw a parallel line through the bend. It splits the bend into a 40° part and a 35° part (alternate interior angles). 40 + 35 = 75."),
+      num("A bent path between two parallel lines makes angles of 50° and 25° with them. What is the bend angle?", 75, "Draw a parallel line through the bend. It splits the bend into a 50° part and a 25° part (alternate interior angles). 50 + 25 = 75."),
       mc("Same-side interior angles measure 2x° and (3x + 30)°. What is the smaller angle?", ["30°", "60°", "75°", "90°", "120°"], 1, "Same-side interior angles add to 180°: 2x + 3x + 30 = 180, so 5x = 150 and x = 30. The angles are 60° and 120°."),
     ],
   },
@@ -3090,10 +3090,10 @@ Object.assign(LESSONS, {
       ${ex("How many right triangles with whole-number sides have a leg of 15?", ["Call the other leg b and the hypotenuse c. Then c² − 15² = b², so c² − b² = 225.", "Factor: (c − b)(c + b) = 225, with c − b smaller than c + b.", "Factor pairs of 225: 1 × 225, 3 × 75, 5 × 45, 9 × 25. (15 × 15 would make b = 0.)", "Each pair gives whole numbers: for 9 × 25, c = 17 and b = 8. The others give b = 112, 36, 20.", "That's <b>4</b> triangles."], "contest style")}
       ${aops("Pythagorean_Theorem", "Pythagorean Theorem")}`,
     quiz: [
-      num("A right triangle has legs 9 and 12. How long is the hypotenuse?", 15, "9 and 12 are 3 × 3 and 3 × 4, so the hypotenuse is 3 × 5 = 15. Or √(81 + 144) = √225 = 15."),
+      num("A right triangle has legs 20 and 21. How long is the hypotenuse?", 29, "√(400 + 441) = √841 = 29."),
       num("A right triangle has hypotenuse 26 and one leg 10. How long is the other leg?", 24, "26 and 10 are 2 × 13 and 2 × 5, so the other leg is 2 × 12 = 24. Or √(676 − 100) = √576 = 24."),
-      num("What is the length of the space diagonal of a 3 × 4 × 12 box?", 13, "√(3² + 4² + 12²) = √(9 + 16 + 144) = √169 = 13."),
-      num("A 17-ft ladder stands with its foot 8 ft from a wall. How high up the wall does it reach?", 15, "Height² = 17² − 8² = 289 − 64 = 225, so the height is 15."),
+      num("What is the length of the space diagonal of a 2 × 3 × 6 box?", 7, "√(2² + 3² + 6²) = √(4 + 9 + 36) = √49 = 7."),
+      num("A 25-ft ladder stands with its foot 7 ft from a wall. How high up the wall does it reach?", 24, "Height² = 25² − 7² = 625 − 49 = 576, so the height is 24."),
       mc("Which of these is <b>not</b> a right triangle?", ["6, 8, 10", "8, 15, 17", "9, 40, 41", "20, 21, 29", "7, 14, 16"], 4, "Check a² + b² = c² for each. 7² + 14² = 49 + 196 = 245, but 16² = 256. The others all match."),
     ],
   },
@@ -3140,7 +3140,7 @@ Object.assign(LESSONS, {
       ${aops("Similarity_(geometry)", "Similarity")}`,
     quiz: [
       num("In triangle ABC, DE ∥ BC with D on AB. AD = 4, AB = 10, BC = 15. How long is DE?", 6, "Triangle ADE is similar to ABC with ratio AD/AB = 4/10. So DE = 15 × 4/10 = 6."),
-      num("DE ∥ BC with AD = 3, DB = 6, and area of triangle ADE = 4. What is the area of ABC?", 36, "AB = 9 is 3 times AD = 3, so areas grow by 3² = 9. 4 × 9 = 36."),
+      num("DE ∥ BC with AD = 2, DB = 6, and area of triangle ADE = 3. What is the area of ABC?", 48, "AB = 8 is 4 times AD = 2, so areas grow by 4² = 16. 3 × 16 = 48."),
       num("The altitude to the hypotenuse of a right triangle splits it into pieces 4 and 9. How long is the altitude?", 6, "The altitude splits the triangle into two similar triangles, which gives h/4 = 9/h. So h² = 36 and h = 6."),
       num("A 12-ft pole casts an 8-ft shadow. At the same time a building casts a 30-ft shadow. How tall is it?", 45, "Similar triangles: height/shadow is the same. 12/8 = 1.5, so h = 1.5 × 30 = 45."),
       mc("A right triangle has legs 9 and 12. How long is the altitude to the hypotenuse?", ["6", "7.2", "7.5", "8", "9"], 1, "The hypotenuse is 15. Area = ½ × 9 × 12 = 54 = ½ × 15 × h. So h = 108 ÷ 15 = 7.2."),
@@ -3317,7 +3317,7 @@ Object.assign(LESSONS, {
     quiz: [
       mc("What is the area of a circle with radius 6?", ["6π", "12π", "36π", "72π", "144π"], 2, "Area = πr² = π × 6² = 36π."),
       mc("What is the area of a 120° sector with radius 6?", ["4π", "6π", "9π", "12π", "36π"], 3, "The whole circle is 36π, and 120° is ⅓ of 360°: 12π."),
-      num("Two circles share a center with radii 5 and 3. The area between them is kπ. What is k?", 16, "Big circle 25π minus small circle 9π leaves 16π, so k = 16."),
+      num("Two circles share a center with radii 7 and 2. The area between them is kπ. What is k?", 45, "Big circle 49π minus small circle 4π leaves 45π, so k = 45."),
       num("A circle's radius doubles. Its area is multiplied by what number?", 4, "Area uses r². Doubling r gives (2r)² = 4r², so the area is multiplied by 4."),
       mc("A square is inscribed in a circle of radius 3. What is the area inside the circle but outside the square?", ["9π − 9", "9π − 18", "3π", "18 − 3π", "9π"], 1, "Circle area 9π. The square's diagonal is the diameter, 6, so its area is ½ × 6 × 6 = 18. Answer 9π − 18."),
     ],
@@ -3343,7 +3343,7 @@ Object.assign(LESSONS, {
       num("What is an angle inscribed in a semicircle, in degrees?", 90, "A semicircle is a 180° arc, and an inscribed angle is half its arc: 90°."),
       num("Quadrilateral ABCD is inscribed in a circle and angle A = 68°. What is angle C?", 112, "Opposite angles of a cyclic quadrilateral add to 180°: 180 − 68 = 112."),
       num("An inscribed angle cuts off an arc of 140°. How big is the angle?", 70, "An inscribed angle is half its arc: 140 ÷ 2 = 70."),
-      mc("Triangle ABC is inscribed in a circle with AB a diameter. Angle A = 35°. What is angle B?", ["35°", "45°", "55°", "65°", "90°"], 2, "AB is a diameter, so angle C is 90°. B = 180 − 90 − 35 = 55°."),
+      mc("Triangle ABC is inscribed in a circle with AB a diameter. Angle A = 28°. What is angle B?", ["28°", "52°", "62°", "72°", "90°"], 2, "AB is a diameter, so angle C is 90°. B = 180 − 90 − 28 = 62°."),
     ],
   },
 
@@ -3366,7 +3366,7 @@ Object.assign(LESSONS, {
       num("Point P is 10 units from the center of a circle with radius 6. How long is a tangent segment from P?", 8, "The tangent, the radius (6), and the line to the center (10) make a right triangle: √(100 − 36) = 8."),
       num("Tangent segments PA and PB are drawn from P to a circle. PA = 7. What is PB?", 7, "Two tangent segments from the same point to a circle are always equal, so PB = 7."),
       num("What angle (in degrees) does a tangent make with the radius at the point of contact?", 90, "A tangent is always perpendicular to the radius at the point where it touches: 90°."),
-      num("What is the inradius of a right triangle with sides 3, 4, 5?", 1, "For a right triangle, r = (leg + leg − hypotenuse)/2 = (3 + 4 − 5)/2 = 1. Or area 6 ÷ half-perimeter 6 = 1."),
+      num("What is the inradius of a right triangle with sides 5, 12, 13?", 2, "For a right triangle, r = (leg + leg − hypotenuse)/2 = (5 + 12 − 13)/2 = 2. Or area 30 ÷ half-perimeter 15 = 2."),
       mc("Quadrilateral ABCD is drawn around a circle (each side touches it). AB = 8, BC = 10, CD = 12. What is DA?", ["6", "8", "10", "12", "14"], 2, "Each corner has two equal tangent pieces, so opposite sides add up the same: AB + CD = BC + DA. 8 + 12 = 10 + DA, so DA = 10."),
     ],
   },
@@ -3511,7 +3511,7 @@ Object.assign(LESSONS, {
       ${aops("Area", "Area")}`,
     quiz: [
       mc("A circle fits exactly inside a square of side 6. What is the area inside the square but outside the circle?", ["9π", "36 − 6π", "36π − 36", "36 − 3π", "36 − 9π"], 4, "Square 36, circle π × 3² = 9π. 36 − 9π."),
-      num("A 10 × 6 rectangle has a triangle with one long side as base and its tip on the opposite side. What is the triangle's area?", 30, "Base 10 and height 6 (the tip is on the opposite side): ½ × 10 × 6 = 30."),
+      num("A 12 × 8 rectangle has a triangle with one long side as base and its tip on the opposite side. What is the triangle's area?", 48, "Base 12 and height 8 (the tip is on the opposite side): ½ × 12 × 8 = 48."),
       num("A right triangle with legs 2 and 3 is cut from the corner of a 6 × 6 square. What area is left?", 33, "Square 36. The triangle is ½ × 2 × 3 = 3. 36 − 3 = 33."),
       mc("A square of side 2 has a quarter circle of radius 1 cut from each corner. What area is left?", ["4 − π", "4 − 2π", "π", "2", "4 − π/4"], 0, "Square 4. Four quarter circles of radius 1 make one whole circle: π. 4 − π."),
       num("A 10 × 10 square has a 4 × 4 square removed from one corner. What area is left?", 84, "10 × 10 = 100, minus the 4 × 4 = 16 piece: 84."),
@@ -3534,7 +3534,7 @@ Object.assign(LESSONS, {
       ${ex("Find the area of a triangle with sides 10, 17, 21.", ["s = (10 + 17 + 21)/2 = 24.", "s − a, s − b, s − c = 14, 7, 3.", "24 × 14 × 7 × 3 = 7056, and √7056 = <b>84</b>."], "contest style")}
       ${aops("Heron%27s_Formula", "Heron's Formula")}`,
     quiz: [
-      num("What is the area of a triangle with sides 9, 10, 17?", 36, "s = 18, and s − a, s − b, s − c = 9, 8, 1. √(18 × 9 × 8 × 1) = √1296 = 36."),
+      num("What is the area of a triangle with sides 11, 13, 20?", 66, "s = 22, and s − a, s − b, s − c = 11, 9, 2. √(22 × 11 × 9 × 2) = √4356 = 66."),
       num("What is the area of a triangle with sides 10, 10, 12?", 48, "s = 16, and the differences are 6, 6, 4. √(16 × 6 × 6 × 4) = √2304 = 48."),
       num("What is the area of a triangle with sides 9, 10, 17?", 36, "s = 18, and the differences are 9, 8, 1. √(18 × 9 × 8 × 1) = √1296 = 36."),
       num("In the 13-14-15 triangle, how long is the height to the side of length 14?", 12, "Area 84 = ½ × 14 × h, so h = 168 ÷ 14 = 12."),
@@ -3607,7 +3607,7 @@ Object.assign(LESSONS, {
       ${ex("A sphere fits exactly inside a cylinder (same radius, height = diameter). What fraction of the cylinder does it fill?", ["Sphere: (4/3)πr³.", "Cylinder: base πr², height 2r (the sphere's diameter), so πr² × 2r = 2πr³.", "(4/3)πr³ ÷ 2πr³ = (4/3) ÷ 2 = <b>2/3</b>. Archimedes wanted this on his tombstone."], "contest style")}
       ${aops("Cone", "Cone")}`,
     quiz: [
-      mc("What is the volume of a cone with radius 6 and height 5?", ["30π", "60π", "90π", "120π", "180π"], 1, "Base π × 6² = 36π. ⅓ × 36π × 5 = 60π."),
+      mc("What is the volume of a cone with radius 6 and height 4?", ["24π", "48π", "72π", "96π", "144π"], 1, "Base π × 6² = 36π. ⅓ × 36π × 4 = 48π."),
       num("What is the volume of a square pyramid with base side 9 and height 4?", 108, "Base 9 × 9 = 81. ⅓ × 81 × 4 = 108."),
       mc("What is the volume of a sphere with radius 6?", ["36π", "72π", "144π", "216π", "288π"], 4, "(4/3)π × 6³ = (4/3) × 216 × π = 288π."),
       num("A cylinder and a cone have the same radius and height. The cylinder's volume is how many times the cone's?", 3, "A cone holds ⅓ of the matching cylinder, so the cylinder is 3 times the cone."),
@@ -3739,8 +3739,8 @@ Object.assign(LESSONS, {
       ${ex("Compute (1 + 2 + ··· + 20) − (1 + 3 + ··· + 19).", ["The first sum has every number from 1 to 20. The second has only the odd ones: 1, 3, 5, …, 19.", "Each odd number appears once with + and once with −, so it cancels. What's left is the even numbers: 2 + 4 + 6 + ··· + 20.", "Every even number is 2 times something, so factor out the 2: 2 + 4 + ··· + 20 = 2 × (1 + 2 + ··· + 10).", "Find 1 + 2 + ··· + 10 by pairing the ends: 1 + 10, 2 + 9, 3 + 8, 4 + 7, 5 + 6. That's 5 pairs of 11, so 5 × 11 = 55. (In general, 1 + 2 + ··· + n = n(n + 1)/2.)", "So the answer is 2 × 55 = <b>110</b>.", "Check it another way: 1 + ··· + 20 = 20 × 21 / 2 = 210. The odd numbers 1 + 3 + ··· + 19 are the first 10 odd numbers, which add to 10² = 100. 210 − 100 = 110."], "contest style")}
       ${aops("Order_of_operations", "Order of operations")}`,
     quiz: [
-      num("What is 8 − 2 × 3 + 4?", 6, "Multiply first: 2 × 3 = 6. Then go left to right: 8 − 6 = 2, and 2 + 4 = 6."),
-      num("What is 24 ÷ 4 × 3?", 18, "× and ÷ are a tie, so go left to right: 24 ÷ 4 = 6 first, then 6 × 3 = 18."),
+      num("What is 10 − 3 × 2 + 5?", 9, "Multiply first: 3 × 2 = 6. Then go left to right: 10 − 6 = 4, and 4 + 5 = 9."),
+      num("What is 36 ÷ 6 × 2?", 12, "× and ÷ are a tie, so go left to right: 36 ÷ 6 = 6 first, then 6 × 2 = 12."),
       num("Compute 23 × 46 + 23 × 54.", 2300, "Factor out the 23: 23 × (46 + 54) = 23 × 100 = 2300."),
       num("Compute 1 − 2 + 3 − 4 + ··· + 49 − 50.", -25, "Pair neighbors: (1 − 2), (3 − 4), and so on. Each pair is −1, and 50 numbers make 25 pairs. 25 × (−1) = −25."),
       mc("What is 2 + 3 × 4²?", ["50", "80", "100", "196", "400"], 0, "Exponent first: 4² = 16. Then multiply: 3 × 16 = 48. Add last: 2 + 48 = 50."),
@@ -3765,7 +3765,7 @@ Object.assign(LESSONS, {
     quiz: [
       num("What is 2/5 of 5/6 of 120?", 40, "“Of” means multiply. 2/5 × 5/6 = 10/30 = 1/3, and a third of 120 is 40."),
       num("What is 30% of 15% of 600?", 27, "15% of 600 is 0.15 × 600 = 90. Then 30% of 90 is 0.3 × 90 = 27."),
-      num("Write 7/8 as a decimal.", 0.875, "1/8 = 0.125, so 7/8 = 7 × 0.125 = 0.875. Or: 7/8 = 1 − 1/8 = 1 − 0.125 = 0.875."),
+      num("Write 3/16 as a decimal.", 0.1875, "1/16 is half of 1/8 = 0.125, so 1/16 = 0.0625. Then 3/16 = 3 × 0.0625 = 0.1875."),
       num("A $40 shirt is 25% off. What is the sale price in dollars?", 30, "25% off means you pay 75%: 40 × 0.75 = 30. Or: 25% of 40 is 10, and 40 − 10 = 30.", "$"),
       mc("Which is largest?", ["5/8", "0.6", "3/5", "0.62", "13/20"], 4, "Turn each into a decimal: 5/8 = 0.625, 0.6, 3/5 = 0.6, 0.62, and 13/20 = 0.65. The largest is 13/20."),
     ],
@@ -3790,7 +3790,7 @@ Object.assign(LESSONS, {
     quiz: [
       num("Cats to dogs at a shelter is 4 : 3, and there are 42 animals. How many cats?", 24, "There are 4 + 3 = 7 parts, so one part is 42 ÷ 7 = 6. Cats are 4 parts: 4 × 6 = 24."),
       num("A recipe uses 3 cups of flour for every 2 cups of sugar. How many cups of flour go with 10 cups of sugar?", 15, "10 cups of sugar is 5 times 2 cups, so use 5 times the flour: 5 × 3 = 15."),
-      num("a : b = 2 : 3 and b : c = 4 : 5. If a = 16, what is c?", 30, "Match the b's: a : b : c = 8 : 12 : 15. a = 16 is double 8, so c is double 15, which is 30."),
+      num("a : b = 3 : 4 and b : c = 6 : 7. If a = 18, what is c?", 28, "Match the b's: a : b : c = 9 : 12 : 14. a = 18 is double 9, so c is double 14, which is 28."),
       num("If 6 notebooks cost $4.50, how many cents do 10 notebooks cost?", 750, "One notebook costs 450¢ ÷ 6 = 75¢. Ten cost 10 × 75 = 750¢.", "¢"),
       mc("Red to blue marbles in a jar is 2 : 7. Which could be the total number of marbles?", ["36", "35", "40", "42", "50"], 0, "2 : 7 splits the jar into 2 + 7 = 9 equal parts, so the total must be a multiple of 9. Only 36 is."),
     ],
@@ -3840,11 +3840,11 @@ Object.assign(LESSONS, {
       <p>When the answer choices are far apart, round hard. 0.49 × 401 is about ½ × 400 = 200.</p>
       ${aops("Mental_math", "Mental math")}`,
     quiz: [
-      num("Compute 99 × 13.", 1287, "99 × 13 = 100 × 13 − 13 = 1300 − 13 = 1287."),
-      num("Compute 25 × 36.", 900, "36 = 4 × 9, and 25 × 4 = 100. So 25 × 36 = 100 × 9 = 900."),
-      num("Compute 48 × 52.", 2496, "Both are 2 away from 50: (50 − 2)(50 + 2) = 50² − 2² = 2500 − 4 = 2496."),
-      num("Compute 65².", 4225, "For a number ending in 5, multiply the front digit by the next number up: 6 × 7 = 42. Then write 25 after it: 4225."),
-      mc("Which is closest to 0.49 × 401?", ["2", "20", "40", "100", "200"], 4, "0.49 is about ½ and 401 is about 400. Half of 400 is 200."),
+      num("Compute 99 × 17.", 1683, "99 × 17 = 100 × 17 − 17 = 1700 − 17 = 1683."),
+      num("Compute 25 × 44.", 1100, "44 = 4 × 11, and 25 × 4 = 100. So 25 × 44 = 100 × 11 = 1100."),
+      num("Compute 47 × 53.", 2491, "Both are 3 away from 50: (50 − 3)(50 + 3) = 50² − 3² = 2500 − 9 = 2491."),
+      num("Compute 85².", 7225, "For a number ending in 5, multiply the front digit by the next number up: 8 × 9 = 72. Then write 25 after it: 7225."),
+      mc("Which is closest to 0.26 × 799?", ["2", "20", "80", "200", "400"], 3, "0.26 is about ¼ and 799 is about 800. A quarter of 800 is 200."),
     ],
   },
 
@@ -3946,7 +3946,7 @@ Object.assign(LESSONS, {
       ${ex("A 300 m train passes a pole in 15 s. How long to cross a 500 m bridge?", ["Passing a pole means the train moves its own length, 300 m, in 15 s. Speed = 300 ÷ 15 = 20 m/s.", "To cross the bridge completely, the front travels the bridge (500 m), and then the back still has to clear it (300 m more).", "Total 800 m at 20 m/s: 800 ÷ 20 = <b>40 s</b>."], "trap")}
       ${aops("Distance_rate_time", "Distance, rate, time")}`,
     quiz: [
-      num("A car drives 150 miles in 2.5 hours. What is its speed in miles per hour?", 60, "Rate = distance ÷ time: 150 ÷ 2.5 = 60."),
+      num("A car drives 180 miles in 2.25 hours. What is its speed in miles per hour?", 80, "Rate = distance ÷ time: 180 ÷ 2.25 is the same as 720 ÷ 9 (multiply both by 4), which is 80."),
       num("At 36 mph, how many miles do you go in 25 minutes?", 15, "25 minutes is 25/60 = 5/12 of an hour. 36 × 5/12 = 15 miles."),
       num("How many minutes does it take to run 4 miles at 6 mph?", 40, "Time = 4 ÷ 6 = 2/3 hour, and 2/3 of 60 minutes is 40."),
       num("A 200 m train at 20 m/s goes through a 400 m tunnel. How many seconds from when the front enters until the back comes out?", 30, "The front crosses the 400 m tunnel, then the back still has the train's 200 m to clear: 600 m. 600 ÷ 20 = 30 s."),
@@ -3971,7 +3971,7 @@ Object.assign(LESSONS, {
     quiz: [
       num("Bike 30 miles at 10 mph, then 30 miles back at 15 mph. What is the average speed in mph?", 12, "Going takes 30 ÷ 10 = 3 hours, coming back 30 ÷ 15 = 2 hours. 60 miles in 5 hours is 12 mph."),
       num("Walk 1 hour at 4 mph, then jog 2 hours at 7 mph. What is the average speed in mph?", 6, "4 miles walking + 14 miles jogging = 18 miles, in 3 hours: 6 mph."),
-      num("Go up a hill at 2 mph and back down the same path at 6 mph. Average speed for the round trip?", 3, "Try a 6-mile hill: 3 hours up, 1 hour down. 12 miles in 4 hours = 3 mph."),
+      num("Go up a hill at 3 mph and back down the same path at 6 mph. Average speed for the round trip?", 4, "Try a 6-mile hill: 2 hours up, 1 hour down. 12 miles in 3 hours = 4 mph."),
       num("On a 100-mile trip, the first 50 miles take 1 hour. How fast (mph) must the last 50 miles be driven to average 75 mph overall?", 150, "75 mph for 100 miles allows 100/75 = 4/3 hours. The first hour is used, leaving 1/3 hour for 50 miles: 50 ÷ 1/3 = 150 mph."),
       mc("You drive 1 mile at 30 mph. Can you average 60 mph over 2 miles?", ["No, the time is already used up", "Yes, at 90 mph", "Yes, at 120 mph", "Yes, at 60 mph", "Yes, at 30 mph"], 0, "Averaging 60 mph over 2 miles means 2 minutes total. The first mile at 30 mph already took 2 minutes."),
     ],
@@ -4043,7 +4043,7 @@ Object.assign(LESSONS, {
     quiz: [
       num("How many liters of pure acid are in 20 L of a 15% acid solution?", 3, "15% of 20 L is 0.15 × 20 = 3 L of acid."),
       num("Mix 20 L of 10% juice drink with 30 L of 30% juice drink. What percent is juice?", 22, "Juice: 2 L + 9 L = 11 L, in 50 L total. 11 ÷ 50 = 22%.", "%"),
-      num("How many liters of water must be added to 6 L of 50% juice to make it 30% juice?", 4, "The 3 L of juice stays the same. It must be 30% of the total, so the total is 10 L. Add 4 L."),
+      num("How many liters of water must be added to 8 L of 60% juice to make it 40% juice?", 4, "The 4.8 L of juice stays the same. It must be 40% of the total, so the total is 4.8 ÷ 0.4 = 12 L. Add 4 L."),
       num("A price rises from $40 to $50. What is the percent increase?", 25, "Percent change = change ÷ original = 10 ÷ 40 = 25%.", "%"),
       mc("A price is lowered 20% and then raised 20%. What is the net change?", ["4% decrease", "No change", "4% increase", "20% decrease", "40% decrease"], 0, "Multiply the factors: 0.8 × 1.2 = 0.96 of the original, a 4% decrease."),
     ],
@@ -4066,7 +4066,7 @@ Object.assign(LESSONS, {
       ${aops("Clock", "Clock problems")}`,
     quiz: [
       num("What is the smaller angle between the hands at 3:00, in degrees?", 90, "Each hour mark is 360 ÷ 12 = 30° apart. At 3:00 the hands are 3 marks apart: 90°.", "°"),
-      num("What is the smaller angle between the hands at 3:30?", 75, "Minute hand: 30 × 6 = 180°. Hour hand: 90° + 15° = 105°. Difference 75°.", "°"),
+      num("What is the smaller angle between the hands at 4:30?", 45, "Minute hand: 30 × 6 = 180°. Hour hand: 120° + 15° = 135°. Difference 45°.", "°"),
       num("What is the smaller angle between the hands at 2:20?", 50, "Minute hand: 20 × 6 = 120°. Hour hand: 2 × 30 = 60°, plus 20 × ½ = 10°, for 70°. Difference 50°.", "°"),
       num("How many degrees does the hour hand turn in 20 minutes?", 10, "The hour hand moves 30° per hour, which is ½° per minute. 20 × ½ = 10°.", "°"),
       mc("Today is Friday. What day of the week is 60 days from now?", ["Tuesday", "Monday", "Wednesday", "Sunday", "Friday"], 0, "60 = 8 weeks + 4 days. Four days after Friday is Tuesday."),
@@ -4154,9 +4154,9 @@ Object.assign(LESSONS, {
       ${ex("Pick a number from 1 to 100. P(perfect square or perfect cube)?", ["Squares up to 100: 1, 4, 9, …, 100. That's 10.", "Cubes up to 100: 1, 8, 27, 64. That's 4.", "1 and 64 are in both lists, so they got counted twice. 10 + 4 − 2 = 12 numbers.", "P = 12/100 = <b>3/25</b>."], "contest style")}
       ${aops("Probability", "Probability")}`,
     quiz: [
-      num("A bag has 3 red, 5 blue, and 2 green marbles. What is the probability of drawing blue? (Give a fraction.)", "1/2", "There are 3 + 5 + 2 = 10 marbles, and 5 are blue: 5/10 = 1/2."),
+      num("A bag has 4 red, 3 blue, and 5 green marbles. What is the probability of drawing blue? (Give a fraction.)", "1/4", "There are 4 + 3 + 5 = 12 marbles, and 3 are blue: 3/12 = 1/4."),
       num("Roll a die. What is the probability the number is prime?", "1/2", "The primes on a die are 2, 3, and 5. That's 3 of 6 faces: 1/2. (1 is not prime.)"),
-      num("Roll two dice. How many of the 36 outcomes have a sum of 7?", 6, "Whatever the first die shows, exactly one value of the second die makes 7: (1, 6), (2, 5), (3, 4), (4, 3), (5, 2), (6, 1). That's 6."),
+      num("Roll two dice. How many of the 36 outcomes have a sum of 6?", 5, "List them: (1, 5), (2, 4), (3, 3), (4, 2), (5, 1). That's 5."),
       num("Roll two dice. What is the probability the sum is 10?", "1/12", "Sum 10: (4, 6), (5, 5), (6, 4). 3 of 36 outcomes, which is 1/12."),
       mc("Flip 3 coins. What is the probability of exactly 2 heads?", ["3/8", "1/8", "1/4", "1/2", "2/3"], 0, "3 coins have 2 × 2 × 2 = 8 outcomes. Exactly 2 heads: HHT, HTH, THH. 3/8."),
     ],
@@ -4223,7 +4223,7 @@ Object.assign(LESSONS, {
     quiz: [
       num("Roll a die. Given the result is even, what is the probability it is 6?", "1/3", "Given even, only 2, 4, 6 are possible. One of the three is 6: 1/3."),
       num("A family has two children and at least one is a girl. What is the probability both are girls?", "1/3", "Two children: GG, GB, BG, BB. At least one girl rules out BB, leaving 3. Only GG is both girls: 1/3."),
-      num("Roll two dice. Given the sum is 8, what is the probability both show 4?", "1/5", "Sum 8: (2, 6), (3, 5), (4, 4), (5, 3), (6, 2). One of the five is (4, 4): 1/5."),
+      num("Roll two dice. Given the sum is 6, what is the probability both show 3?", "1/5", "Sum 6: (1, 5), (2, 4), (3, 3), (4, 2), (5, 1). One of the five is (3, 3): 1/5."),
       num("60% of a class play soccer and 30% play both soccer and piano. Given a student plays soccer, what is the percent chance they play piano?", 50, "Among soccer players (60%), half also play piano (30%): 30 ÷ 60 = 50%.", "%"),
       mc("A card is drawn from a deck. Given it is a face card (J, Q, or K), what is the probability it is a king?", ["1/3", "1/4", "1/12", "1/13", "4/13"], 0, "There are 12 face cards and 4 are kings: 4/12 = 1/3."),
     ],
@@ -4249,7 +4249,7 @@ Object.assign(LESSONS, {
       num("What is the expected value of one roll of a die?", 3.5, "Average of the faces: (1 + 2 + … + 6) ÷ 6 = 21 ÷ 6 = 3.5."),
       num("A game pays $10 with probability 1/5 and nothing otherwise. What are the expected winnings in dollars?", 2, "Expected winnings = prize × chance = 10 × 1/5 = 2 dollars.", "$"),
       num("What is the expected number of 6s in 30 rolls of a die?", 5, "Each roll adds 1/6 of a six on average: 30 × 1/6 = 5."),
-      num("What is the expected sum of two dice?", 7, "Expected values add: 3.5 + 3.5 = 7."),
+      num("What is the expected sum of three dice?", 10.5, "Expected values add: 3.5 + 3.5 + 3.5 = 10.5."),
       mc("A $3 ticket wins $20 with probability 1/10. What is the expected profit per ticket?", ["−$1", "$0", "$1", "−$2", "$2"], 0, "Expected prize 1/10 × $20 = $2. Minus the $3 cost: −$1."),
     ],
   },
@@ -4420,7 +4420,7 @@ Object.assign(LESSONS, {
       ${ex("1, 2, …, 10 are on a board. A move erases two numbers and writes their difference. What is the parity of the last number?", ["Watch the total of all numbers on the board. It starts at 1 + 2 + ··· + 10 = 55, which is odd.", "A move removes a and b (the total drops by a + b) and adds a − b. The total changes by (a − b) − (a + b) = −2b, which is even.", "So the total stays odd forever.", "At the end the total is the last number, so it is <b>odd</b>."], "contest style")}
       ${aops("Parity", "Parity")}`,
     quiz: [
-      mc("Is 1 + 2 + 3 + ··· + 99 odd or even?", ["Even", "Odd", "Neither", "It depends", "Can't tell"], 0, "From 1 to 99 there are 50 odd numbers. An even count of odd numbers adds to an even number, so the sum is even."),
+      mc("Is 1 + 2 + 3 + ··· + 50 odd or even?", ["Even", "Odd", "Neither", "It depends", "Can't tell"], 1, "From 1 to 50 there are 25 odd numbers. An odd count of odd numbers adds to an odd number, so the sum is odd."),
       mc("Can a 5 × 5 board be covered exactly by 1 × 2 dominoes?", ["No", "Yes, with 12", "Yes, with 13", "Yes, with 25", "Only if one corner is removed"], 0, "Dominoes always cover an even number of squares in total. A 5 × 5 board has 25 squares, which is odd."),
       num("What is the largest whole number that always divides the sum of 5 consecutive integers?", 5, "Call the middle number n: (n − 2) + (n − 1) + n + (n + 1) + (n + 2) = 5n. The ±1 and ±2 cancel. So 5 always divides the sum."),
       mc("Seven coins: 3 tails and 4 heads. A move flips exactly two coins. Can you reach all heads?", ["No", "Yes, in 2 moves", "Yes, in 3 moves", "Yes, in 4 moves", "Yes, in 5 moves"], 0, "Each move changes the number of tails by −2, 0, or +2, so odd stays odd. It starts at 3 and all heads means 0 tails, which is even."),
