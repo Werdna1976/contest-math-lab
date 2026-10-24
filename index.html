@@ -306,6 +306,8 @@ th{font-weight:600;color:var(--muted);font-size:.8rem;text-transform:uppercase;l
 /* =========================================================
    CONFIG
    ========================================================= */
+// Google Sheet web app that shares progress between PCs off claude.ai (see sync/Code.gs). Empty = this browser only.
+const SYNC_URL = "";
 const BASE_STUDENTS = ["Colin", "Claire", "Dad", "Mom", "Testing"];
 let STUDENTS = BASE_STUDENTS.slice();   // plus people added on the Setup page (settings["people-list"].extra)
 const LEVELS = {
@@ -8397,12 +8399,47 @@ function prettyMath(h) {
    opened:  one doc per student+lesson, written the first time a lesson is opened
    settings: one doc per student, e.g. { maxLevel: "amc8" }
    ========================================================= */
-const LS_KEY = "cml.results.v1", LS_OPEN = "cml.opened.v1", LS_WHO = "cml.student", LS_THEME = "cml.theme", LS_SET = "cml.settings.v1", LS_FMHIDE = "cml.fmhide", LS_TIER = "cml.tier";
+const LS_KEY = "cml.results.v1", LS_OPEN = "cml.opened.v1", LS_WHO = "cml.student", LS_THEME = "cml.theme", LS_SET = "cml.settings.v1", LS_FMHIDE = "cml.fmhide", LS_TIER = "cml.tier", LS_SEEN = "cml.seen.v1";
 const COMPLETE_AT = 0.8; // best lesson-check score that counts as complete
 const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 const byDateDesc = (a, b) => (b.date || "").localeCompare(a.date || "");
 // Every save goes to this browser first. When the shared db is reachable it is merged in (deduped by id)
 // and any record only this browser has is copied up, so a failed or offline write is never lost.
+// Off claude.ai: a Google Sheet web app shaped like the Claude db calls the store uses
+// (collection().doc().set/delete and onSnapshot). It is polled, so other PCs' saves show up within a minute.
+function sheetDb(url) {
+  const data = { results: {}, opened: {}, settings: {} }, subs = { results: [], opened: [], settings: [] };
+  let loaded = false;
+  const snap = c => ({ docs: Object.entries(data[c]).map(([id, d]) => ({ id, data: () => d })) });
+  const fire = c => subs[c].forEach(([ok]) => ok(snap(c)));
+  const post = body => fetch(url, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(body) })
+    .then(r => r.json()).then(j => { if (!j.ok) throw new Error(j.error || "save failed"); });
+  async function poll() {
+    const r = await fetch(url + (url.includes("?") ? "&" : "?") + "op=all&t=" + Date.now());
+    const j = await r.json();
+    for (const c of Object.keys(data)) { data[c] = Object.fromEntries((j[c] || []).map(x => [x.id, x.data])); }
+    loaded = true; Object.keys(data).forEach(fire);
+  }
+  const collection = c => {
+    const q = {
+      orderBy: () => q, limit: () => q,
+      onSnapshot(ok, err) { subs[c].push([ok, err]); if (loaded) ok(snap(c)); },
+      doc: id => ({
+        set: d => { data[c][id] = d; fire(c); return post({ op: "set", col: c, id, data: d }); },
+        delete: () => { delete data[c][id]; fire(c); return post({ op: "del", col: c, id }); },
+      }),
+    };
+    return q;
+  };
+  const again = () => poll().catch(() => {});
+  return poll().then(() => {
+    setInterval(again, 60000);
+    addEventListener("focus", again);
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) again(); });
+    return { collection };
+  });
+}
+
 const store = {
   mode: "local", db: null, results: [], opened: {}, settings: {}, listeners: [], lsOK: true,
   dbResults: null, dbOpened: null, pushed: new Set(),
@@ -8422,7 +8459,15 @@ const store = {
     const local = this.localResults(), localOpen = this.lsGet(LS_OPEN, {});
     if (!this.dbResults) { this.results = local.sort(byDateDesc); this.opened = localOpen; return; }
     const have = new Set(this.dbResults.map(r => r.id || r._id));
-    const extra = local.filter(r => !have.has(r.id));
+    // a local record the shared copy once had but no longer has was reset on another PC: drop it here too
+    const seen = new Set(this.lsGet(LS_SEEN, []));
+    const gone = local.filter(r => !have.has(r.id) && seen.has(r.id));
+    if (gone.length) this.lsSet(LS_KEY, local.filter(r => !gone.includes(r)));
+    const extra = local.filter(r => !have.has(r.id) && !seen.has(r.id));
+    if (this.dbOpened) for (const k of Object.keys(localOpen)) if (!this.dbOpened[k] && seen.has("o:" + k)) { delete localOpen[k]; this.lsSet(LS_OPEN, localOpen); }
+    have.forEach(id => seen.add(id));
+    if (this.dbOpened) Object.keys(this.dbOpened).forEach(k => seen.add("o:" + k));
+    this.lsSet(LS_SEEN, [...seen]);
     this.results = [...this.dbResults, ...extra].sort(byDateDesc);
     this.opened = { ...localOpen, ...(this.dbOpened || {}) };
     // copy up anything only this browser has
@@ -8441,7 +8486,8 @@ const store = {
     this.settings = this.lsGet(LS_SET, {});
     this.merge();
     addEventListener("storage", e => { if ([LS_KEY, LS_OPEN].includes(e.key)) { this.merge(); this.emit(); } });
-    const db = await (window.claude?.use?.("db") ?? Promise.resolve(null)).catch(() => null);
+    const db = await (window.claude?.use?.("db") ?? Promise.resolve(null)).catch(() => null)
+      || (SYNC_URL ? await sheetDb(SYNC_URL).catch(() => null) : null);
     if (!db) { this.emit(); return; }
     this.db = db; this.mode = "shared";
     const fail = () => { this.mode = "local"; this.dbResults = this.dbOpened = null; this.merge(); this.emit(); };
