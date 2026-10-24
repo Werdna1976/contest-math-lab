@@ -306,7 +306,8 @@ th{font-weight:600;color:var(--muted);font-size:.8rem;text-transform:uppercase;l
 /* =========================================================
    CONFIG
    ========================================================= */
-const STUDENTS = ["Colin", "Claire", "Dad", "Mom", "Testing"];
+const BASE_STUDENTS = ["Colin", "Claire", "Dad", "Mom", "Testing"];
+let STUDENTS = BASE_STUDENTS.slice();   // plus people added on the Setup page (settings["people-list"].extra)
 const LEVELS = {
   mk56:  { short: "MK 5/6",  name: "Math Kangaroo, grades 5–6", count: 24, minutes: 75, secPerQ: 190, desc: "24 questions in 75 min on the real test" },
   mk78:  { short: "MK 7/8",  name: "Math Kangaroo, grades 7–8", count: 30, minutes: 75, secPerQ: 150, desc: "30 questions in 75 min on the real test" },
@@ -8507,7 +8508,10 @@ const store = {
     for (const r of data.results) { const rec = { ...r, id: r.id || newId() }; if (!have.has(rec.id)) { list.push(rec); have.add(rec.id); added++; } }
     this.lsSet(LS_KEY, list.sort(byDateDesc));
     this.lsSet(LS_OPEN, { ...(data.opened || {}), ...this.lsGet(LS_OPEN, {}) });
-    if (data.settings) { this.settings = { ...data.settings, ...this.settings }; this.lsSet(LS_SET, this.settings); }
+    if (data.settings) {
+      const extra = [...new Set([...(this.settings["people-list"]?.extra || []), ...(data.settings["people-list"]?.extra || [])])];
+      this.settings = { ...data.settings, ...this.settings, "people-list": { extra } }; this.lsSet(LS_SET, this.settings);
+    }
     this.merge(); this.emit();
     return added;
   },
@@ -8519,7 +8523,7 @@ const store = {
    ========================================================= */
 const S = {
   view: "home", lessonId: null, chapterId: null, level: "amc8", testChapter: "all",
-  student: (() => { const s = store.lsGet(LS_WHO, "Testing"); return STUDENTS.includes(s) ? s : "Testing"; })(),
+  student: (() => { const s = store.lsGet(LS_WHO, "Testing"); return [...STUDENTS, ...(store.lsGet(LS_SET, {})["people-list"]?.extra || [])].includes(s) ? s : "Testing"; })(),
   test: null, lastResult: null, quizState: {}, progressWho: "All", openAttempt: null,
   showAbove: false, confirmReset: null, testLen: "full",
   fmHide: new Set(store.lsGet(LS_FMHIDE, [])),
@@ -8624,7 +8628,11 @@ applyTheme(store.lsGet(LS_THEME, null));
 /* =========================================================
    CHROME (tabs + student picker)
    ========================================================= */
+// added people are kept in settings, so they sync like names and levels do
+const extraPeople = () => (store.settings["people-list"]?.extra || []).filter(x => typeof x === "string" && x && !BASE_STUDENTS.includes(x));
+function syncStudents() { STUDENTS = [...BASE_STUDENTS, ...extraPeople()]; }
 function renderChrome() {
+  syncStudents();
   const inTest = S.view === "test";
   const owner = { lesson: "learn", chapter: "learn", test: "setup", result: "setup" }[S.view] || S.view;
   document.querySelectorAll(".tab").forEach(b => {
@@ -8918,6 +8926,12 @@ function viewProfile() {
       ${nameOf(k) !== k ? `<button class="btn ghost" type="button" data-act="nameclear">Back to “${k}”</button>` : ""}</form>
   </section>
   <section class="panel" style="display:flex;flex-direction:column;gap:10px">
+    <h3>People</h3>
+    <div class="row">${STUDENTS.map(p => BASE_STUDENTS.includes(p) ? `<span class="pill" style="cursor:default">${nameOf(p)}</span>`
+      : `<span class="pill" style="cursor:default;display:inline-flex;gap:6px;align-items:center">${nameOf(p)}<button class="linkbtn" data-act="prem" data-s="${p}" aria-label="Remove ${nameOf(p)}">✕</button></span>`).join("")}</div>
+    <form class="row" data-form="addp"><input class="numin pname" id="newp" maxlength="24" placeholder="Name" aria-label="New person's name"><button class="btn primary" type="submit">Add person</button></form>
+  </section>
+  <section class="panel" style="display:flex;flex-direction:column;gap:10px">
     <h3>Target test level</h3>
     <div class="levels">${LEVEL_ORDER.map(lv => `<button class="level" aria-pressed="${cap === lv}" data-act="setcap" data-s="${k}" data-k="${lv}"><span class="t">${LEVELS[lv].short}</span><span class="d">${lv === "amc10" ? "Everything" : `Up to ${LEVELS[lv].short}`}</span><span class="d mono">${CURRICULUM.flatMap(readyLessons).filter(l => LEVEL_ORDER.indexOf(lessonLevel(l.id)) <= LEVEL_ORDER.indexOf(lv)).length} lessons</span></button>`).join("")}</div>
   </section>
@@ -8928,7 +8942,8 @@ function viewProfile() {
       ${resetBlock("all", k, "Reset everything", `Erase every test, lesson check, and "opened" mark for ${nameOf(k)}? Their name and level stay.`)}</div>
     <h3 style="margin-top:6px">Reset learning by chapter</h3>
     <div class="tbl-wrap"><table><tbody>${CURRICULUM.map(c => { const p = chapterProgress(k, c); return `<tr><td>${c.title}</td><td class="mono" style="white-space:nowrap">${p.done}/${p.total} done</td><td>${resetBlock("chapter", c.id, "Reset chapter", `Erase ${nameOf(k)}'s lesson checks, "opened" marks, and chapter-only tests for ${c.title}?`)}</td></tr>`; }).join("")}</tbody></table></div>
-  </section>`;
+  </section>
+`;
 }
 
 const GEN_REPEATS = 6; // a generator may appear up to this many times in one test, with different numbers
@@ -9138,6 +9153,16 @@ function render() {
 }
 
 app.addEventListener("submit", e => {
+  const fp = e.target.closest('[data-form="addp"]');
+  if (fp) {
+    e.preventDefault();
+    const v = $("#newp").value.replace(/[<>"&`\\]/g, "").trim().slice(0, 24);
+    if (!v || v === "people-list") return;
+    if (STUDENTS.some(p => p.toLowerCase() === v.toLowerCase() || nameOf(p).toLowerCase() === v.toLowerCase())) { toast(`${v} is already on the list`); return; }
+    store.setSetting("people-list", { extra: [...extraPeople(), v] });
+    S.student = v; store.lsSet(LS_WHO, v); syncStudents(); toast(`Added ${v}`); render();
+    return;
+  }
   const f = e.target.closest('[data-form="name"]'); if (!f) return;
   e.preventDefault();
   const v = $("#pname").value.trim().slice(0, 24);
@@ -9189,6 +9214,12 @@ app.addEventListener("click", async e => {
     case "tconfirm": finishTest(false); break;
     case "tquitok": clearInterval(S.timer); S.test = null; go("setup"); break;
     case "pwho": S.progressWho = b.dataset.s; S.openAttempt = null; S.confirmReset = null; render(); break;
+    case "prem": {
+      const who = b.dataset.s;
+      store.setSetting("people-list", { extra: extraPeople().filter(x => x !== who) });
+      if (S.student === who) { S.student = "Testing"; store.lsSet(LS_WHO, "Testing"); }
+      toast(`Removed ${who} from the list`); render(); break;
+    }
     case "nameclear": store.setSetting(S.student, { name: "" }); toast("Name reset"); break;
     case "setcap": store.setSetting(b.dataset.s, { maxLevel: b.dataset.k }); break;
     case "showabove": S.showAbove = !S.showAbove; render(); break;
