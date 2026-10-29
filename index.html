@@ -57,6 +57,38 @@ button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{ou
 .pill{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 11px;font-size:.88rem}
 .pill[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .pill:disabled{opacity:.5;cursor:not-allowed}
+.awb{display:inline-flex;gap:6px;margin-left:6px;font-weight:700;font-size:.82rem;vertical-align:middle}
+.awn{display:inline-flex;align-items:center;gap:2px}
+.awn svg{width:17px;height:17px}
+.awi{display:inline-flex;flex:none}
+.awi svg{width:22px;height:22px}
+.award-ov{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:16px;background:rgba(10,14,30,.62);overflow:hidden;animation:aw-fade .25s ease-out}
+.award-card{position:relative;z-index:1;background:var(--surface);color:var(--ink);border-radius:24px;padding:28px 28px 24px;width:min(440px,100%);text-align:center;box-shadow:0 24px 70px rgba(0,0,0,.35);animation:aw-pop .55s cubic-bezier(.2,1.6,.4,1)}
+.award-ov.trophy .award-card{border:4px solid #F5C518;background:linear-gradient(180deg,#FFF6CC,var(--surface) 55%)}
+.award-ov.medal .award-card{border:3px solid #9AA6B4}
+.award-art{position:relative;display:grid;place-items:center;height:230px}
+.award-art svg{position:relative;width:200px;height:200px;filter:drop-shadow(0 8px 14px rgba(0,0,0,.25))}
+.award-ov.medal .award-art{height:190px}
+.award-ov.medal .award-art svg{width:160px;height:160px;animation:aw-swing 1.6s ease-in-out infinite alternate;transform-origin:50% 0}
+.award-ov.trophy .award-art svg{animation:aw-bob 1.4s ease-in-out infinite alternate}
+.rays{position:absolute;width:300px;height:300px;border-radius:50%;background:repeating-conic-gradient(rgba(245,197,24,.45) 0 10deg,transparent 10deg 20deg);-webkit-mask:radial-gradient(circle,#000 30%,transparent 70%);mask:radial-gradient(circle,#000 30%,transparent 70%);animation:aw-spin 9s linear infinite}
+.award-card h2{font-size:2.6rem;margin:6px 0 2px;letter-spacing:.5px}
+.award-ov.trophy h2{color:#B07F00}
+.award-ov.medal h2{color:#4A5563}
+.award-sub{font-size:1.15rem;font-weight:700;margin:0}
+.award-les{color:var(--muted);margin:6px 0 12px}
+.award-tally{display:flex;justify-content:center;align-items:center;gap:14px;font-weight:700;margin:0 0 18px}
+.award-tally svg{width:24px;height:24px}
+.award-tally span:last-child{color:var(--muted);font-weight:500}
+.confetti{position:absolute;inset:0;pointer-events:none}
+.confetti i{position:absolute;top:-20px;width:9px;height:15px;border-radius:2px;animation:aw-fall linear infinite}
+@keyframes aw-fade{from{opacity:0}}
+@keyframes aw-pop{from{transform:scale(.4);opacity:0}}
+@keyframes aw-bob{to{transform:translateY(-8px) scale(1.03)}}
+@keyframes aw-swing{from{transform:rotate(-6deg)}to{transform:rotate(6deg)}}
+@keyframes aw-spin{to{transform:rotate(360deg)}}
+@keyframes aw-fall{to{top:105%;transform:rotate(540deg)}}
+@media (prefers-reduced-motion:reduce){.confetti{display:none}}
 
 main{max-width:1440px;margin:0 auto;padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
   display:flex;flex-direction:column;gap:28px}
@@ -8809,6 +8841,50 @@ function bestQuiz(student, lessonId) {
   const rs = store.results.filter(r => r.kind === "quiz" && r.lessonId === lessonId && r.student === student);
   return rs.length ? Math.max(...rs.map(r => r.correct / r.total)) : null;
 }
+/* awards come from the FIRST check attempt on each lesson: 5/5 = trophy, 4/5 = medal, 3/5 or less = nothing.
+   They are worked out from saved results, so checks done before awards existed count too. */
+function firstQuiz(student, lessonId) {
+  let f = null;
+  for (const r of store.results) if (r.kind === "quiz" && r.lessonId === lessonId && r.student === student && (!f || r.date < f.date)) f = r;
+  return f;
+}
+const awardOf = r => !r || !r.total ? null : r.correct >= r.total ? "trophy" : r.correct / r.total >= 0.8 ? "medal" : null;
+const lessonAward = (student, id) => awardOf(firstQuiz(student, id));
+function awardTally(student) {
+  const t = { trophy: 0, medal: 0, max: 0 };
+  for (const id of Object.keys(LESSONS)) { t.max++; const a = lessonAward(student, id); if (a) t[a]++; }
+  return t;
+}
+const ICON_TROPHY = `<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M18 8h28v14a14 14 0 0 1-28 0z" fill="#F5C518" stroke="#A97A00" stroke-width="2.5"/><path d="M18 13H9v4a10 10 0 0 0 10 10M46 13h9v4a10 10 0 0 1-10 10" fill="none" stroke="#A97A00" stroke-width="3.5" stroke-linecap="round"/><path d="M28 35h8v9h-8z" fill="#E0A800"/><path d="M19 52a13 8 0 0 1 26 0v4H19z" fill="#F5C518" stroke="#A97A00" stroke-width="2.5"/><path d="M24 12v9" stroke="#FFF6C8" stroke-width="3" stroke-linecap="round"/></svg>`;
+const ICON_MEDAL = `<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M20 4h10l6 22h-10zM44 4H34l-6 22h10z" fill="#3D6FE0" stroke="#22408F" stroke-width="2"/><circle cx="32" cy="42" r="17" fill="#CFD6DE" stroke="#7D8794" stroke-width="3"/><circle cx="32" cy="42" r="11" fill="none" stroke="#A3ADB9" stroke-width="2"/><path d="m32 34 2.4 5 5.4.6-4 3.7 1.1 5.3L32 46l-4.9 2.6 1.1-5.3-4-3.7 5.4-.6z" fill="#FFFFFF" stroke="#7D8794" stroke-width="1.2"/></svg>`;
+const awardIcon = a => `<span class="awi" title="${a === "trophy" ? "Trophy: 5/5 on the first try" : "Medal: 4/5 on the first try"}" aria-label="${a}">${a === "trophy" ? ICON_TROPHY : ICON_MEDAL}</span>`;
+const awardMini = (student, id) => { const a = lessonAward(student, id); return a ? awardIcon(a) : ""; };
+function awardBadge(student) {
+  const t = awardTally(student); if (!t.trophy && !t.medal) return "";
+  const lbl = `${t.trophy} trophies, ${t.medal} medals (of ${t.max} lessons)`;
+  return `<span class="awb" title="${lbl}" aria-label="${lbl}">${t.trophy ? `<span class="awn">${ICON_TROPHY}${t.trophy}</span>` : ""}${t.medal ? `<span class="awn">${ICON_MEDAL}${t.medal}</span>` : ""}</span>`;
+}
+function showAward(kind, lessonTitle, student) {
+  const t = awardTally(student), trophy = kind === "trophy";
+  const ov = document.createElement("div");
+  ov.className = `award-ov ${kind}`; ov.setAttribute("role", "dialog"); ov.setAttribute("aria-modal", "true"); ov.setAttribute("aria-label", trophy ? "Trophy earned" : "Medal earned");
+  const bits = trophy ? Array.from({ length: 70 }, (_, i) => `<i style="left:${Math.random() * 100}%;background:${["#F5C518", "#3D6FE0", "#E5484D", "#1E8A57", "#B65CE0", "#FF8A3D"][i % 6]};animation-delay:${(Math.random() * 1.2).toFixed(2)}s;animation-duration:${(2.2 + Math.random() * 1.6).toFixed(2)}s;transform:rotate(${Math.round(Math.random() * 360)}deg)"></i>`).join("") : "";
+  ov.innerHTML = `<div class="confetti" aria-hidden="true">${bits}</div>
+    <div class="award-card">
+      <div class="award-art">${trophy ? `<div class="rays" aria-hidden="true"></div>` : ""}${trophy ? ICON_TROPHY : ICON_MEDAL}</div>
+      <h2>${trophy ? "Trophy!" : "Medal!"}</h2>
+      <p class="award-sub">${trophy ? "5 of 5" : "4 of 5"} · first try</p>
+      <p class="award-les">${lessonTitle}</p>
+      <p class="award-tally"><span class="awn">${ICON_TROPHY}${t.trophy}</span><span class="awn">${ICON_MEDAL}${t.medal}</span><span>of ${t.max}</span></p>
+      <button class="btn primary" data-close>${trophy ? "Awesome!" : "Nice!"}</button>
+    </div>`;
+  const close = () => { ov.remove(); document.removeEventListener("keydown", esc); };
+  const esc = e => { if (e.key === "Escape") close(); };
+  ov.addEventListener("click", e => { if (e.target === ov || e.target.closest("[data-close]")) close(); });
+  document.addEventListener("keydown", esc);
+  document.body.appendChild(ov);
+  ov.querySelector("[data-close]").focus();
+}
 /* soon | ready | opened | progress | complete */
 function lessonStatus(student, id) {
   if (!LESSONS[id]) return { s: "soon", label: "soon" };
@@ -8872,7 +8948,7 @@ function renderChrome() {
     b.disabled = inTest;
   });
   $("#brand").disabled = inTest;
-  $("#who").innerHTML = STUDENTS.map(s => `<button class="pill" aria-pressed="${s === S.student}" data-who="${s}" ${inTest ? "disabled" : ""}>${nameOf(s)}</button>`).join("");
+  $("#who").innerHTML = STUDENTS.map(s => `<button class="pill" aria-pressed="${s === S.student}" data-who="${s}" ${inTest ? "disabled" : ""}>${nameOf(s)}${awardBadge(s)}</button>`).join("");
 }
 $("#tabs").addEventListener("click", e => { const b = e.target.closest("[data-go]"); if (b) go(b.dataset.go); });
 $("#brand").addEventListener("click", () => go("home"));
@@ -8964,7 +9040,7 @@ function viewMap() {
             const st = lessonStatus(S.student, l.id), above = !inLevel(S.student, l.id);
             return st.s === "soon"
               ? `<li><button disabled>${l.title}${statusTag(st)}</button></li>`
-              : `<li><button class="ready t${l.tier} ${above ? "above" : ""}" data-act="lesson" data-id="${l.id}"><span class="lt">${l.title}${above ? lvlTag(l.id) : ""}</span><span class="row" style="gap:4px;flex-wrap:nowrap">${S.tier ? "" : tierDot(l.id)}${statusTag(st)}</span></button></li>`;
+              : `<li><button class="ready t${l.tier} ${above ? "above" : ""}" data-act="lesson" data-id="${l.id}"><span class="lt">${l.title}${above ? lvlTag(l.id) : ""}</span><span class="row" style="gap:4px;flex-wrap:nowrap">${S.tier ? "" : tierDot(l.id)}${awardMini(S.student, l.id)}${statusTag(st)}</span></button></li>`;
           }).join("")}</ul>` : "";
         }).join("")}
         <button class="fm-tile" data-act="chapter" data-id="${c.id}"><span class="fm-ico" aria-hidden="true">ƒ(x)</span><span><b>Key formulas</b><small>${(FORMULAS[c.id] || []).length} equations · chapter page</small></span><span aria-hidden="true">→</span></button>
@@ -9001,7 +9077,7 @@ function viewChapter() {
       ${c.groups.map(g => `<section style="display:flex;flex-direction:column;gap:8px"><h3>${g.title}</h3>
         <div class="lesson-list">${g.lessons.filter(l => (S.showAbove || inLevel(S.student, l.id)) && tierOK(l.id)).map(l => {
           const st = lessonStatus(S.student, l.id), les = LESSONS[l.id], above = !inLevel(S.student, l.id);
-          return `<button class="lesson-row t${l.tier} ${above ? "above" : ""}" data-act="lesson" data-id="${l.id}" ${les ? "" : "disabled"}><span><b>${l.title}</b>${les ? `<small>about ${les.minutes} min · ${les.quiz.length}-question check${above ? " · above " + S.student + "'s level" : ""}</small>` : `<small>Not written yet</small>`}</span><span class="row" style="gap:6px;flex-wrap:nowrap">${tierDot(l.id)}${lvlTag(l.id)}${statusTag(st)}</span></button>`;
+          return `<button class="lesson-row t${l.tier} ${above ? "above" : ""}" data-act="lesson" data-id="${l.id}" ${les ? "" : "disabled"}><span><b>${l.title}</b>${les ? `<small>about ${les.minutes} min · ${les.quiz.length}-question check${above ? " · above " + S.student + "'s level" : ""}</small>` : `<small>Not written yet</small>`}</span><span class="row" style="gap:6px;flex-wrap:nowrap">${tierDot(l.id)}${lvlTag(l.id)}${awardMini(S.student, l.id)}${statusTag(st)}</span></button>`;
         }).join("")}</div></section>`).join("")}
       ${levelNote()}
       ${resetBlock("chapter", c.id, `Reset ${c.title} for ${nameOf(S.student)}`, `This erases ${nameOf(S.student)}'s lesson checks, "opened" marks, and chapter-only tests for ${c.title}. Other chapters and mixed tests stay.`)}
@@ -9089,7 +9165,7 @@ function viewLesson() {
   <nav class="crumbs"><button data-act="go" data-v="learn">Learn</button><span>›</span><button data-act="chapter" data-id="${meta.chapter.id}">${meta.chapter.title}</button><span>›</span><span>${meta.group.title}</span></nav>
   <div class="lesson">
     <article class="prose">
-      <div><span class="eyebrow">${meta.chapter.title} · about ${les.minutes} min</span><h1>${les.title}</h1><div class="row" style="margin-top:8px">${tierTag(S.lessonId)}${lvlTag(S.lessonId)}${statusTag(status)}<span class="status">for ${nameOf(S.student)}${inLevel(S.student, S.lessonId) ? "" : " · above the level set for " + S.student}</span></div></div>
+      <div><span class="eyebrow">${meta.chapter.title} · about ${les.minutes} min</span><h1>${les.title}</h1><div class="row" style="margin-top:8px">${tierTag(S.lessonId)}${lvlTag(S.lessonId)}${awardMini(S.student, S.lessonId)}${statusTag(status)}<span class="status">for ${nameOf(S.student)}${inLevel(S.student, S.lessonId) ? "" : " · above the level set for " + S.student}</span></div></div>
       ${withTricks(S.lessonId, les.body())}
       <h3 id="check">Check yourself</h3>
       <p class="status">Fractions OK (7/2) · ${Math.round(COMPLETE_AT * 100)}% to complete</p>
@@ -9367,7 +9443,7 @@ function viewProgress() {
   <section class="panel" style="display:flex;flex-direction:column;gap:10px">
     <div class="row" style="justify-content:space-between"><h3>Lesson status</h3>${statusLegend()}</div>
     <div class="tbl-wrap"><table><thead><tr><th>Lesson</th>${people.map(p => `<th>${nameOf(p)}</th>`).join("")}</tr></thead><tbody>
-      ${chaps.map(c => `<tr class="chap-row"><td colspan="${people.length + 1}">${c.title}</td></tr>${readyLessons(c).map(l => `<tr><td><button class="linkish" data-act="lesson" data-id="${l.id}">${l.title}</button> ${lvlTag(l.id)}</td>${people.map(p => `<td>${inLevel(p, l.id) ? statusTag(lessonStatus(p, l.id)) : `<span class="status">above level</span>`}</td>`).join("")}</tr>`).join("")}`).join("")}
+      ${chaps.map(c => `<tr class="chap-row"><td colspan="${people.length + 1}">${c.title}</td></tr>${readyLessons(c).map(l => `<tr><td><button class="linkish" data-act="lesson" data-id="${l.id}">${l.title}</button> ${lvlTag(l.id)}</td>${people.map(p => `<td>${inLevel(p, l.id) ? awardMini(p, l.id) + statusTag(lessonStatus(p, l.id)) : `<span class="status">above level</span>`}</td>`).join("")}</tr>`).join("")}`).join("")}
     </tbody></table></div>
   </section>
   ${who === "All" ? ""
@@ -9425,8 +9501,10 @@ app.addEventListener("click", async e => {
       const blank = v => v === undefined || v === "";
       const rec = { kind: "quiz", student: S.student, lessonId: S.lessonId, title: les.title, date: new Date().toISOString(), total: les.quiz.length, correct: res.filter(r => r.ok).length,
         missed: res.filter(r => !r.ok).map(({ it, i }) => ({ id: S.lessonId + "-" + (i + 1), q: strip(it.q), your: blank(st.answers[i]) ? null : (it.type === "mc" ? strip(it.choices[st.answers[i]]) : String(st.answers[i])), correct: it.type === "mc" ? strip(it.choices[it.answer]) : String(it.answer) })) };
+      const isFirst = !firstQuiz(S.student, S.lessonId), award = isFirst ? awardOf(rec) : null;
       const where = store.add(rec);
       render();
+      if (award) showAward(award, les.title, rec.student);
       const w = await where;
       if (w === "none" || (w === "local" && store.mode === "shared")) toast(saveMsg(w, rec.student));
       break;
