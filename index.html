@@ -57,6 +57,9 @@ button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{ou
 .pill{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 11px;font-size:.88rem}
 .pill[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .pill:disabled{opacity:.5;cursor:not-allowed}
+.gl{border-bottom:1.5px dotted var(--accent);cursor:help;border-radius:2px}
+.gl:hover,.gl:focus{background:var(--accent-soft);outline:none}
+.gltip{position:fixed;z-index:60;background:var(--ink);color:var(--bg);padding:8px 12px;border-radius:10px;font-size:.9rem;line-height:1.4;box-shadow:0 8px 24px rgba(0,0,0,.25);pointer-events:none}
 .awb{display:inline-flex;gap:6px;margin-left:6px;font-weight:700;font-size:.82rem;vertical-align:middle}
 .awn{display:inline-flex;align-items:center;gap:2px}
 .awn svg{width:17px;height:17px}
@@ -3833,6 +3836,7 @@ Object.assign(LESSONS, {
     outline: ["Mean is really a sum", "Median and mode", "Changing the data", "Check yourself"],
     body: () => `
       <h3>Mean is really a sum</h3>
+      ${rule("Four words:", "<b>mean</b> = add them up, divide by how many; <b>median</b> = the middle one after sorting; <b>mode</b> = the one that shows up most; <b>range</b> = biggest minus smallest.")}
       ${rule("Key idea:", "sum = mean × count. Most average problems become easy once you turn averages back into sums.")}
       ${ex("Five numbers average 12. Four of them are 10, 11, 13, 14. Find the fifth.", ["Turn the average into a sum: 5 numbers × 12 = 60.", "The four known numbers add to 10 + 11 + 13 + 14 = 48.", "The fifth makes up the difference: 60 − 48 = <b>12</b>."])}
       ${ex("Ana averages 85 on 4 tests. What does she need on test 5 to average 87?", ["To average 87 on 5 tests she needs a total of 5 × 87 = 435.", "So far she has 4 × 85 = 340.", "She needs 435 − 340 = <b>95</b>.", "Shortcut: 87 is 2 more than 85, for each of the 5 tests. So the 5th test must be 85 + 5 × 2 = 95."])}
@@ -8609,6 +8613,229 @@ function prettyMath(h) {
   for (const list of Object.values(FORMULAS)) for (const f of list) for (const k of ["name", "eq", "note"]) if (f[k]) f[k] = P(f[k].replace(/\s+·\s+/g, "; "));
   const gp = genProblem;
   genProblem = g => { const p = gp(g); fixItem(p); return p; };
+})();
+
+/* =========================================================
+   GLOSSARY: math words get a dotted underline; hover, tap or tab to see a kid-friendly definition.
+   Applied to lesson pages, Remember-it boxes, and lesson check questions/answers.
+   Each entry: [key, regex source (matched case-insensitively, whole words), definition]
+   ========================================================= */
+const GLOSSARY = [
+  // arithmetic words
+  ["sum", "sums?", "The answer when you add. The sum of 3 and 4 is 7."],
+  ["difference", "differences?", "The answer when you subtract. The difference of 9 and 4 is 5."],
+  ["product", "products?", "The answer when you multiply. The product of 3 and 4 is 12."],
+  ["quotient", "quotients?", "The answer when you divide. 12 ÷ 3 has quotient 4."],
+  ["remainder", "remainders?", "What is left over when a number doesn't divide evenly. 14 ÷ 4 = 3 with remainder 2."],
+  ["reciprocal", "reciprocals?", "1 divided by the number: flip the fraction. The reciprocal of 4 is 1/4, and of 2/3 is 3/2."],
+  ["numerator", "numerators?", "The top number of a fraction. In 3/4 it is 3."],
+  ["denominator", "denominators?", "The bottom number of a fraction. In 3/4 it is 4."],
+  ["mixed number", "mixed numbers?", "A whole number and a fraction together, like 2½."],
+  ["improper fraction", "improper fractions?", "A fraction whose top is at least its bottom, like 7/4."],
+  ["decimal", "decimals?", "A number written with a decimal point, like 0.75 (which is 75 hundredths)."],
+  ["percent", "percents?|percentages?", "Out of 100. 25% means 25 out of 100, or 0.25."],
+  ["ratio", "ratios?", "A comparison of two amounts. 3 : 5 means 3 of one thing for every 5 of another."],
+  ["proportion", "proportions?|proportional", "Two ratios that are equal, like 2 : 3 = 4 : 6."],
+  ["rate", "rates?", "An amount for each one unit of something else, like 60 miles per hour."],
+  ["mph", "mph", "Miles per hour: how many miles you go in one hour."],
+  ["estimate", "estimates?|estimating|estimation", "A close guess found by rounding, to check whether an answer is reasonable."],
+  ["evaluate", "evaluate", "Work out the value."],
+  ["simplify", "simplify|simplified|simplest form", "Rewrite in the shortest, neatest way that has the same value."],
+  ["order of operations", "order of operations", "The order to do math steps: parentheses, exponents, × and ÷ left to right, then + and − left to right."],
+  ["distributive", "distributive property|distributive", "a(b + c) = ab + ac. Multiplying a sum is the same as multiplying each part and adding."],
+  ["operation", "operations?", "A math action: add, subtract, multiply, or divide."],
+  // statistics
+  ["mean", "(?<=\\b(?:the|a|arithmetic|have|has|with|new|their|its|same) )means?|mean(?= (?:of|is|was|×|·|\u0002|=|follows|\\d))|mean(?=[:,.])", "The average: add up the numbers, then divide by how many numbers there are."],
+  ["median", "medians?", "The middle number when the list is put in order. With two middle numbers, it is their average."],
+  ["mode", "modes?", "The number that shows up most often in a list."],
+  ["range", "(?<=\\bthe )range|range(?= of|:| is)", "The biggest number minus the smallest number in a list."],
+  ["average", "averages?|averaged|averaging", "Add up the numbers, then divide by how many there are. Also called the mean."],
+  ["weighted average", "weighted averages?", "An average where some numbers count more than others because there are more of them."],
+  // number theory
+  ["integer", "integers?", "A whole number that can be positive, negative, or zero: …, −2, −1, 0, 1, 2, …"],
+  ["whole number", "whole numbers?|whole-number", "One of the counting numbers 0, 1, 2, 3, … (no fractions or decimals)."],
+  ["positive", "positive", "Bigger than 0."],
+  ["negative", "negative", "Less than 0, like −3."],
+  ["nonnegative", "nonnegative", "0 or bigger."],
+  ["even number", "even numbers?|even integers?", "A whole number that 2 divides evenly: 0, 2, 4, 6, …"],
+  ["odd number", "odd numbers?|odd integers?", "A whole number that leaves remainder 1 when divided by 2: 1, 3, 5, …"],
+  ["parity", "parity", "Whether a number is even or odd."],
+  ["digit", "digits?", "One of the ten symbols 0 to 9. The number 352 has digits 3, 5, and 2."],
+  ["units digit", "units digits?|ones digits?", "The last digit of a number. The units digit of 352 is 2."],
+  ["consecutive", "consecutive", "Coming one right after another, like 7, 8, 9."],
+  ["factor", "factors|factor(?= of)|common factors?", "A number that divides another with no remainder. 3 is a factor of 12."],
+  ["multiple", "multiple(?= of)|multiples", "A number times a whole number. Multiples of 4 are 4, 8, 12, 16, …"],
+  ["divisible", "divisible|divisibility", "Divides evenly with no remainder. 12 is divisible by 3 because 12 ÷ 3 = 4."],
+  ["divisor", "divisors?", "Another word for factor: a number that divides evenly into another."],
+  ["prime", "primes?|prime numbers?", "A whole number bigger than 1 whose only factors are 1 and itself: 2, 3, 5, 7, 11, 13, …"],
+  ["composite", "composites?|composite numbers?", "A whole number bigger than 1 that is not prime, like 4, 6, 8, 9."],
+  ["prime factorization", "prime factorizations?", "Writing a number as a product of primes. 12 = 2 · 2 · 3."],
+  ["GCD", "greatest common (?:factor|divisor)s?|GCDs?|GCFs?", "Greatest common factor: the biggest number that divides both numbers. GCD(12, 18) = 6."],
+  ["LCM", "least common multiples?|LCMs?", "Least common multiple: the smallest number both numbers divide into. LCM(4, 6) = 12."],
+  ["relatively prime", "relatively prime", "Two numbers whose only common factor is 1, like 8 and 15."],
+  ["mod", "mod(?= \\d)|modulo|modular", "Working with remainders. a ≡ b (mod n) means a and b leave the same remainder when divided by n."],
+  ["perfect square", "perfect squares?", "A whole number times itself: 1, 4, 9, 16, 25, …"],
+  ["perfect cube", "perfect cubes?", "A whole number times itself three times: 1, 8, 27, 64, …"],
+  ["exponent", "exponents?", "The small raised number. It says how many times to multiply the base: 2³ = 2 · 2 · 2 = 8."],
+  ["square root", "square roots?", "The number that times itself gives this one. √49 = 7 because 7 · 7 = 49."],
+  ["cube root", "cube roots?", "The number that times itself three times gives this one. ∛8 = 2 because 2 · 2 · 2 = 8."],
+  ["radical", "radicals?", "A root sign, like √. √50 is a radical."],
+  ["scientific notation", "scientific notation", "Writing a number as (something from 1 to 10) × (a power of 10), like 3.2 × 10⁵."],
+  ["factorial", "factorials?", "n! means n · (n − 1) · … · 2 · 1. So 4! = 4 · 3 · 2 · 1 = 24."],
+  // algebra
+  ["variable", "variables?", "A letter, like x, that stands for a number we don't know yet."],
+  ["expression", "expressions?", "Numbers, letters, and operations with no equals sign, like 3x + 2."],
+  ["equation", "equations?", "A statement that two things are equal, using =, like 2x + 1 = 7."],
+  ["coefficient", "coefficients?", "The number multiplied by a letter. In 5x, the coefficient is 5."],
+  ["inequality", "inequalit(?:y|ies)", "A statement using &lt;, &gt;, ≤, or ≥ instead of =."],
+  ["absolute value", "absolute values?", "How far a number is from 0, so it's never negative. |−5| = 5."],
+  ["function", "functions?", "A rule that turns each input into exactly one output. f(x) = 2x + 1 turns 3 into 7."],
+  ["slope", "slopes?", "How steep a line is: how far it goes up for each step to the right (rise ÷ run)."],
+  ["intercept", "intercepts?|y-intercepts?|x-intercepts?", "Where a line crosses an axis. The y-intercept is where it crosses the y-axis."],
+  ["axis", "ax[ie]s|x-axis|y-axis", "The two number lines on a graph: the x-axis goes across, the y-axis goes up."],
+  ["coordinates", "coordinates?", "The pair (x, y) that tells where a point is: x across, y up."],
+  ["origin", "(?<=\\bthe )origin", "The point (0, 0), where the two axes cross."],
+  ["quadratic", "quadratics?", "An expression or equation with an x² term, like x² + 3x + 2."],
+  ["root", "(?<=\\bthe )roots?(?! of)|roots(?= of)", "A solution of an equation: a number that makes it true."],
+  ["sequence", "sequences?", "A list of numbers in a pattern, like 3, 7, 11, 15, …"],
+  ["arithmetic sequence", "arithmetic sequences?", "A list where you add the same amount each time, like 3, 7, 11, 15 (add 4)."],
+  ["geometric sequence", "geometric sequences?", "A list where you multiply by the same amount each time, like 2, 6, 18, 54 (times 3)."],
+  ["common difference", "common differences?", "In an arithmetic sequence, the amount you add each step."],
+  ["system", "systems? of equations", "Two or more equations that must all be true at the same time."],
+  // counting & probability
+  ["permutation", "permutations?", "An arrangement where order matters. ABC and CBA are different permutations."],
+  ["combination", "combinations?", "A choice where order does not matter. Choosing {A, B} is the same as {B, A}."],
+  ["outcome", "outcomes?", "One possible result, like rolling a 4 on a die."],
+  ["probability", "probabilit(?:y|ies)", "How likely something is: good outcomes ÷ all outcomes. It is between 0 (never) and 1 (always)."],
+  ["independent", "independent", "Two events are independent if one happening doesn't change the chance of the other."],
+  ["expected value", "expected values?", "The average result you'd get if you repeated something many, many times."],
+  ["at random", "at random|randomly", "Every choice is equally likely."],
+  ["complement", "complements?|complementary counting", "The part that is left out. In counting: everything that is NOT the event, so count it and subtract from the total. For angles: the angle that adds to 90°."],
+  ["lattice point", "lattice points?", "A point whose x and y coordinates are both integers."],
+  // geometry
+  ["perimeter", "perimeters?", "The distance all the way around a shape."],
+  ["area", "areas?", "How much flat space a shape covers, measured in square units."],
+  ["surface area", "surface areas?", "The total area of all the outside faces of a solid."],
+  ["volume", "volumes?", "How much space a solid takes up, measured in cubic units."],
+  ["circumference", "circumferences?", "The distance around a circle: π times the diameter."],
+  ["radius", "radius|radii", "The distance from the center of a circle to its edge. Half the diameter."],
+  ["diameter", "diameters?", "The distance across a circle through its center. Twice the radius."],
+  ["chord", "chords?", "A straight segment joining two points on a circle."],
+  ["arc", "arcs?", "A piece of a circle's edge."],
+  ["sector", "sectors?", "A pizza-slice part of a circle, between two radii."],
+  ["tangent", "tangents?", "A line that touches a circle at exactly one point."],
+  ["inscribed", "inscribed", "Drawn inside another shape so that it touches it, like a square whose corners sit on a circle."],
+  ["circumscribed", "circumscribed", "Drawn around another shape so that it touches it."],
+  ["vertex", "vertex|vertices", "A corner point of a shape."],
+  ["polygon", "polygons?", "A flat closed shape made of straight sides, like a triangle or hexagon."],
+  ["regular polygon", "regular polygons?|regular (?:pentagon|hexagon|octagon)s?", "A polygon with all sides equal and all angles equal."],
+  ["quadrilateral", "quadrilaterals?", "A polygon with 4 sides."],
+  ["pentagon", "pentagons?", "A polygon with 5 sides."],
+  ["hexagon", "hexagons?", "A polygon with 6 sides."],
+  ["octagon", "octagons?", "A polygon with 8 sides."],
+  ["parallelogram", "parallelograms?", "A quadrilateral whose opposite sides are parallel."],
+  ["trapezoid", "trapezoids?", "A quadrilateral with one pair of parallel sides."],
+  ["rhombus", "rhombus(?:es)?|rhombi", "A quadrilateral with 4 equal sides."],
+  ["isosceles", "isosceles", "A triangle with two equal sides (and two equal angles)."],
+  ["equilateral", "equilateral", "All sides equal. An equilateral triangle also has three 60° angles."],
+  ["scalene", "scalene", "A triangle with no equal sides."],
+  ["acute", "acute", "An angle less than 90°. An acute triangle has all three angles less than 90°."],
+  ["obtuse", "obtuse", "An angle between 90° and 180°."],
+  ["right angle", "right angles?", "An angle of exactly 90°, like the corner of a square."],
+  ["right triangle", "right triangles?", "A triangle with a 90° angle."],
+  ["hypotenuse", "hypotenuses?", "The longest side of a right triangle, across from the 90° angle. The other two sides are the legs."],
+  ["parallel", "parallel", "Lines that go the same direction and never meet."],
+  ["perpendicular", "perpendicular", "Meeting at a 90° angle."],
+  ["diagonal", "diagonals?", "A segment joining two corners that are not next to each other."],
+  ["congruent", "congruent", "Exactly the same size and shape."],
+  ["similar", "similar(?= (?:triangles|figures|shapes|polygons|solids|cylinders|rectangles|cones))", "Same shape, maybe a different size. All sides grow by the same scale factor."],
+  ["scale factor", "scale factors?", "The number every length is multiplied by to get the bigger (or smaller) copy."],
+  ["bisect", "bisects?|bisector|bisectors|bisected", "Cuts into two equal parts."],
+  ["midpoint", "midpoints?", "The point exactly halfway along a segment."],
+  ["altitude", "altitudes?", "A height: a segment from a corner that meets the opposite side at a right angle."],
+  ["supplementary", "supplementary", "Two angles that add to 180°."],
+  ["complementary angles", "complementary angles?", "Two angles that add to 90°."],
+  ["adjacent", "adjacent", "Next to each other, sharing a side."],
+  ["vertical angles", "vertical angles?", "The opposite angles made when two lines cross. They are always equal."],
+  ["alternate interior", "alternate interior angles?", "Angles on opposite sides of a crossing line, between two parallel lines. They are equal."],
+  ["interior angle", "interior angles?", "An angle inside a polygon, at one of its corners."],
+  ["exterior angle", "exterior angles?", "The angle between one side of a polygon and the next side extended outward."],
+  ["prism", "prisms?", "A solid with two matching ends joined by flat rectangle sides, like a box."],
+  ["cylinder", "cylinders?", "A solid like a can: two circle ends joined by a curved side."],
+  ["cone", "cones?", "A solid like an ice cream cone: a circle base narrowing to a point."],
+  ["pyramid", "pyramids?", "A solid with a flat base and triangle sides that meet at a point."],
+  ["sphere", "spheres?", "A perfectly round ball."],
+  ["polyhedron", "polyhedr(?:on|a|ons)", "A solid whose faces are all flat polygons, like a cube or pyramid."],
+  ["Pythagorean", "Pythagorean theorem|Pythagoras", "In a right triangle, leg² + leg² = hypotenuse²."],
+];
+GLOSSARY.sort((a, b) => b[0].length - a[0].length); // longer phrases first, so "prime factorization" wins over "prime"
+const GL_RE = new RegExp(`(?<![A-Za-z-])(?:${GLOSSARY.map(([k, r]) => `(${r})`).join("|")})(?![A-Za-z])`, "gi");
+const GL_SKIP = new Set(["svg", "summary", "h1", "h2", "h3", "h4", "h5", "h6", "a", "button", "code", "title", "script", "style"]);
+const GL_VOID = new Set(["br", "hr", "img", "input", "meta", "wbr", "col", "source"]);
+const glEsc = s => s.replace(/&(?![#\w]+;)/g, "&amp;").replace(/"/g, "&quot;");
+// wrap the first use of each glossary word in each piece of text; "used" is shared so a term is marked once per block
+const GL_DOT = '<b class="md">·</b>';
+function glossify(h, used = new Set()) {
+  if (typeof h !== "string" || !h) return h;
+  h = h.split(GL_DOT).join("\u0002"); // the times-dot is a tag, but words next to it should still see it
+
+  let out = "", i = 0; const stack = [];
+  const skipping = () => stack.some(t => t.skip);
+  while (i < h.length) {
+    if (h[i] === "<" && /[A-Za-z\/!]/.test(h[i + 1] || "")) {
+      const j = h.indexOf(">", i); if (j < 0) { out += h.slice(i); break; }
+      const tag = h.slice(i, j + 1), m = /^<\/?([A-Za-z0-9]+)/.exec(tag), name = m ? m[1].toLowerCase() : "";
+      if (tag[1] === "/") { const k = stack.map(t => t.name).lastIndexOf(name); if (k >= 0) stack.length = k; }
+      else if (tag[1] !== "!" && !tag.endsWith("/>") && !GL_VOID.has(name)) stack.push({ name, skip: GL_SKIP.has(name) || /class="[^"]*\b(lbl|gl|frac)\b/.test(tag) || (stack.length && stack[stack.length - 1].skip) });
+      out += tag; i = j + 1; continue;
+    }
+    let j = h.indexOf("<", i + 1); while (j > 0 && !/[A-Za-z\/!]/.test(h[j + 1] || "")) j = h.indexOf("<", j + 1);
+    if (j < 0) j = h.length;
+    const text = h.slice(i, j);
+    out += skipping() ? text : text.replace(GL_RE, (w, ...g) => {
+      const k = g.slice(0, GLOSSARY.length).findIndex(x => x !== undefined);
+      if (k < 0) return w;
+      const [key, , def] = GLOSSARY[k];
+      if (used.has(key)) return w;
+      used.add(key);
+      return `<span class="gl" tabindex="0" data-def="${glEsc(def)}">${w}</span>`;
+    });
+    i = j;
+  }
+  return out.split("\u0002").join(GL_DOT);
+}
+// lesson bodies: once per term per section (sections start at each <h3>)
+const glossifyBody = h => typeof h !== "string" ? h : h.split(/(?=<h3[\s>])/).map(part => glossify(part)).join("");
+(() => {
+  const GA = v => Array.isArray(v) ? (u => v.map(x => glossify(x, u)))(new Set()) : glossify(v);
+  for (const l of Object.values(LESSONS)) {
+    const body = l.body; l.body = () => glossifyBody(body());
+    (l.quiz || []).forEach(it => { if (it.q != null) it.q = glossify(it.q); if (it.explain != null) it.explain = GA(it.explain); });
+  }
+  for (const list of Object.values(TRICKS)) for (const t of list) t.h = glossify(t.h);
+})();
+// one floating tip, placed next to the word and kept inside the screen
+(() => {
+  const tip = document.createElement("div"); tip.className = "gltip"; tip.setAttribute("role", "tooltip"); tip.hidden = true;
+  document.body.appendChild(tip);
+  let cur = null, shownAt = 0;
+  const show = el => {
+    if (cur !== el || tip.hidden) shownAt = Date.now();
+    cur = el; tip.textContent = el.dataset.def; tip.hidden = false;
+    const r = el.getBoundingClientRect(), w = Math.min(300, innerWidth - 24);
+    tip.style.maxWidth = w + "px";
+    const tw = tip.offsetWidth, th = tip.offsetHeight;
+    const left = Math.max(12, Math.min(r.left + r.width / 2 - tw / 2, innerWidth - tw - 12));
+    const top = r.top - th - 8 >= 8 ? r.top - th - 8 : r.bottom + 8;
+    tip.style.left = left + "px"; tip.style.top = top + "px";
+  };
+  const hide = () => { tip.hidden = true; cur = null; };
+  // hover only for a real mouse; touch shows the tip on tap (click) and keeps it until the next tap elsewhere
+  document.addEventListener("pointerover", e => { if (e.pointerType !== "mouse") return; const g = e.target.closest?.(".gl"); if (g) show(g); else if (cur) hide(); });
+  document.addEventListener("focusin", e => { const g = e.target.closest?.(".gl"); if (g) show(g); else hide(); });
+  document.addEventListener("click", e => { const g = e.target.closest?.(".gl"); if (g) { cur === g && !tip.hidden && Date.now() - shownAt > 400 ? hide() : show(g); } else hide(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") hide(); });
+  addEventListener("scroll", hide, { passive: true });
 })();
 
 /* =========================================================
