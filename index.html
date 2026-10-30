@@ -3031,7 +3031,7 @@ Object.assign(LESSONS, {
       ${aops("Transversal", "Transversal")}`,
     quiz: [
       num("A transversal crosses two parallel lines. One angle is 72°. What is its corresponding angle?", 72, "Corresponding angles sit in the same position at each crossing, and with parallel lines they're equal: 72°."),
-      num("Same setup. What is the same-side interior partner of a 72° angle?", 108, "Same-side interior angles add to 180° when the lines are parallel: 180 − 72 = 108."),
+      num("A transversal crosses two parallel lines. One angle is 64°. What is the same-side interior angle paired with it?", 116, "Same-side interior angles add to 180° when the lines are parallel: 180 − 64 = 116."),
       num("Alternate interior angles measure (2x + 30)° and (5x − 15)°. What is x?", 15, "Alternate interior angles are equal: 2x + 30 = 5x − 15. So 45 = 3x and x = 15."),
       num("A bent path between two parallel lines makes angles of 50° and 25° with them. What is the bend angle?", 75, "Draw a parallel line through the bend. It splits the bend into a 50° part and a 25° part (alternate interior angles). 50 + 25 = 75."),
       mc("Same-side interior angles measure 2x° and (3x + 30)°. What is the smaller angle?", ["30°", "60°", "75°", "90°", "120°"], 1, "Same-side interior angles add to 180°: 2x + 3x + 30 = 180, so 5x = 150 and x = 30. The angles are 60° and 120°."),
@@ -4030,7 +4030,7 @@ Object.assign(LESSONS, {
       ${aops("Relative_motion", "Relative motion")}`,
     quiz: [
       num("Two cities are 390 km apart. Trains leave at the same time toward each other at 60 and 70 km/h. In how many hours do they meet?", 3, "The gap closes at 60 + 70 = 130 km/h, so 390 km takes 3 hours."),
-      num("In that problem, how many miles from the 40 mph car's starting town do they meet?", 80, "They meet after 2 hours, and the 40 mph car goes 40 × 2 = 80 miles."),
+      num("Two towns are 210 miles apart. Cars leave at the same time and drive toward each other at 30 mph and 40 mph. How many miles from the 30 mph car's starting town do they meet?", 90, "The gap closes at 30 + 40 = 70 mph, so they meet after 210 ÷ 70 = 3 hours. The 30 mph car has gone 30 × 3 = 90 miles."),
       num("A fox is 60 m behind a rabbit. The fox runs 14 m/s and the rabbit 10 m/s. How many seconds until the fox catches it?", 15, "The fox gains 14 − 10 = 4 m each second, so 60 m takes 15 seconds."),
       num("Kim leaves at 9 am walking 4 mph. At 10 am Raj bikes after her at 8 mph. At what hour (am) does Raj catch her?", 11, "Kim is 4 miles ahead at 10 am. Raj gains 8 − 4 = 4 mph, so 1 more hour: 11 am."),
       mc("Two runners start together on a 400 m track and run in opposite directions at 3 m/s and 5 m/s. When do they first meet?", ["50 s", "80 s", "100 s", "133 s", "200 s"], 0, "Running toward each other around the track, they close the 400 m gap at 3 + 5 = 8 m/s. 400 ÷ 8 = 50 s."),
@@ -4237,7 +4237,7 @@ Object.assign(LESSONS, {
     quiz: [
       num("Roll a die and flip two coins. What is P(a 5 and two heads)?", "1/24", "Independent events multiply: 1/6 × ½ × ½ = 1/24."),
       num("A bag has 4 red and 2 blue. Draw two without replacement. P(both red)?", "2/5", "4 of 6 are red, then 3 of the remaining 5: 4/6 × 3/5 = 12/30 = 2/5."),
-      num("Same bag, but put the first marble back. P(both red)?", "9/25", "Putting it back resets the bag: 3/5 × 3/5 = 9/25."),
+      num("A bag has 4 red and 2 blue marbles. Draw one, put it back, then draw again. P(both red)?", "4/9", "Putting it back resets the bag, so each draw is red with chance 4/6 = 2/3: 2/3 × 2/3 = 4/9."),
       num("A free-throw shooter makes 80% of shots. What is the percent chance she makes two in a row?", 64, "Two independent shots: 0.8 × 0.8 = 0.64, which is 64%.", "%"),
       mc("Draw two cards from a standard 52-card deck without replacement. What is P(both aces)?", ["1/221", "1/169", "1/26", "1/13", "2/13"], 0, "First ace: 4/52. Then 3 aces among 51 cards: 3/51. 4/52 × 3/51 = 12/2652 = 1/221."),
     ],
@@ -8419,7 +8419,7 @@ GEN("evh-hh", "expected", "amc10", R => {
 GEN("evh-distinct", "expected", "amc10", R => {
   const k = R.int(2, 5), sd = R.pick([4, 6, 8]); R.p = { k, sd };
   const N = sd ** k - (sd - 1) ** k, D = sd ** (k - 1);
-  return { q: `${k} fair ${sd}-sided dice (numbered 1 to ${sd}) are rolled. What is the expected number of different numbers that show? (For example, 3, 3, 4${k > 3 ? ", 4" : ""}${k > 4 ? ", 1" : ""} shows ${k > 4 ? 3 : 2} different numbers.)`, a: fr(N, D), traps: [fr(N + sd ** (k - 2), D), String(k), fr(k + 1, 2), fr(N, sd ** k), fr(sd * k, sd + 1), fr(N - sd ** (k - 2), D)].filter(x => x !== fr(N, D)), hint: "For each face, find the chance it shows up at least once. Add those chances.", sol: [`Look at one face at a time. It shows up unless all ${k} dice miss it: probability 1 − (${sd - 1}/${sd})<sup>${k}</sup>.`, `Expected values add over the ${sd} faces: ${sd} × (1 − ${(sd - 1) ** k}/${sd ** k}).`, `= ${sd} × ${N}/${sd ** k} = <b>${fr(N, D)}</b>.`] };
+  return { q: `${k} fair ${sd}-sided dice (numbered 1 to ${sd}) are rolled. What is the expected number of different numbers that show? (For example, rolling ${[3, 3, 4, 4, 1].slice(0, k).join(", ")} shows ${new Set([3, 3, 4, 4, 1].slice(0, k)).size} different number${k > 2 ? "s" : ""}.)`, a: fr(N, D), traps: [fr(N + sd ** (k - 2), D), String(k), fr(k + 1, 2), fr(N, sd ** k), fr(sd * k, sd + 1), fr(N - sd ** (k - 2), D)].filter(x => x !== fr(N, D)), hint: "For each face, find the chance it shows up at least once. Add those chances.", sol: [`Look at one face at a time. It shows up unless all ${k} dice miss it: probability 1 − (${sd - 1}/${sd})<sup>${k}</sup>.`, `Expected values add over the ${sd} faces: ${sd} × (1 − ${(sd - 1) ** k}/${sd ** k}).`, `= ${sd} × ${N}/${sd ** k} = <b>${fr(N, D)}</b>.`] };
 }, ({ k, sd }) => { let s = 0; eachTuple(sd, k, t => { s += new Set(t).size; }); return fr(s, sd ** k); });
 
 /* ---- geometric probability ---- */
