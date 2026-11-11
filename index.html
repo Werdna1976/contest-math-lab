@@ -266,6 +266,14 @@ th{font-weight:600;color:var(--muted);font-size:.8rem;text-transform:uppercase;l
 .qnav button{width:36px;height:36px;border-radius:8px;border:1px solid var(--line);background:var(--surface);font-family:var(--f-mono);font-size:.85rem;position:relative}
 .qnav button.ans{background:var(--accent-soft);border-color:var(--accent)}
 .qnav button.cur{outline:2px solid var(--ink);outline-offset:1px}
+.qnav button.flag{box-shadow:inset 0 -4px 0 var(--hi)}
+.qnav button.pr-ok{background:var(--good-soft);border-color:var(--good)}
+.qnav button.pr-no{background:var(--bad-soft);border-color:var(--bad)}
+.keys{font-family:var(--f-mono);font-size:.75rem}
+@media (hover:none){.keys{display:none}}
+.today{display:flex;flex-direction:column;gap:8px}
+.today .btn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left}
+.today .btn small{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
 .qnav button.h::after{content:"";position:absolute;top:3px;right:3px;width:6px;height:6px;border-radius:50%;background:var(--hi)}
 .confirm{background:var(--hi-soft);border-radius:12px;padding:14px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:space-between}
 
@@ -528,7 +536,7 @@ const TIER_OF = {};
 Object.entries({
   1: "order-ops fractions ratios averages mental-math units patterns backwards organized-lists polygon-angles triangle-types quadrilaterals symmetry drt clocks expressions linear-eq word-eq angle-basics parallel-lines exterior-angle primes divisibility exp-rules mult-principle circle-parts circumference circle-area basic-area prisms prob-basic",
   2: "logic-puzzles parity diagonals congruent-similar coordinates solids avg-speed meeting work mixtures systems inequalities functions lines sequences angle-chasing clock-angles pythagorean similar-triangles triangle-inequality num-divisors gcd-lcm units-digit digits exp-zero-neg sci-notation sqrt-simplify permutations combinations repeats casework complementary grid-paths pigeonhole shaded-area cones-spheres surface-area scaling gcf-factor diff-squares perfect-squares prob-complement independent expected",
-  3: "aime-vieta aime-poly aime-logs aime-series aime-amgm aime-crt aime-euler aime-divsum aime-floor aime-dioph aime-bij aime-rec aime-pie aime-ev aime-states aime-trig aime-bisector aime-cyclic aime-coords aime-3d aime-complex aime-polar aime-unity aime-trigid aime-strategy quadratics special-right modular bases diophantine rationalize compare-powers pascal pie stars-bars mcnugget circular derangements inscribed-angles tangents power-point heron picks-shoelace cubes sfft expansions conditional geo-prob",
+  3: "a12-functions a12-unit-circle a12-conics a12-ineq a12-strategy aime-vieta aime-poly aime-logs aime-series aime-amgm aime-crt aime-euler aime-divsum aime-floor aime-dioph aime-bij aime-rec aime-pie aime-ev aime-states aime-trig aime-bisector aime-cyclic aime-coords aime-3d aime-complex aime-polar aime-unity aime-trigid aime-strategy quadratics special-right modular bases diophantine rationalize compare-powers pascal pie stars-bars mcnugget circular derangements inscribed-angles tangents power-point heron picks-shoelace cubes sfft expansions conditional geo-prob",
 }).forEach(([t, ids]) => ids.split(" ").forEach(id => { TIER_OF[id] = +t; }));
 // normalize [id, title] pairs to objects, easier tiers first within each group
 CURRICULUM.forEach(c => c.groups.forEach(g => {
@@ -12329,6 +12337,7 @@ function chapterProgress(student, c) {
 
 function go(view, extra = {}) {
   if (S.test && !S.test.done && view !== "test") return;
+  if (S.prac && !S.prac.done && view !== "practice") pracFinish();   // walking away keeps what was answered
   Object.assign(S, { view, confirmReset: null }, extra);
   if (view === "lesson") store.markOpened(S.student, S.lessonId);
   render(); window.scrollTo(0, 0);
@@ -12428,10 +12437,26 @@ function viewHome() {
   </section>
   <section class="doors">
     <button class="door" data-act="go" data-v="learn"><span class="k">Learn</span><h3>${nameOf(S.student)}: ${done} of ${ready} lessons complete</h3><p>${capOf(S.student) === TOP_LEVEL ? `All ${ready} lessons` : `${ready} lessons up to ${LEVELS[capOf(S.student)].short}`}</p></button>
-    <button class="door" data-act="go" data-v="setup"><span class="k">Test prep</span><h3>${BANK.filter(b => levelOK(S.student, b.level)).length} problems + ${GENS.filter(g => levelOK(S.student, g.level)).length} generators</h3><p>MK 5/6 · MK 7/8 · AMC 8 · AMC 10 · AIME</p></button>
+    <button class="door" data-act="go" data-v="setup"><span class="k">Test prep</span><h3>${BANK.filter(b => levelOK(S.student, b.level)).length} problems + ${GENS.filter(g => levelOK(S.student, g.level)).length} generators</h3><p>${LEVEL_ORDER.filter(k => levelOK(S.student, k)).map(k => LEVELS[k].short).join(" · ")}</p></button>
     <button class="door" data-act="go" data-v="progress"><span class="k">Progress</span><h3>${lastTest ? `${nameOf(S.student)}'s last test: ${lastTest.correct}/${lastTest.total}` : `${mine.length} saved results for ${nameOf(S.student)}`}</h3><p>Scores · time · hints · missed questions</p></button>
   </section>
+  ${todayRow()}
   ${viewMap()}`;
+}
+
+/* home: where to pick up, as plain buttons */
+function todayRow() {
+  const who = S.student, miss = missCount(who), streak = streakOf(who);
+  const path = (S.tier ? tierPath(S.tier) : CURRICULUM.flatMap(readyLessons)).filter(l => inLevel(who, l.id));
+  const next = path.find(l => { const s = lessonStatus(who, l.id).s; return s === "opened" || s === "progress"; }) || path.find(l => lessonStatus(who, l.id).s === "ready");
+  const weak = weakLessons(who, 1)[0];
+  return `<section class="today" aria-label="Today">
+    <span class="eyebrow">Today · ${nameOf(who)}${streak ? ` · ${streak}-day streak` : ""}</span>
+    <div class="row">
+      ${next ? `<button class="btn" data-act="lesson" data-id="${next.id}"><small>${lessonStatus(who, next.id).s === "ready" ? "Next lesson" : "Continue"}</small>${next.title}</button>` : ""}
+      ${miss ? `<button class="btn" data-act="prac" data-scope="misses" data-id=""><small>Redo</small>${miss} missed problem${miss === 1 ? "" : "s"}</button>` : ""}
+      ${weak ? `<button class="btn" data-act="prac" data-scope="lesson" data-id="${weak[0]}"><small>Practice weak spot</small>${LESSONS[weak[0]].title}</button>` : ""}
+    </div></section>`;
 }
 
 function statusLegend() {
@@ -12504,6 +12529,7 @@ function viewChapter() {
           const st = lessonStatus(S.student, l.id), les = LESSONS[l.id], above = !inLevel(S.student, l.id);
           return `<button class="lesson-row t${l.tier} ${above ? "above" : ""}" data-act="lesson" data-id="${l.id}" ${les ? "" : "disabled"}><span><b>${l.title}</b>${les ? `<small>about ${les.minutes} min · ${les.quiz.length}-question check${above ? " · above " + S.student + "'s level" : ""}</small>` : `<small>Not written yet</small>`}</span><span class="row" style="gap:6px;flex-wrap:nowrap">${tierDot(l.id)}${lvlTag(l.id)}${awardMini(S.student, l.id)}${statusTag(st)}</span></button>`;
         }).join("")}</div></section>`).join("")}
+      <div class="row"><button class="btn" data-act="prac" data-scope="chapter" data-id="${c.id}" ${pracCount("chapter", c.id, S.student) ? "" : "disabled"}>Practice this chapter · ${pracCount("chapter", c.id, S.student)} problems</button></div>
       ${levelNote()}
       ${resetBlock("chapter", c.id, `Reset ${c.title} for ${nameOf(S.student)}`, `This erases ${nameOf(S.student)}'s lesson checks, "opened" marks, and chapter-only tests for ${c.title}. Other chapters and mixed tests stay.`)}
     </div>
@@ -12601,6 +12627,8 @@ function viewLesson() {
              <button class="btn" data-act="qretry">Try again</button>${next ? `<button class="btn primary" data-act="lesson" data-id="${next.id}">Next: ${next.title}</button>` : ""}`
           : `<button class="btn primary" data-act="qcheck">Check answers</button>`}
       </div>
+      ${pracCount("lesson", S.lessonId, S.student) ? `<h3 id="practice">More practice</h3>
+      <div class="row"><button class="btn" data-act="prac" data-scope="lesson" data-id="${S.lessonId}">Practice problems · ${pracCount("lesson", S.lessonId, S.student)} available</button><span class="status">Untimed · answer shown after each problem</span></div>` : ""}
     </article>
     <aside class="side panel">
       <span class="eyebrow">In this lesson</span>
@@ -12627,17 +12655,17 @@ function resetBlock(scope, id, label, question) {
 async function doReset({ scope, id, student }) {
   let ok;
   if (scope === "lesson") {
-    ok = await store.reset(r => r.student === student && r.kind === "quiz" && r.lessonId === id, k => k === `${student}__${id}`);
+    ok = await store.reset(r => r.student === student && (r.kind === "quiz" || r.kind === "practice") && r.lessonId === id, k => k === `${student}__${id}`);
     delete S.quizState[id];
   } else if (scope === "chapter") {
     const ids = new Set(chapterLessons(chapterById(id)).map(l => l.id));
-    ok = await store.reset(r => r.student === student && ((r.kind === "quiz" && ids.has(r.lessonId)) || (r.kind === "test" && r.chapter === id)),
+    ok = await store.reset(r => r.student === student && (((r.kind === "quiz" || r.kind === "practice") && ids.has(r.lessonId)) || ((r.kind === "test" || r.kind === "practice") && r.chapter === id)),
       k => k.startsWith(student + "__") && ids.has(k.slice(student.length + 2)));
     ids.forEach(i => delete S.quizState[i]);
   } else if (scope === "tests") {
     ok = await store.reset(r => r.student === student && r.kind === "test", () => false);
   } else if (scope === "learning") {
-    ok = await store.reset(r => r.student === student && r.kind === "quiz", k => k.startsWith(student + "__"));
+    ok = await store.reset(r => r.student === student && (r.kind === "quiz" || r.kind === "practice"), k => k.startsWith(student + "__"));
     S.quizState = {};
   } else {
     ok = await store.reset(r => r.student === student, k => k.startsWith(student + "__"));
@@ -12650,7 +12678,7 @@ async function doReset({ scope, id, student }) {
 function viewProfile() {
   const k = S.student, cap = capOf(k);
   const mine = store.results.filter(r => r.student === k);
-  const nTests = mine.filter(r => r.kind === "test").length, nChecks = mine.filter(r => r.kind === "quiz").length;
+  const nTests = mine.filter(r => r.kind === "test").length, nChecks = mine.filter(r => r.kind === "quiz").length, nPrac = mine.filter(r => r.kind === "practice").length;
   return `
   <section style="display:flex;flex-direction:column;gap:8px"><span class="eyebrow">Setup</span><h1>${nameOf(k)}'s setup</h1></section>
   <section class="panel" style="display:flex;flex-direction:column;gap:10px">
@@ -12671,7 +12699,7 @@ function viewProfile() {
   <section class="panel" style="display:flex;flex-direction:column;gap:12px">
     <h3>Reset</h3>
     <div class="row">${resetBlock("tests", k, `Reset tests (${nTests})`, `Erase all ${nTests} of ${nameOf(k)}'s practice test results?`)}
-      ${resetBlock("learning", k, `Reset learning (${nChecks} lesson check${nChecks === 1 ? "" : "s"})`, `Erase ${nameOf(k)}'s lesson checks and "opened" marks in every chapter?`)}
+      ${resetBlock("learning", k, `Reset learning (${nChecks} lesson check${nChecks === 1 ? "" : "s"}, ${nPrac} practice)`, `Erase ${nameOf(k)}'s lesson checks, practice sessions and "opened" marks in every chapter?`)}
       ${resetBlock("all", k, "Reset everything", `Erase every test, lesson check, and "opened" mark for ${nameOf(k)}? Their name and level stay.`)}</div>
     <h3 style="margin-top:6px">Reset learning by chapter</h3>
     <div class="tbl-wrap"><table><tbody>${CURRICULUM.map(c => { const p = chapterProgress(k, c); return `<tr><td>${c.title}</td><td class="mono" style="white-space:nowrap">${p.done}/${p.total} done</td><td>${resetBlock("chapter", c.id, "Reset chapter", `Erase ${nameOf(k)}'s lesson checks, "opened" marks, and chapter-only tests for ${c.title}?`)}</td></tr>`; }).join("")}</tbody></table></div>
@@ -12746,13 +12774,17 @@ function viewSetup() {
     <p><b class="mono">${n}</b> questions · <b class="mono">${fmtTime(limit)}</b> time limit${S.testLen === "full" && n < lv.count ? ` <span class="status">(only ${n} problems match; time scaled to fit)</span>` : ""}${topped ? ` <span class="status">(includes some ${LEVELS[prevLevel(S.level)].short} problems)</span>` : ""} · taken by <b>${nameOf(S.student)}</b></p>
     ${n ? "" : `<p class="status">No problems at this level for this chapter.</p>`}
     <div class="row"><button class="btn primary" data-act="start" ${n ? "" : "disabled"}>Start test</button>${storageNote()}</div>
+  </section>
+  <section class="panel" style="display:flex;flex-direction:column;gap:12px">
+    <h2>Untimed practice</h2>
+    <div class="row">${missCount(S.student) ? `<button class="btn" data-act="prac" data-scope="misses" data-id="">Redo missed problems (${missCount(S.student)})</button>` : ""}${S.testChapter === "all" ? `<span class="status">Pick a chapter under Topics to practice it</span>` : `<button class="btn" data-act="prac" data-scope="chapter" data-id="${S.testChapter}">Practice ${chapterById(S.testChapter).title}</button>`}</div>
   </section>`;
 }
 
 function startTest() {
   const { n, limit } = testShape(S.level, poolSize(S.level, S.testChapter));
   const pool = drawTest(S.level, S.testChapter, n);
-  S.test = { level: S.level, len: S.testLen, student: S.student, qs: pool, answers: {}, hints: {}, cur: 0, start: Date.now(), limit, done: false, confirming: false };
+  S.test = { level: S.level, len: S.testLen, student: S.student, qs: pool, answers: {}, hints: {}, flags: {}, cur: 0, start: Date.now(), limit, done: false, confirming: false };
   go("test");
   clearInterval(S.timer);
   S.timer = setInterval(tick, 1000);
@@ -12774,14 +12806,16 @@ function viewTest() {
     <div><span class="eyebrow">${LEVELS[t.level].name} · ${nameOf(t.student)}</span><h2>Question ${i + 1} of ${t.qs.length}</h2></div>
     <div class="row"><span class="eyebrow">Time left</span><span class="timer ${left < 60 ? "low" : ""}" id="timer" aria-live="off">${fmtTime(left)}</span></div>
   </section>
-  <nav class="qnav" aria-label="Questions">${t.qs.map((_, k) => `<button class="${t.answers[k] !== undefined ? "ans" : ""} ${k === i ? "cur" : ""} ${t.hints[k] ? "h" : ""}" data-act="tjump" data-i="${k}" aria-label="Question ${k + 1}">${k + 1}</button>`).join("")}</nav>
+  <nav class="qnav" aria-label="Questions">${t.qs.map((_, k) => `<button class="${t.answers[k] !== undefined ? "ans" : ""} ${k === i ? "cur" : ""} ${t.hints[k] ? "h" : ""} ${t.flags[k] ? "flag" : ""}" data-act="tjump" data-i="${k}" aria-label="Question ${k + 1}">${k + 1}</button>`).join("")}</nav>
   <div class="q">
     <p style="font-size:1.08rem">${q.q}</p>
     ${q.fig ? `<figure class="fig">${q.fig()}</figure>` : ""}
     ${q.choices ? `<div class="choices">${q.choices.map((c, j) => `<button class="choice" aria-pressed="${t.answers[i] === j}" data-act="tpick" data-j="${j}"><span class="L">${L(j)}</span>${c}</button>`).join("")}</div>`
       : `<div class="row"><input class="numin aimein" id="tint" aria-label="Answer, a whole number from 0 to 999" data-act="tint" inputmode="numeric" autocomplete="off" maxlength="3" placeholder="000–999" value="${t.answers[i] ?? ""}"><span class="status">Integer 0–999</span></div>`}
-    ${t.hints[i] ? `<div class="hint"><b>Hint:</b> ${q.hint}</div>` : `<div><button class="btn ghost" data-act="thint">Use my hint for this problem</button></div>`}
+    ${t.hints[i] ? `<div class="hint"><b>Hint:</b> ${q.hint}</div>` : `<div class="row"><button class="btn ghost" data-act="thint">Use my hint for this problem</button><button class="btn ghost" aria-pressed="${!!t.flags[i]}" data-act="tflag">${t.flags[i] ? "⚑ Marked to revisit" : "⚐ Mark to revisit"}</button></div>`}
+    ${t.hints[i] ? `<div><button class="btn ghost" aria-pressed="${!!t.flags[i]}" data-act="tflag">${t.flags[i] ? "⚑ Marked to revisit" : "⚐ Mark to revisit"}</button></div>` : ""}
   </div>
+  <p class="status keys">Keys: ${q.choices ? "A–E answer · " : ""}← → move · F mark</p>
   <div class="row" style="justify-content:space-between">
     <div class="row"><button class="btn" data-act="tprev" ${i === 0 ? "disabled" : ""}>← Previous</button><button class="btn" data-act="tnext" ${i === t.qs.length - 1 ? "disabled" : ""}>Next →</button></div>
     <div class="row"><button class="btn ghost" data-act="tquit">Quit without saving</button><button class="btn primary" data-act="tsubmit">Submit test</button></div>
@@ -12800,6 +12834,7 @@ async function finishTest(timedOut = false) {
     chapter: S.testChapter, length: t.len, total: t.qs.length, correct: items.filter(x => x.ok).length, hintsUsed: items.filter(x => x.hint).length,
     timeSec, timeLimitSec: t.limit, timedOut,
     missed: items.filter(x => !x.ok).map(({ id, q, your, correct, hint, topic }) => ({ id, q, your, correct, hint, topic })),
+    right: items.filter(x => x.ok).map(x => x.id), blank: items.filter(x => x.your === null).length,
   };
   S.lastResult = { rec, test: t };
   S.test = null;
@@ -12814,10 +12849,11 @@ function viewResult() {
   const { rec, test } = S.lastResult;
   const pct = Math.round(100 * rec.correct / rec.total);
   const weak = [...new Set(rec.missed.map(m => m.topic).filter(t => LESSONS[t]))];
+  const blank = test.qs.filter((_, k) => test.answers[k] === undefined).length, amc = amcScored(rec.level);
   return `
   <section style="display:flex;flex-direction:column;gap:8px"><span class="eyebrow">${rec.title} · ${nameOf(rec.student)}${rec.timedOut ? " · time ran out" : ""}</span><h1>${rec.correct} of ${rec.total} correct</h1></section>
   <section class="stats">
-    <div class="stat"><div class="v">${pct}%</div><div class="l">Score</div></div>
+    ${amc ? `<div class="stat"><div class="v">${amcScore(rec.correct, blank)}</div><div class="l">AMC score of ${6 * rec.total} · 6 right, 1.5 blank, 0 wrong</div></div>` : `<div class="stat"><div class="v">${pct}%</div><div class="l">Score</div></div>`}
     <div class="stat"><div class="v">${fmtTime(rec.timeSec)}</div><div class="l">Time used of ${fmtTime(rec.timeLimitSec)}</div></div>
     <div class="stat"><div class="v">${rec.hintsUsed}</div><div class="l">Hints used</div></div>
     <div class="stat"><div class="v">${rec.total - rec.correct}</div><div class="l">To review</div></div>
@@ -12834,7 +12870,7 @@ function viewResult() {
       <div class="fb ${ok ? "ok" : "no"}"><b>Solution:</b> ${Array.isArray(q.solution) ? steps(q.solution) : q.solution}</div></div>`;
   }).join("")}
   </section>
-  <div class="row"><button class="btn primary" data-act="go" data-v="setup">Take another test</button><button class="btn" data-act="go" data-v="progress">See progress</button></div>`;
+  <div class="row"><button class="btn primary" data-act="go" data-v="setup">Take another test</button>${rec.total - rec.correct ? `<button class="btn" data-act="prac" data-scope="misses" data-id="">Redo missed problems (${missCount(rec.student)})</button>` : ""}<button class="btn" data-act="go" data-v="progress">See progress</button></div>`;
 }
 
 function viewProgress() {
@@ -12856,14 +12892,21 @@ function viewProgress() {
     <div class="stat"><div class="v">${hints}</div><div class="l">Hints used on tests</div></div>
     <div class="stat"><div class="v">${fmtTime(time)}</div><div class="l">Time on tests</div></div>
   </section>
+  ${who === "All" ? "" : (() => {
+    const weak = weakLessons(who), miss = missCount(who), streak = streakOf(who);
+    return `<section class="panel" style="display:flex;flex-direction:column;gap:10px">
+    <div class="row" style="justify-content:space-between"><h3>Most missed lessons</h3><span class="status">${streak ? `${streak}-day streak · ` : ""}${miss} missed problem${miss === 1 ? "" : "s"} to redo</span></div>
+    ${weak.length ? `<div class="tbl-wrap"><table><tbody>${weak.map(([t, n]) => `<tr><td><button class="linkish" data-act="lesson" data-id="${t}">${LESSONS[t].title}</button></td><td class="mono" style="white-space:nowrap">${n} missed</td><td style="text-align:right"><button class="btn small" data-act="prac" data-scope="lesson" data-id="${t}" ${S.student === who ? "" : "disabled"}>Practice</button></td></tr>`).join("")}</tbody></table></div>` : `<p class="empty">No missed test or practice problems yet.</p>`}
+    ${miss && S.student === who ? `<div class="row"><button class="btn primary" data-act="prac" data-scope="misses" data-id="">Redo missed problems (${miss})</button></div>` : ""}
+  </section>`; })()}
   <section class="panel" style="display:flex;flex-direction:column;gap:10px">
-    <h3>Tests and lesson checks</h3>
+    <h3>Tests, practice and lesson checks</h3>
     ${rs.length ? `<div class="tbl-wrap"><table class="attempts"><thead><tr><th>Date</th><th>Who</th><th>What</th><th>Score</th><th>Time</th><th>Hints</th></tr></thead><tbody>
       ${rs.slice(0, 200).map(r => {
         const key = r._id || r.date + r.student;
         const open = S.openAttempt === key;
         const d = new Date(r.date);
-        const what = r.kind === "test" ? `Test · ${LEVELS[r.level]?.short || r.title}${r.length && r.length !== "full" ? " · " + TEST_LENGTHS[r.length] : ""}${r.chapter && r.chapter !== "all" ? " · " + (chapterById(r.chapter)?.title || "") : ""}` : "Lesson · " + r.title;
+        const what = r.kind === "test" ? `Test · ${LEVELS[r.level]?.short || r.title}${r.length && r.length !== "full" ? " · " + TEST_LENGTHS[r.length] : ""}${r.chapter && r.chapter !== "all" ? " · " + (chapterById(r.chapter)?.title || "") : ""}` : r.kind === "practice" ? "Practice · " + r.title : "Lesson · " + r.title;
         const row = `<tr class="click" data-act="popen" data-k="${key}" aria-expanded="${open}"><td>${d.toLocaleDateString()} ${d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</td><td>${nameOf(r.student)}</td><td>${what}</td><td class="mono">${r.correct}/${r.total}</td><td class="mono">${r.timeSec != null ? fmtTime(r.timeSec) : "–"}</td><td class="mono">${r.kind === "test" ? r.hintsUsed : "–"}</td></tr>`;
         const detail = open ? `<tr><td colspan="6"><div class="miss">${r.missed?.length ? `<b>Missed:</b><ol>${r.missed.map(m => `<li>${m.q}<br>Answered: ${m.your ?? "blank"} · Correct: ${m.correct}${m.hint ? " · hint used" : ""}</li>`).join("")}</ol>` : "No misses. Perfect score."}${r.timedOut ? "<p>Time ran out on this test.</p>" : ""}</div></td></tr>` : "";
         return row + detail;
@@ -12881,6 +12924,150 @@ function viewProgress() {
       ${resetBlock("all", who, `Reset all of ${nameOf(who)}'s progress`, `Erase every test, lesson check, and "opened" mark for ${nameOf(who)}? Their name and level stay.`)}</section>`}`;
 }
 
+/* =========================================================
+   PRACTICE: untimed, one problem at a time, answer and solution shown right away.
+   Scopes: one lesson, one chapter, or "misses" (problems missed on tests or in
+   practice and not yet answered right since).
+   Saved as results of kind "practice"; lesson checks, awards and tests are untouched.
+   ========================================================= */
+const PRAC_N = 10;
+/* the last thing that happened to each problem this person met: missed or answered right */
+function problemLog(student) {
+  const log = {};
+  const rs = store.results.filter(r => r.student === student && (r.kind === "test" || r.kind === "practice")).sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : 0);
+  for (const r of rs) {
+    for (const m of r.missed || []) if (m.id) log[m.id] = "miss";
+    for (const id of r.right || []) log[id] = "right";
+  }
+  return log;
+}
+const srcOf = id => { if (String(id).startsWith("gen:")) { const g = GENS.find(x => x.id === id.slice(4)); return g ? { g } : null; } const b = BANK.find(x => x.id === id); return b ? { b } : null; };
+function missQueue(student) {
+  const log = problemLog(student);
+  return Object.keys(log).filter(id => log[id] === "miss").map(srcOf).filter(Boolean);
+}
+const missCount = student => missQueue(student).length;
+const levelIdx = s => LEVEL_ORDER.indexOf((s.b || s.g).level);
+function makeQ(s) {
+  if (s.g) return genProblem(s.g);
+  if (!s.b.choices) return { ...s.b };
+  const perm = shuffle(s.b.choices.map((_, j) => j));
+  return { ...s.b, choices: perm.map(j => s.b.choices[j]), answer: perm.indexOf(s.b.answer) };
+}
+function pracSources(scope, id, student) {
+  if (scope === "misses") return missQueue(student);
+  const want = scope === "lesson" ? t => t === id : t => lessonMeta(t)?.chapter.id === id;
+  let bank = BANK.filter(b => want(b.topic)), gens = GENS.filter(g => want(g.topic));
+  // stay inside the person's level unless that leaves nothing
+  const okB = bank.filter(b => levelOK(student, b.level)), okG = gens.filter(g => levelOK(student, g.level));
+  if (okB.length + okG.length) { bank = okB; gens = okG; }
+  return [...bank.map(b => ({ b })), ...gens.map(g => ({ g }))];
+}
+const pracCount = (scope, id, student) => pracSources(scope, id, student).length;
+function pracDraw(scope, id, student) {
+  const all = pracSources(scope, id, student);
+  if (scope === "misses") return shuffle(all).slice(0, PRAC_N).map(makeQ);
+  const log = problemLog(student);
+  // problems not yet answered right come first, so repeat sessions walk through the whole bank
+  const fresh = shuffle(all.filter(s => s.b && log[s.b.id] !== "right")), gens = shuffle(all.filter(s => s.g)), done = shuffle(all.filter(s => s.b && log[s.b.id] === "right"));
+  const nG = Math.min(gens.length, Math.max(3, PRAC_N - fresh.length));
+  const pick = [...fresh.slice(0, PRAC_N - nG), ...gens.slice(0, nG)];
+  for (const s of [...fresh.slice(PRAC_N - nG), ...done, ...gens.slice(nG)]) { if (pick.length >= PRAC_N) break; pick.push(s); }
+  return pick.slice(0, PRAC_N).sort((a, b) => levelIdx(a) - levelIdx(b)).map(makeQ);   // easier levels first
+}
+function pracTitle(scope, id) {
+  return scope === "misses" ? "Missed problems" : scope === "lesson" ? LESSONS[id]?.title || id : chapterById(id)?.title || id;
+}
+function startPractice(scope, id) {
+  const qs = pracDraw(scope, id, S.student);
+  if (!qs.length) { toast("No problems here yet"); return; }
+  S.prac = { scope, id, student: S.student, title: pracTitle(scope, id), qs, cur: 0, answers: {}, checked: {}, hints: {}, done: false, rec: null };
+  go("practice");
+}
+function pracCheck() {
+  const p = S.prac, a = p.answers[p.cur];
+  if (a === undefined || a === "") return;
+  p.checked[p.cur] = true; render();
+}
+/* save what was answered; called on Finish and when the person walks away mid-session */
+function pracFinish() {
+  const p = S.prac; if (!p || p.done) return;
+  p.done = true;
+  const idx = p.qs.map((_, k) => k).filter(k => p.checked[k]);
+  if (!idx.length) { p.rec = null; return; }
+  const show = (q, a) => q.choices ? L(a) + ". " + strip(q.choices[a]) : String(a);
+  const ok = k => testRight(p.qs[k], p.answers[k]);
+  const rec = {
+    kind: "practice", student: p.student, scope: p.scope, title: p.title, date: new Date().toISOString(),
+    total: idx.length, correct: idx.filter(ok).length, hintsUsed: idx.filter(k => p.hints[k]).length,
+    missed: idx.filter(k => !ok(k)).map(k => ({ id: p.qs[k].id, q: strip(p.qs[k].q), topic: p.qs[k].topic, your: show(p.qs[k], p.answers[k]), correct: show(p.qs[k], p.qs[k].answer), hint: !!p.hints[k] })),
+    right: idx.filter(ok).map(k => p.qs[k].id),
+  };
+  if (p.scope === "lesson") rec.lessonId = p.id;
+  if (p.scope === "chapter") rec.chapter = p.id;
+  p.rec = rec;
+  store.add(rec).then(w => { if (w === "none" || (w === "local" && store.mode === "shared")) toast(saveMsg(w, rec.student)); });
+}
+const pracBack = p => p.scope === "lesson" ? `<button class="btn" data-act="lesson" data-id="${p.id}">Back to lesson</button>`
+  : p.scope === "chapter" ? `<button class="btn" data-act="chapter" data-id="${p.id}">Back to chapter</button>` : `<button class="btn" data-act="go" data-v="progress">See progress</button>`;
+
+function viewPractice() {
+  const p = S.prac; if (!p) return viewLearn();
+  const nDone = Object.keys(p.checked).length, nRight = p.qs.filter((q, k) => p.checked[k] && testRight(q, p.answers[k])).length;
+  if (p.done) {
+    const left = missCount(p.student), weak = [...new Set((p.rec?.missed || []).map(m => m.topic).filter(t => LESSONS[t] && t !== p.id))];
+    return `
+    <section style="display:flex;flex-direction:column;gap:8px"><span class="eyebrow">Practice · ${p.title} · ${nameOf(p.student)}</span><h1>${nRight} of ${nDone} correct</h1></section>
+    <section class="stats">
+      <div class="stat"><div class="v">${nDone ? Math.round(100 * nRight / nDone) + "%" : "–"}</div><div class="l">Score</div></div>
+      <div class="stat"><div class="v">${nDone}</div><div class="l">Problems done</div></div>
+      <div class="stat"><div class="v">${Object.keys(p.hints).length}</div><div class="l">Hints used</div></div>
+      <div class="stat"><div class="v">${left}</div><div class="l">Missed problems to redo</div></div>
+    </section>
+    ${weak.length ? `<section class="panel" style="display:flex;flex-direction:column;gap:8px"><h3>Lessons to revisit</h3><div class="row">${weak.map(t => `<button class="btn small" data-act="lesson" data-id="${t}">${LESSONS[t].title}</button>`).join("")}</div></section>` : ""}
+    <div class="row">${p.scope === "misses" ? "" : `<button class="btn primary" data-act="prac" data-scope="${p.scope}" data-id="${p.id}">Practice again</button>`}${left ? `<button class="btn ${p.scope === "misses" ? "primary" : ""}" data-act="prac" data-scope="misses" data-id="">Redo missed problems (${left})</button>` : ""}${pracBack(p)}</div>`;
+  }
+  const i = p.cur, q = p.qs[i], a = p.answers[i], chk = !!p.checked[i], ok = chk && testRight(q, a), last = i === p.qs.length - 1;
+  return `
+  <section class="runbar">
+    <div><span class="eyebrow">Practice · ${p.title} · ${nameOf(p.student)}</span><h2>Problem ${i + 1} of ${p.qs.length}</h2></div>
+    <div class="row"><span class="eyebrow">Correct</span><span class="timer">${nRight}/${nDone}</span></div>
+  </section>
+  <nav class="qnav" aria-label="Problems">${p.qs.map((x, k) => `<button class="${p.checked[k] ? (testRight(x, p.answers[k]) ? "pr-ok" : "pr-no") : ""} ${k === i ? "cur" : ""}" data-act="pjump" data-i="${k}" aria-label="Problem ${k + 1}">${k + 1}</button>`).join("")}</nav>
+  <div class="q">
+    <div class="q-h"><span class="q-n">${LEVELS[q.level]?.short || ""}${p.scope === "lesson" ? "" : ` · ${LESSONS[q.topic]?.title || ""}`}</span>${chk ? `<span class="tag ${ok ? "st-complete" : "st-soon"}">${ok ? "correct" : "missed"}</span>` : ""}</div>
+    <p style="font-size:1.08rem">${q.q}</p>
+    ${q.fig ? `<figure class="fig">${q.fig()}</figure>` : ""}
+    ${q.choices ? `<div class="choices">${q.choices.map((c, j) => `<button class="choice ${chk ? (j === q.answer ? "right" : j === a ? "wrong" : "") : ""}" aria-pressed="${a === j}" data-act="ppick" data-j="${j}" ${chk ? "disabled" : ""}><span class="L">${L(j)}</span>${c}</button>`).join("")}</div>`
+      : `<div class="row"><input class="numin aimein" id="pint" aria-label="Answer, a whole number from 0 to 999" data-act="pint" inputmode="numeric" autocomplete="off" maxlength="3" placeholder="000–999" value="${a ?? ""}" ${chk ? "disabled" : ""}>${chk ? `<span class="mono">Correct: <b>${q.answer}</b></span>` : `<button class="btn primary" data-act="pcheck">Check</button>`}</div>`}
+    ${chk ? `<div class="fb ${ok ? "ok" : "no"}"><b>Solution:</b> ${Array.isArray(q.solution) ? steps(q.solution) : q.solution}</div>`
+      : p.hints[i] ? `<div class="hint"><b>Hint:</b> ${q.hint}</div>` : `<div><button class="btn ghost" data-act="phint">Hint</button></div>`}
+  </div>
+  <div class="row" style="justify-content:space-between">
+    <div class="row">${chk && p.scope !== "lesson" && LESSONS[q.topic] ? `<button class="btn ghost" data-act="lesson" data-id="${q.topic}">Lesson: ${LESSONS[q.topic].title}</button>` : ""}</div>
+    <div class="row"><button class="btn ghost" data-act="pend">End practice</button>${chk ? `<button class="btn primary" data-act="${last ? "pend" : "pnext"}">${last ? "Finish" : "Next →"}</button>` : ""}</div>
+  </div>`;
+}
+
+/* days in a row (ending today or yesterday) with at least one saved test, check or practice */
+function streakOf(student) {
+  const day = d => { const x = new Date(d); return `${x.getFullYear()}-${x.getMonth() + 1}-${x.getDate()}`; };
+  const days = new Set(store.results.filter(r => r.student === student).map(r => day(r.date)));
+  const d = new Date(); let n = 0;
+  if (!days.has(day(d))) d.setDate(d.getDate() - 1);
+  while (days.has(day(d))) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+/* lessons this person misses most on tests and practice, newest results first */
+function weakLessons(student, max = 8) {
+  const n = {};
+  for (const r of store.results) if (r.student === student && (r.kind === "test" || r.kind === "practice"))
+    for (const m of r.missed || []) if (LESSONS[m.topic]) n[m.topic] = (n[m.topic] || 0) + 1;
+  return Object.entries(n).sort((a, b) => b[1] - a[1]).slice(0, max);
+}
+/* AMC 10/12 scoring: 6 per right answer, 1.5 per blank, 0 per wrong */
+const amcScored = level => level === "amc10" || level === "amc12";
+const amcScore = (correct, blank) => 6 * correct + 1.5 * blank;
 /* =========================================================
    TEXTBOOK VIEW: table of contents, one chapter per page, pop-up notes, search
    ========================================================= */
@@ -12970,7 +13157,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape") closePop(); 
    ========================================================= */
 function render() {
   renderChrome();
-  const v = { home: viewHome, learn: viewLearn, chapter: viewChapter, lesson: viewLesson, book: viewBook, formulas: viewFormulas, setup: viewSetup, test: viewTest, result: viewResult, progress: viewProgress, profile: viewProfile }[S.view] || viewHome;
+  const v = { home: viewHome, learn: viewLearn, chapter: viewChapter, lesson: viewLesson, book: viewBook, formulas: viewFormulas, setup: viewSetup, test: viewTest, result: viewResult, progress: viewProgress, profile: viewProfile, practice: viewPractice }[S.view] || viewHome;
   app.innerHTML = v();
 }
 
@@ -12998,6 +13185,8 @@ app.addEventListener("change", e => {
 app.addEventListener("input", e => {
   const ti = e.target.closest('[data-act="tint"]');
   if (ti && S.test) { const v = ti.value.replace(/\D/g, "").slice(0, 3); ti.value = v; S.test.answers[S.test.cur] = v === "" ? undefined : v; document.querySelector(".qnav .cur")?.classList.toggle("ans", v !== ""); return; }
+  const pi = e.target.closest('[data-act="pint"]');
+  if (pi && S.prac) { const v = pi.value.replace(/\D/g, "").slice(0, 3); pi.value = v; S.prac.answers[S.prac.cur] = v === "" ? undefined : v; return; }
   const bs = e.target.closest('[data-act="bsearch"]');
   if (bs) { S.bookQ = bs.value; $("#bres").innerHTML = bookResults(S.bookQ); return; }
   const el = e.target.closest('[data-act="qnum"]'); if (!el) return;
@@ -13031,6 +13220,14 @@ app.addEventListener("click", async e => {
     case "tlen": S.testLen = b.dataset.k; render(); break;
     case "tchap": S.testChapter = b.dataset.id; render(); break;
     case "start": startTest(); break;
+    case "prac": startPractice(b.dataset.scope, b.dataset.id); break;
+    case "ppick": S.prac.answers[S.prac.cur] = +b.dataset.j; pracCheck(); break;
+    case "pcheck": pracCheck(); break;
+    case "phint": S.prac.hints[S.prac.cur] = true; render(); break;
+    case "pnext": S.prac.cur++; render(); window.scrollTo(0, 0); break;
+    case "pjump": S.prac.cur = +b.dataset.i; render(); break;
+    case "pend": pracFinish(); render(); window.scrollTo(0, 0); break;
+    case "tflag": t.flags[t.cur] = !t.flags[t.cur]; render(); break;
     case "tpick": t.answers[t.cur] = +b.dataset.j; render(); break;
     case "thint": t.hints[t.cur] = true; render(); break;
     case "tjump": t.cur = +b.dataset.i; t.confirming = t.quitting = false; render(); break;
@@ -13072,8 +13269,31 @@ app.addEventListener("click", async e => {
   }
 });
 
+/* keyboard: A–E (or 1–5) answer, arrows move, F marks a test question, Enter checks or moves on in practice */
+document.addEventListener("keydown", e => {
+  if (e.ctrlKey || e.metaKey || e.altKey || document.querySelector(".award-ov")) return;
+  const inField = e.target.matches?.("input, textarea, select"), k = e.key.toLowerCase();
+  const letter = "abcde".indexOf(k) >= 0 && k.length === 1 ? "abcde".indexOf(k) : "12345".indexOf(k) >= 0 && k.length === 1 ? "12345".indexOf(k) : -1;
+  if (S.view === "test" && S.test && !S.test.confirming && !S.test.quitting) {
+    const t = S.test, q = t.qs[t.cur];
+    if (!inField && q.choices && letter >= 0 && letter < q.choices.length) { t.answers[t.cur] = letter; render(); }
+    else if (!inField && k === "f") { t.flags[t.cur] = !t.flags[t.cur]; render(); }
+    else if (k === "arrowright" && !inField && t.cur < t.qs.length - 1) { t.cur++; render(); }
+    else if (k === "arrowleft" && !inField && t.cur > 0) { t.cur--; render(); }
+    else return;
+    e.preventDefault();
+  } else if (S.view === "practice" && S.prac && !S.prac.done) {
+    const p = S.prac, q = p.qs[p.cur], chk = p.checked[p.cur];
+    if (!inField && !chk && q.choices && letter >= 0 && letter < q.choices.length) { p.answers[p.cur] = letter; pracCheck(); }
+    else if (k === "enter" && !chk && !q.choices) pracCheck();
+    else if ((k === "enter" || k === "arrowright") && chk && !(inField && k !== "enter")) { if (p.cur < p.qs.length - 1) { p.cur++; render(); window.scrollTo(0, 0); } else { pracFinish(); render(); } }
+    else return;
+    e.preventDefault();
+  }
+});
+
 // re-render on data changes, but never wipe a half-typed lesson answer or a running test
-store.listeners.push(() => { if (S.view !== "test" && !document.activeElement?.matches?.(".numin")) render(); });
+store.listeners.push(() => { if (S.view !== "test" && !(S.view === "practice" && S.prac && !S.prac.done) && !document.activeElement?.matches?.(".numin")) render(); });
 render();
 store.init();
 </script>
