@@ -359,6 +359,15 @@ th{font-weight:600;color:var(--muted);font-size:.8rem;text-transform:uppercase;l
 .facts .lbl{font-family:var(--f-mono);font-size:.75rem;color:var(--accent);text-transform:uppercase;letter-spacing:.06em}
 .facts ul{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:4px}
 .btraps ul{margin:4px 0 0;padding-left:1.3em}
+.bdeep{border-left:3px solid var(--accent);padding:4px 0 4px 16px;display:flex;flex-direction:column;gap:8px}
+.bdeep .lab,.btips .lab{font-family:var(--f-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--accent)}
+.bdeep p{margin:0}
+.fcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 16px;display:flex;flex-direction:column;gap:6px}
+.fcard p{margin:0}
+.fc-h{font-weight:700}
+.fc-f{font-size:1.08rem;background:var(--accent-soft,var(--good-soft));border-radius:8px;padding:8px 12px;overflow-x:auto}
+.btips{background:var(--accent-soft,var(--good-soft));border-radius:10px;padding:12px 16px}
+.btips ul{margin:4px 0 0;padding-left:1.3em;display:flex;flex-direction:column;gap:4px}
 
 /* examples switch */
 .exsw{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px 4px 6px;font-size:.84rem;color:var(--ink);white-space:nowrap}
@@ -11002,6 +11011,918 @@ BOOK.push(
   { id: "notes", t: "All notes A to Z", h: `<div class="notes-az">${Object.entries(POPS).sort((a, b) => a[1].t.localeCompare(b[1].t)).map(([k, p]) => pop(k, p.t)).join("")}</div>` },
   ] },
 );
+/* TEXTBOOK "In depth" layer: full discussion, formula cards, tips, extra examples.
+   BX["chapter.section"] = html, merged into that section before its Practice row (see 0639z). */
+const BX = {};
+const bx = (key, html) => { BX[key] = html; };
+const deep = paras => `<div class="bdeep"><span class="lab">In depth</span>${paras.map(p => `<p>${p}</p>`).join("")}</div>`;
+const fc = (name, formula, why, when) => `<div class="fcard"><div class="fc-h">${name}</div><div class="fc-f">${formula}</div><p><b>Why it's true.</b> ${why}</p><p><b>When to reach for it.</b> ${when}</p></div>`;
+const tips = items => `<div class="btips"><span class="lab">Tips</span><ul>${items.map(x => `<li>${x}</li>`).join("")}</ul></div>`;
+/* In depth: contests, arithmetic, algebra I, exponents/radicals/logs */
+bx("start.habits", `
+${deep([
+  "Most contest problems have a short solution and a long one. The long one usually works too, but it eats the minutes you need for the last five problems. The habits above are how you find the short one: you slow down for ten seconds at the start so you can speed up for the rest.",
+  "\"Try small cases\" deserves special attention. When a problem says 2026, the number is almost never special. The problem writer picked the year. Replace it with 1, 2, 3, 4, compute those by hand, and look at the answers in a row. Usually a pattern jumps out (the answers double, or they're squares, or they alternate). Then you only have to explain why the pattern continues.",
+  "\"Name things\" matters more than it sounds. Writing \"let x be the number of boys\" forces you to decide what x is, and many wrong answers come from solving for the right number and then reporting the wrong one (the girls instead of the boys, the radius instead of the diameter)."])}
+${tips([
+  "Before computing, ask: what would the answer look like? An integer? A fraction with a π? This rules out choices and catches errors.",
+  "If you're stuck for more than two minutes on an AMC problem, mark it and move on. Come back with fresh eyes.",
+  "Write neatly enough to re-read. Most \"silly mistakes\" are misreading your own handwriting.",
+  "When two answer choices differ by exactly a factor of 2, or by 1, the problem is probably testing double-counting or an off-by-one error.",
+  "After you finish, plug your answer back into the original words, not your equation. Equations can be set up wrong."])}
+${ex("How many numbers are in the list 7, 11, 15, …, 403?", ["Small case thinking: the list 7, 11 has 2 numbers, and (11 − 7)/4 = 1. So the count is (gap ÷ step) + 1.", "(403 − 7)/4 + 1 = 396/4 + 1 = 99 + 1 = <b>100</b>.", "The +1 is the fence-post fix: 99 gaps need 100 posts."])}`);
+
+bx("arith.fractions", `
+${deep([
+  "A fraction a/b means \"a divided by b\", and it also means \"a parts out of b equal parts\". A percent is just a fraction with denominator 100: 37% = 37/100. A decimal is a fraction with denominator 10, 100, 1000…. So these are three spellings of one idea, and you should switch to whichever spelling makes the arithmetic easiest.",
+  "The single most useful idea in percent problems is the <b>multiplier</b>. Increasing by 15% means multiplying by 1.15. Decreasing by 15% means multiplying by 0.85. Once every change is a multiplier, a chain of changes is just a product, and order doesn't matter: up 10% then down 20% is the same as down 20% then up 10%, because 1.1 × 0.8 = 0.8 × 1.1.",
+  "Percent change always compares to the <b>starting</b> value. If a price goes from 80 to 100, that's a 25% increase (20/80). Going back from 100 to 80 is a 20% decrease (20/100). Same 20-dollar change, different base."])}
+${fc("Percent change", "percent change = (new − old) ÷ old × 100%", "You're asking what fraction of the original the change is.", "Any \"by what percent did it increase or decrease\" question. Identify old and new first.")}
+${fc("Successive changes", "start × (1 + p₁)(1 + p₂)(1 + p₃)…", "Each change acts on the result of the previous one, so you multiply rather than add.", "Discounts on discounts, interest, populations that grow by a percent each year.")}
+${fc("Working backward from a percent", "original = final ÷ multiplier", "If final = original × 0.8, divide both sides by 0.8.", "\"After a 20% discount the price is $64. What was it before?\" Answer: 64 ÷ 0.8 = 80, not 64 × 1.2 = 76.80.")}
+${tips([
+  "Memorize the eighths: 1/8 = 12.5%, 3/8 = 37.5%, 5/8 = 62.5%, 7/8 = 87.5%. They show up constantly.",
+  "To compare fractions, cross-multiply: 5/7 vs 7/10 compares 50 vs 49, so 5/7 is bigger.",
+  "When a percent problem gives no starting number, start with 100.",
+  "x% of y = y% of x. So 4% of 75 is the same as 75% of 4 = 3.",
+  "Repeating decimals: a two-digit block repeating forever is that block over 99. So 0.272727… = 27/99 = 3/11, and 0.444… = 4/9."])}
+${ex("A shirt is discounted 25%, and then a coupon takes another 20% off the sale price. A second shirt is discounted 45% once. Which is cheaper, and by what percent of the original price?", ["First shirt: 0.75 × 0.8 = 0.60 of the original, a 40% total discount.", "Second shirt: 0.55 of the original, a 45% discount.", "The second is cheaper by <b>5% of the original price</b>.", "Note that 25% + 20% = 45% is the trap: stacked discounts give less than their sum."])}`);
+
+bx("arith.ratios", `
+${deep([
+  "A ratio compares sizes without telling you the actual amounts. \"Red to blue is 2 : 3\" fits 2 red and 3 blue, or 20 and 30, or 2k and 3k for any k. That k (the \"size of one part\") is the hidden unknown in almost every ratio problem. Find k from whatever actual number you're given, and everything else follows.",
+  "Rates are ratios with units: miles per hour, dollars per pound, jobs per day. The formula distance = rate × time is really three formulas in one, and a table with columns for rate, time and amount keeps you organized when there are two travelers or two workers.",
+  "Two kinds of proportion show up. <b>Direct:</b> more of one means more of the other in the same ratio (more gallons, more miles). <b>Inverse:</b> more of one means less of the other so that the product stays fixed (more workers, fewer days). Ask yourself which kind before setting up an equation."])}
+${fc("Parts method", "amounts = (ratio part) × k", "A ratio a : b says the amounts are multiples of a and b by the same factor.", "Any ratio problem with one real number given: a total, a difference, or one amount.")}
+${fc("Combined work rate", "1/T = 1/a + 1/b, so T = ab/(a + b)", "Rates (jobs per hour) add when people work at the same time. The time for one job is 1 ÷ rate.", "Two pipes, two painters, two machines. With a drain, subtract its rate.")}
+${fc("Average speed", "average speed = total distance ÷ total time", "Speed is defined that way. For equal distances at speeds a and b this gives 2ab/(a + b).", "Round trips and multi-leg trips. Never average the speeds unless the times are equal.")}
+${tips([
+  "Units are a free check: (miles/hour) × hours = miles. If the units of your answer are wrong, the setup is wrong.",
+  "To combine ratios a : b and b : c that share b, scale them so b matches. 2 : 3 and 4 : 5 become 8 : 12 and 12 : 15, so a : b : c = 8 : 12 : 15.",
+  "For meeting problems, use the relative speed: add speeds toward each other, subtract for a chase.",
+  "Worker-days and person-hours: a job that takes 6 people 10 days is 60 person-days of work."])}
+${ex("A recipe uses flour and sugar in ratio 5 : 2. A baker has 3 cups of sugar and wants to use all of it. She also wants the total of flour plus sugar to be 14 cups, so she adds some cocoa to fill the rest. How much cocoa?", ["Sugar is 2 parts = 3 cups, so one part is 1.5 cups.", "Flour is 5 parts = 7.5 cups.", "Flour + sugar = 10.5 cups, so cocoa = 14 − 10.5 = <b>3.5 cups</b>."])}`);
+
+bx("arith.averages", `
+${deep([
+  "The mean is the \"fair share\" value: if everyone pooled their numbers and split evenly, each would get the mean. That picture explains most tricks. Adding a new number above the mean pulls the mean up; below pulls it down; exactly at the mean leaves it unchanged.",
+  "Because sum = mean × count, every mean problem can be turned into a sum problem, and sums are easy to add and subtract. When two groups combine, add their sums and add their counts. Never average the two means unless the groups are the same size.",
+  "The median only cares about order. Changing the biggest number in a list to something enormous doesn't move the median at all, but it can move the mean a lot. Contest problems love to ask for the smallest possible mean or the largest possible value given a fixed median, so list the numbers in order and fill them in from the constraints."])}
+${fc("Weighted mean", "mean = (n₁m₁ + n₂m₂) ÷ (n₁ + n₂)", "Turn each group's mean into its sum (count × mean), add, divide by the total count.", "Two classes, two test sections, mixing groups of different sizes.")}
+${fc("Evenly spaced lists", "mean = median = (first + last) ÷ 2", "The list is symmetric around its middle.", "Consecutive integers, consecutive odd numbers, any arithmetic sequence.")}
+${tips([
+  "For \"largest possible value\" questions, make everything else as small as the rules allow.",
+  "If a list has n numbers with mean m and you remove one number x, the new mean is (nm − x)/(n − 1).",
+  "Mode questions: the mode must appear more often than any other value, so count carefully.",
+  "With an even number of values, the median is the average of the two middle ones and need not be in the list."])}
+${ex("Seven positive integers have median 10 and mean 12. What is the largest possible value of the biggest one?", ["Sum = 7 × 12 = 84.", "Sorted: a ≤ b ≤ c ≤ 10 ≤ e ≤ f ≤ g. To make g big, make the rest small: a = b = c = 1 is allowed, and the middle is 10.", "e and f must be at least 10: take e = f = 10.", "g = 84 − (1 + 1 + 1 + 10 + 10 + 10) = <b>51</b>."])}`);
+
+bx("arith.tricks", `
+${deep([
+  "Every shortcut on this page comes from one of two laws you already know: the distributive law, a(b + c) = ab + ac, and the difference of squares, (a − b)(a + b) = a² − b². The skill is noticing when a calculation has that shape in disguise.",
+  "Look for a \"center\". 38 × 42 has center 40, so it's 40² − 2². 997 × 1003 has center 1000. If the two numbers aren't the same distance from a round number, you can still write them as (100 − 3)(100 + 5) and expand: 10000 + 200 − 15.",
+  "Pairing is the other big idea. Gauss added 1 to 100 by pairing 1 + 100, 2 + 99, and so on, getting 50 pairs of 101. The same trick works for any arithmetic list, and a cousin of it (pairing a term with its \"mirror\") works for many sums with symmetry."])}
+${fc("Gauss sum", "1 + 2 + ··· + n = n(n + 1)/2", "Write the sum forward and backward and add: each column is n + 1 and there are n columns, giving twice the sum.", "Any sum of consecutive integers, triangular numbers, counting handshakes (that's C(n, 2) = (n − 1)n/2).")}
+${fc("Sum of the first n odd numbers", "1 + 3 + 5 + ··· + (2n − 1) = n²", "Each odd number adds an L-shaped border that grows a square by one size.", "Sums of odd numbers, and spotting squares in patterns.")}
+${tips([
+  "Multiply by 5 as ×10 ÷ 2; by 25 as ×100 ÷ 4; by 125 as ×1000 ÷ 8.",
+  "Dividing by 5 is ×2 ÷ 10: 435 ÷ 5 = 87.",
+  "Square numbers ending in 5: 85² = 8 · 9 = 72, then attach 25: 7225.",
+  "Check a product's last digit and rough size against the choices before doing it in full.",
+  "Name a big repeated number n to see the algebra: 2025² − 2024 · 2026 = n² − (n − 1)(n + 1) = 1."])}
+${ex("Compute 1² − 2² + 3² − 4² + ··· + 19² − 20².", ["Pair terms: (1² − 2²) + (3² − 4²) + ···.", "Each pair is (k − (k + 1))(k + (k + 1)) = −(2k + 1).", "So the sum is −(1 + 2 + 3 + ··· + 20) = −(20 · 21/2) = <b>−210</b>."])}`);
+
+bx("alg1.expr", `
+${deep([
+  "An expression is a recipe for a number, with letters standing for inputs you haven't chosen yet. Simplifying means writing the same recipe in a shorter form that gives the same number for every input. That last phrase is the test: if two expressions are truly equal, they agree for x = 0, x = 1, x = 2, and every other x. Plugging in a couple of values is a fast check on your algebra.",
+  "Most algebra errors are sign errors and distribution errors. A minus sign in front of parentheses multiplies every term inside by −1. Squaring a sum gives a middle term: (x + 3)² is x² + 6x + 9, not x² + 9.",
+  "Contest problems often give you combinations (like a + b and ab) and ask for another combination (like a² + b²). You almost never need to find a and b. Instead, look for an identity that connects what you have to what you want."])}
+${fc("Square of a sum", "(a + b)² = a² + 2ab + b²", "Multiply out (a + b)(a + b): you get a², two copies of ab, and b².", "Anything with a + b and ab, or when you see a² + b² next to ab.")}
+${fc("Sum of squares from sum and product", "a² + b² = (a + b)² − 2ab", "Rearrange the square of a sum.", "Finding a² + b² for the roots of a quadratic without solving it.")}
+${fc("Three variables", "(a + b + c)² = a² + b² + c² + 2(ab + bc + ca)", "Each pair appears twice when you multiply out.", "Given a + b + c and a² + b² + c², find ab + bc + ca.")}
+${tips([
+  "Combine like terms only when variables and powers match exactly.",
+  "Distribute a negative to every term: −(3x − 2y + 1) = −3x + 2y − 1.",
+  "Evaluate after simplifying. Huge numbers usually cancel.",
+  "If an expression is symmetric in a and b, the answer usually depends only on a + b and ab."])}
+${ex("If x − y = 3 and xy = 10, find x² + y² and x³ − y³.", ["x² + y² = (x − y)² + 2xy = 9 + 20 = <b>29</b>.", "x³ − y³ = (x − y)(x² + xy + y²) = 3 · (29 + 10) = <b>117</b>.", "Check with real values: x = 5, y = 2 gives 25 + 4 = 29 and 125 − 8 = 117. ✓"])}`);
+
+bx("alg1.lineq", `
+${deep([
+  "A linear equation has the unknown only to the first power. Solving one is a sequence of \"undo\" steps that keeps the two sides equal. Whatever you do to one side, do to the other, and the solution doesn't change.",
+  "A system of two linear equations is two lines; the solution is where they cross. Elimination (add or subtract the equations to kill a variable) and substitution (solve one for a variable and plug in) always work. But contests reward a third approach: look at what's asked. If they want x + y, try adding or subtracting the equations before solving for anything.",
+  "Watch for the special cases. If elimination wipes out both variables and leaves a true statement like 0 = 0, the lines are the same and there are infinitely many solutions. If it leaves something false like 0 = 4, the lines are parallel and there's no solution."])}
+${fc("Elimination", "multiply equations so one variable's coefficients match, then add or subtract", "Adding equal things to equal things keeps them equal.", "Two equations, two unknowns, especially with nice coefficients.")}
+${fc("Number of solutions of ax + by = c, dx + ey = f", "one solution unless a/d = b/e", "When the coefficient ratios match, the lines have the same slope, so they're parallel or identical.", "\"For what k does the system have no solution (or infinitely many)?\"")}
+${tips([
+  "Clear fractions first by multiplying through by the common denominator.",
+  "With three equations that each leave out one variable, add all three.",
+  "Check your solution in both original equations, not just the one you used last.",
+  "Use a letter that reminds you what it means: c for cost, t for time."])}
+${ex("2x + 3y + 4z = 20 and 4x + 3y + 2z = 16. Find x + y + z.", ["Two equations, three unknowns: you can't find each variable, but you might find the sum.", "Add them: 6x + 6y + 6z = 36.", "Divide by 6: x + y + z = <b>6</b>."])}`);
+
+bx("alg1.words", `
+${deep([
+  "Word problems are translation problems. The math is usually easy once the equation is right, so spend your effort on the setup. Read a sentence, write what it says in symbols, then read the next.",
+  "Choose one unknown when you can and express everything else in terms of it. \"Ann has 3 more than twice what Bo has\" becomes Bo = b, Ann = 2b + 3. Fewer letters means fewer equations to juggle.",
+  "Time words need care. \"In 5 years\" adds 5 to everyone's age; \"5 years ago\" subtracts 5. \"Twice as old as she was\" refers to her age back then, not now."])}
+${fc("Translation table", "is → = &nbsp; of → × &nbsp; more than → + &nbsp; less than → reversed − &nbsp; per → ÷", "These are the standard English meanings.", "Every word problem. \"7 less than n\" is n − 7.")}
+${tips([
+  "Write a one-line definition of each variable before you start.",
+  "Draw a timeline for age and motion problems.",
+  "For coin problems, write one equation for the number of coins and one for the value (in cents).",
+  "Check the answer against the story: ages can't be negative, people come in whole numbers."])}
+${ex("Ten years ago, Sam was 3 times as old as Kim. In five years, Sam will be twice as old as Kim. How old is Kim now?", ["Let Kim be k now and Sam be s now.", "Ten years ago: s − 10 = 3(k − 10), so s = 3k − 20.", "In five years: s + 5 = 2(k + 5), so s = 2k + 5.", "3k − 20 = 2k + 5 gives k = <b>25</b> (and s = 55). Check: 45 = 3 · 15 and 60 = 2 · 30. ✓"])}`);
+
+bx("alg1.ineq", `
+${deep([
+  "Inequalities work like equations with one big exception: multiplying or dividing by a negative number reverses the direction. That's because negation flips the number line: 2 < 5 but −2 > −5.",
+  "Absolute value is distance. |x − 3| is how far x is from 3. So |x − 3| < 4 means \"x is within 4 of 3\", which is the interval from −1 to 7. Thinking of distance makes absolute value equations and inequalities quick and visual.",
+  "For sums of absolute values like |x − 1| + |x − 5|, think of total distance from x to the points 1 and 5. Anywhere between 1 and 5, the total is 4. Outside, it's more. With an odd number of points, the minimum is at the middle point (the median)."])}
+${fc("Absolute value inequalities", "|x − a| < r ⟺ a − r < x < a + r &nbsp;&nbsp; |x − a| > r ⟺ x < a − r or x > a + r", "Distance from a is less than r means you're within r on either side.", "Any inequality with one absolute value.")}
+${fc("Squares are never negative", "(anything)² ≥ 0, with equality only when it's 0", "A positive times a positive and a negative times a negative are both positive.", "Proving inequalities, and finding minimums by completing the square.")}
+${tips([
+  "When you divide by a variable, you don't know its sign. Move everything to one side and factor instead.",
+  "For |expression| = k, solve expression = k and expression = −k, then check both.",
+  "Count integers in a ≤ x ≤ b as b − a + 1. For strict inequalities, adjust the ends first.",
+  "Test a value from each region to see which pieces satisfy a messy inequality."])}
+${ex("Solve (x − 2)(x + 3) < 0.", ["The product is negative when the factors have opposite signs.", "The zeros are x = 2 and x = −3. They split the number line into three regions.", "Test x = 0: (−2)(3) = −6 < 0 ✓. Test x = 5: positive. Test x = −5: positive.", "So <b>−3 < x < 2</b>."])}`);
+
+bx("exp.rules", `
+${deep([
+  "An exponent counts repeated multiplication: 2⁵ = 2 · 2 · 2 · 2 · 2. Every exponent rule falls out of that counting. Multiplying 2³ by 2⁴ strings together 3 twos and 4 twos, so 7 twos: you add exponents. Raising 2³ to the 4th power makes 4 groups of 3 twos: you multiply exponents.",
+  "Zero and negative exponents are defined so that the rules keep working. Since 2⁵ ÷ 2⁵ should be 2⁰ and also equals 1, we need 2⁰ = 1. Since 2³ ÷ 2⁵ = 2⁻² and also equals 1/4, we need 2⁻² = 1/2².",
+  "The most common contest move is rewriting everything in the same base. 8 = 2³, 16 = 2⁴, 32 = 2⁵, 9 = 3², 27 = 3³, 81 = 3⁴, 125 = 5³. Once the bases match, you compare or set equal the exponents."])}
+${fc("Product and power rules", "aᵐ · aⁿ = aᵐ⁺ⁿ &nbsp;&nbsp; (aᵐ)ⁿ = aᵐⁿ &nbsp;&nbsp; (ab)ⁿ = aⁿbⁿ", "Count the factors.", "Simplifying, and solving equations like 4ˣ = 8 (write both as powers of 2: 2²ˣ = 2³).")}
+${fc("Fractional exponents", "a^(m/n) = (ⁿ√a)ᵐ", "(a^(1/n))ⁿ should be a¹ = a, so a^(1/n) is the nth root.", "Expressions like 27^(2/3) = 3² = 9. Take the root first to keep numbers small.")}
+${tips([
+  "Adding equal powers: 5ⁿ + 5ⁿ + 5ⁿ + 5ⁿ + 5ⁿ = 5 · 5ⁿ = 5ⁿ⁺¹.",
+  "(−2)⁴ = 16 but −2⁴ = −16. The exponent binds tighter than the minus.",
+  "If aˣ = aʸ with a > 0 and a ≠ 1, then x = y.",
+  "Factor out the smallest power before simplifying a sum: 3¹⁰ − 3⁸ = 3⁸(9 − 1) = 8 · 3⁸."])}
+${ex("If 2ᵃ = 3 and 2ᵇ = 5, write 2^(2a + b) and 8^(a − b) as numbers.", ["2^(2a + b) = (2ᵃ)² · 2ᵇ = 9 · 5 = <b>45</b>.", "8^(a − b) = 2^(3a − 3b) = (2ᵃ)³ ÷ (2ᵇ)³ = 27/125 = <b>27/125</b>."])}`);
+
+bx("exp.compare", `
+${deep([
+  "Contest problems sometimes ask which of several enormous numbers is biggest. You can't compute them, but you don't need to. The trick is to make them comparable: same exponent (then compare bases) or same base (then compare exponents).",
+  "To get a common exponent, look for the gcd of the exponents. 2⁴⁰⁰, 3³⁰⁰, 5²⁰⁰ all share 100: they're (2⁴)¹⁰⁰ = 16¹⁰⁰, (3³)¹⁰⁰ = 27¹⁰⁰, (5²)¹⁰⁰ = 25¹⁰⁰. Now it's obvious 3³⁰⁰ is biggest.",
+  "When that fails, use logarithms or benchmarks. 2¹⁰ = 1024 is just over 10³, so 2¹⁰⁰ is a little over 10³⁰ (it has 31 digits). log₁₀ 2 ≈ 0.301 and log₁₀ 3 ≈ 0.477 let you estimate the number of digits of any power of 2 or 3."])}
+${fc("Digits from logs", "number of digits of N = ⌊log₁₀ N⌋ + 1", "N has k digits exactly when 10ᵏ⁻¹ ≤ N < 10ᵏ.", "\"How many digits does 2⁵⁰ have?\" 50 × 0.301 = 15.05, so 16 digits.")}
+${tips([
+  "When bases are close (like 99¹⁰⁰ vs 100⁹⁹), divide one by the other and compare to 1.",
+  "Square roots and cube roots: compare √5 + √7 to √3 + √9 by squaring both.",
+  "For fractions like 2¹⁰⁰/3⁶⁰, rewrite as (2⁵/3³)²⁰ = (32/27)²⁰ > 1."])}
+${ex("Which is bigger, 31¹¹ or 17¹⁴?", ["31 < 32 = 2⁵, so 31¹¹ < 2⁵⁵.", "17 > 16 = 2⁴, so 17¹⁴ > 2⁵⁶.", "2⁵⁵ < 2⁵⁶, so <b>17¹⁴</b> is bigger. Bounding by powers of 2 avoids all computation."])}`);
+
+bx("exp.radicals", `
+${deep([
+  "√a means the nonnegative number whose square is a. The main rule is √(ab) = √a · √b, which lets you pull perfect-square factors out: √72 = √(36 · 2) = 6√2. There is no rule for √(a + b); √(9 + 16) is 5, not 7.",
+  "Simplified form means no perfect-square factor under the root and no root in a denominator. To clear a root from the bottom, multiply top and bottom by the same root (for √a) or by the conjugate (for a + √b), which uses the difference of squares to make the root disappear.",
+  "Nested radicals like √(11 + 6√2) often hide a perfect square: try to write it as (√m + √n)² = m + n + 2√(mn). Match m + n = 11 and 2√(mn) = 6√2 so mn = 18: m = 9, n = 2, giving 3 + √2."])}
+${fc("Conjugates", "(a + √b)(a − √b) = a² − b", "Difference of squares: the middle terms cancel.", "Rationalizing denominators, and telescoping sums of 1/(√(n + 1) + √n).")}
+${fc("Estimating roots", "√n is between the integers whose squares bracket n", "Square roots grow with n.", "\"How many integers are between √20 and √200?\" 4.4 to 14.1 gives 5 through 14: 10 integers.")}
+${tips([
+  "√(x²) = |x|, not x. This matters when x might be negative.",
+  "Like radicals add like terms: 2√3 + 5√3 = 7√3. Unlike radicals (√2 and √3) don't combine.",
+  "Cube roots of negatives are fine: ∛(−27) = −3.",
+  "Squaring both sides of an equation with a root can introduce fake solutions. Always check."])}
+${ex("Solve √(x + 7) = x − 5.", ["Square: x + 7 = x² − 10x + 25, so x² − 11x + 18 = 0.", "Factor: (x − 2)(x − 9) = 0, so x = 2 or x = 9.", "Check x = 2: √9 = 3 but 2 − 5 = −3. Fake.", "Check x = 9: √16 = 4 = 9 − 5. ✓ Answer: <b>x = 9</b>."])}`);
+
+bx("exp.logs", `
+${deep([
+  "A logarithm answers \"what exponent?\". log₂ 8 = 3 because 2³ = 8. So every log statement is an exponent statement in disguise, and when a log problem feels confusing, rewrite it as an exponent: log_b x = y means bʸ = x.",
+  "The log rules are the exponent rules read backward. Multiplying numbers adds exponents, so logs turn products into sums: log(xy) = log x + log y. Powers multiply exponents, so log(xⁿ) = n log x. That's why logs were invented: they turn hard multiplication into easy addition.",
+  "The change of base formula lets you switch to any base you like, usually one that makes the numbers nice. A useful special case: log_a b · log_b c = log_a c, which makes chains of logs collapse."])}
+${fc("Product, quotient, power", "log(xy) = log x + log y &nbsp;&nbsp; log(x/y) = log x − log y &nbsp;&nbsp; log(xⁿ) = n log x", "These are the exponent rules aᵐaⁿ = aᵐ⁺ⁿ and (aᵐ)ⁿ = aᵐⁿ written in log language.", "Combining or splitting log expressions; solving equations with several logs.")}
+${fc("Change of base", "log_a b = log b ÷ log a (any base on top and bottom)", "If aʸ = b, take logs in any base: y log a = log b.", "Mixed bases, like log₄ 8 = log₂ 8 / log₂ 4 = 3/2.")}
+${fc("Reciprocal", "log_a b = 1 ÷ log_b a", "Change of base with the two logs swapped.", "Sums like 1/log₂ N + 1/log₃ N + 1/log₅ N = log_N 30.")}
+${tips([
+  "log of 1 is 0 in every base; log_b b = 1.",
+  "You can only take logs of positive numbers. Check that solutions don't make any log's input zero or negative.",
+  "a^(log_a x) = x. This undoes a log.",
+  "Number of digits: ⌊log₁₀ N⌋ + 1."])}
+${ex("Solve log₂ x + log₂(x − 2) = 3.", ["Combine: log₂(x(x − 2)) = 3, so x(x − 2) = 8.", "x² − 2x − 8 = 0 factors as (x − 4)(x + 2) = 0.", "x = −2 makes log₂ x undefined, so throw it out.", "<b>x = 4</b>. Check: log₂ 4 + log₂ 2 = 2 + 1 = 3. ✓"])}`);
+/* In depth: algebra II and sequences */
+bx("alg2.functions", `
+${deep([
+  "A function is a machine: put in x, get out exactly one f(x). The notation f(3) just means \"run the machine on 3\". Writing f(x + 1) means \"run it on x + 1\", so replace every x in the rule with (x + 1), parentheses included.",
+  "Composition f(g(x)) runs g first, then feeds the result into f. Order matters: if f doubles and g adds 1, then f(g(x)) = 2x + 2 but g(f(x)) = 2x + 1. An inverse function undoes the machine: f⁻¹(f(x)) = x. To find it, write y = f(x), swap x and y, and solve for y.",
+  "Graph transformations follow a pattern that feels backward at first. f(x − 3) shifts the graph 3 to the <b>right</b>, because the machine now needs an input 3 bigger to produce the same output. f(x) + 3 shifts up 3. f(2x) squeezes the graph horizontally by half.",
+  "Functional equations (\"f(x) + f(1 − x) = 1 for all x\") are solved by plugging in clever values. Try x = 0, x = 1, values that make two terms equal, or replace x with something that turns the equation into a second equation you can combine with the first."])}
+${fc("Inverse", "y = f(x) → swap x and y → solve for y", "The inverse undoes f, so it trades the roles of input and output.", "\"Find f⁻¹(7)\": solve f(x) = 7 instead of finding the whole inverse.")}
+${fc("Shifts", "y = f(x − h) + k moves the graph h right and k up", "A point (a, b) on f becomes (a + h, b + k).", "Recognizing parabolas y = a(x − h)² + k (vertex (h, k)) and circle equations.")}
+${tips([
+  "f(x)² usually means (f(x))², but f²(x) can mean f(f(x)). Read the problem's convention.",
+  "To find f(f(f(2))), work from the inside out and write each step.",
+  "Iterated functions often cycle. Compute a few and look for repetition.",
+  "If f(a) = f(b) and f is one-to-one (never repeats outputs), then a = b."])}
+${ex("f(x) = (x + 1)/(x − 1). Find f(f(x)), then f(f(f(… f(3)…))) with 2027 f's.", ["f(f(x)) = ((x + 1)/(x − 1) + 1) / ((x + 1)/(x − 1) − 1).", "Multiply top and bottom by (x − 1): (x + 1 + x − 1)/(x + 1 − x + 1) = 2x/2 = x.", "So f undoes itself: applying f twice returns the start.", "With an odd number (2027) of f's, the result is f(3) = 4/2 = <b>2</b>."])}`);
+
+bx("alg2.quad", `
+${deep([
+  "A quadratic ax² + bx + c has a U-shaped graph (a parabola) that opens up if a > 0 and down if a < 0. Its roots are where the graph crosses the x-axis, and its vertex is the lowest (or highest) point, halfway between the roots.",
+  "There are three ways to solve ax² + bx + c = 0. <b>Factor</b> when the numbers are friendly: look for two numbers that multiply to c and add to b (when a = 1). <b>Complete the square</b> to see the vertex. <b>The quadratic formula</b> always works.",
+  "Completing the square is worth understanding, not just memorizing, because it's where the formula comes from and because it finds maximums and minimums. x² + 6x is a square missing a corner: (x + 3)² = x² + 6x + 9, so x² + 6x = (x + 3)² − 9. The smallest value of (x + 3)² − 9 is −9, at x = −3.",
+  "The discriminant b² − 4ac is the part under the square root in the formula. It tells you how many real roots there are without solving: two if positive, one (a double root) if zero, none if negative. If it's a perfect square, the roots are rational."])}
+${fc("Quadratic formula", "x = (−b ± √(b² − 4ac)) / (2a)", "Divide by a, complete the square, take square roots of both sides.", "When factoring isn't obvious, or when you need exact roots with radicals.")}
+${fc("Vertex", "x = −b/(2a); the min or max value is c − b²/(4a)", "The vertex is halfway between the roots, whose average is −b/(2a).", "Maximizing area or profit, minimizing a quadratic expression.")}
+${fc("Vertex form", "a(x − h)² + k", "Completing the square rewrites any quadratic this way.", "Reading off the vertex (h, k) and the min/max value k.")}
+${tips([
+  "If a + b + c = 0, then x = 1 is a root (plug it in). If a − b + c = 0, x = −1 is a root.",
+  "Always check for a common factor first: 3x² − 12x + 9 = 3(x² − 4x + 3).",
+  "Max-area problems with a fixed perimeter are quadratics in disguise; the answer is usually the symmetric choice.",
+  "If the problem only asks about the sum or product of roots, skip solving and use Vieta."])}
+${ex("A farmer has 120 m of fence to make a rectangular pen against a long barn wall (no fence needed on that side). What is the largest area?", ["Let the two sides touching the barn be x. The side opposite the barn is 120 − 2x.", "Area A = x(120 − 2x) = −2x² + 120x.", "Vertex at x = −120/(2 · −2) = 30.", "A = 30 · 60 = <b>1800 m²</b>. Note the best pen is not a square here, because the barn side is free."])}`);
+
+bx("alg2.vieta", `
+${deep([
+  "If r and s are the roots of x² + bx + c, then the polynomial factors as (x − r)(x − s) = x² − (r + s)x + rs. Comparing coefficients gives Vieta's formulas: r + s = −b and rs = c. That's the entire idea, and it generalizes to any degree.",
+  "Vieta lets you work with roots you never compute. Any symmetric expression in the roots (one that doesn't change if you swap them) can be written using only the sum and the product. That includes r² + s², 1/r + 1/s, (r − s)², and r³ + s³.",
+  "For a cubic x³ + px² + qx + r with roots a, b, c: a + b + c = −p, ab + bc + ca = q, abc = −r. The signs alternate: −, +, −. For a general leading coefficient, divide everything by it first."])}
+${fc("Vieta for a quadratic", "ax² + bx + c: r + s = −b/a, rs = c/a", "Expand a(x − r)(x − s) and match coefficients.", "Questions about sums, products or symmetric combinations of roots.")}
+${fc("Vieta for a cubic", "ax³ + bx² + cx + d: Σr = −b/a, Σrs = c/a, rst = −d/a", "Expand a(x − r)(x − s)(x − t).", "AMC 12 and AIME root problems; also building a polynomial from given roots.")}
+${fc("Useful symmetric expressions", "r² + s² = (r + s)² − 2rs &nbsp;&nbsp; (r − s)² = (r + s)² − 4rs &nbsp;&nbsp; r³ + s³ = (r + s)³ − 3rs(r + s)", "Expand the right-hand sides.", "Turning anything symmetric into sum and product.")}
+${tips([
+  "Watch the sign of the sum: it's −b/a, a classic slip.",
+  "To build a quadratic with roots r and s: x² − (r + s)x + rs = 0.",
+  "To find a polynomial whose roots are the old roots plus 1 (or doubled, or reciprocals), substitute: replace x by x − 1 (or x/2, or 1/x) in the old one.",
+  "Vieta still holds when roots are complex or repeated."])}
+${ex("The roots of x² − 5x + 3 = 0 are r and s. Find a quadratic whose roots are r² and s².", ["Sum: r² + s² = (r + s)² − 2rs = 25 − 6 = 19.", "Product: r²s² = (rs)² = 9.", "Quadratic: <b>x² − 19x + 9 = 0</b>."])}`);
+
+bx("alg2.poly", `
+${deep([
+  "A polynomial of degree n has exactly n roots if you count complex roots and repeated ones. It's completely determined by its roots and its leading coefficient: P(x) = a(x − r₁)(x − r₂)···(x − rₙ).",
+  "The <b>Remainder Theorem</b> says the remainder when P(x) is divided by (x − a) is just P(a). This turns long division into plugging in. Its partner, the <b>Factor Theorem</b>, says (x − a) is a factor exactly when P(a) = 0.",
+  "When dividing by a degree-2 polynomial, the remainder has degree at most 1, so write it as px + q and use two values of x to find p and q. This idea (choose the unknown remainder's form, then plug in roots of the divisor) handles almost every remainder problem.",
+  "The Rational Root Theorem narrows the search for rational roots: if p/q in lowest terms is a root of a polynomial with integer coefficients, then p divides the constant term and q divides the leading coefficient."])}
+${fc("Remainder Theorem", "P(x) ÷ (x − a) leaves remainder P(a)", "Write P(x) = (x − a)Q(x) + R and plug in x = a: the first term vanishes.", "Remainders, checking roots, and evaluating P(a) quickly.")}
+${fc("Sum of coefficients", "sum of coefficients = P(1); alternating sum = P(−1)", "Plugging in 1 makes every power of x equal to 1.", "\"Sum of the coefficients of (2x − 1)⁷\" is 1⁷ = 1. Half of P(1) + P(−1) gives the even-power coefficients.")}
+${fc("Rational Root Theorem", "rational roots p/q: p | constant, q | leading coefficient", "Plug in p/q, multiply by qⁿ, and look at divisibility.", "Finding a first root of a cubic so you can factor the rest.")}
+${tips([
+  "Complex roots of real polynomials come in conjugate pairs: if 2 + i is a root, so is 2 − i.",
+  "Irrational roots of rational polynomials pair up too: 1 + √3 brings 1 − √3.",
+  "P(x) − x having roots 1, 2, 3 means P(x) − x = (x − 1)(x − 2)(x − 3)·(something). This trick handles \"P(1) = 1, P(2) = 2, P(3) = 3\" problems.",
+  "Synthetic division is the fast way to divide by x − a once you know a root."])}
+${ex("P is a polynomial with P(1) = 4 and P(3) = 10. Find the remainder when P(x) is divided by (x − 1)(x − 3).", ["The remainder has degree at most 1: P(x) = (x − 1)(x − 3)Q(x) + px + q.", "x = 1: p + q = 4. x = 3: 3p + q = 10.", "Subtract: 2p = 6, so p = 3 and q = 1.", "Remainder: <b>3x + 1</b>."])}`);
+
+bx("seq.arith", `
+${deep([
+  "An arithmetic sequence adds the same number d each step: 3, 7, 11, 15, …. A geometric sequence multiplies by the same number r each step: 3, 6, 12, 24, …. Recognize which one you have by checking differences (constant d) or ratios (constant r).",
+  "The nth-term formulas count steps. To get from term 1 to term n you take n − 1 steps, so aₙ = a₁ + (n − 1)d or aₙ = a₁rⁿ⁻¹. Off-by-one errors come from forgetting that the first term takes zero steps.",
+  "Sum formulas come from clever tricks. Arithmetic: pair the first and last terms (Gauss). Geometric: multiply the sum by r and subtract; almost everything cancels. When |r| < 1, the terms shrink toward 0 and the infinite sum settles to a₁/(1 − r)."])}
+${fc("Arithmetic sum", "Sₙ = n(a₁ + aₙ)/2 = n(2a₁ + (n − 1)d)/2", "Write the sum forward and backward; each column adds to a₁ + aₙ.", "Any sum of evenly spaced numbers. Remember: count × average of ends.")}
+${fc("Geometric sum", "Sₙ = a₁(rⁿ − 1)/(r − 1)", "S − rS leaves a₁ − a₁rⁿ.", "Doubling problems, sums of powers of 2 or 3, repeating decimals.")}
+${fc("Infinite geometric series", "S = a₁/(1 − r), only for |r| < 1", "As n grows, rⁿ shrinks to 0 in the finite formula.", "Bouncing balls, repeating decimals, probability games that repeat.")}
+${tips([
+  "In an arithmetic sequence, any term is the average of terms equally far before and after it.",
+  "In a geometric sequence, any term squared equals the product of terms equally far on each side.",
+  "If you know two terms of an arithmetic sequence, the difference d = (aₘ − aₖ)/(m − k).",
+  "Repeating decimal 0. 333… is 3/10 + 3/100 + ··· = (3/10)/(1 − 1/10) = 1/3."])}
+${ex("A ball is dropped from 10 feet. Each bounce reaches 3/5 of the previous height. What total distance does it travel before coming to rest?", ["Down 10 first.", "Then each bounce goes up and down: 2 × (6 + 3.6 + 2.16 + ···).", "That's 2 × 6/(1 − 3/5) = 2 × 15 = 30.", "Total: 10 + 30 = <b>40 feet</b>."])}`);
+
+bx("seq.sums", `
+${deep([
+  "Besides arithmetic and geometric sums, three power sums come up again and again: the sum of the first n integers, squares, and cubes. Their formulas are worth memorizing, along with the surprising fact that the sum of cubes is the square of the sum of integers.",
+  "Telescoping is the other key technique. If each term can be written as a difference f(k) − f(k + 1), then in the sum almost everything cancels in a chain, leaving only the first and last pieces. The standard example is 1/(k(k + 1)) = 1/k − 1/(k + 1).",
+  "Partial fractions make telescoping happen. For 1/(k(k + 2)), write it as (1/2)(1/k − 1/(k + 2)). Now the cancellation skips one term, so two pieces survive at each end."])}
+${fc("Power sums", "Σk = n(n + 1)/2 &nbsp;&nbsp; Σk² = n(n + 1)(2n + 1)/6 &nbsp;&nbsp; Σk³ = (n(n + 1)/2)²", "Provable by induction; the cubes formula also has a lovely picture of nested squares.", "Counting squares in a grid (Σk²), sums like 1·2 + 2·3 + ··· (expand to k² + k).")}
+${fc("Telescoping fraction", "1/(k(k + 1)) = 1/k − 1/(k + 1)", "Combine the right side over a common denominator.", "Sums of 1/(products of consecutive integers).")}
+${tips([
+  "Write out the first three terms and the last two of a telescoping sum to see exactly what survives.",
+  "Products telescope too: (2/1)(3/2)(4/3)···((n + 1)/n) = n + 1.",
+  "Number of squares of all sizes in an n × n grid: 1² + 2² + ··· + n².",
+  "Rewrite k(k + 1) as k² + k to use the power sum formulas."])}
+${ex("Compute 1/(1·3) + 1/(3·5) + 1/(5·7) + ··· + 1/(19·21).", ["Each term 1/((2k − 1)(2k + 1)) = (1/2)(1/(2k − 1) − 1/(2k + 1)).", "The sum telescopes: (1/2)(1/1 − 1/3 + 1/3 − 1/5 + ··· − 1/21).", "Everything inside cancels except 1 − 1/21 = 20/21.", "Answer: (1/2)(20/21) = <b>10/21</b>."])}`);
+
+bx("seq.rec", `
+${deep([
+  "A recursive sequence defines each term from earlier ones, like the Fibonacci numbers Fₙ = Fₙ₋₁ + Fₙ₋₂. Many counting problems produce recursions naturally: to count length-n strings with a property, look at how the string ends and reduce to shorter strings.",
+  "When a recursion is hard to solve exactly, just compute terms. Contest problems usually ask for a term small enough (n = 10 or 12) to reach by hand in a table, or they have a cycle you can spot.",
+  "Linear recursions like aₙ = 5aₙ₋₁ − 6aₙ₋₂ have a closed form. Try aₙ = xⁿ: you get x² = 5x − 6, so x = 2 or 3, and every solution is aₙ = A·2ⁿ + B·3ⁿ. Use the first two terms to find A and B."])}
+${fc("Characteristic equation", "aₙ = paₙ₋₁ + qaₙ₋₂ → x² = px + q; aₙ = Arⁿ + Bsⁿ", "Powers of a root of the characteristic equation satisfy the recursion, and combinations of solutions are solutions.", "Closed forms for linear recursions; the AIME uses these.")}
+${fc("Counting by the last move", "count(n) = (ways ending in A) + (ways ending in B)", "Every length-n object ends in exactly one way.", "Tilings, stairs climbed 1 or 2 steps at a time, strings with no two consecutive 1s (all Fibonacci).")}
+${tips([
+  "Build a table: n in one column, the count in another, and check the first few by listing.",
+  "If terms repeat (a cycle), find the cycle length and use remainders.",
+  "Fibonacci facts: F₁ + F₂ + ··· + Fₙ = Fₙ₊₂ − 1; every third Fibonacci number is even."])}
+${ex("How many ways can you climb 8 stairs taking 1 or 2 steps at a time?", ["Let w(n) be the number of ways for n stairs. The last move is a 1-step (from n − 1) or a 2-step (from n − 2), so w(n) = w(n − 1) + w(n − 2).", "w(1) = 1, w(2) = 2.", "Then 3, 5, 8, 13, 21, 34 for n = 3 to 8.", "<b>34</b> ways."])}`);
+
+bx("seq.amgm", `
+${deep([
+  "The AM-GM inequality says the average of nonnegative numbers is at least their geometric mean: (a + b)/2 ≥ √(ab), with equality exactly when a = b. The two-variable version follows from (√a − √b)² ≥ 0, which is just \"squares aren't negative\".",
+  "AM-GM turns a fixed sum into a maximum product, or a fixed product into a minimum sum. If x + y = 10, then xy ≤ 25. If xy = 16, then x + y ≥ 8. In both cases the extreme happens when the numbers are equal, so a good first guess for any optimization problem is \"make things equal\".",
+  "Sometimes you have to split terms to make AM-GM work. To minimize x + 4/x, the product x · (4/x) = 4 is constant, so x + 4/x ≥ 2√4 = 4. To minimize x² + 2/x, split it as x² + 1/x + 1/x so the product of the three pieces is constant."])}
+${fc("AM-GM", "(a₁ + ··· + aₙ)/n ≥ ⁿ√(a₁···aₙ) for aᵢ ≥ 0, equal iff all aᵢ are equal", "Two-variable case: (√a − √b)² ≥ 0. The general case builds from it.", "Max product with a fixed sum, min sum with a fixed product.")}
+${fc("Trivial inequality", "x² ≥ 0", "A square can't be negative.", "Completing the square to find minimums, and proving other inequalities.")}
+${fc("Cauchy-Schwarz", "(a₁b₁ + a₂b₂)² ≤ (a₁² + a₂²)(b₁² + b₂²)", "It's the statement that a dot product is at most the product of lengths.", "Maximizing ax + by subject to x² + y² = r²: the max is r√(a² + b²).")}
+${tips([
+  "Always check that the equality case is actually allowed by the problem's conditions.",
+  "AM-GM needs nonnegative numbers.",
+  "For integers, the best split may not be exactly equal: 10 = 3 + 3 + 4 gives the max product 36 for three integer parts.",
+  "Fixed perimeter rectangle: the square has the biggest area. Fixed area: the square has the smallest perimeter."])}
+${ex("Positive numbers x and y satisfy xy = 18. What is the smallest value of 2x + y?", ["AM-GM on 2x and y: (2x + y)/2 ≥ √(2x · y) = √36 = 6.", "So 2x + y ≥ <b>12</b>.", "Equality when 2x = y: 2x · x = 18 gives x = 3, y = 6. ✓"])}`);
+/* In depth: number theory, counting, probability */
+bx("nt.primes", `
+${deep([
+  "Primes are the atoms of the integers: every whole number bigger than 1 breaks into primes in exactly one way (the Fundamental Theorem of Arithmetic). Once you know a number's prime factorization, you know almost everything about it: its divisors, whether it's a square, its gcd with other numbers.",
+  "To factor a number, divide by small primes in order (2, 3, 5, 7, 11, 13, …) and stop once the prime squared is bigger than what's left. If nothing up to √n divides n, then n is prime. That's why you only need to test up to the square root: if n = ab with both factors bigger than √n, then ab would be bigger than n.",
+  "Some numbers are worth knowing by heart because contests reuse them: 1001 = 7 · 11 · 13, 111 = 3 · 37, 1111 = 11 · 101, 10001 = 73 · 137, and the current year's factorization (2026 = 2 · 1013, 2025 = 3⁴ · 5²)."])}
+${fc("Fundamental Theorem of Arithmetic", "n = p₁^a₁ · p₂^a₂ ··· pₖ^aₖ, uniquely", "Proved from the fact that if a prime divides ab, it divides a or b.", "Every divisor, gcd, lcm, square and cube question starts here.")}
+${fc("Primes up to √n", "n is prime if no prime ≤ √n divides it", "A composite n has a factor no bigger than √n.", "Testing whether 221, 323, 391 are prime (they're 13 · 17, 17 · 19, 17 · 23).")}
+${fc("Legendre's formula", "exponent of p in n! = ⌊n/p⌋ + ⌊n/p²⌋ + ⌊n/p³⌋ + ···", "Count multiples of p, then extra factors from multiples of p², and so on.", "Trailing zeros of n!, and the largest power of a prime dividing a factorial.")}
+${tips([
+  "A number is a perfect square exactly when every exponent in its factorization is even; a cube when every exponent is a multiple of 3.",
+  "The product of k consecutive integers is divisible by k!.",
+  "p² − 1 is divisible by 24 for every prime p > 3.",
+  "Look for difference-of-squares factorizations: 899 = 900 − 1 = 29 · 31."])}
+${ex("What is the smallest positive integer n such that 180n is a perfect cube?", ["180 = 2² · 3² · 5.", "Each exponent must become a multiple of 3: need one more 2, one more 3, and two more 5s.", "n = 2 · 3 · 5² = <b>150</b>. Check: 180 · 150 = 27000 = 30³. ✓"])}`);
+
+bx("nt.divisors", `
+${deep([
+  "If n = 2³ · 5², then every divisor looks like 2ᵃ · 5ᵇ with a from 0 to 3 and b from 0 to 2. Choosing a and b independently gives 4 · 3 = 12 divisors. That's the whole reason the divisor-count formula multiplies (exponent + 1)'s.",
+  "The gcd of two numbers takes the smaller power of each prime, the lcm takes the larger. Because min + max = sum for each prime, gcd(a, b) · lcm(a, b) = a · b. For three or more numbers that product rule no longer holds, but the min/max description still does.",
+  "The Euclidean algorithm finds gcds without factoring: gcd(a, b) = gcd(b, a − b) = gcd(b, a mod b). It's much faster for big numbers and it also shows that gcd(a, b) can be written as ax + by for some integers x and y."])}
+${fc("Number of divisors", "d(p^a q^b r^c) = (a + 1)(b + 1)(c + 1)", "Each prime's exponent in a divisor is chosen independently.", "Counting divisors, and finding the smallest number with exactly k divisors.")}
+${fc("Sum of divisors", "σ(p^a q^b) = (1 + p + ··· + p^a)(1 + q + ··· + q^b)", "Expanding the product lists every divisor exactly once.", "Sums of divisors, and perfect numbers.")}
+${fc("gcd times lcm", "gcd(a, b) · lcm(a, b) = ab", "For each prime, min(exponents) + max(exponents) = the sum of the exponents.", "Finding the other number when given one number, the gcd and the lcm.")}
+${tips([
+  "Divisors come in pairs d and n/d multiplying to n. Only squares have a divisor paired with itself, so only squares have an odd number of divisors.",
+  "Product of all divisors of n is n^(d(n)/2).",
+  "Consecutive integers are coprime: gcd(n, n + 1) = 1.",
+  "gcd(a, b) divides every combination ax + by. So gcd(n, n + 6) divides 6."])}
+${ex("How many positive divisors of 6000 are multiples of 100?", ["6000 = 2⁴ · 3 · 5³. A multiple of 100 = 2² · 5² needs at least 2² and 5².", "Divisor = 2ᵃ · 3ᵇ · 5ᶜ with a in {2, 3, 4}, b in {0, 1}, c in {2, 3}.", "3 · 2 · 2 = <b>12</b>.", "Shortcut: count divisors of 6000/100 = 60 = 2² · 3 · 5: 3 · 2 · 2 = 12. ✓"])}`);
+
+bx("nt.mod", `
+${deep([
+  "Modular arithmetic is arithmetic with remainders. Saying a ≡ b (mod n) means a and b leave the same remainder when divided by n, or equivalently n divides a − b. Clock arithmetic is mod 12: four hours after 10 o'clock is 2 o'clock.",
+  "The power of mod is that you can reduce at every step. To find the remainder of a giant product or power, replace each number by its remainder before multiplying. 47 · 53 mod 10 is just 7 · 3 = 21 ≡ 1.",
+  "Powers mod n always cycle eventually, and Euler's theorem tells you a cycle length that always works: if gcd(a, n) = 1, then a^φ(n) ≡ 1 (mod n). For a prime p, φ(p) = p − 1, which is Fermat's Little Theorem. Reduce the exponent modulo the cycle length, not modulo n.",
+  "Division is the one operation that needs care. You can \"divide by a\" mod n only if gcd(a, n) = 1, and you do it by multiplying by the inverse of a (the number that times a gives 1)."])}
+${fc("Fermat's Little Theorem", "a^(p − 1) ≡ 1 (mod p), p prime, p ∤ a", "Multiplying 1, 2, …, p − 1 by a just shuffles them mod p, so the products match.", "Big powers mod a prime: reduce the exponent mod p − 1.")}
+${fc("Euler's theorem", "a^φ(n) ≡ 1 (mod n) if gcd(a, n) = 1; φ(n) = n(1 − 1/p₁)(1 − 1/p₂)···", "Same shuffle argument with the numbers coprime to n.", "Last two digits (mod 100, φ = 40), last three digits (mod 1000, φ = 400).")}
+${fc("Chinese Remainder Theorem", "x mod m and x mod n (coprime) determine x mod mn", "The remainder pairs are all different for 0 to mn − 1.", "Work mod 4 and mod 25 separately to get mod 100; solve \"remainder 2 when divided by 3 and 3 when divided by 5\".")}
+${tips([
+  "Use negative remainders: 99 ≡ −1 (mod 100), so 99¹⁰¹ ≡ −1 ≡ 99.",
+  "Squares mod 4 are 0 or 1; mod 8 odd squares are 1; mod 3 squares are 0 or 1. Great for proving something is impossible.",
+  "A number ≡ its digit sum (mod 9), and ≡ its alternating digit sum (mod 11).",
+  "To find a cycle, list powers until you get back to 1."])}
+${ex("Find the last two digits of 3²⁰²⁶.", ["We want 3²⁰²⁶ mod 100. Euler promises 3⁴⁰ ≡ 1, but look for a shorter cycle first.", "3¹⁰ = 59049 ≡ 49, and 3²⁰ ≡ 49² = 2401 ≡ 1 (mod 100). So the cycle length is 20.", "2026 = 20 · 101 + 6, so 3²⁰²⁶ ≡ 3⁶ = 729.", "Last two digits: <b>29</b>."])}`);
+
+bx("nt.units", `
+${deep([
+  "The units digit of a product depends only on the units digits of the factors. So the units digit of 2027¹⁰⁰ is the same as that of 7¹⁰⁰. This is just arithmetic mod 10.",
+  "Units digits of powers repeat in short cycles. 7: 7, 9, 3, 1, then repeat. Because every cycle has length 1, 2 or 4, you can always reduce the exponent mod 4 (using 4 in place of a remainder of 0).",
+  "For the last two digits, work mod 100. Powers ending in 1 are easy to handle with the binomial theorem: 21⁵ ≡ 1 + 5 · 20 = 101 ≡ 01 (mod 100). Otherwise use Euler (cycle 20 or 40) or split into mod 4 and mod 25."])}
+${fc("Cycle lengths of units digits", "0, 1, 5, 6: length 1 &nbsp; 4, 9: length 2 &nbsp; 2, 3, 7, 8: length 4", "There are only 10 possible units digits, and multiplying by a fixed digit eventually repeats.", "Units digit of any big power.")}
+${fc("Trailing zeros", "zeros at the end of n! = ⌊n/5⌋ + ⌊n/25⌋ + ⌊n/125⌋ + ···", "Each zero needs a factor 10 = 2 · 5, and 5s are scarcer than 2s.", "\"How many zeros does 200! end with?\" 40 + 8 + 1 = 49.")}
+${tips([
+  "Exponent remainder 0 mod 4 means the 4th entry of the cycle, not the \"0th\".",
+  "Towers like 7^(7^7): find the top exponent mod 4 first (7⁷ ≡ 3 mod 4), then use the cycle.",
+  "The last nonzero digit of n! is a harder question; don't confuse it with trailing zeros.",
+  "Sums: add units digits of each term, then take the units digit of that sum."])}
+${ex("What is the units digit of 1¹ + 2² + 3³ + 4⁴ + 5⁵ + 6⁶ + 7⁷ + 8⁸ + 9⁹?", ["Units digits: 1, 4, 7 (27), 6 (256), 5, 6, 3 (7⁷: 7 ≡ 3 mod 4, so cycle entry 3), 6 (8⁸: 8 ≡ 0 mod 4, entry 4), 9 (9 is odd).", "Sum of these digits: 1 + 4 + 7 + 6 + 5 + 6 + 3 + 6 + 9 = 47.", "Units digit <b>7</b>."])}`);
+
+bx("nt.bases", `
+${deep([
+  "Our number system is base 10: 3,507 means 3·10³ + 5·10² + 0·10 + 7. Base b works the same way with powers of b and digits 0 to b − 1. Computers use base 2, where 1101₂ = 8 + 4 + 0 + 1 = 13.",
+  "Converting to base 10 is just expanding the place values. Converting from base 10 means repeatedly dividing by b and collecting remainders; the remainders are the digits from right to left. Another way: subtract the biggest power of b that fits, and repeat.",
+  "Digit problems use the same expansion. A two-digit number with digits a and b is 10a + b, which explains the classic facts: a number minus its reversal is a multiple of 9, and a number plus its reversal is a multiple of 11."])}
+${fc("Place value", "(dₖ…d₁d₀)_b = dₖbᵏ + ··· + d₁b + d₀", "That's what the positions mean.", "Every base conversion, and setting up digit problems with algebra.")}
+${fc("Divisibility in base b", "b − 1 divides n iff it divides the digit sum (base b)", "b ≡ 1 (mod b − 1), so every power of b is ≡ 1.", "Base-10 rule for 9 and 3; in base 8 the rule works for 7.")}
+${tips([
+  "If a base-b number contains the digit 7, then b ≥ 8.",
+  "Arithmetic in another base: either convert to base 10, or carry when a column reaches b.",
+  "A number with k digits in base 2 is between 2ᵏ⁻¹ and 2ᵏ − 1.",
+  "Unknown base problems usually become a quadratic in b: 24_b + 35_b = 61_b gives 2b + 4 + 3b + 5 = 6b + 1, so b = 8."])}
+${ex("Find the 3-digit number whose digits, read backward, give the same number in base 9. (abc in base 10 equals cba in base 9.)", ["Expand: 100a + 10b + c = 81c + 9b + a.", "Simplify: 99a + b = 80c. Base-9 digits mean a, b, c ≤ 8, and a, c ≥ 1.", "Try c = 1 to 8: 80c − 99a must be a digit b from 0 to 8. Only c = 5 works: 400 − 396 = 4, so a = 4 and b = 4.", "The number is <b>445</b>. Check: 544 in base 9 = 5 · 81 + 4 · 9 + 4 = 445. ✓"])}`);
+
+bx("nt.dioph", `
+${deep([
+  "A Diophantine equation asks for integer solutions. The most common type is linear: ax + by = c. It has solutions exactly when gcd(a, b) divides c. Once you find one solution, you get all of them by stepping x up by b/g and y down by a/g (g = gcd), which keeps ax + by unchanged.",
+  "For positive solutions, find the general solution and then the range of the step parameter. Or reduce mod a or mod b to pin down the residue of one variable, then list.",
+  "Nonlinear equations usually yield to factoring. If xy − 2x − 3y = 0, add 6 to both sides to get (x − 3)(y − 2) = 6, then list factor pairs of 6. Squares are another lever: x² − y² = (x − y)(x + y), and x² can only end in certain digits or have certain remainders."])}
+${fc("Linear Diophantine", "ax + by = c solvable ⟺ gcd(a, b) | c; then x = x₀ + (b/g)t, y = y₀ − (a/g)t", "Changing x by b/g and y by −a/g changes ax + by by zero.", "Coin and stamp problems, buying items at fixed prices with a fixed budget.")}
+${fc("Factoring trick (SFFT)", "xy + ax + by = c ⟺ (x + b)(y + a) = c + ab", "Expand the right side.", "Any equation with an xy term and linear terms.")}
+${tips([
+  "Use mod to rule out cases: x² + y² = 4003 is impossible because squares are 0 or 1 mod 4, and 4003 ≡ 3.",
+  "Bound the variables: if x ≤ y and xy = 100, then x ≤ 10.",
+  "Remember negative factor pairs when variables can be negative.",
+  "Check parity: x − y and x + y have the same parity."])}
+${ex("Find all positive integers x, y with x² − y² = 45.", ["(x − y)(x + y) = 45 with 0 < x − y < x + y, both odd (45 is odd).", "Pairs: (1, 45), (3, 15), (5, 9).", "Solve each: (23, 22), (9, 6), (7, 2).", "<b>Three solutions</b>."])}`);
+
+bx("count.basics", `
+${deep([
+  "The multiplication principle is the engine of all counting: if a task has stages, and stage 1 has m outcomes and stage 2 has n outcomes no matter what happened in stage 1, the whole task has m · n outcomes. Its partner, the addition principle, says that if outcomes split into separate cases, you add the case counts.",
+  "The art is choosing the stages. Handle the most restricted choice first. For 3-digit odd numbers with distinct digits, choose the last digit (5 options), then the first (8 options: not 0, not the last), then the middle (8 options). Going left to right instead runs into \"it depends\" trouble.",
+  "If the number of options at a stage depends on earlier choices in a way you can't avoid, split into cases (casework), count each, and add."])}
+${fc("Multiplication principle", "total = n₁ · n₂ ··· nₖ", "Each sequence of choices is one outcome, and there are n₁ choices for the first, then n₂ for each of those, and so on.", "Codes, license plates, menus, anything built in steps.")}
+${fc("Subsets", "an n-element set has 2ⁿ subsets", "Each element is in or out: 2 choices, n times.", "Counting subsets, binary strings, ways to answer yes/no questions.")}
+${tips([
+  "Ask: does order matter? Can things repeat? Those two answers decide the formula.",
+  "\"At least one\": count the complement.",
+  "If a choice depends on a previous one, either reorder the steps or split into cases.",
+  "Sanity check with a tiny version you can list by hand."])}
+${ex("How many 5-letter strings using A–Z have no two consecutive letters the same?", ["First letter: 26 choices.", "Each later letter: anything except the letter right before it, 25 choices.", "26 · 25⁴ = <b>10,156,250</b>."])}`);
+
+bx("count.pc", `
+${deep([
+  "A permutation is an arrangement where order matters; a combination is a selection where it doesn't. Choosing a president, VP and treasurer from 10 people is a permutation (10 · 9 · 8 = 720). Choosing a 3-person committee is a combination (720 ÷ 3! = 120), because each committee was counted once for each of its 3! orders.",
+  "That idea, \"count with order, then divide by how many times each unordered thing was counted\", is behind both C(n, k) and arrangements with repeated letters. It's more reliable than memorizing which formula to use.",
+  "Restrictions come in two flavors. \"Must be together\": glue them into one block, arrange the blocks, then arrange inside the glued block. \"Must not be together\": count all arrangements minus the together ones, or place the others first and drop the separated items into gaps."])}
+${fc("Permutations", "P(n, k) = n!/(n − k)! = n(n − 1)···(n − k + 1)", "k slots, each with one fewer choice than the last.", "Rankings, officer positions, arranging k of n distinct things in a row.")}
+${fc("Combinations", "C(n, k) = n!/(k!(n − k)!)", "Ordered selections ÷ the k! orders of each group.", "Committees, hands of cards, choosing points, paths on a grid.")}
+${fc("Repeated letters", "n!/(a! b! c! ···)", "Swapping identical letters doesn't make a new word, so divide by their arrangements.", "Anagrams of MISSISSIPPI, strings of 0s and 1s, paths.")}
+${tips([
+  "C(n, k) = C(n, n − k): choosing who's in is choosing who's out.",
+  "Committees with \"at least\" conditions: split into exact cases or use the complement.",
+  "Don't choose \"one special person first\" and then the rest; that double counts.",
+  "Arranging around a circle: (n − 1)! because rotations are the same."])}
+${ex("A 5-card hand is dealt from a standard 52-card deck. How many hands have exactly two pairs (like 7, 7, K, K, 4)?", ["Choose the two ranks for the pairs: C(13, 2) = 78. (Unordered, so 7-K and K-7 are the same.)", "Choose 2 suits for each pair: C(4, 2)² = 36.", "Choose the fifth card from the other 11 ranks: 11 · 4 = 44.", "78 · 36 · 44 = <b>123,552</b>."])}`);
+
+bx("count.pascal", `
+${deep([
+  "Each entry in Pascal's triangle is the sum of the two above it, and the entry in row n, position k (both starting at 0) is C(n, k). The adding rule says C(n, k) = C(n − 1, k − 1) + C(n − 1, k), which has a counting story: a k-group from n people either includes Person 1 (choose k − 1 more from the rest) or doesn't (choose all k from the rest).",
+  "The binomial theorem says (a + b)ⁿ expands with coefficients from row n. The reason: each term comes from choosing a or b from each of the n factors, and the number of ways to choose b exactly k times is C(n, k).",
+  "Many identities fall out of plugging in values. With a = b = 1, the row sums to 2ⁿ. With a = 1, b = −1, the alternating sum is 0. The hockey-stick identity (sum down a diagonal equals the entry just below and to the side) shows up in AIME problems."])}
+${fc("Binomial theorem", "(a + b)ⁿ = Σ C(n, k) aⁿ⁻ᵏ bᵏ", "Choose b from k of the n factors and a from the rest.", "Specific coefficients, sums of coefficients, approximations like 1.01¹⁰.")}
+${fc("Hockey stick", "C(r, r) + C(r + 1, r) + ··· + C(n, r) = C(n + 1, r + 1)", "Count (r + 1)-subsets of {1, …, n + 1} by their largest element.", "Sums of triangular numbers, sums along a diagonal of Pascal's triangle.")}
+${fc("Vandermonde", "Σ C(m, k) C(n, r − k) = C(m + n, r)", "Choose r people from m boys and n girls, split by the number of boys.", "Sums of products of binomial coefficients; Σ C(n, k)² = C(2n, n).")}
+${tips([
+  "Row n has n + 1 entries. Row 0 is \"1\".",
+  "To get the coefficient of xᵏ in (2x − 3)ⁿ, don't forget the 2ᵏ and the (−3)ⁿ⁻ᵏ.",
+  "The middle entries of a row are the largest.",
+  "Each row read as digits gives powers of 11 for the first few rows: 1, 11, 121, 1331, 14641."])}
+${ex("Find the constant term in the expansion of (x + 2/x)⁶.", ["General term: C(6, k) xᵏ (2/x)⁶⁻ᵏ = C(6, k) 2⁶⁻ᵏ x^(2k − 6).", "Constant term: 2k − 6 = 0, so k = 3.", "C(6, 3) · 2³ = 20 · 8 = <b>160</b>."])}`);
+
+bx("count.methods", `
+${deep([
+  "Three methods cover most counting problems that formulas can't handle directly. <b>Casework</b> splits the problem into separate situations; the trick is to choose a splitting feature that makes each case easy and the cases non-overlapping. <b>Complementary counting</b> counts the opposite and subtracts from the total. <b>Inclusion-exclusion (PIE)</b> counts a union of overlapping sets by adding, subtracting overlaps, and adding back triple overlaps.",
+  "How to pick: if the condition says \"at least one\" or \"not all\", try the complement. If the condition involves \"or\" across overlapping properties (divisible by 2 or 3), use PIE. If there are a few distinct shapes the answer can take, use casework.",
+  "PIE generalizes: for n sets, add singles, subtract pairs, add triples, subtract quadruples, and so on. It's also how derangements are counted."])}
+${fc("Complement", "count(what you want) = total − count(what you don't)", "The two groups split the total.", "\"At least one\", \"not all the same\", \"some two adjacent\".")}
+${fc("Inclusion-exclusion", "|A ∪ B ∪ C| = Σ|A| − Σ|A ∩ B| + |A ∩ B ∩ C|", "Each element in the union is counted exactly once after the corrections.", "Divisibility counts, survey Venn diagrams, \"none of these properties\".")}
+${tips([
+  "Make cases mutually exclusive; check that they cover everything by testing a random example.",
+  "A table or tree is a good way to organize casework.",
+  "In a Venn diagram, fill in the center region first and work outward.",
+  "If casework reaches more than about 6 cases, look for a smarter method."])}
+${ex("How many integers from 1 to 1000 are not divisible by 2, 3, or 7?", ["Divisible by 2, 3, 7: 500, 333, 142. Sum 975.", "Pairs: by 6: 166, by 14: 71, by 21: 47. Sum 284.", "All three (42): 23.", "Union: 975 − 284 + 23 = 714. Not divisible by any: 1000 − 714 = <b>286</b>."])}`);
+
+bx("count.special", `
+${deep([
+  "Stars and bars counts ways to distribute identical items into distinct boxes. Picture n stars in a row and k − 1 bars dividing them into k groups. Every arrangement of stars and bars is one distribution, so the count is C(n + k − 1, k − 1). If every box needs at least one, hand out one to each box first and distribute the rest.",
+  "The pigeonhole principle is a tool for proving something must happen. If more than n objects go into n boxes, some box gets two. The creative part is choosing the boxes: remainders, pairs that sum to a target, regions of a square.",
+  "Other special tools: derangements count arrangements with no item in its original spot; the Chicken McNugget theorem gives the largest amount you can't make from two coprime sizes; Catalan numbers count paths that never cross a diagonal and balanced parentheses."])}
+${fc("Stars and bars", "n identical items into k boxes: C(n + k − 1, k − 1); each box ≥ 1: C(n − 1, k − 1)", "Arrange n stars and k − 1 bars in a row.", "Nonnegative integer solutions of x₁ + ··· + xₖ = n, buying n donuts of k kinds.")}
+${fc("Pigeonhole", "N objects, k boxes → some box has ≥ ⌈N/k⌉", "If every box had fewer, the total would be less than N.", "\"Guarantee\" problems: how many socks, how many people, which two numbers.")}
+${fc("Derangements", "D(n) = n!(1 − 1/1! + 1/2! − ··· ± 1/n!); D(n) = (n − 1)(D(n − 1) + D(n − 2))", "PIE on the events \"item i is fixed\".", "Hat check, secret Santa, letters in wrong envelopes.")}
+${fc("Catalan numbers", "Cₙ = C(2n, n)/(n + 1): 1, 1, 2, 5, 14, 42, 132", "Reflection trick: paths that cross the diagonal match paths to a reflected endpoint.", "Paths that stay below the diagonal, valid parentheses strings, triangulations of a polygon.")}
+${tips([
+  "Stars and bars needs identical items and distinct boxes. Distinct items into boxes is kⁿ.",
+  "Upper limits (each box at most 5) need a complement or PIE on top of stars and bars.",
+  "For pigeonhole \"how many to guarantee\", find the worst case and add one."])}
+${ex("How many ways can you pick 6 donuts from 4 kinds if you want at least one of each kind?", ["Give one of each kind first: 2 donuts left to choose freely among 4 kinds.", "Stars and bars: C(2 + 4 − 1, 3) = C(5, 3) = <b>10</b>."])}`);
+
+bx("prob.basic", `
+${deep([
+  "When all outcomes are equally likely, probability is counting: favorable ÷ total. The danger is in the words \"equally likely\". Rolling two dice gives 36 equally likely ordered pairs, but the 11 possible sums are not equally likely (7 happens 6 ways, 2 happens 1 way).",
+  "So the first step is always to pick a sample space where outcomes really are equally likely. For dice and coins, treat them as different colors so order matters. For drawing cards or marbles, either count ordered draws in both numerator and denominator, or unordered in both.",
+  "Probabilities of separate (non-overlapping) events add, and all the outcomes together have probability 1. That lets you find a probability by subtracting from 1."])}
+${fc("Classical probability", "P(E) = |E| / |S| for equally likely outcomes", "Each outcome gets probability 1/|S|, and E is a set of them.", "Dice, coins, cards, marbles, random choices from a list.")}
+${fc("Two dice sums", "P(sum = s) = (6 − |s − 7|)/36", "The number of ways rises by 1 up to 7 and falls after.", "Any two-dice sum question in a second.")}
+${tips([
+  "Mixed ordered and unordered counts is the top error. Pick one and stick with it.",
+  "Draws without replacement in a fixed order give the same answer as choosing a set at once.",
+  "Check: probabilities are between 0 and 1, and complementary ones add to 1.",
+  "Symmetry: if two outcomes play identical roles, they have equal probability."])}
+${ex("Three cards are drawn from a standard deck. What is the probability they are all hearts?", ["Choose 3 cards: C(52, 3) = 22100. All hearts: C(13, 3) = 286.", "286/22100 = <b>11/850</b>.", "Same in order: (13/52)(12/51)(11/50) = 1716/132600 = 11/850. ✓"])}`);
+
+bx("prob.multi", `
+${deep([
+  "Two events are independent if one happening doesn't change the chance of the other: two coin flips, or drawing with replacement. Then P(A and B) = P(A) · P(B). Without replacement, the second draw depends on the first, and you multiply by the updated probability.",
+  "Conditional probability P(A | B) means \"the chance of A, given that B happened\". The given information shrinks the world: you only look at outcomes where B is true, and ask what fraction of those also have A. That's P(A and B) ÷ P(B).",
+  "A tree diagram organizes multi-step experiments: multiply along branches to get the probability of each path, add the paths you care about. For \"given\" questions, the answer is (paths with both) ÷ (paths with the given)."])}
+${fc("Multiplication rule", "P(A and B) = P(A) · P(B | A)", "First A has to happen, then B has to happen given A.", "Sequential draws, multi-stage games. If independent, P(B | A) = P(B).")}
+${fc("Bayes' rule", "P(A | B) = P(B | A) · P(A) / P(B)", "Both sides equal P(A and B)/P(B).", "Medical tests, \"which bag did the marble come from\" problems.")}
+${fc("Total probability", "P(B) = P(B | A)P(A) + P(B | not A)P(not A)", "Split B by whether A happened.", "The denominator in Bayes problems.")}
+${tips([
+  "\"Given\" means restrict. Count only within the given condition.",
+  "Independent and mutually exclusive are different: exclusive events can't both happen, so they're never independent (unless one has probability 0).",
+  "Natural frequencies (imagine 1000 people) make Bayes problems easy to see.",
+  "The two-child puzzle: \"at least one is a girl\" gives 1/3 for two girls; \"the older is a girl\" gives 1/2."])}
+${ex("Bag A has 3 red and 1 blue; bag B has 1 red and 3 blue. You pick a bag at random and draw a red marble. What's the chance it came from bag A?", ["P(red and A) = (1/2)(3/4) = 3/8. P(red and B) = (1/2)(1/4) = 1/8.", "P(red) = 4/8.", "P(A | red) = (3/8)/(4/8) = <b>3/4</b>."])}`);
+
+bx("prob.ev", `
+${deep([
+  "Expected value is the long-run average: multiply each possible value by its probability and add. If you play a game many times, your average result approaches the expected value.",
+  "The most powerful fact is <b>linearity</b>: the expected value of a sum is the sum of the expected values, always, even when the pieces depend on each other. That lets you count things one at a time. To find the expected number of fixed points, couples seated together, or heads, define a 0-or-1 indicator for each possible occurrence and add up their probabilities.",
+  "For \"how long until\" questions, use states. Let E be the expected number of steps from the start. One step later you're in some state with its own expected value, so E = 1 + (weighted average of the next states' values). Solve the equations."])}
+${fc("Expected value", "E[X] = Σ x · P(X = x)", "It's a probability-weighted average.", "Games, payouts, \"on average how many\".")}
+${fc("Linearity", "E[X + Y] = E[X] + E[Y]", "Expand the definition; it doesn't need independence.", "Counting with indicators: expected matches, expected runs, expected number of distinct values.")}
+${fc("Waiting time", "success probability p each try → expected tries 1/p", "From the state equation E = 1 + (1 − p)E.", "Rolling until a 6 (6 rolls), coupon collector (n(1 + 1/2 + ··· + 1/n)).")}
+${tips([
+  "Expected value doesn't have to be a possible outcome: one die averages 3.5.",
+  "Subtract the cost to play to get expected profit.",
+  "Use symmetry: in a random arrangement, each position is equally likely to hold anything.",
+  "For expected maximum or minimum, use P(max ≥ k) summed over k."])}
+${ex("You flip a fair coin until you get two heads in a row. What is the expected number of flips?", ["States: S (no progress), H (last flip was heads). Let a and b be the expected flips from each.", "From S: a = 1 + ½b + ½a. From H: b = 1 + ½ · 0 + ½a.", "First gives a = 2 + b. Then b = 1 + ½(2 + b), so b = 4 and a = 6.", "<b>6 flips</b>."])}`);
+
+bx("prob.geoprob", `
+${deep([
+  "When an outcome is a random point (on a segment, in a square, in time), probability becomes a ratio of lengths, areas or volumes. The key step is drawing the right picture. Two random numbers x and y become a single random point (x, y) in a square, and the condition becomes a region you can shade.",
+  "Inequalities like x + y < 1 or |x − y| < 0.2 cut the square along straight lines, so the shaded regions are triangles and trapezoids. Conditions like x² + y² < 1 make circles, which brings π into the answer.",
+  "\"States\" problems (random walks, games that repeat) use a different idea: let pᵢ be the probability of winning from state i, write an equation for each state from one step of the process, and solve the system. Gambler's ruin and first-to-win games are the classic examples."])}
+${fc("Geometric probability", "P = (favorable measure) ÷ (total measure)", "A uniform random point is equally likely to be anywhere, so probability is proportional to size.", "Meeting times, broken sticks, random points in shapes.")}
+${fc("Two random numbers in [0, 1]", "the point (x, y) is uniform in the unit square", "Independent uniform choices fill the square evenly.", "Sums, differences, products and orderings of two random numbers.")}
+${tips([
+  "Draw the square and the boundary lines. Shade, then compute areas.",
+  "Use symmetry: P(x < y) = 1/2 for two random numbers.",
+  "Breaking a stick at two random points: the three pieces form a triangle with probability 1/4.",
+  "In repeated games, write \"p = (chance I win now) + (chance we restart) · p\" and solve."])}
+${ex("Ann and Bo take turns rolling a die, Ann first. The first to roll a 6 wins. What's the probability Ann wins?", ["Let p = P(Ann wins). On her first roll she wins with 1/6.", "Otherwise (5/6), Bo rolls; he misses with 5/6, and the game restarts with Ann to roll.", "p = 1/6 + (5/6)(5/6)p, so p(1 − 25/36) = 1/6.", "p = (1/6)/(11/36) = <b>6/11</b>."])}`);
+/* In depth: geometry I-IV */
+bx("geo1.angles", `
+${deep([
+  "Angle facts are the grammar of geometry. Almost every geometry solution includes a few lines of angle chasing: writing down angles you know, using one fact at a time, until the angle you want appears. The basic facts are few: a straight line is 180°, a full turn is 360°, vertical angles are equal, a triangle's angles add to 180°.",
+  "Parallel lines add a powerful set of equalities. A line crossing two parallel lines makes the same angle with each, so you get matching (corresponding) angles, alternate interior angles (the Z shape), and same-side interior angles that add to 180° (the C shape).",
+  "When you're stuck, give an unknown angle a name like x, and write every other angle in terms of x. Equal sides give equal base angles, so isosceles triangles (including the ones made by two radii of a circle) are the most common source of the equation that finally pins x down."])}
+${fc("Triangle angle sum", "∠A + ∠B + ∠C = 180°", "Draw a line through one vertex parallel to the opposite side; alternate angles line up along a straight line.", "Every triangle. Combined with isosceles base angles it solves most angle problems.")}
+${fc("Exterior angle", "exterior angle = sum of the two remote interior angles", "Both equal 180° minus the adjacent interior angle.", "When a side is extended, or when an angle sits outside a triangle you know.")}
+${fc("Isosceles triangle", "equal sides ⟺ equal opposite angles", "Fold the triangle along its axis of symmetry.", "Radii of a circle, equal tangent segments, any marked equal sides.")}
+${tips([
+  "Don't trust the picture's proportions; trust the given facts.",
+  "Mark every angle you find directly on the figure as you go.",
+  "Two radii make an isosceles triangle. Look for them whenever there's a circle.",
+  "Angle bisectors split an angle in half; the incenter is where they meet, with ∠BIC = 90° + ∠A/2."])}
+${ex("In triangle ABC, AB = AC. Point D is on AC with BD = BC = AD. Find ∠A.", ["Let ∠A = x. AD = BD makes triangle ABD isosceles: ∠ABD = x.", "Exterior angle of triangle ABD at D: ∠BDC = 2x.", "BD = BC makes triangle BDC isosceles: ∠BCD = ∠BDC = 2x.", "AB = AC: ∠ABC = ∠ACB = 2x. Triangle ABC: x + 2x + 2x = 180, so x = <b>36°</b>."])}`);
+
+bx("geo1.right", `
+${deep([
+  "The Pythagorean theorem a² + b² = c² connects the three sides of a right triangle. It's the most-used fact in contest geometry: distances in the coordinate plane, chords and tangents in circles, diagonals of boxes, heights of triangles all come down to it.",
+  "Learn the common triples so you recognize them instantly: 3-4-5, 5-12-13, 8-15-17, 7-24-25, 20-21-29, 9-40-41, and their multiples. A problem that gives you legs 15 and 20 is really a 3-4-5 triangle scaled by 5, with hypotenuse 25.",
+  "The two special right triangles come from cutting a square and an equilateral triangle in half. A square's diagonal makes a 45-45-90 triangle with sides x, x, x√2. Half an equilateral triangle is a 30-60-90 triangle with sides x, x√3, 2x. Their ratios let you skip the Pythagorean theorem entirely."])}
+${fc("Pythagorean theorem", "a² + b² = c² (c is the hypotenuse)", "Arrange four copies of the triangle inside a square of side a + b; the leftover is either c² or a² + b².", "Any right angle: drop an altitude to make one if you need it.")}
+${fc("30-60-90 and 45-45-90", "x : x√3 : 2x &nbsp;&nbsp; x : x : x√2", "Half an equilateral triangle, half a square.", "60° and 30° angles, hexagons, equilateral triangles, squares and their diagonals.")}
+${fc("Altitude to the hypotenuse", "h = ab/c; h² = (piece₁)(piece₂); a² = c · (adjacent piece)", "The altitude makes two smaller triangles similar to the original.", "Right triangles with a perpendicular from the right angle.")}
+${tips([
+  "Use the converse to test angles: with longest side c, a² + b² > c² means acute, < means obtuse.",
+  "Generate triples with m² − n², 2mn, m² + n².",
+  "Distance in 3D: √(a² + b² + c²).",
+  "If you see √3, think 30-60-90; √2, think 45-45-90."])}
+${ex("A ladder 25 feet long leans against a wall with its foot 7 feet from the wall. The top slides down 4 feet. How far does the foot slide out?", ["Start: height √(625 − 49) = 24.", "After sliding: height 20. Foot distance √(625 − 400) = 15.", "The foot moves 15 − 7 = <b>8 feet</b>."])}`);
+
+bx("geo1.similar", `
+${deep([
+  "Similar triangles have the same shape: equal angles and proportional sides. Two pairs of equal angles are enough (AA), since the third angle follows. Similarity is the main way to find lengths that aren't on right triangles.",
+  "Where to find similar triangles: a line parallel to one side of a triangle (it cuts off a small copy), two triangles sharing an angle with another pair of equal angles, the altitude to the hypotenuse of a right triangle, chords crossing in a circle, and the triangles formed by a trapezoid's diagonals.",
+  "Once you have similar triangles, write the vertices in matching order and set up ratios of matching sides. Scale factor k for lengths means k² for areas. Congruent triangles are the special case k = 1, proved with SSS, SAS, ASA, AAS or HL."])}
+${fc("Similarity ratios", "△ABC ~ △DEF ⟹ AB/DE = BC/EF = CA/FD = k; area ratio = k²", "Scaling a figure by k scales every length by k and every area by k².", "Shadows, parallel lines in triangles, nested shapes.")}
+${fc("Angle bisector theorem", "the bisector from A splits BC so that BD/DC = AB/AC", "Compare areas of the two pieces, or drop perpendiculars to the sides.", "Any angle bisector inside a triangle.")}
+${fc("Side splitter", "a line parallel to BC through AB and AC divides them proportionally", "It cuts off a triangle similar to the whole.", "Midsegments (half the third side), trapezoids, ratios along sides.")}
+${tips([
+  "Write similarity statements with matching vertices in order before setting ratios.",
+  "Mark equal angles with the same symbol to spot similar triangles.",
+  "Midpoint connector: the segment joining midpoints of two sides is parallel to the third side and half as long.",
+  "Mass points are a fast shortcut for ratios along cevians (see the playbook)."])}
+${ex("In triangle ABC, AB = 6, AC = 9, BC = 10. The bisector of ∠A meets BC at D. Find BD.", ["Angle bisector theorem: BD/DC = AB/AC = 6/9 = 2/3.", "BD + DC = 10, so BD = 10 · 2/5 = <b>4</b> (and DC = 6)."])}`);
+
+bx("geo1.centers", `
+${deep([
+  "Every triangle has several \"centers\", each the meeting point of three special lines. The <b>centroid</b> G is where the medians meet (vertex to midpoint of the opposite side). The <b>incenter</b> I is where the angle bisectors meet; it's the center of the inscribed circle. The <b>circumcenter</b> O is where the perpendicular bisectors meet; it's the center of the circle through all three vertices. The <b>orthocenter</b> H is where the altitudes meet.",
+  "Each center comes with a useful fact. The centroid divides each median 2 : 1 from the vertex and splits the triangle into six equal areas. The incircle's radius r satisfies Area = r · s. The circumradius R satisfies Area = abc/(4R), and in a right triangle the circumcenter is the midpoint of the hypotenuse, so R = c/2.",
+  "Tangent lengths from the incircle are worth knowing: the tangent from vertex A has length s − a, where s is the semiperimeter. In a right triangle with legs a, b and hypotenuse c, r = (a + b − c)/2."])}
+${fc("Centroid", "G divides each median 2 : 1; G = average of the vertices", "Medians are concurrent and the coordinates average out.", "Median lengths, area splits, coordinates of the center of mass.")}
+${fc("Inradius", "Area = r · s (s = semiperimeter)", "Split the triangle into three triangles from I, each with height r.", "Any problem with an inscribed circle.")}
+${fc("Circumradius", "R = abc/(4 · Area) = a/(2 sin A)", "Law of sines with the diameter as a chord.", "Circles through three points; right triangles (R = half the hypotenuse).")}
+${tips([
+  "In an equilateral triangle, all four centers coincide, and R = 2r.",
+  "Euler line: O, G, H lie on one line with HG = 2GO.",
+  "The median to the hypotenuse equals half the hypotenuse.",
+  "Median length: mₐ² = (2b² + 2c² − a²)/4."])}
+${ex("Find the inradius and circumradius of a 5-12-13 triangle.", ["Area = ½ · 5 · 12 = 30, s = 15.", "r = 30/15 = <b>2</b>. Check: (5 + 12 − 13)/2 = 2. ✓", "Right triangle: R = 13/2 = <b>6.5</b>."])}`);
+
+bx("geo1.ineq", `
+${deep([
+  "Three lengths make a triangle only if each is less than the sum of the other two. In practice you check one thing: the longest side must be less than the sum of the two shorter sides. If it equals the sum, the \"triangle\" is flat.",
+  "Given two sides a and b, the third side lies strictly between |a − b| and a + b. Counting integer possibilities means counting the integers in that open interval.",
+  "Triangles are also classified by angles, and you can tell from the sides alone using the Pythagorean comparison. And within a triangle, bigger sides face bigger angles, which settles many \"which is longest\" questions."])}
+${fc("Triangle inequality", "|a − b| < c < a + b", "The straight path between two points is shortest.", "Possible third sides, possible perimeters, and shortest-path problems.")}
+${fc("Acute, right or obtuse", "with c longest: a² + b² vs c² (>, =, <)", "Law of cosines: c² = a² + b² − 2ab cos C.", "Classifying triangles from their sides.")}
+${tips([
+  "For integer triangles with a fixed perimeter p, the longest side is less than p/2.",
+  "Shortest path with a reflection: reflect one endpoint across the mirror line and draw a straight line.",
+  "In any triangle, the largest angle is at least 60° and the smallest at most 60°."])}
+${ex("How many non-congruent triangles with integer sides have perimeter 15?", ["List a ≤ b ≤ c with c < 7.5, so c ≤ 7, and c ≥ 5.", "c = 7: a + b = 8, b ≤ 7: (1,7), (2,6), (3,5), (4,4). Four.", "c = 6: a + b = 9, b ≤ 6: (3,6), (4,5). Two.", "c = 5: a + b = 10, b ≤ 5: (5,5). One.", "Total: <b>7</b>."])}`);
+
+bx("geo2.polygons", `
+${deep([
+  "An n-sided polygon can be cut into n − 2 triangles by drawing diagonals from one vertex, which is why its interior angles add to (n − 2) · 180°. The exterior angles always add to 360°: walk around the polygon and you turn exactly once.",
+  "Regular polygons (all sides and angles equal) have each exterior angle 360°/n. That gives the interior angle quickly and works backward too: if each interior angle is 150°, the exterior is 30°, so n = 12.",
+  "Regular hexagons and octagons appear constantly. A regular hexagon is six equilateral triangles. A regular octagon is a square with its corners cut off as isosceles right triangles. Both decompositions turn area questions into easy ones."])}
+${fc("Angle sums", "interior sum = (n − 2) · 180°; exterior sum = 360°", "Triangulate from one vertex; for exterior, total turning is one full circle.", "Polygon angle problems and finding n from an angle.")}
+${fc("Diagonals", "n(n − 3)/2", "Each vertex connects to n − 3 non-neighbors; each diagonal counted twice.", "Counting diagonals and their crossings (C(n, 4) inside a convex polygon).")}
+${fc("Regular hexagon", "area = (3√3/2)s²; long diagonal 2s; short diagonal s√3", "Six equilateral triangles of side s.", "Hexagons in any problem.")}
+${tips([
+  "Interior + exterior at each vertex = 180°.",
+  "Regular n-gon interior angle: 180 − 360/n.",
+  "A convex polygon has at most 3 acute interior angles.",
+  "Tilings: regular triangles, squares and hexagons tile the plane, because their angles divide 360°."])}
+${ex("A regular octagon has side 2. Find its area.", ["Build it from a square by cutting off corners. Each corner triangle is a right isosceles triangle with hypotenuse 2, so legs √2.", "Square side = √2 + 2 + √2 = 2 + 2√2. Square area = (2 + 2√2)² = 4 + 8√2 + 8 = 12 + 8√2.", "Four corners, each area ½ · √2 · √2 = 1, total 4.", "Octagon area = <b>8 + 8√2</b>."])}`);
+
+bx("geo2.area", `
+${deep([
+  "Area formulas are all built from the rectangle. A parallelogram is a rectangle with a triangle moved from one end to the other, so its area is base × height. A triangle is half a parallelogram. A trapezoid is the average of its two bases times its height.",
+  "The word \"height\" always means the perpendicular distance to the base line, not a slanted side. Choosing which side to call the base is up to you; pick the one whose height is easiest to find.",
+  "For triangles, there's a whole toolbox: ½bh, Heron's formula from three sides, ½ab sin C from two sides and the included angle, rs with the inradius, abc/(4R) with the circumradius, and the shoelace formula from coordinates. Comparing two expressions for the same area is a classic way to find an unknown length."])}
+${fc("Triangle area, many forms", "½bh = √(s(s − a)(s − b)(s − c)) = ½ab sin C = rs = abc/(4R)", "Each comes from ½bh with the height expressed differently.", "Use whichever matches what you're given; equate two of them to find a length.")}
+${fc("Ratio of areas", "same height → areas in ratio of bases; same base → ratio of heights", "½bh is proportional to each of b and h.", "Cevians splitting a triangle, points dividing sides in a ratio.")}
+${fc("Quadrilateral with perpendicular diagonals", "area = ½ d₁ d₂", "The diagonals cut it into four right triangles.", "Rhombuses, kites, squares.")}
+${tips([
+  "The height of an equilateral triangle with side s is (√3/2)s.",
+  "To find the height to side a: h = 2 · Area / a.",
+  "Area of a triangle with two sides fixed is largest when the angle between them is 90°.",
+  "Medians split a triangle into six small triangles of equal area."])}
+${ex("In triangle ABC, point D is on BC with BD = 2 · DC, and point E is on AD with AE = 3 · ED. If the area of ABC is 48, what is the area of triangle BED?", ["ABD shares the height from A with ABC, and BD = (2/3)BC, so area ABD = 32.", "In triangle ABD, triangles ABE and EBD share the height from B; ED = (1/4)AD.", "Area BED = (1/4) · 32 = <b>8</b>."])}`);
+
+bx("geo2.shaded", `
+${deep([
+  "Shaded-region problems reward planning over computing. Before writing formulas, look at the figure and decide: is the shaded part easier to compute directly, or as (whole) − (unshaded)? Can pieces be moved to make a simpler shape? Is there symmetry that makes the region a fraction of something easy?",
+  "Common building blocks: a quarter circle of radius r minus the right triangle on its chord gives a circular segment (πr²/4 − r²/2). Two overlapping quarter circles in a square make a lens worth πr²/2 − r². A circle inscribed in a square covers π/4 of it.",
+  "When regions overlap, use inclusion-exclusion: area of the union = sum of areas − area of overlap. That one line often finds the overlap you need without computing it directly."])}
+${fc("Circular segment", "segment = sector − triangle = (θ/360)πr² − ½r² sin θ", "The segment is the sector with the triangle from the center removed.", "Lenses, crescents, regions between a chord and an arc.")}
+${fc("Inclusion-exclusion for areas", "Area(A ∪ B) = Area(A) + Area(B) − Area(A ∩ B)", "The overlap gets counted twice in the sum.", "Overlapping circles, overlapping squares, lens shapes.")}
+${tips([
+  "Look for congruent pieces you can slide or rotate into a gap.",
+  "Express the answer in the form of the choices (like aπ − b) to see which pieces you need.",
+  "Label every length you know on the figure; shaded problems are usually about finding one missing radius.",
+  "Check: the shaded area must be less than the whole figure."])}
+${ex("Four circles of radius 1 are centered at the corners of a square of side 2. Find the area inside the square but outside all four circles.", ["Each circle covers a quarter circle inside the square: four quarters make one full circle, area π.", "The quarter circles just touch at the midpoints of the sides, so they don't overlap.", "Square area 4. Leftover: <b>4 − π</b>."])}`);
+
+bx("geo2.coords", `
+${deep([
+  "Coordinates turn geometry into algebra. Put the figure on axes in the most convenient way: a right angle at the origin, a symmetric figure centered on an axis, a square with corners at (0, 0) and (s, s). Good placement makes the numbers small and many coordinates zero.",
+  "The core formulas come from the Pythagorean theorem and averages: distance, midpoint, slope. Lines are y = mx + b or ax + by = c; circles are (x − h)² + (y − k)² = r². Intersections come from solving equations together.",
+  "For areas, the shoelace formula handles any polygon given its vertices in order. For lattice polygons, Pick's theorem connects area to counts of lattice points. The distance from a point to a line has its own formula, which saves a lot of work."])}
+${fc("Distance and midpoint", "d = √((Δx)² + (Δy)²); M = ((x₁ + x₂)/2, (y₁ + y₂)/2)", "Pythagorean theorem on the horizontal and vertical legs; averaging.", "Lengths, centers, checking for isosceles or right triangles.")}
+${fc("Point to line distance", "distance from (x₀, y₀) to ax + by + c = 0 is |ax₀ + by₀ + c| / √(a² + b²)", "Project onto the line's perpendicular direction (a, b).", "Tangent lines to circles, heights of triangles in coordinates.")}
+${fc("Shoelace", "Area = ½|Σ(xᵢyᵢ₊₁ − xᵢ₊₁yᵢ)|", "Adds signed areas of triangles from the origin.", "Any polygon with known vertices.")}
+${fc("Pick's theorem", "Area = I + B/2 − 1", "Provable by building up from triangles; works for polygons with lattice-point vertices.", "Counting interior lattice points, or areas on dot paper.")}
+${tips([
+  "Perpendicular slopes multiply to −1; parallel slopes are equal.",
+  "Reflect a point over y = x by swapping coordinates.",
+  "The centroid of a triangle is the average of its vertices.",
+  "Lattice points on a segment from (0, 0) to (a, b): gcd(a, b) + 1."])}
+${ex("Find the distance from the center of the circle x² + y² − 6x + 8y = 0 to the line 3x + 4y = 13.", ["Complete squares: (x − 3)² + (y + 4)² = 25, center (3, −4), radius 5.", "Distance: |3 · 3 + 4 · (−4) − 13| / √(9 + 16) = |9 − 16 − 13|/5 = 20/5 = <b>4</b>.", "Since 4 < 5, the line cuts the circle in a chord of length 2√(25 − 16) = 6."])}`);
+
+bx("geo3.basics", `
+${deep([
+  "π is the ratio of any circle's circumference to its diameter, so C = πd = 2πr. Area is πr², which you can picture by cutting the circle into thin wedges and rearranging them into an almost-rectangle of width πr and height r.",
+  "Arcs and sectors are fractions of the whole. A 60° arc is 60/360 = 1/6 of the circumference; a 60° sector is 1/6 of the area. When the angle is in radians θ, arc length is simply rθ and sector area is ½r²θ.",
+  "Rolling and wrapping problems are circumference problems in disguise. A wheel of radius r rolls 2πr per turn. A coin rolling around another coin of the same size makes two full turns, not one, because it also travels around the center."])}
+${fc("Circle formulas", "C = 2πr &nbsp;&nbsp; A = πr²", "π is defined by C/d; area by rearranging wedges.", "Every circle problem.")}
+${fc("Arcs and sectors", "arc = (θ/360) · 2πr &nbsp;&nbsp; sector = (θ/360) · πr² = ½ · r · arc", "They are fractions of the full circle.", "Pie slices, clock hands, curved paths, belts around pulleys.")}
+${tips([
+  "Doubling the radius doubles the circumference but quadruples the area.",
+  "A ring (annulus) has area π(R² − r²).",
+  "A semicircle's perimeter is πr + 2r, not just πr.",
+  "Keep answers in terms of π unless the problem says to approximate."])}
+${ex("A goat is tied with a 10 m rope to the corner of a 4 m by 6 m shed in an open field. What area can it graze?", ["Outside the shed, the rope sweeps 3/4 of a circle of radius 10: (3/4) · 100π = 75π.", "Going around the 6 m side, 4 m of rope is left: a quarter circle of radius 4, area 4π.", "Going around the 4 m side, 6 m of rope is left: a quarter circle of radius 6, area 9π.", "Those two quarter circles meet only at the shed's far corner (4 + 6 = 10, the two short sides exactly), so they don't overlap. Total: 75π + 4π + 9π = <b>88π m²</b>."])}`);
+
+bx("geo3.angles", `
+${deep([
+  "An inscribed angle (vertex on the circle, sides as chords) is half the central angle that cuts off the same arc. So all inscribed angles that cut off the same arc are equal, no matter where on the circle the vertex sits. This is the most important fact about circles in contest geometry.",
+  "Special cases follow right away. An angle inscribed in a semicircle cuts off 180°, so it's 90°: a triangle with one side as a diameter is right. In a quadrilateral inscribed in a circle, opposite angles cut off arcs that add to 360°, so the angles add to 180°.",
+  "Angles formed by chords crossing inside the circle are the average of the two arcs they cut off. Angles formed by secants or tangents meeting outside are half the difference of the arcs. A tangent and chord make an angle equal to half the arc they cut off, just like an inscribed angle."])}
+${fc("Inscribed angle theorem", "inscribed angle = ½ · intercepted arc = ½ · central angle", "Draw the radius to the vertex: two isosceles triangles and the exterior angle theorem finish it.", "Any angle with its vertex on a circle.")}
+${fc("Cyclic quadrilateral", "opposite angles sum to 180°", "Their arcs add to the whole circle, 360°.", "Recognizing four points on a circle; Ptolemy's theorem (AC · BD = AB · CD + AD · BC).")}
+${fc("Inside and outside angles", "inside: ½(arc₁ + arc₂) &nbsp;&nbsp; outside: ½(far arc − near arc)", "Exterior angle theorem with inscribed angles.", "Crossing chords, secants from an outside point, tangents.")}
+${tips([
+  "A diameter in the picture is a strong hint to look for a right angle.",
+  "If two points see a segment at the same angle from the same side, all four points lie on a circle.",
+  "Equal chords cut off equal arcs and subtend equal inscribed angles.",
+  "The angle between a tangent and a radius is 90°."])}
+${ex("Points A, B, C, D lie on a circle in that order. ∠BAC = 25° and ∠CAD = 40°. Find ∠BCD.", ["ABCD is cyclic, so ∠BCD + ∠BAD = 180°.", "∠BAD = ∠BAC + ∠CAD = 65°.", "∠BCD = 180 − 65 = <b>115°</b>."])}`);
+
+bx("geo3.tangents", `
+${deep([
+  "A tangent touches a circle at exactly one point, and the radius to that point is perpendicular to the tangent. That right angle is the key: draw the radius, and you have a right triangle with the center, the tangent point, and any point on the tangent line.",
+  "From any point outside a circle there are two tangents, and they have equal lengths (the \"ice cream cone\" picture). This equal-tangents fact solves incircle problems: the incircle touches each side at a point, and the tangent lengths from each vertex match up.",
+  "Two circles have common tangents. Their lengths come from a right triangle built by sliding the tangent segment to pass through one center: the hypotenuse is the distance between centers and one leg is the difference (external) or sum (internal) of the radii."])}
+${fc("Tangent ⟂ radius", "OT ⟂ tangent at T; tangent length from P = √(OP² − r²)", "The closest point of the line to O is T, and the shortest segment from a point to a line is perpendicular.", "Every tangent problem.")}
+${fc("Equal tangents", "PA = PB for the two tangents from P", "Triangles OAP and OBP are congruent right triangles (HL).", "Incircles, circles inscribed in quadrilaterals (AB + CD = BC + DA).")}
+${fc("Common tangent lengths", "external: √(d² − (r₁ − r₂)²) &nbsp;&nbsp; internal: √(d² − (r₁ + r₂)²)", "Slide the tangent to pass through one center to make a right triangle.", "Belts, two circles and a line, circles sitting on a line.")}
+${tips([
+  "For two circles tangent to each other, the distance between centers is r₁ + r₂ (outside) or |r₁ − r₂| (inside).",
+  "Circles tangent to the same line with touching points d apart: when they touch each other, d = 2√(r₁r₂).",
+  "Tangent segments from a vertex of a triangle to the incircle have length s − (opposite side).",
+  "A circle inscribed in a right angle has its center on the angle bisector, at distance r from both sides."])}
+${ex("A circle is inscribed in a right triangle with legs 20 and 21. Find its radius and the lengths into which it divides the hypotenuse.", ["Hypotenuse: 29 (20-21-29 triple).", "r = (20 + 21 − 29)/2 = <b>6</b>.", "s = 35. Tangent lengths on the hypotenuse: s − 20 = 15 and s − 21 = 14.", "The hypotenuse splits into <b>15 and 14</b> (they add to 29 ✓)."])}`);
+
+bx("geo3.power", `
+${deep([
+  "Power of a point is one theorem in three costumes. Draw any line through a point P that meets a circle at two points A and B. Then the product PA · PB is the same for every such line. That product is called the power of P.",
+  "If P is inside the circle (crossing chords), the two pieces of each chord multiply to the same number. If P is outside (two secants), multiply the outside part by the whole secant. A tangent is a secant where both points merge into one, so its contribution is PT².",
+  "There's a single formula for the power: d² − r², where d is the distance from P to the center. That's negative inside (use lengths without signs in practice), zero on the circle, positive outside. It also explains why the products match, since every line through P gives the same d and r."])}
+${fc("Crossing chords", "PA · PB = PC · PD", "Triangles PAC and PDB are similar (inscribed angles on the same arcs).", "Two chords meeting inside a circle.")}
+${fc("Secants and tangents", "PA · PB = PC · PD = PT²", "Similar triangles again, using the tangent-chord angle for the tangent case.", "Lines from an outside point.")}
+${fc("Power formula", "power(P) = OP² − r²", "Use the line through the center: (d − r)(d + r).", "When you know the distance to the center instead of chord pieces.")}
+${tips([
+  "With secants, the product uses the whole length from P to the far point, not the inside chord.",
+  "A diameter perpendicular to a chord gives (half chord)² = (piece)(piece) of the diameter.",
+  "Points with equal power to two circles lie on a line (the radical axis).",
+  "Combine with Pythagoras: power of P = (tangent length)²."])}
+${ex("A chord of length 10 lies 3 units from the center of a circle. A point P on the chord is 2 units from one end. Find the product of the two pieces of any other chord through P, and the radius.", ["Pieces of the given chord: 2 and 8, so the power is 2 · 8 = <b>16</b> for every chord through P.", "Radius: half chord 5, distance 3, so r = √(25 + 9) = <b>√34</b>.", "Check with the formula: P is 3 from the chord's midpoint, so OP² = 9 + 9 = 18, and r² − OP² = 34 − 18 = 16. ✓"])}`);
+
+bx("geo4.solids", `
+${deep([
+  "Polyhedra are solids with flat faces. Three counts describe them: vertices V, edges E and faces F. For every convex polyhedron, V − E + F = 2 (Euler's formula). That one equation, plus a way to count edges from faces, answers most counting questions.",
+  "To count edges, add up the number of sides of every face and divide by 2 (each edge borders two faces). To count vertices, add up the corners of every face and divide by the number of faces meeting at each vertex.",
+  "Prisms and pyramids follow simple patterns based on the base polygon. Painted-cube problems split unit cubes by location: corners (3 painted faces), edges (2), face centers (1), and the hidden interior (0)."])}
+${fc("Euler's formula", "V − E + F = 2", "Remove faces and edges one at a time; the quantity stays fixed.", "Finding a missing count; checking an answer.")}
+${fc("Edges from faces", "2E = sum of the numbers of sides of all faces", "Each edge belongs to exactly two faces.", "Soccer balls, solids described by their faces.")}
+${fc("Painted n × n × n cube", "3 faces: 8 &nbsp; 2 faces: 12(n − 2) &nbsp; 1 face: 6(n − 2)² &nbsp; 0 faces: (n − 2)³", "Corners, edges minus corners, faces minus borders, interior.", "Painted and cut cube problems.")}
+${tips([
+  "A prism on an n-gon has 2n vertices, 3n edges, n + 2 faces.",
+  "A pyramid on an n-gon has n + 1 vertices, 2n edges, n + 1 faces.",
+  "The five Platonic solids have 4, 6, 8, 12 and 20 faces.",
+  "Check: the four painted-cube counts add to n³."])}
+${ex("A polyhedron has only pentagon and hexagon faces, and exactly three faces meet at each vertex. How many pentagons must it have?", ["Let p and h be the counts. F = p + h, E = (5p + 6h)/2, V = (5p + 6h)/3.", "Euler: (5p + 6h)/3 − (5p + 6h)/2 + p + h = 2.", "Multiply by 6: 10p + 12h − 15p − 18h + 6p + 6h = 12, so p = 12.", "Always <b>12 pentagons</b>, no matter how many hexagons (a soccer ball has 20)."])}`);
+
+bx("geo4.volume", `
+${deep([
+  "Volume measures how many unit cubes fit inside. For any prism or cylinder, it's the area of the base times the height, because you can stack thin copies of the base. For pyramids and cones, it's one third of that, which you can check with a cube split into three congruent pyramids.",
+  "A sphere's volume is (4/3)πr³ and its surface area is 4πr². Archimedes showed that a sphere fills 2/3 of the cylinder that wraps it exactly, which is a good memory hook.",
+  "Surface area is the total area of all faces, which you often find by unfolding the solid into a flat net. A cylinder unrolls into two circles and a rectangle of width 2πr. A cone unrolls into a circle and a sector whose radius is the slant height."])}
+${fc("Prisms and cylinders", "V = (base area) × h; cylinder V = πr²h", "Stack copies of the base.", "Boxes, tanks, cans, any solid with a constant cross-section.")}
+${fc("Pyramids and cones", "V = ⅓ (base area) × h", "Three congruent pyramids fill a cube.", "Pointed solids, including slanted ones (the height is perpendicular).")}
+${fc("Spheres", "V = (4/3)πr³ &nbsp;&nbsp; S = 4πr²", "Archimedes' cylinder comparison.", "Balls, bubbles, spheres inscribed in cubes or cylinders.")}
+${fc("Surface areas", "box 2(lw + lh + wh); cylinder 2πr² + 2πrh; cone πr² + πrℓ", "Unfold into nets.", "Painting, wrapping, and gluing solids together.")}
+${tips([
+  "Cone slant height ℓ = √(r² + h²).",
+  "Displacement: a submerged object's volume equals the rise in water level times the tank's base area.",
+  "Scaling by k multiplies surface area by k² and volume by k³.",
+  "A frustum (cone with its tip cut off) is a big cone minus a small similar cone."])}
+${ex("A cone has radius 3 and height 4. It is unrolled into a flat sector. What is the sector's angle?", ["Slant height ℓ = 5 (3-4-5), which becomes the sector's radius.", "The arc length equals the base circumference 2π · 3 = 6π.", "Full circle of radius 5 has circumference 10π, so the angle is (6π/10π) · 360° = <b>216°</b>."])}`);
+
+bx("geo4.distances", `
+${deep([
+  "Distances in 3D extend the Pythagorean theorem: the diagonal of a box is √(a² + b² + c²). For any distance between two points in a solid, find a right triangle that contains it, often lying in a hidden plane slice through the solid.",
+  "Slicing a solid with a plane gives a flat cross-section, and many 3D questions become 2D questions about that slice. A plane through the center of a sphere cuts a great circle; slicing a cube through three corners gives an equilateral triangle; the cross-section of a cone parallel to its base is a smaller circle.",
+  "Shortest paths along the surface (an ant crawling on a box) are solved by unfolding the faces into a flat net and drawing a straight line. Try each way of unfolding the relevant faces and take the smallest."])}
+${fc("Space diagonal", "d = √(a² + b² + c²); cube: s√3", "Apply Pythagoras twice: across a face, then up.", "Spheres around boxes, longest rod that fits, cube in a sphere.")}
+${fc("Sphere slices", "a plane at distance d from the center cuts a circle of radius √(R² − d²)", "Right triangle with the radius as hypotenuse.", "Cross-sections, spherical caps, a sphere resting in a hole.")}
+${tips([
+  "Draw the 2D slice separately and label it.",
+  "For surface paths on a box, the candidates are √((a + b)² + c²) for each choice of which edge length stands alone.",
+  "Regular tetrahedron with edge s: height s√(2/3), volume s³/(6√2).",
+  "The distance between opposite edges of a regular tetrahedron with edge s is s/√2."])}
+${ex("A sphere of radius 5 rests in a circular hole of radius 4 in a flat table. How far is the sphere's center above the table?", ["Slice through the center vertically: a circle of radius 5 resting on a gap of width 8.", "The center, the edge of the hole, and the point directly below the center form a right triangle with hypotenuse 5 and horizontal leg 4.", "Height above the table: √(25 − 16) = <b>3</b>."])}`);
+/* In depth: contests overview, trig, complex numbers, playbook */
+bx("start.contests", `
+${deep([
+  "The AMC 8 is for students in 8th grade and below. The AMC 10 is for 10th grade and below, and the AMC 12 for 12th grade and below. Each AMC is 25 multiple-choice problems that start easy and get hard; problems 1 to 10 reward speed and accuracy, problems 20 to 25 reward real insight.",
+  "The AIME (American Invitational Mathematics Examination) is the next step for top AMC 10 and 12 scorers. It's 15 problems in 3 hours, and every answer is an integer from 0 to 999. There are no answer choices to check against, so accuracy matters even more. A typical qualifier who solves 5 or 6 AIME problems has done very well; 10 or more puts a student in range for the USA(J)MO.",
+  "Because AIME answers are integers from 000 to 999, many problems ask for a remainder, a sum m + n of a reduced fraction m/n, or a value like ⌊1000x⌋. If you get a non-integer or a number above 999, re-read the question: you probably need one more step."])}
+${tips([
+  "On the AIME, problems 1 to 5 are approachable; aim to get all of them right before attacking 6 to 10.",
+  "Write answers on the AIME as three digits (007, not 7) on the answer sheet.",
+  "On the AMC, the last 5 problems are worth the same as the first 5. Secure the easy points first.",
+  "Practice with real past papers under time; the AoPS wiki has every problem with solutions."])}`);
+
+bx("start.levels", `
+${deep([
+  "Each level builds on the one before. The AMC 8 toolbox (fractions, ratios, area, simple counting) is used constantly on the AMC 10, and the AIME uses the AMC 10 and 12 toolbox but chains several ideas together in one problem. So weakness at a lower level shows up as lost time at a higher one.",
+  "For a student moving from AMC 8 to AIME, the biggest new ideas are: Vieta and polynomial structure, modular arithmetic with big exponents, counting with combinations and recursion, expected value with linearity, similar triangles and power of a point in circles, and basic trigonometry and complex numbers. This textbook covers each of those in its own chapter.",
+  "A good study loop: read a section here, work the matching lessons in the Learn tab, then take mixed tests. When a test problem stumps you, find its topic here and reread the In depth part and the traps."])}
+${tips([
+  "Keep an error log: for each missed problem write the topic and the one idea you missed.",
+  "Redo missed problems a week later without looking at the solution.",
+  "Speed comes from recognizing patterns, so the Patterns by signal table is worth rereading often."])}`);
+
+bx("trig.defs", `
+${deep([
+  "In a right triangle with an acute angle θ, the three basic ratios compare sides: sin θ = opposite/hypotenuse, cos θ = adjacent/hypotenuse, tan θ = opposite/adjacent. Because all right triangles with the same angle θ are similar, these ratios depend only on θ, not on the triangle's size.",
+  "The unit circle extends trig to every angle. Walk counterclockwise from (1, 0) around a circle of radius 1 by angle θ: the point you land on is (cos θ, sin θ). That's why cos² θ + sin² θ = 1 (it's the circle's equation), why sine is positive in quadrants I and II, and why cos(180° − θ) = −cos θ.",
+  "Radians measure angles by arc length on the unit circle: a full turn is 2π radians, so π radians = 180°. Contest problems at the AMC 12 and AIME level use both, so convert fluently: 30° = π/6, 45° = π/4, 60° = π/3, 90° = π/2.",
+  "The exact values come from the two special triangles. Half an equilateral triangle with hypotenuse 2 has sides 1, √3, 2, which gives every 30° and 60° value. Half a square gives the 45° values. Memorize the pattern rather than the table: sin 0°, 30°, 45°, 60°, 90° are √0/2, √1/2, √2/2, √3/2, √4/2."])}
+${fc("SOH-CAH-TOA", "sin = opp/hyp &nbsp; cos = adj/hyp &nbsp; tan = opp/adj = sin/cos", "Definitions, made size-independent by similar triangles.", "Finding a side from an angle and another side, or an angle from two sides.")}
+${fc("Pythagorean identity", "sin²θ + cos²θ = 1; also 1 + tan²θ = sec²θ", "The point (cos θ, sin θ) is on the unit circle x² + y² = 1.", "Finding cos from sin (watch the sign), simplifying expressions.")}
+${fc("Symmetries", "sin(180° − θ) = sin θ &nbsp; cos(180° − θ) = −cos θ &nbsp; sin(−θ) = −sin θ &nbsp; sin(90° − θ) = cos θ", "Reflections of the unit circle point.", "Angles beyond 90°, and supplementary angles in triangles (sin A = sin(B + C)).")}
+${tips([
+  "Signs by quadrant: All positive in I, Sine in II, Tangent in III, Cosine in IV (\"All Students Take Calculus\").",
+  "sin θ = k has two solutions between 0° and 180° when 0 < k < 1: θ and 180° − θ.",
+  "tan θ is the slope of the line at angle θ from the x-axis.",
+  "Reference angles: find the acute angle to the x-axis, then fix the sign by quadrant."])}
+${ex("In triangle ABC, ∠C = 90°, sin A = 5/13, and AB = 26. Find the area.", ["sin A = BC/AB, so BC = 26 · 5/13 = 10.", "AC = √(26² − 10²) = √576 = 24.", "Area = ½ · 10 · 24 = <b>120</b>."])}`);
+
+bx("trig.laws", `
+${deep([
+  "The law of cosines generalizes the Pythagorean theorem to any triangle: c² = a² + b² − 2ab cos C. When C = 90°, cos C = 0 and it becomes a² + b² = c². When C is obtuse, cos C is negative, so c is longer than in a right triangle, as you'd expect.",
+  "Use the law of cosines when you know two sides and the angle between them (SAS) to find the third side, or all three sides (SSS) to find an angle. The two most useful special cases: a 60° angle gives c² = a² + b² − ab, and a 120° angle gives c² = a² + b² + ab.",
+  "The law of sines says a/sin A = b/sin B = c/sin C = 2R, where R is the circumradius. Use it when you know two angles and a side, or for ratios of sides. The \"= 2R\" part is a bonus: it connects any side and its opposite angle to the circumscribed circle.",
+  "The area formula ½ab sin C is the familiar ½ · base · height with the height written as b sin C. It's the cleanest way to get areas from two sides and an angle, and it's behind many ratio-of-areas arguments."])}
+${fc("Law of cosines", "c² = a² + b² − 2ab cos C", "Drop an altitude from B and apply Pythagoras to both pieces.", "SAS and SSS triangles; any triangle with a 60° or 120° angle.")}
+${fc("Law of sines", "a/sin A = b/sin B = c/sin C = 2R", "Each side is a chord of the circumcircle, and the inscribed angle across from it is the triangle's angle.", "AAS and ASA triangles, circumradius, ratios of sides.")}
+${fc("Area", "Area = ½ab sin C", "The height to side a is b sin C.", "Two sides and the angle between them; comparing areas with a shared angle.")}
+${fc("Stewart's theorem", "b²m + c²n = a(d² + mn) for a cevian of length d splitting side a into m and n", "Law of cosines in both small triangles, using cos of supplementary angles.", "Lengths of medians, angle bisectors and other cevians.")}
+${tips([
+  "Law of sines with two sides and a non-included angle (SSA) can give two triangles. Check both.",
+  "If you know all three sides, cos C = (a² + b² − c²)/(2ab) tells you whether C is acute (positive) or obtuse (negative).",
+  "Median length: mₐ = ½√(2b² + 2c² − a²) (Stewart with m = n = a/2).",
+  "The ratio of areas of two triangles that share an angle is the ratio of the products of the sides around it."])}
+${ex("A triangle has sides 7 and 8 with a 120° angle between them. Find the third side, the area, and the circumradius.", ["Third side: c² = 49 + 64 + 7 · 8 = 169 (cos 120° = −½), so c = 13.", "Area = ½ · 7 · 8 · sin 120° = 28 · (√3/2) = <b>14√3</b>.", "Circumradius: 2R = 13 / sin 120° = 26/√3, so R = 13/√3 = <b>13√3/3</b>."])}`);
+
+bx("trig.ids", `
+${deep([
+  "Almost every trig identity grows from two seeds: sin² + cos² = 1 and the angle-addition formulas. Double-angle formulas are addition with a = b. Half-angle formulas are double-angle formulas solved backward. Product-to-sum formulas come from adding two addition formulas. If you remember the seeds, you can rebuild the rest during a test.",
+  "Contest trig is mostly about spotting which identity collapses an expression. Seeing sin x + cos x? Square it: you get 1 + sin 2x. Seeing sin² of many angles? Pair θ with 90° − θ to make sin² + cos² = 1. Seeing a product of cosines at doubling angles? Multiply by a sine and use sin 2x = 2 sin x cos x repeatedly.",
+  "Equations like 2 sin² x − 3 sin x + 1 = 0 are quadratics in sin x. Solve for sin x, then find all angles in the required range, remembering that sine and cosine values repeat."])}
+${fc("Angle addition", "sin(a ± b) = sin a cos b ± cos a sin b &nbsp;&nbsp; cos(a ± b) = cos a cos b ∓ sin a sin b", "Rotate the unit circle point, or use a rectangle-and-triangles picture.", "Exact values like sin 75° = (√6 + √2)/4; any angle written as a sum.")}
+${fc("Double angle", "sin 2x = 2 sin x cos x &nbsp;&nbsp; cos 2x = cos²x − sin²x = 2cos²x − 1 = 1 − 2sin²x", "Angle addition with a = b.", "Squaring sin x + cos x; rewriting sin² or cos² as cos 2x.")}
+${fc("Tangent addition", "tan(a + b) = (tan a + tan b)/(1 − tan a tan b)", "Divide the sine and cosine formulas.", "Angles formed by lines with given slopes; if a + b = 45°, then (1 + tan a)(1 + tan b) = 2.")}
+${fc("Product to sum", "2 sin a cos b = sin(a + b) + sin(a − b)", "Add the two addition formulas.", "Sums of sines at evenly spaced angles, telescoping trig sums.")}
+${tips([
+  "sin x cos x = ½ sin 2x.",
+  "cos 36° = (1 + √5)/4: the golden ratio lives in the regular pentagon.",
+  "sin² 1° + sin² 2° + ··· + sin² 89° = 44.5 (pair each angle with its complement).",
+  "Convert everything to sin and cos when stuck."])}
+${ex("If sin x + cos x = 7/5 for an angle x between 0° and 90°, find sin 2x and tan x + 1/tan x.", ["Square: sin²x + 2 sin x cos x + cos²x = 49/25, so 1 + sin 2x = 49/25 and sin 2x = <b>24/25</b>.", "tan x + 1/tan x = sin/cos + cos/sin = (sin² + cos²)/(sin x cos x) = 1/(sin x cos x).", "sin x cos x = 12/25, so the value is <b>25/12</b>. (The angle has sin and cos 3/5 and 4/5.)"])}`);
+
+bx("cx.basics", `
+${deep([
+  "Complex numbers start with i, a number whose square is −1. Every complex number has the form a + bi with real part a and imaginary part b. You add, subtract and multiply them like polynomials in i, replacing i² with −1 whenever it appears.",
+  "Think of a + bi as the point (a, b) in the plane. Adding complex numbers is adding vectors. The absolute value |a + bi| = √(a² + b²) is the distance from the origin. The conjugate a − bi is the reflection across the real axis.",
+  "Division uses the conjugate to make the denominator real: multiply top and bottom by the conjugate of the bottom, since (c + di)(c − di) = c² + d². This is the same move as rationalizing a radical.",
+  "The powers of i cycle with period 4: i, −1, −i, 1. So iⁿ depends only on n mod 4."])}
+${fc("Conjugate and modulus", "z = a + bi, z̄ = a − bi, z · z̄ = a² + b² = |z|²", "Difference of squares with i² = −1.", "Division, finding |z|, and showing a number is real (z = z̄).")}
+${fc("Modulus is multiplicative", "|zw| = |z| · |w| and |z/w| = |z|/|w|", "Follows from |z|² = z z̄ and the conjugate of a product being the product of conjugates.", "Finding |(3 + 4i)⁵| = 5⁵ without expanding.")}
+${fc("Powers of i", "i¹ = i, i² = −1, i³ = −i, i⁴ = 1, then repeat", "Multiply by i each time.", "Sums like i + i² + ··· + i²⁰²⁶ (each block of 4 sums to 0).")}
+${tips([
+  "Two complex numbers are equal exactly when their real parts match and their imaginary parts match. That gives two equations from one.",
+  "Solve z² = a + bi by writing z = x + yi and matching parts, or use polar form.",
+  "For a real polynomial, complex roots come in conjugate pairs.",
+  "|z − w| is the distance between the points z and w."])}
+${ex("Find all complex numbers z with z² = 5 − 12i.", ["Let z = x + yi. Then x² − y² + 2xyi = 5 − 12i, so x² − y² = 5 and xy = −6.", "Also |z|² = |5 − 12i| = 13, so x² + y² = 13.", "Adding: 2x² = 18, x = ±3, and then y = −6/x.", "<b>z = 3 − 2i or z = −3 + 2i</b>."])}`);
+
+bx("cx.polar", `
+${deep([
+  "Every complex number can be written by its distance r from the origin and its angle θ from the positive real axis: z = r(cos θ + i sin θ), often shortened to r cis θ or re^(iθ). The payoff is multiplication: multiply the lengths and add the angles. Multiplying by i is a 90° rotation; multiplying by cis 60° rotates by 60°.",
+  "De Moivre's theorem follows: (r cis θ)ⁿ = rⁿ cis(nθ). Huge powers of numbers like 1 + i (length √2, angle 45°) become easy: (1 + i)²⁰ = (√2)²⁰ cis 900° = 1024 cis 180° = −1024.",
+  "The nth roots of unity are the solutions of zⁿ = 1: the points cis(360°k/n) for k = 0, 1, …, n − 1, which are the vertices of a regular n-gon on the unit circle. They add to 0 (for n ≥ 2), and they're the roots of zⁿ − 1 = (z − 1)(zⁿ⁻¹ + ··· + z + 1).",
+  "The cube roots of unity are especially common: 1, ω, ω² with ω = cis 120°. They satisfy ω³ = 1 and 1 + ω + ω² = 0, which lets you simplify any polynomial expression in ω."])}
+${fc("Multiplication in polar form", "r₁ cis θ₁ · r₂ cis θ₂ = r₁r₂ cis(θ₁ + θ₂)", "Expand and use the angle-addition formulas.", "Rotations, products of many complex numbers, geometry with complex coordinates.")}
+${fc("De Moivre", "(r cis θ)ⁿ = rⁿ cis(nθ)", "Repeated multiplication.", "Large powers, and deriving multiple-angle trig formulas.")}
+${fc("Roots of unity", "zⁿ = 1 ⟺ z = cis(360°k/n), k = 0, …, n − 1; their sum is 0", "Equally spaced on the unit circle; by symmetry (or Vieta) they sum to 0.", "Regular polygons, sums of evenly spaced cosines, filtering coefficients (every 3rd term).")}
+${fc("Roots of unity filter", "sum of coefficients a₀ + a₃ + a₆ + ··· of P = (P(1) + P(ω) + P(ω²))/3", "Powers of ω average to 0 except when the exponent is a multiple of 3.", "Counting subsets whose size (or sum) is a multiple of 3; AIME favorites.")}
+${tips([
+  "To find the angle of a + bi, sketch the point first so the quadrant is right.",
+  "|z| = 1 means z̄ = 1/z. That simplifies many unit-circle problems.",
+  "Rotating a point w about a center c by angle θ: c + (w − c) cis θ.",
+  "zⁿ = w has n solutions, equally spaced on a circle of radius |w|^(1/n)."])}
+${ex("Compute (1 + i√3)⁹.", ["Length: √(1 + 3) = 2. Angle: 60° (since tan θ = √3 in quadrant I).", "De Moivre: 2⁹ cis 540° = 512 cis 180°.", "cis 180° = −1, so the answer is <b>−512</b>."])}`);
+
+bx("play.patterns", `
+${deep([
+  "Experienced solvers don't start from a blank page. They see a feature of the problem and remember what has worked on that feature before. The table above lists the most common signals. The point isn't to follow it mechanically, but to have a first idea ready within seconds.",
+  "A few more signals worth adding to the table: a product equal to a sum (like ab = a + b) suggests Simon's trick; an expression symmetric in x and y suggests using x + y and xy; a condition that holds \"for all x\" suggests plugging in special values; the phrase \"relatively prime positive integers m and n\" means the answer is a fraction you must reduce, typical on the AIME.",
+  "Mass points is a quick tool for ratios along cevians in a triangle. Put weights at the vertices so each cevian's foot is the balance point of its side; then the ratio along a cevian is the inverse ratio of the weights at its ends. It replaces messy similar-triangle chains."])}
+${fc("Mass points", "if BD : DC = m : n, put mass n at B and m at C; D gets n + m", "It's the lever law, equivalent to Menelaus' theorem.", "Two cevians crossing inside a triangle: find the ratio in which they cut each other.")}
+${tips([
+  "When a problem has a year in it, check whether it factors nicely (2025 = 45², 2024 = 8 · 11 · 23).",
+  "If the answer choices include π, the problem involves a circle somewhere, even if it doesn't look like it.",
+  "If two answer choices differ by a factor of 2, double counting is being tested.",
+  "\"Find m + n\" means reduce the fraction first."])}
+${ex("In triangle ABC, D is on BC with BD : DC = 1 : 2 and E is on AC with AE : EC = 1 : 1. Segments AD and BE meet at P. Find AP : PD.", ["Masses balance each side: mass(B) × BD = mass(C) × DC, so the heavier end is the closer one.", "AE : EC = 1 : 1, so A and C get equal masses. Give each mass 1.", "BD : DC = 1 : 2, so mass(B) : mass(C) = 2 : 1. B gets mass 2.", "D, the balance point of B and C, gets mass 2 + 1 = 3.", "On AD, AP : PD = mass(D) : mass(A) = <b>3 : 1</b>."])}`);
+
+bx("play.process", `
+${deep([
+  "The four steps (understand, plan, carry out, look back) come from George Pólya's classic book How to Solve It. They sound obvious, but most mistakes come from skipping step 1 (solving the wrong problem) or step 4 (not checking).",
+  "Planning has a short list of moves to try when stuck: draw a picture; try small cases; work backward from what's asked; solve a simpler version (fewer variables, smaller numbers); look for symmetry; add an auxiliary line or variable; consider the extreme case; change the point of view (count the complement, use coordinates, use a different variable).",
+  "Looking back is where learning happens. After solving, ask: could I have seen this faster? Which step was the key one? That one-sentence lesson is what to write in your error log."])}
+${tips([
+  "If you've been stuck for a while, reread the problem slowly. Often a condition went unused.",
+  "Every given fact is usually needed. If you haven't used one, that's where the solution is.",
+  "Check extreme cases: does your formula give the right answer for n = 1?",
+  "Estimate the answer before computing it exactly."])}`);
+
+bx("play.testday", `
+${deep([
+  "Test day is about turning what you know into points. The first pass through the paper collects all the problems you can do quickly and accurately. The second pass is for problems where you see a path but it's long. The last minutes are for checking answers you're unsure about, not for starting new hard problems.",
+  "On the AMC 10 and 12, a blank earns 1.5 points and a wrong answer 0, so guess only when you can eliminate at least two choices. On the AMC 8 and AIME there's no penalty, so never leave a blank.",
+  "For the AIME, budget about 10 to 12 minutes per problem on average, but spend more on problems 1 to 8 where you have a real chance and less on 13 to 15 unless they click."])}
+${tips([
+  "Sleep and food matter more than last-minute review.",
+  "Bring several pencils, an eraser, and a watch if allowed.",
+  "Mark the answer sheet carefully. Transcription errors cost real points.",
+  "If a problem shakes your confidence, skip it and do an easier one to reset."])}`);
+/* Merge the In-depth layer into BOOK sections. */
+(() => {
+  for (const c of BOOK) for (const s of c.secs) {
+    const add = BX[c.id + "." + s.id]; if (!add) continue;
+    const i = s.h.lastIndexOf('<div class="prac"');
+    s.h = i >= 0 ? s.h.slice(0, i) + add + s.h.slice(i) : s.h + add;
+  }
+})();
 /* =========================================================
    STORAGE: shared Claude db when available, else this browser
    results: one doc per finished test or lesson check
