@@ -320,6 +320,40 @@ th{font-weight:600;color:var(--muted);font-size:.8rem;text-transform:uppercase;l
 .chap-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start}
 @media (max-width:820px){.chap-grid{grid-template-columns:1fr}}
 
+/* textbook */
+.pop{background:none;border:0;padding:0;font:inherit;color:var(--accent);text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:3px;cursor:pointer}
+.pop:hover{background:var(--accent-soft)}
+.pop-demo{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+.xref{background:none;border:0;padding:0;font:inherit;color:var(--accent);text-align:left;cursor:pointer}
+.xref:hover{text-decoration:underline}
+.blv{font:600 .68rem/1.2 var(--f-mono);padding:2px 8px;border-radius:999px;background:var(--t3-soft);color:var(--t3);white-space:nowrap;vertical-align:middle;align-self:flex-start}
+.btoc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.bintro{color:var(--muted);font-size:.9rem}
+.bsecs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px;font-size:.92rem}
+.book{display:grid;grid-template-columns:260px minmax(0,1fr);gap:28px;align-items:start}
+.btoc{position:sticky;top:90px;max-height:calc(100vh - 110px);overflow:auto;display:flex;flex-direction:column;gap:8px;padding:16px}
+.btoc-list,.btoc-list ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.btoc-list ol{margin:2px 0 6px 26px;border-left:2px solid var(--line);padding-left:8px}
+.btoc-list button{display:flex;gap:8px;width:100%;text-align:left;background:none;border:0;padding:3px 4px;border-radius:6px;font-size:.88rem;color:var(--muted)}
+.btoc-list button:hover{background:var(--accent-soft);color:var(--ink)}
+.btoc-list li.cur>button{color:var(--ink);font-weight:600}
+.btoc-list .bn{font-family:var(--f-mono);font-size:.75rem;min-width:18px;color:var(--muted)}
+.bsec{display:flex;flex-direction:column;gap:14px;scroll-margin-top:84px;padding-top:6px;border-top:1px solid var(--line)}
+.bsec ul{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:4px}
+.bjump{display:flex;flex-wrap:wrap;gap:4px 10px}
+.prac{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.prac .lab,.pats .lab,.btraps .lab{font-family:var(--f-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.pats{background:var(--good-soft);border-radius:10px;padding:12px 16px}
+.btraps{background:var(--bad-soft);border-radius:10px;padding:12px 16px}
+.bsearch{width:min(420px,100%)}
+.bres{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.bres small{display:block;color:var(--muted);font-size:.8rem}
+.bpop-ov{position:fixed;inset:0;z-index:55;background:rgba(10,14,30,.45);display:grid;place-items:center;padding:16px}
+.bpop{background:var(--surface);color:var(--ink);border-radius:16px;padding:20px 22px;width:min(520px,100%);max-height:80vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.35);display:flex;flex-direction:column;gap:10px}
+.bpop-b{line-height:1.6}
+.notes-az{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px 18px}.notes-az .pop{text-align:left}
+@media (max-width:820px){.book{grid-template-columns:1fr}.btoc{display:none}}
+
 /* examples switch */
 .exsw{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px 4px 6px;font-size:.84rem;color:var(--ink);white-space:nowrap}
 .exsw-k{width:30px;height:18px;border-radius:999px;background:var(--line);position:relative;transition:background .15s;flex:none}
@@ -335,6 +369,7 @@ th{font-weight:600;color:var(--muted);font-size:.8rem;text-transform:uppercase;l
   </button>
   <nav class="tabs" id="tabs">
     <button class="tab" data-go="learn">Learn</button>
+    <button class="tab" data-go="book">Textbook</button>
     <button class="tab" data-go="setup">Test prep</button>
     <button class="tab" data-go="formulas">Formulas</button>
     <button class="tab" data-go="progress">Progress</button>
@@ -5474,7 +5509,7 @@ Object.assign(LESSONS, {
       ${ex("A probability works out to 18/48. The problem says it is m/n in lowest terms and asks for m + n.", ["Reduce: 18/48 = 3/8 (divide by 6).", "m + n = 3 + 8 = <b>11</b>. Using 18 + 48 = 66 is the classic mistake."])}
       <h3>Time plan</h3>
       <p>Three hours for 15 problems sounds like plenty, but the hard ones eat time. A plan that works for most students:</p>
-      ${tbl(["Problems", "Typical difficulty", "Plan"], [["1–5", "Late AMC 10/12", "Solve carefully, check each answer, about 10 minutes each"], ["6–10", "Medium", "Try each; skip one after 15 minutes of no progress and come back"], ["11–15", "Hard", "Read them all; pick the one whose topic you know best"]])}
+      ${tbl(["Problems", "Typical difficulty", "Plan"], [["1–5", "Late AMC 10 and 12", "Solve carefully, check each answer, about 10 minutes each"], ["6–10", "Medium", "Try each; skip one after 15 minutes of no progress and come back"], ["11–15", "Hard", "Read them all; pick the one whose topic you know best"]])}
       <h3>When you're stuck</h3>
       ${rule("Moves that unlock problems:", "Try small cases (n = 1, 2, 3, 4) and look for a pattern.<br>Draw an accurate diagram; measure it to guess the answer, then prove it.<br>Name things: give the unknown a letter and write the facts as equations.<br>Work backwards from the answer format.<br>Bash carefully: coordinates, casework, or a table often finish what cleverness can't.")}
       ${ex("Find the sum of the first 25 odd numbers.", ["Small cases: 1 = 1, 1 + 3 = 4, 1 + 3 + 5 = 9, 1 + 3 + 5 + 7 = 16. Squares!", "The first n odd numbers add to n², so the answer is 25² = <b>625</b>.", "Then prove it if you have time: the kth odd number is 2k − 1, and Σ(2k − 1) = n(n + 1) − n = n²."], "slow walkthrough")}
@@ -9837,6 +9872,519 @@ const glossifyBody = h => typeof h !== "string" ? h : h.split(/(?=<h3[\s>])/).ma
 })();
 
 /* =========================================================
+   TEXTBOOK: helpers and pop-up notes
+   BOOK = [{ id, title, lv, intro, secs: [{ id, t, lv?, h }] }]  (filled by 0636–0638)
+   In section HTML:
+     pop("key", "label")   button that opens POPS[key] in a pop-up (no navigation)
+     xr("ch.sec", "label") jump to another textbook section
+     prac("id id ...")     chips that open app lessons
+     lv("AMC 8")           level tag
+   ========================================================= */
+const BOOK = [];
+const POPS = {};   // key -> { t: title, h: html }
+const pop = (k, label) => `<button class="pop" data-pop="${k}">${label}</button>`;
+const xr = (ref, label) => `<button class="xref" data-act="bookgo" data-ref="${ref}">${label}</button>`;
+const lv = s => `<span class="blv">${s}</span>`;
+const prac = ids => `<div class="prac"><span class="lab">Practice</span>${ids.split(" ").map(id => LESSONS[id] || lessonMetaLite(id) ? `<button class="pill" data-act="lesson" data-id="${id}">${lessonMetaLite(id)?.title || id}</button>` : "").join("")}</div>`;
+function lessonMetaLite(id) { for (const c of CURRICULUM) for (const g of c.groups) for (const l of g.lessons) if (l.id === id) return l; return null; }
+const pats = items => `<div class="pats"><span class="lab">Typical question patterns</span><ul>${items.map(x => `<li>${x}</li>`).join("")}</ul></div>`;
+const traps = items => `<div class="btraps"><span class="lab">Common traps</span><ul>${items.map(x => `<li>${x}</li>`).join("")}</ul></div>`;
+const P_ = (k, t, h) => { POPS[k] = { t, h }; };
+
+/* ---------- pop-up notes: definitions, proofs, mini examples ---------- */
+P_("integer", "Integer", "A whole number, positive, negative, or zero: …, −2, −1, 0, 1, 2, …. Contest problems that say \"positive integer\" mean 1, 2, 3, …; \"nonnegative\" also allows 0.");
+P_("rational", "Rational number", "A number you can write as a fraction p/q of integers with q ≠ 0. Every terminating or repeating decimal is rational: 0.333… = 1/3. Numbers like √2 and π are <b>irrational</b>.");
+P_("prime", "Prime number", "A whole number greater than 1 whose only divisors are 1 and itself: 2, 3, 5, 7, 11, 13, …. 1 is <b>not</b> prime. 2 is the only even prime.");
+P_("factorial", "Factorial", "n! = n · (n − 1) · ··· · 2 · 1. So 5! = 120. By definition 0! = 1. Factorials count the ways to line up n different things.");
+P_("gcd", "GCD (greatest common divisor)", "The largest number dividing both. gcd(12, 18) = 6. From prime factorizations: take each shared prime to its <b>smaller</b> power. Also: gcd(a, b) · lcm(a, b) = a · b.");
+P_("lcm", "LCM (least common multiple)", "The smallest positive number both divide. lcm(4, 6) = 12. From prime factorizations: take each prime to its <b>larger</b> power.");
+P_("mod", "Congruence mod m", "a ≡ b (mod m) means a and b leave the same remainder when divided by m, or equivalently m divides a − b. 17 ≡ 2 (mod 5). You can add, subtract, and multiply congruences freely.");
+P_("coprime", "Relatively prime", "Two integers are relatively prime (coprime) if their gcd is 1. 8 and 15 are coprime even though neither is prime.");
+P_("lowest", "Lowest terms", "A fraction m/n is in lowest terms when gcd(m, n) = 1. Reduce by dividing top and bottom by the gcd: 18/48 → 3/8. Contest answers of the form \"m + n\" always need this first.");
+P_("variable", "Variable", "A letter standing for a number you don't know yet. Naming the unknown is the first move in most word problems.");
+P_("linear", "Linear equation", "An equation where the variable appears only to the first power, like 3x + 5 = 20. Its graph is a straight line.");
+P_("quadratic", "Quadratic", "A polynomial of degree 2: ax² + bx + c. Its graph is a parabola. It has at most 2 roots.");
+P_("qformula", "Quadratic formula", "The roots of ax² + bx + c = 0 are x = (−b ± √(b² − 4ac)) / (2a). Derived by completing the square on ax² + bx + c.");
+P_("discriminant", "Discriminant", "D = b² − 4ac for ax² + bx + c. D > 0: two real roots. D = 0: one repeated root. D < 0: no real roots (two complex ones). For integer coefficients, rational roots need D to be a perfect square.");
+P_("vieta", "Vieta's formulas", "For ax² + bx + c with roots r, s: r + s = −b/a and rs = c/a. For higher degree the pattern continues with alternating signs. See the AIME lesson for cubics.");
+P_("polynomial", "Polynomial", "A sum of terms like 3x⁴ − x + 7, with whole-number powers of x. The <b>degree</b> is the highest power; the <b>leading coefficient</b> multiplies that power; <b>monic</b> means the leading coefficient is 1.");
+P_("root", "Root (zero)", "A value of x that makes the polynomial equal 0. If r is a root, then (x − r) is a factor.");
+P_("function", "Function", "A rule that turns each input into exactly one output. f(x) = 2x + 1 sends 3 to 7. Composition f(g(x)) means do g first, then f.");
+P_("slope", "Slope", "Rise over run: (y₂ − y₁)/(x₂ − x₁). Parallel lines have equal slopes; perpendicular lines have slopes whose product is −1.");
+P_("absval", "Absolute value", "|x| is the distance from x to 0, so it's never negative. |x − a| is the distance between x and a. |x − 3| < 2 means x is within 2 of 3: 1 < x < 5.");
+P_("exponent", "Exponent", "aⁿ means n copies of a multiplied. a⁰ = 1 (for a ≠ 0), a⁻ⁿ = 1/aⁿ, a^(1/n) = ⁿ√a.");
+P_("log", "Logarithm", "log_b x is the power you raise b to in order to get x. log₂ 32 = 5. It undoes exponentiation: b^(log_b x) = x.");
+P_("radical", "Simplest radical form", "Pull every square factor out of the square root and leave no root in a denominator: √72 = 6√2, and 1/√2 = √2/2.");
+P_("arith-seq", "Arithmetic sequence", "Each term adds the same difference d: a, a + d, a + 2d, …. The nth term is a + (n − 1)d. Sum = (number of terms) × (first + last)/2.");
+P_("geo-seq", "Geometric sequence", "Each term multiplies by the same ratio r: a, ar, ar², …. Sum of n terms = a(rⁿ − 1)/(r − 1). Infinite sum = a/(1 − r) when |r| < 1.");
+P_("amgm", "AM-GM inequality", "For nonnegative numbers, the average is at least the geometric mean: (a + b)/2 ≥ √(ab), equality only when a = b. Proof: (√a − √b)² ≥ 0.");
+P_("perm", "Permutation", "An ordered arrangement. The number of ways to line up k of n different things is n!/(n − k)! = n(n − 1)···(n − k + 1). Written P(n, k).");
+P_("comb", "Combination", "An unordered selection. Choosing k of n: C(n, k) = n!/(k!(n − k)!). Order doesn't matter, so you divide the permutation count by k!.");
+P_("binomial", "Binomial theorem", "(x + y)ⁿ = Σ C(n, k) xⁿ⁻ᵏ yᵏ. The coefficients are row n of Pascal's triangle. Setting x = y = 1 shows the row sums to 2ⁿ.");
+P_("pascal", "Pascal's triangle", "Each entry is the sum of the two above it, which is the identity C(n, k) = C(n − 1, k − 1) + C(n − 1, k). Row 4: 1 4 6 4 1.");
+P_("starsbars", "Stars and bars", "Ways to write n as an ordered sum of k nonnegative integers: C(n + k − 1, k − 1). Picture n stars split by k − 1 bars.");
+P_("pie", "Inclusion–exclusion", "|A ∪ B| = |A| + |B| − |A ∩ B|. With three sets add the triple overlap back: |A ∪ B ∪ C| = singles − pairs + triple.");
+P_("pigeonhole", "Pigeonhole principle", "Put more than n objects into n boxes and some box gets at least two. More generally, some box gets at least ⌈objects/boxes⌉.");
+P_("bijection", "Bijection", "A perfect one-to-one pairing between two sets. If you can pair A with B, then |A| = |B|, so you can count whichever is easier.");
+P_("derangement", "Derangement", "An arrangement where nothing is in its original place. D₁ = 0, D₂ = 1, D₃ = 2, D₄ = 9, D₅ = 44. Dₙ = (n − 1)(Dₙ₋₁ + Dₙ₋₂).");
+P_("prob", "Probability", "P(event) = (favorable outcomes)/(total outcomes) when all outcomes are equally likely. Always between 0 and 1.");
+P_("indep", "Independent events", "A and B are independent if one happening doesn't change the chance of the other. Then P(A and B) = P(A) · P(B). Two separate coin flips are independent; drawing two cards without replacement is not.");
+P_("cond", "Conditional probability", "P(A | B) = P(A and B)/P(B): the chance of A once you know B happened. Shrink the sample space to B.");
+P_("ev", "Expected value", "The long-run average outcome: Σ value × probability. A fair die has expected value 3.5.");
+P_("linearity", "Linearity of expectation", "E[X + Y] = E[X] + E[Y], even if X and Y depend on each other. Split a count into 1-or-0 pieces (indicators) and add their probabilities.");
+P_("congruent", "Congruent", "Same shape and same size. Triangles are congruent by SSS, SAS, ASA, AAS, or HL (right triangles). SSA is not enough.");
+P_("similar", "Similar", "Same shape, possibly different size: equal angles, proportional sides. Two angles equal (AA) is enough for triangles. Scale factor k multiplies lengths by k, areas by k², volumes by k³.");
+P_("pythag", "Pythagorean theorem", "In a right triangle with legs a, b and hypotenuse c: a² + b² = c². Proof by rearranging four copies of the triangle inside a square of side a + b.");
+P_("triples", "Pythagorean triples", "Whole-number right triangles: 3-4-5, 5-12-13, 8-15-17, 7-24-25, 20-21-29, 9-40-41, and multiples like 6-8-10.");
+P_("special", "Special right triangles", "45-45-90: sides x, x, x√2. 30-60-90: sides x, x√3, 2x (short leg opposite 30°, hypotenuse is twice it).");
+P_("extangle", "Exterior angle theorem", "An exterior angle of a triangle equals the sum of the two interior angles not next to it.");
+P_("tri-ineq", "Triangle inequality", "Any side is less than the sum of the other two. For sides a ≤ b ≤ c, it's enough to check a + b > c.");
+P_("centroid", "Centroid", "Where the three medians meet. It splits each median 2 : 1 (long part at the vertex). In coordinates it's the average of the three vertices.");
+P_("incenter", "Incenter and inradius", "Where the angle bisectors meet; the center of the inscribed circle. Its radius r satisfies Area = r · s, where s is the semiperimeter. Right triangle: r = (a + b − c)/2.");
+P_("circumcenter", "Circumcenter and circumradius", "Where the perpendicular bisectors of the sides meet; the center of the circle through all three vertices. R = abc/(4·Area). In a right triangle, R is half the hypotenuse.");
+P_("heron", "Heron's formula", "Area = √(s(s − a)(s − b)(s − c)) with s = (a + b + c)/2. Best when all three sides are whole numbers. 13-14-15 gives 84.");
+P_("shoelace", "Shoelace formula", "List vertices in order (x₁, y₁), …, (xₙ, yₙ). Area = ½|x₁y₂ − x₂y₁ + x₂y₃ − x₃y₂ + ··· + xₙy₁ − x₁yₙ|.");
+P_("pick", "Pick's theorem", "For a polygon with corners on grid points: Area = I + B/2 − 1, where I = grid points inside and B = grid points on the boundary.");
+P_("inscribed", "Inscribed angle theorem", "An angle with its vertex on the circle is half the arc it cuts off. So an angle in a semicircle is 90°, and angles cutting off the same arc are equal.");
+P_("tangent", "Tangent line", "A line touching a circle at one point. The radius to that point is perpendicular to the tangent. Two tangent segments from one outside point are equal.");
+P_("pop", "Power of a point", "Through a point P, every line meeting a circle at A and B gives the same product PA · PB. For a tangent PT, it's PT². It equals |d² − r²|.");
+P_("cyclic", "Cyclic quadrilateral", "A quadrilateral with all four vertices on a circle. Opposite angles add to 180°. Ptolemy: AC · BD = AB · CD + AD · BC.");
+P_("euler-poly", "Euler's formula for polyhedra", "V − E + F = 2 for any convex polyhedron. A cube: 8 − 12 + 6 = 2.");
+P_("lawcos", "Law of cosines", "c² = a² + b² − 2ab cos C. With C = 90° it's Pythagoras. Use it for SAS (find the third side) or SSS (find an angle).");
+P_("lawsin", "Law of sines", "a/sin A = b/sin B = c/sin C = 2R. Use it when you know two angles and a side.");
+P_("unitcircle", "Unit circle", "The point at angle θ on the circle of radius 1 is (cos θ, sin θ). That's why sin²θ + cos²θ = 1.");
+P_("complex", "Complex number", "a + bi with i² = −1. Plot it as the point (a, b). |a + bi| = √(a² + b²).");
+P_("demoivre", "De Moivre's theorem", "(cos θ + i sin θ)ⁿ = cos nθ + i sin nθ. Multiplying complex numbers multiplies lengths and adds angles.");
+P_("rou", "Roots of unity", "The n solutions of zⁿ = 1 sit evenly around the unit circle at angles 0°, 360°/n, 2·360°/n, …. They add to 0.");
+P_("floor", "Floor function", "⌊x⌋ is the greatest integer at most x: ⌊3.9⌋ = 3, ⌊−0.5⌋ = −1. The number of multiples of k up to n is ⌊n/k⌋.");
+P_("legendre", "Legendre's formula", "The power of prime p in n! is ⌊n/p⌋ + ⌊n/p²⌋ + ⌊n/p³⌋ + ···. Trailing zeros of n! = power of 5.");
+P_("fermat", "Fermat's little theorem", "If p is prime and doesn't divide a, then a^(p − 1) ≡ 1 (mod p). So 2¹⁰ ≡ 1 (mod 11).");
+P_("phi", "Euler's totient φ(n)", "How many numbers from 1 to n share no factor with n. φ(n) = n · Π(1 − 1/p) over primes p dividing n. φ(12) = 4: {1, 5, 7, 11}.");
+P_("crt", "Chinese Remainder Theorem", "If the moduli share no factors, knowing a number's remainder mod each one fixes it mod their product. x ≡ 2 (mod 3) and x ≡ 3 (mod 5) means x ≡ 8 (mod 15).");
+P_("sfft", "Simon's Favorite Factoring Trick", "Add a constant so xy + ax + by factors: xy + ax + by + ab = (x + b)(y + a).");
+P_("mcnugget", "Chicken McNugget theorem", "If a and b are coprime, the largest number not of the form ax + by (x, y ≥ 0) is ab − a − b. With 5 and 8: 27.");
+P_("parity", "Parity", "Whether a number is even or odd. even + even = even, odd + odd = even, odd × odd = odd. Parity arguments prove that something is impossible.");
+P_("invariant", "Invariant", "A quantity that never changes no matter which allowed move you make. If the start and the goal give different values, the goal is unreachable.");
+P_("wlog", "WLOG", "\"Without loss of generality\": assuming a convenient case (like a ≤ b ≤ c, or a side of length 1) because the other cases work the same way.");
+P_("casework", "Casework", "Split the problem into cases that don't overlap and together cover everything, count each, and add. Choose the split so each case is easy.");
+P_("complement", "Complementary counting", "Count what you don't want and subtract from the total. Best for \"at least one\" problems.");
+P_("telescope", "Telescoping", "A sum whose terms are differences f(k) − f(k + 1), so neighbors cancel and only the ends survive.");
+P_("recursion", "Recursion", "Define the answer for n using answers for smaller n, like aₙ = aₙ₋₁ + aₙ₋₂, then build a table from the start.");
+P_("mass", "Mass points", "Put weights on vertices so each cevian's foot balances: a point dividing BC as m : n gets masses n at B and m at C. Ratios along cevians are inverse ratios of masses.");
+P_("dist-line", "Distance from a point to a line", "From (x₀, y₀) to ax + by + c = 0: |ax₀ + by₀ + c| / √(a² + b²).");
+P_("aime-fmt", "AIME answer format", "Every AIME answer is an integer from 0 to 999. Problems often ask for m + n where m/n is in lowest terms, or a remainder mod 1000.");
+/* =========================================================
+   TEXTBOOK part A: contests, arithmetic, algebra, exponents & logs, polynomials, sequences
+   ========================================================= */
+BOOK.push(
+{ id: "start", title: "How contest math works", lv: "All levels",
+  intro: "Contest problems test whether you can see the short path, not whether you can grind. This chapter is the map: what each contest looks like and the habits that win points.",
+  secs: [
+  { id: "contests", t: "The contests", h: `
+    ${tbl(["Contest", "Questions", "Time", "Answers", "Scoring"], [
+      ["AMC 8", "25", "40 min", "A–E", "1 point each, no penalty"],
+      ["AMC 10 and 12", "25", "75 min", "A–E", "6 right, 1.5 blank, 0 wrong"],
+      ["AIME", "15", "3 hours", "000–999", "1 point each, no penalty"]])}
+    <p>The AMC 10 covers everything before precalculus. The AMC 12 adds ${pop("log", "logarithms")}, trigonometry, and ${pop("complex", "complex numbers")}. A high AMC 10 or 12 score qualifies you for the AIME, and AIME problems use the same topics at a deeper level.</p>
+    ${rule("Guessing on the AMC 10 and 12:", "A blank is worth 1.5. A random guess is worth 6 × ⅕ = 1.2 on average, so blind guessing loses. If you can rule out two choices, a guess is worth 6 × ⅓ = 2, so guess.")}` },
+  { id: "habits", t: "Habits that win points", h: `
+    <p>Strong solvers do a few things every time:</p>
+    <ul>
+      <li><b>Read the question twice.</b> Underline what is asked: the sum, the product, the remainder, the number of ways.</li>
+      <li><b>Name things.</b> Give the unknown a ${pop("variable", "variable")}, label every length in the figure.</li>
+      <li><b>Try small cases.</b> If a problem has 2026 in it, try 1, 2, 3, 4 first and look for a pattern.</li>
+      <li><b>Look for symmetry and structure</b> before computing: pairing, factoring, a clever substitution.</li>
+      <li><b>Check against the choices.</b> Wrong answers are designed from common mistakes, so an answer that matches a choice is not proof. Re-check signs and "off by one" counts.</li>
+    </ul>
+    ${ex("A 2026-term pattern: 1 − 2 + 3 − 4 + ··· + 2025 − 2026. Find the value.", ["Small cases: 1 − 2 = −1, then 1 − 2 + 3 − 4 = −2, then −3 for six terms.", "Each pair (odd − even) is −1, and 2026 terms make 1013 pairs.", "The sum is <b>−1013</b>."])}` },
+  { id: "levels", t: "What each level expects", h: `
+    ${tbl(["Level", "You should be fluent in"], [
+      ["AMC 8", "fractions, percents, ratios, rates, area and perimeter, the Pythagorean theorem, basic counting and probability, divisibility"],
+      ["AMC 10", "algebra and quadratics, similar triangles, circles, counting with combinations, modular arithmetic, expected value"],
+      ["AMC 12", "everything above plus logarithms, trig, complex numbers, harder polynomials"],
+      ["AIME", "the same toolkit used in multi-step problems: Vieta, mod arithmetic with Euler, recursion, power of a point, trig in geometry"]])}
+    ${prac("aime-strategy patterns backwards")}` },
+  ] },
+
+{ id: "arith", title: "Arithmetic & number sense", lv: "AMC 8 → AMC 10",
+  intro: "Fast, accurate arithmetic is the floor everything else stands on. The goal is to compute less by noticing structure.",
+  secs: [
+  { id: "fractions", t: "Fractions, decimals, percents", h: `
+    <p>One number, three names: 3/4 = 0.75 = 75%. Use whichever makes the problem easiest.</p>
+    ${rule("Key facts:", "\"of\" means multiply: 30% of 40 = 0.3 × 40 = 12.<br>Percent change = change ÷ original.<br>Increase by p% then decrease by p% leaves you <b>below</b> where you started: × (1 + p)(1 − p) = 1 − p².")}
+    ${tbl(["Fraction", "1/2", "1/3", "1/4", "1/5", "1/6", "1/8", "1/9", "1/12"], [["Decimal", "0.5", "0.333…", "0.25", "0.2", "0.1666…", "0.125", "0.111…", "0.0833…"]])}
+    ${ex("A price rises 20%, then falls 20%. What is the net percent change?", ["Multiply the factors: 1.2 × 0.8 = 0.96.", "The price ends at 96% of the start, a <b>4% decrease</b>.", "Not 0%: the 20% decrease is taken from a bigger number."])}
+    ${prac("fractions mixtures")}` },
+  { id: "ratios", t: "Ratios, rates and units", h: `
+    <p>A ratio 3 : 5 means \"3 parts to 5 parts\". Turn it into actual amounts with one unknown: 3k and 5k.</p>
+    ${rule("Rate problems:", "distance = rate × time; work = rate × time. Rates add when people work together: if A does a job in 3 hours and B in 6, together they do 1/3 + 1/6 = 1/2 job per hour, so 2 hours.")}
+    <p>Average speed is total distance ÷ total time, <b>not</b> the average of the speeds. Going 30 mph there and 60 mph back averages 40 mph (the harmonic mean 2·30·60/90).</p>
+    ${ex("Boys and girls are in ratio 3 : 5, and there are 12 more girls than boys. How many students?", ["Let there be 3k boys and 5k girls. Then 5k − 3k = 2k = 12, so k = 6.", "Total 8k = <b>48</b>."])}
+    ${prac("ratios drt avg-speed work units")}` },
+  { id: "averages", t: "Averages", h: `
+    ${rule("Mean:", "mean = sum ÷ count, so <b>sum = mean × count</b>. Most average problems are really sum problems.<br><b>Median:</b> middle value when sorted. <b>Mode:</b> most frequent. <b>Range:</b> max − min.")}
+    ${ex("The average of 5 tests is 84. What must the 6th test be to raise the average to 86?", ["Current sum 5 × 84 = 420. Needed sum 6 × 86 = 516.", "The 6th test must be 516 − 420 = <b>96</b>."])}
+    ${prac("averages")}` },
+  { id: "tricks", t: "Computation shortcuts", h: `
+    ${rule("Shortcuts worth knowing:", "Distribute: 17 × 23 + 17 × 77 = 17 × 100.<br>Difference of squares: 47 × 53 = 50² − 3² = 2491.<br>Gauss pairing: 1 + 2 + ··· + n = n(n + 1)/2.<br>Multiply by 25 = multiply by 100, divide by 4.")}
+    <p>Estimate first to catch wild answers. If the choices are far apart, estimating may be the whole solution.</p>
+    ${pats(["\"What percent of…\" chains: multiply the factors.", "Sums of a long arithmetic list: pair the ends.", "Clever products like 999 × 1001 = 10⁶ − 1."])}
+    ${traps(["Averaging two speeds directly.", "Percent of a percent: a 50% increase of a 10% rate is 15%, not 60%.", "Counting fence posts: from 1 to n inclusive there are n numbers, from a to b there are b − a + 1."])}
+    ${prac("order-ops mental-math")}` },
+  ] },
+
+{ id: "alg1", title: "Algebra I: expressions and equations", lv: "AMC 8 → AMC 10",
+  intro: "Algebra is bookkeeping for unknowns. Name the unknown, write the facts as equations, and solve. Most of the skill is in the setup.",
+  secs: [
+  { id: "expr", t: "Expressions", h: `
+    ${rule("Moves you use constantly:", "Distribute: a(b + c) = ab + ac.<br>Combine like terms: 3x + 5x = 8x.<br>FOIL: (a + b)(c + d) = ac + ad + bc + bd.<br>Special products: (a + b)² = a² + 2ab + b², (a − b)² = a² − 2ab + b², (a + b)(a − b) = a² − b².")}
+    <p>When a problem gives you a + b and ab, you can find a² + b² = (a + b)² − 2ab without finding a and b. This idea (work with symmetric combinations) returns in ${xr("alg2.vieta", "Vieta's formulas")}.</p>
+    ${ex("x + y = 7 and xy = 10. Find x² + y².", ["(x + y)² = x² + 2xy + y², so 49 = x² + y² + 20.", "x² + y² = <b>29</b>."])}
+    ${prac("expressions perfect-squares diff-squares")}` },
+  { id: "lineq", t: "Linear equations and systems", h: `
+    <p>A ${pop("linear", "linear equation")} is solved by undoing operations in reverse order, doing the same thing to both sides.</p>
+    ${rule("Systems of two equations:", "<b>Substitution:</b> solve one equation for a variable and plug in.<br><b>Elimination:</b> add or subtract equations to cancel a variable.<br><b>Contest trick:</b> add all the equations, or subtract them, when they are symmetric.")}
+    ${ex("a + b = 10, b + c = 13, a + c = 11. Find a + b + c.", ["Add all three: 2a + 2b + 2c = 34.", "a + b + c = <b>17</b>. (Then each variable is 17 minus one equation, if needed.)"])}
+    ${prac("linear-eq systems")}` },
+  { id: "words", t: "Turning words into equations", h: `
+    <p>Translate phrase by phrase: \"is\" means =, \"of\" means ×, \"more than\" means +, \"less than\" flips the order (5 less than x is x − 5).</p>
+    ${rule("Setup checklist:", "1. Name the unknown (say what it stands for, including units).<br>2. Write one equation per fact.<br>3. Solve, then answer the question actually asked.<br>4. Check the answer in the original words.")}
+    ${ex("In 6 years Ana will be twice as old as she was 4 years ago. How old is she now?", ["Let a = her age now. In 6 years: a + 6. Four years ago: a − 4.", "a + 6 = 2(a − 4) = 2a − 8, so a = <b>14</b>.", "Check: 20 = 2 × 10. ✓"])}
+    ${prac("word-eq backwards")}` },
+  { id: "ineq", t: "Inequalities and absolute value", h: `
+    ${rule("Inequality rules:", "Add or subtract anything. Multiply or divide by a <b>positive</b> number freely. Multiplying or dividing by a <b>negative</b> flips the sign.")}
+    <p>${pop("absval", "Absolute value")} is distance. |x − 4| ≤ 3 means x is within 3 of 4, so 1 ≤ x ≤ 7. For |x − a| = |x − b|, x is the midpoint (a + b)/2.</p>
+    ${ex("How many integers satisfy |2x − 5| < 9?", ["−9 < 2x − 5 < 9, so −4 < 2x < 14 and −2 < x < 7.", "Integers −1 through 6: <b>8</b>."])}
+    ${pats(["Ages, coins, and mixtures: one unknown per quantity.", "Symmetric systems: add everything.", "\"Find x + y\" without finding x and y: look for a combination."])}
+    ${traps(["Forgetting to flip the inequality when multiplying by a negative.", "Answering for x when the question asks for 2x + 1.", "Mixing units (minutes and hours)."])}
+    ${prac("inequalities")}` },
+  ] },
+
+{ id: "exp", title: "Exponents, radicals and logarithms", lv: "AMC 8 → AIME",
+  intro: "Exponent rules are a handful of patterns. Radicals are exponents of 1/2, and logarithms run exponents backward. Learn them as one family.",
+  secs: [
+  { id: "rules", t: "Exponent rules", h: `
+    ${rule("Rules (same base):", "aᵐ · aⁿ = aᵐ⁺ⁿ &nbsp; aᵐ/aⁿ = aᵐ⁻ⁿ &nbsp; (aᵐ)ⁿ = aᵐⁿ &nbsp; (ab)ⁿ = aⁿbⁿ<br>a⁰ = 1, a⁻ⁿ = 1/aⁿ, a^(1/n) = ⁿ√a, a^(m/n) = (ⁿ√a)ᵐ.")}
+    <p>The main contest move: <b>rewrite everything with the same base</b>. 8ˣ = 2³ˣ, 27 = 3³, 0.25 = 2⁻².</p>
+    ${ex("Solve 4ˣ⁺¹ = 8ˣ.", ["Base 2: 2^(2x + 2) = 2^(3x).", "2x + 2 = 3x, so x = <b>2</b>."])}
+    ${prac("exp-rules exp-zero-neg sci-notation")}` },
+  { id: "compare", t: "Comparing huge numbers", h: `
+    <p>To compare 2¹⁰⁰ and 3⁶⁰, make the exponents match: 2¹⁰⁰ = (2⁵)²⁰ = 32²⁰ and 3⁶⁰ = (3³)²⁰ = 27²⁰. So 2¹⁰⁰ is bigger.</p>
+    ${rule("Tools:", "Match exponents (take a common root) or match bases. Units digits cycle (see the number theory chapter). The number of digits of N is ⌊log₁₀ N⌋ + 1.")}
+    ${prac("compare-powers")}` },
+  { id: "radicals", t: "Radicals", h: `
+    ${rule("Radical rules:", "√(ab) = √a · √b and √(a/b) = √a/√b (for a, b ≥ 0). But √(a + b) ≠ √a + √b.<br>Simplify: √72 = √36 · √2 = 6√2.<br>Rationalize: 1/√3 = √3/3; 1/(√5 − √2) = (√5 + √2)/3 (multiply by the conjugate).")}
+    <p>Contests want ${pop("radical", "simplest radical form")}. Write the answer as a√b with b having no square factor.</p>
+    ${ex("Simplify √(7 + 4√3).", ["Guess (a + b√3)² = a² + 3b² + 2ab√3 = 7 + 4√3.", "2ab = 4 and a² + 3b² = 7: a = 2, b = 1 works.", "√(7 + 4√3) = <b>2 + √3</b>."])}
+    ${prac("sqrt-simplify rationalize")}` },
+  { id: "logs", t: "Logarithms", lv: "AMC 12 / AIME", h: `
+    <p>A ${pop("log", "logarithm")} answers \"what power?\": log₃ 81 = 4 because 3⁴ = 81.</p>
+    ${rule("Log rules:", "log(xy) = log x + log y &nbsp; log(x/y) = log x − log y &nbsp; log(xⁿ) = n log x<br>Change of base: log_b x = log x / log b. Chain: log_a b · log_b c = log_a c.")}
+    ${ex("Compute log₂ 6 + log₂ (4/3).", ["Add logs = log of product: log₂(6 · 4/3) = log₂ 8.", "= <b>3</b>."])}
+    ${traps(["(a + b)² is not a² + b².", "(−2)² = 4 but −2² = −4.", "log(x + y) is not log x + log y."])}
+    ${prac("aime-logs")}` },
+  ] },
+
+{ id: "alg2", title: "Algebra II: functions, quadratics, polynomials", lv: "AMC 10 → AIME",
+  intro: "Quadratics are the most-tested algebra topic on the AMC 10. Polynomials of higher degree dominate AIME algebra. The same few ideas carry both.",
+  secs: [
+  { id: "functions", t: "Functions and graphs", h: `
+    <p>A ${pop("function", "function")} f turns inputs into outputs. Lines y = mx + b have ${pop("slope", "slope")} m and y-intercept b.</p>
+    ${rule("Function facts:", "f(g(x)) means apply g first. To find f(5) from a rule like f(2x + 1) = 4x, set 2x + 1 = 5 (x = 2), so f(5) = 8.<br>Shifts: f(x − h) + k moves the graph right h and up k.")}
+    ${ex("f(x + 1) = x² + 3x. Find f(4).", ["x + 1 = 4 means x = 3.", "f(4) = 9 + 9 = <b>18</b>."])}
+    ${prac("functions lines")}` },
+  { id: "quad", t: "Quadratics", h: `
+    <p>Three ways to solve ax² + bx + c = 0: factor, complete the square, or the ${pop("qformula", "quadratic formula")}. The ${pop("discriminant", "discriminant")} b² − 4ac tells how many real roots.</p>
+    ${rule("Vertex:", "y = ax² + bx + c has its vertex at x = −b/(2a). Completing the square: x² + 6x + 5 = (x + 3)² − 4, so the minimum is −4 at x = −3.")}
+    ${ex("Solve x² − 5x + 6 = 0 two ways.", ["Factor: (x − 2)(x − 3) = 0, so x = 2 or 3.", "Formula: (5 ± √(25 − 24))/2 = (5 ± 1)/2 = 3 or 2. ✓"])}
+    ${prac("quadratics")}` },
+  { id: "vieta", t: "Vieta's formulas", h: `
+    <p>${pop("vieta", "Vieta's formulas")} connect the roots to the coefficients without solving. For x² + bx + c with roots r and s: r + s = −b, rs = c.</p>
+    ${rule("Cubic x³ + ax² + bx + c:", "r + s + t = −a, rs + st + tr = b, rst = −c. Sum of squares = (sum)² − 2(pair sum).")}
+    ${ex("The roots of x² − 7x + 3 are r and s. Find r² + s² and 1/r + 1/s.", ["r + s = 7, rs = 3.", "r² + s² = 49 − 6 = <b>43</b>.", "1/r + 1/s = (r + s)/(rs) = <b>7/3</b>."])}
+    ${prac("quadratics aime-vieta")}` },
+  { id: "poly", t: "Polynomials", lv: "AMC 12 / AIME", h: `
+    ${rule("Polynomial toolkit:", "<b>Remainder theorem:</b> P(x) ÷ (x − a) leaves P(a).<br><b>Factor theorem:</b> P(a) = 0 ⇔ (x − a) is a factor.<br><b>Coefficient sum</b> = P(1).<br><b>Rational roots</b> p/q: p divides the constant, q divides the leading coefficient.<br><b>Conjugates:</b> real coefficients pair a + bi with a − bi.")}
+    <p>When P(1) = 1, P(2) = 2, P(3) = 3, look at P(x) − x, which has roots 1, 2, 3.</p>
+    ${pats(["Find a sum of powers of roots: Vieta or Newton's sums.", "Find a remainder: plug in the root of the divisor.", "Integer roots: Vieta plus factoring (SFFT)."])}
+    ${traps(["Sign errors in Vieta: r + s = −b/a, not b/a.", "Forgetting the leading coefficient when it isn't 1.", "Counting a double root twice when asked for distinct roots."])}
+    ${prac("aime-poly aime-vieta")}` },
+  ] },
+
+{ id: "seq", title: "Sequences, series and inequalities", lv: "AMC 10 → AIME",
+  intro: "Long sums and \"find the maximum\" problems look intimidating, but they come down to a few patterns: arithmetic and geometric sequences, telescoping, and AM-GM.",
+  secs: [
+  { id: "arith", t: "Arithmetic and geometric sequences", h: `
+    ${rule("Arithmetic:", "nth term a + (n − 1)d; sum = n × (first + last)/2.")}
+    ${rule("Geometric:", "nth term arⁿ⁻¹; sum of n terms a(rⁿ − 1)/(r − 1); infinite sum a/(1 − r) when |r| < 1.")}
+    ${ex("How many terms are in 7, 11, 15, …, 203, and what is their sum?", ["d = 4. Terms: (203 − 7)/4 + 1 = 50.", "Sum = 50 × (7 + 203)/2 = 50 × 105 = <b>5250</b>."])}
+    <p>See ${pop("arith-seq", "arithmetic")} and ${pop("geo-seq", "geometric")} sequences for quick reminders.</p>
+    ${prac("sequences patterns")}` },
+  { id: "sums", t: "Sums of powers and telescoping", h: `
+    ${rule("Standard sums:", "Σk = n(n + 1)/2, Σk² = n(n + 1)(2n + 1)/6, Σk³ = (n(n + 1)/2)².")}
+    <p>${pop("telescope", "Telescoping")}: 1/(k(k + 1)) = 1/k − 1/(k + 1), so Σ from 1 to n is 1 − 1/(n + 1).</p>
+    ${prac("aime-series")}` },
+  { id: "rec", t: "Recursive sequences", h: `
+    <p>A sequence defined from earlier terms is often <b>periodic</b>. Compute terms until one repeats, then use the remainder of the index.</p>
+    ${ex("a₁ = 1, a₂ = 2, aₙ = aₙ₋₁/aₙ₋₂. Find a₂₀₂₆.", ["1, 2, 2, 1, 1/2, 1/2, 1, 2, …: period 6.", "2026 = 6 × 337 + 4, so a₂₀₂₆ = a₄ = <b>1</b>."])}` },
+  { id: "amgm", t: "Inequalities and optimization", lv: "AMC 12 / AIME", h: `
+    ${rule("Two tools:", "<b>Squares are never negative:</b> complete the square, minimum at the vertex.<br><b>AM-GM:</b> (a + b)/2 ≥ √(ab); fixed product → smallest sum when equal; fixed sum → largest product when equal.")}
+    ${ex("Minimize x + 25/x for x > 0.", ["Product x · 25/x = 25 is fixed.", "x + 25/x ≥ 2√25 = <b>10</b>, at x = 5."])}
+    ${pats(["\"How many terms\" in a list: (last − first)/d + 1.", "Infinite geometric series inside word problems (bouncing balls, repeated games).", "Max area for a fixed perimeter: make it as equal as possible."])}
+    ${traps(["Using AM-GM where equality can't happen (check the equal case is allowed).", "Off-by-one term counts."])}
+    ${prac("aime-amgm")}` },
+  ] },
+);
+/* =========================================================
+   TEXTBOOK part B: number theory, counting, probability
+   ========================================================= */
+BOOK.push(
+{ id: "nt", title: "Number theory", lv: "AMC 8 → AIME",
+  intro: "Number theory is the study of whole numbers: how they factor and what remainders they leave. Nearly every result starts from the prime factorization.",
+  secs: [
+  { id: "primes", t: "Primes and factorization", h: `
+    <p>Every whole number above 1 is a product of ${pop("prime", "primes")} in exactly one way (ignoring order): 360 = 2³ · 3² · 5. Find it with a factor tree.</p>
+    ${rule("Testing primality:", "n is prime if no prime up to √n divides it. To test 221, check primes up to 14: 221 = 13 · 17, not prime.")}
+    ${rule("Divisibility rules:", "2: last digit even. 3 or 9: digit sum divisible by 3 or 9. 4: last two digits. 8: last three digits. 5: ends in 0 or 5. 11: alternating digit sum divisible by 11.")}
+    ${prac("primes divisibility")}` },
+  { id: "divisors", t: "Divisors, GCD and LCM", h: `
+    ${rule("From n = p^a q^b r^c:", "Number of divisors d(n) = (a + 1)(b + 1)(c + 1).<br>Sum of divisors σ(n) = (1 + p + ··· + p^a)(1 + q + ··· + q^b)(…).<br>Perfect squares are exactly the numbers with an odd number of divisors.")}
+    <p>${pop("gcd", "GCD")}: smaller powers of shared primes. ${pop("lcm", "LCM")}: larger powers of all primes. And gcd · lcm = a · b.</p>
+    ${ex("How many divisors does 2⁴ · 3² · 7 have, and how many are odd?", ["All: 5 · 3 · 2 = 30.", "Odd divisors use 2⁰ only: 1 · 3 · 2 = <b>6</b>."])}
+    ${prac("num-divisors gcd-lcm aime-divsum")}` },
+  { id: "mod", t: "Modular arithmetic", h: `
+    <p>Working ${pop("mod", "mod m")} means keeping only remainders. You can add, subtract and multiply, reducing at every step.</p>
+    ${rule("Useful facts:", "Squares mod 4 are 0 or 1; mod 8 odd squares are 1; mod 3 squares are 0 or 1.<br>A number ≡ its digit sum (mod 9).<br>Division needs an inverse: a⁻¹ exists mod m exactly when gcd(a, m) = 1.")}
+    ${ex("What is the remainder when 2026 · 2027 · 2028 is divided by 7?", ["2026 = 7 · 289 + 3, so the factors are ≡ 3, 4, 5 (mod 7).", "3 · 4 · 5 = 60 = 56 + 4. Remainder <b>4</b>."])}
+    ${prac("modular aime-crt")}` },
+  { id: "units", t: "Units digits and big powers", h: `
+    <p>Last digits of powers cycle: 2, 4, 8, 6, 2, … (length 4). For the last digit of 7²⁰²⁶, 2026 ≡ 2 (mod 4), so it matches 7² = 49: <b>9</b>.</p>
+    ${rule("Theorems that shrink exponents:", `${"Fermat"}: a^(p − 1) ≡ 1 (mod p). Euler: a^φ(n) ≡ 1 (mod n) when gcd(a, n) = 1. For mod 1000, split into mod 8 and mod 125 and recombine with the Chinese Remainder Theorem.`)}
+    <p>Pop-ups: ${pop("fermat", "Fermat")}, ${pop("phi", "φ(n)")}, ${pop("crt", "CRT")}.</p>
+    ${prac("units-digit aime-euler")}` },
+  { id: "bases", t: "Bases and digits", h: `
+    <p>In base b, the digits are place values of powers of b: 213₅ = 2·25 + 1·5 + 3 = 58. To convert to base b, divide by b repeatedly and read remainders bottom to top.</p>
+    <p>Digit problems: write a two-digit number as 10a + b. Reversing gives 10b + a, and the difference is 9(a − b).</p>
+    ${prac("bases digits")}` },
+  { id: "dioph", t: "Integer equations", h: `
+    ${rule("Strategies:", "Linear ax + by = c: solvable iff gcd(a, b) | c; solutions step by (b/g, −a/g).<br>Factor into a product = constant (SFFT): xy + ax + by = c ⇒ (x + b)(y + a) = c + ab.<br>Bound: if x ≤ y, then x is at most some small number.<br>Use mod to rule out cases (no square is 2 or 3 mod 4).")}
+    <p>See ${pop("sfft", "Simon's Favorite Factoring Trick")}, ${pop("mcnugget", "Chicken McNugget")}, ${pop("floor", "floor")} and ${pop("legendre", "Legendre's formula")}.</p>
+    ${pats(["Count divisors with a condition (even, square, multiple of k).", "Remainder of a huge power: find the cycle.", "Trailing zeros of n!: count 5s.", "Integer solutions: factor and list divisor pairs."])}
+    ${traps(["1 is not prime.", "Forgetting negative divisor pairs in SFFT problems.", "Using Euler when gcd(a, n) ≠ 1."])}
+    ${prac("diophantine sfft mcnugget aime-dioph aime-floor")}` },
+  ] },
+
+{ id: "count", title: "Counting", lv: "AMC 8 → AIME",
+  intro: "Counting is about organizing so you count everything exactly once. Pick the method that matches the structure: multiply for steps, choose for selections, subtract for \"at least\", recurse for patterns.",
+  secs: [
+  { id: "basics", t: "Multiplication principle", h: `
+    ${rule("Multiplication principle:", "If a task is a sequence of steps with m ways, then n ways, …, the total is m × n × ···. Do the most restricted step first.")}
+    ${ex("How many 3-digit numbers have all digits different?", ["Hundreds digit: 9 choices (not 0). Tens: 9 (any but the first). Units: 8.", "9 · 9 · 8 = <b>648</b>."])}
+    ${prac("mult-principle organized-lists")}` },
+  { id: "pc", t: "Permutations and combinations", h: `
+    <p>Order matters → ${pop("perm", "permutation")}. Order doesn't → ${pop("comb", "combination")}.</p>
+    ${rule("Formulas:", "P(n, k) = n!/(n − k)!. C(n, k) = n!/(k!(n − k)!). Arrangements of a word with repeats: n! / (product of each letter count!). MISSISSIPPI: 11!/(4!4!2!).")}
+    ${rule("Values to know:", "C(n, 2) = n(n − 1)/2. C(5, 2) = 10, C(6, 3) = 20, C(8, 4) = 70, C(10, 5) = 252.")}
+    ${ex("A committee of 3 is chosen from 5 boys and 4 girls with at least one girl. How many?", ["All committees: C(9, 3) = 84.", "No girls: C(5, 3) = 10.", "84 − 10 = <b>74</b>. (That is complementary counting.)"])}
+    ${prac("permutations combinations repeats complementary")}` },
+  { id: "pascal", t: "Pascal's triangle and the binomial theorem", h: `
+    <p>Each entry of ${pop("pascal", "Pascal's triangle")} is C(n, k). The ${pop("binomial", "binomial theorem")} says (x + y)ⁿ uses row n as coefficients.</p>
+    ${rule("Identities:", "C(n, k) = C(n, n − k). Row n sums to 2ⁿ. Hockey stick: C(k, k) + C(k + 1, k) + ··· + C(n, k) = C(n + 1, k + 1).")}
+    ${prac("pascal grid-paths")}` },
+  { id: "methods", t: "Casework, complements, PIE", h: `
+    <p>Three ways to avoid double counting:</p>
+    <ul><li>${pop("casework", "Casework")}: split into non-overlapping cases.</li><li>${pop("complement", "Complementary counting")}: total minus the bad ones.</li><li>${pop("pie", "Inclusion–exclusion")}: add the sets, subtract overlaps, add back triple overlaps.</li></ul>
+    ${ex("How many integers from 1 to 100 are divisible by 2 or 3?", ["50 + 33 − 16 = <b>67</b> (16 multiples of 6 were counted twice)."])}
+    ${prac("casework complementary pie")}` },
+  { id: "special", t: "Stars and bars and other special tools", h: `
+    ${rule("Special tools:", "Stars and bars: C(n + k − 1, k − 1) ways to split n identical items among k people.<br>Circular arrangements of n people: (n − 1)!.<br>Derangements Dₙ: nobody in their own spot.<br>Pigeonhole: n + 1 items in n boxes forces a shared box.")}
+    <p>Reminders: ${pop("starsbars", "stars and bars")}, ${pop("derangement", "derangement")}, ${pop("pigeonhole", "pigeonhole")}, ${pop("bijection", "bijection")}, ${pop("recursion", "recursion")}.</p>
+    ${pats(["Lattice paths: C(right + up, right); avoid a point by subtracting paths through it.", "Distributing identical objects: stars and bars, then PIE for upper limits.", "No two adjacent: place the others first, then choose gaps.", "\"Number of ways\" with a pattern rule: recursion table."])}
+    ${traps(["Counting ordered pairs when the problem wants unordered (divide by 2!, unless the pair can be equal).", "Forgetting that the first digit can't be 0.", "Rotations: are they considered the same in a circle?"])}
+    ${prac("stars-bars circular derangements pigeonhole aime-bij aime-rec aime-pie")}` },
+  ] },
+
+{ id: "prob", title: "Probability and expected value", lv: "AMC 8 → AIME",
+  intro: "Probability is counting with a denominator. Most contest probability is either a careful count or a clever shortcut: complement, symmetry, or linearity.",
+  secs: [
+  { id: "basic", t: "Counting probability", h: `
+    ${rule("Equally likely outcomes:", "P = favorable ÷ total. List the sample space carefully: two dice have 36 ordered outcomes, not 21.")}
+    ${ex("Two dice are rolled. What is the probability the sum is 8?", ["Ordered pairs: (2,6), (3,5), (4,4), (5,3), (6,2): 5.", "5/36."])}
+    ${prac("prob-basic prob-complement")}` },
+  { id: "multi", t: "Independent, dependent, conditional", h: `
+    <p>${pop("indep", "Independent")}: multiply. Without replacement: multiply with updated counts. ${pop("cond", "Conditional")}: restrict to what you know.</p>
+    ${ex("Two cards are drawn from a standard deck without replacement. P(both aces)?", ["4/52 for the first, then 3/51.", "(4/52)(3/51) = 12/2652 = <b>1/221</b>."])}
+    ${ex("A family has two children and at least one is a boy. What is P(two boys)?", ["Sample space now: BB, BG, GB (GG is ruled out).", "P = <b>1/3</b>, not 1/2."])}
+    ${prac("independent conditional")}` },
+  { id: "ev", t: "Expected value", h: `
+    ${rule("Expected value:", "E = Σ value × probability. Linearity: the expected total is the sum of expected parts, always.")}
+    <p>See ${pop("ev", "expected value")} and ${pop("linearity", "linearity of expectation")}. To find an expected count, add the probability of each individual event.</p>
+    ${ex("10 people each flip a coin. Expected number of people whose coin matches the person to their right (in a circle)?", ["10 adjacent pairs, each matches with probability ½.", "Expected <b>5</b>."])}
+    ${prac("expected aime-ev")}` },
+  { id: "geoprob", t: "Geometric probability and states", h: `
+    <p>When outcomes are continuous (a random point, a random time), probability = favorable area ÷ total area. Two random numbers in [0, 1] make a point in a unit square.</p>
+    ${ex("Two friends arrive independently at random times between 1:00 and 2:00 and each waits 15 minutes. P(they meet)?", ["Let x, y be minutes after 1:00. They meet when |x − y| ≤ 15.", "The miss region is two triangles with legs 45: area 2 · ½ · 45² = 2025 out of 3600.", "P(meet) = 1 − 2025/3600 = 1575/3600 = <b>7/16</b>."])}
+    <p>For games that can last forever, assign an unknown probability to each state and write equations (see the AIME lesson on states).</p>
+    ${pats(["\"At least one\": 1 − P(none).", "Selection without replacement: count combinations, or multiply updated fractions.", "Expected number of something: linearity with indicators.", "Random point problems: draw the square."])}
+    ${traps(["Treating sums of dice as equally likely.", "Assuming independence when drawing without replacement.", "Answering P(A | B) with P(B | A)."])}
+    ${prac("geo-prob aime-states")}` },
+  ] },
+);
+/* =========================================================
+   TEXTBOOK part C: geometry (angles & triangles, polygons & area, circles, 3D), trig, complex numbers, playbook
+   ========================================================= */
+BOOK.push(
+{ id: "geo1", title: "Geometry I: angles and triangles", lv: "AMC 8 → AIME",
+  intro: "Triangles are the atoms of geometry: almost every figure is solved by finding the right triangle inside it. Start with angles, then lengths.",
+  secs: [
+  { id: "angles", t: "Angle facts", h: `
+    ${rule("Angle facts:", "Straight line 180°, full turn 360°. Vertical angles are equal. Triangle angles add to 180°. Parallel lines cut by a transversal: corresponding and alternate angles are equal, same-side angles add to 180°.")}
+    <p>The ${pop("extangle", "exterior angle theorem")}: an exterior angle equals the two far interior angles added. It's the fastest tool in ${"angle chasing"}: label every angle you can, one at a time, until the unknown appears.</p>
+    ${ex("In isosceles triangle ABC with AB = AC, angle A = 40°. Find angle B.", ["The base angles are equal: B = C.", "B + C = 180° − 40° = 140°, so B = <b>70°</b>."])}
+    ${prac("angle-basics parallel-lines exterior-angle angle-chasing")}` },
+  { id: "right", t: "Right triangles", h: `
+    <p>The ${pop("pythag", "Pythagorean theorem")}: a² + b² = c². Memorize the common ${pop("triples", "triples")} and the ${pop("special", "special right triangles")}.</p>
+    ${tbl(["Triangle", "Sides"], [["3-4-5 family", "6-8-10, 9-12-15, 15-20-25"], ["5-12-13", "10-24-26"], ["8-15-17", "7-24-25, 20-21-29"], ["45-45-90", "x, x, x√2"], ["30-60-90", "x, x√3, 2x"]])}
+    ${ex("A ladder 13 ft long reaches 12 ft up a wall. How far is its foot from the wall?", ["5-12-13 triangle: <b>5 ft</b>."])}
+    ${prac("pythagorean special-right")}` },
+  { id: "similar", t: "Similar and congruent triangles", h: `
+    <p>${pop("similar", "Similar")} triangles have equal angles and proportional sides. Look for them whenever you see parallel lines (AA similarity) or a right triangle with an altitude to the hypotenuse.</p>
+    ${rule("Altitude to the hypotenuse:", "In a right triangle with altitude h to the hypotenuse, splitting it into p and q: h² = pq. All three triangles are similar.")}
+    ${ex("A 6-ft person casts a 4-ft shadow when a tree casts a 30-ft shadow. How tall is the tree?", ["Sun rays make similar triangles: height/shadow is the same.", "6/4 = h/30, so h = <b>45 ft</b>."])}
+    ${prac("similar-triangles congruent-similar")}` },
+  { id: "centers", t: "Triangle centers and special segments", lv: "AMC 10 / AIME", h: `
+    ${tbl(["Center", "Where lines meet", "Fact"], [
+      [pop("centroid", "Centroid"), "medians", "splits each median 2 : 1"],
+      [pop("incenter", "Incenter"), "angle bisectors", "Area = r · s"],
+      [pop("circumcenter", "Circumcenter"), "perpendicular bisectors", "R = abc/(4 · Area)"],
+      ["Orthocenter", "altitudes", "in a right triangle, it's the right-angle corner"]])}
+    ${rule("Segment formulas:", "Angle bisector: BD/DC = AB/AC. Median: m² = (2b² + 2c² − a²)/4. Stewart: b²m + c²n = a(d² + mn).")}
+    ${prac("aime-bisector")}` },
+  { id: "ineq", t: "Triangle inequality and classification", h: `
+    <p>${pop("tri-ineq", "Triangle inequality")}: the longest side must be shorter than the other two added. With c the longest side: c² < a² + b² acute, = right, > obtuse.</p>
+    ${pats(["Angle chase in a figure with parallel lines or isosceles triangles.", "Find a hidden right triangle and use a triple.", "Similar triangles from parallel lines; set up a proportion.", "\"How many triangles with integer sides…\": triangle inequality plus casework."])}
+    ${traps(["Assuming a figure is drawn to scale.", "Mixing up which sides correspond in similar triangles (match the angles).", "Forgetting the triangle inequality is strict."])}
+    ${prac("triangle-inequality triangle-types")}` },
+  ] },
+
+{ id: "geo2", title: "Geometry II: polygons, area and coordinates", lv: "AMC 8 → AIME",
+  intro: "Area problems reward flexible thinking: add pieces, subtract pieces, or change which side you call the base.",
+  secs: [
+  { id: "polygons", t: "Polygons", h: `
+    ${rule("Polygon facts:", "Interior angle sum (n − 2) · 180°. Exterior angles add to 360°. Regular n-gon: each exterior 360°/n. Diagonals: n(n − 3)/2.")}
+    ${prac("polygon-angles diagonals quadrilaterals symmetry")}` },
+  { id: "area", t: "Area formulas", h: `
+    ${tbl(["Shape", "Area"], [["Triangle", "½ · base · height"], ["Parallelogram", "base · height"], ["Trapezoid", "½(b₁ + b₂) · h"], ["Rhombus / kite", "½ d₁ d₂"], ["Equilateral, side s", "(√3/4) s²"], ["Regular hexagon, side s", "(3√3/2) s²"], ["Any triangle", "½ab sin C, or Heron"]])}
+    <p>${pop("heron", "Heron's formula")} for three known sides. Triangles with the same height have areas in the ratio of their bases, a fact behind many \"ratio of areas\" problems.</p>
+    ${ex("In triangle ABC, D is on BC with BD = 2 and DC = 5. Area(ABD) = 6. Find Area(ABC).", ["ABD and ADC share the height from A.", "Areas are in ratio 2 : 5, so Area(ADC) = 15.", "Total <b>21</b>."])}
+    ${prac("basic-area heron shaded-area")}` },
+  { id: "shaded", t: "Shaded and composite regions", h: `
+    <p>Find a shaded area by <b>adding</b> simple pieces or by <b>subtracting</b> unshaded pieces from a big shape. Rearranging pieces (sliding a curved region into a gap) often makes the answer obvious.</p>` },
+  { id: "coords", t: "Coordinate geometry", h: `
+    ${rule("Coordinate tools:", "Distance √((Δx)² + (Δy)²). Midpoint = averages. Slope rise/run. Line through two points, then find intersections. Shoelace for polygon areas.")}
+    <p>See ${pop("shoelace", "shoelace")}, ${pop("pick", "Pick's theorem")}, ${pop("dist-line", "distance to a line")}.</p>
+    ${pats(["Area of a polygon on a grid: shoelace or Pick.", "Ratio of areas: shared heights or similar triangles (ratio squared).", "Shortest path touching a line: reflect.", "Regular hexagon: six equilateral triangles."])}
+    ${traps(["Using a slanted side as the height.", "Shoelace with vertices out of order.", "Scaling: doubling lengths multiplies area by 4."])}
+    ${prac("coordinates picks-shoelace scaling aime-coords")}` },
+  ] },
+
+{ id: "geo3", title: "Geometry III: circles", lv: "AMC 8 → AIME",
+  intro: "Circle problems turn on two facts: radii are all equal (draw them!) and angles relate to arcs. Add power of a point and you can handle most AIME circle problems.",
+  secs: [
+  { id: "basics", t: "Circumference, area, arcs, sectors", h: `
+    ${rule("Formulas:", "C = 2πr, A = πr². A sector of angle θ is θ/360 of the circle: arc = (θ/360) · 2πr, area = (θ/360) · πr².")}
+    ${ex("A sector of a circle of radius 6 has area 6π. What is its central angle?", ["Full area 36π. 6π/36π = 1/6 of the circle.", "1/6 of 360° = <b>60°</b>."])}
+    ${prac("circle-parts circumference circle-area")}` },
+  { id: "angles", t: "Inscribed angles", h: `
+    <p>${pop("inscribed", "Inscribed angle theorem")}: an inscribed angle is half its arc. A triangle inscribed with one side a diameter is a right triangle (Thales). Opposite angles of a ${pop("cyclic", "cyclic quadrilateral")} add to 180°.</p>
+    ${prac("inscribed-angles")}` },
+  { id: "tangents", t: "Tangents and chords", h: `
+    <p>A ${pop("tangent", "tangent")} is perpendicular to the radius at its point. Two tangents from the same point are equal, which gives the incircle trick: the tangent lengths from each vertex are s − (opposite side).</p>
+    ${rule("Chords:", "A perpendicular from the center bisects a chord. Chord length = 2√(r² − d²), with d the distance from the center.")}
+    ${prac("tangents")}` },
+  { id: "power", t: "Power of a point", lv: "AMC 10 / AIME", h: `
+    <p>${pop("pop", "Power of a point")}: chords PA · PB = PC · PD; secant-secant; tangent² = outside × whole.</p>
+    ${ex("From a point 10 units from the center of a circle of radius 6, how long is a tangent?", ["Tangent² = 10² − 6² = 64.", "Tangent = <b>8</b>."])}
+    ${pats(["Draw radii to points of tangency and to chord endpoints; look for right triangles.", "Inscribed angle half the central angle.", "Two circles tangent: centers and the tangent point are collinear; distance between centers is r₁ ± r₂.", "Circle inscribed in a right triangle: r = (a + b − c)/2."])}
+    ${traps(["Mixing up diameter and radius.", "Arc length vs. arc measure (degrees).", "Forgetting the second intersection in power of a point."])}
+    ${prac("power-point aime-cyclic")}` },
+  ] },
+
+{ id: "geo4", title: "Geometry IV: 3D", lv: "AMC 8 → AIME",
+  intro: "Solve 3D problems by finding a 2D slice that contains what you need, or by unfolding the surface flat.",
+  secs: [
+  { id: "solids", t: "Solids and counting parts", h: `
+    <p>${pop("euler-poly", "Euler's formula")}: V − E + F = 2. A prism on an n-gon has 2n vertices, 3n edges, n + 2 faces; a pyramid has n + 1, 2n, n + 1.</p>
+    ${prac("solids")}` },
+  { id: "volume", t: "Volume and surface area", h: `
+    ${tbl(["Solid", "Volume", "Surface area"], [["Box a × b × c", "abc", "2(ab + bc + ca)"], ["Cylinder", "πr²h", "2πr² + 2πrh"], ["Cone", "⅓πr²h", "πr² + πrℓ (ℓ = slant)"], ["Sphere", "(4/3)πr³", "4πr²"], ["Pyramid", "⅓ · base · height", "base + triangles"]])}
+    ${ex("A cone has radius 3 and slant height 5. Find its volume.", ["Height = √(25 − 9) = 4.", "V = ⅓ · π · 9 · 4 = <b>12π</b>."])}
+    ${prac("prisms cones-spheres surface-area")}` },
+  { id: "distances", t: "Distances, slices and unfolding", h: `
+    ${rule("3D tools:", "Space diagonal of a box √(a² + b² + c²). Distance in coordinates adds a z² term. A plane cut of a sphere at distance d is a circle of radius √(R² − d²). Shortest path on a surface: unfold to a net and draw a straight line.")}
+    ${pats(["Painted cube cut into n³ small cubes: count by faces painted.", "Sphere inside a cube or cone: slice through the center.", "Water poured between containers: volumes equal.", "Scaling a solid by k multiplies volume by k³."])}
+    ${traps(["Using slant height as the height in a cone volume.", "Surface area of a cylinder without the two circles (or with them when it's open).", "Counting edges of a prism twice."])}
+    ${prac("scaling aime-3d")}` },
+  ] },
+
+{ id: "trig", title: "Trigonometry", lv: "AMC 12 / AIME",
+  intro: "Trig turns angles into lengths. You need only the definitions, a few exact values, and four or five identities.",
+  secs: [
+  { id: "defs", t: "Definitions and exact values", h: `
+    <p>In a right triangle: sin = opposite/hypotenuse, cos = adjacent/hypotenuse, tan = opposite/adjacent (SOH-CAH-TOA). On the ${pop("unitcircle", "unit circle")}, the point at angle θ is (cos θ, sin θ).</p>
+    ${tbl(["θ", "30°", "45°", "60°"], [["sin", "1/2", "√2/2", "√3/2"], ["cos", "√3/2", "√2/2", "1/2"], ["tan", "√3/3", "1", "√3"]])}` },
+  { id: "laws", t: "Triangle laws", h: `
+    <p>${pop("lawcos", "Law of cosines")} and ${pop("lawsin", "law of sines")}, plus area = ½ab sin C.</p>
+    ${ex("Find the third side of a triangle with sides 5 and 8 and a 60° angle between them.", ["c² = 25 + 64 − 2 · 5 · 8 · ½ = 49.", "c = <b>7</b>."])}
+    ${prac("aime-trig")}` },
+  { id: "ids", t: "Identities", h: `
+    ${rule("Identities:", "sin²θ + cos²θ = 1.<br>sin 2θ = 2 sin θ cos θ; cos 2θ = cos²θ − sin²θ.<br>sin(a + b) = sin a cos b + cos a sin b; cos(a + b) = cos a cos b − sin a sin b.<br>sin(90° − θ) = cos θ; sin(180° − θ) = sin θ.")}
+    ${pats(["Given sin x + cos x, square it to get sin 2x.", "Sum of sin² over symmetric angles: pair θ with 90° − θ.", "Triangle with a 60° or 120° angle: law of cosines with cos = ±½."])}
+    ${traps(["Degrees vs. radians (π radians = 180°).", "Sign of cosine for obtuse angles.", "Forgetting both solutions of sin θ = k in [0°, 180°]."])}
+    ${prac("aime-trigid")}` },
+  ] },
+
+{ id: "cx", title: "Complex numbers", lv: "AMC 12 / AIME",
+  intro: "Complex numbers are points in the plane that you can multiply. Multiplying rotates and stretches, which is why they solve geometry and polynomial problems.",
+  secs: [
+  { id: "basics", t: "Arithmetic", h: `
+    <p>A ${pop("complex", "complex number")} is a + bi with i² = −1. Divide by multiplying by the conjugate. |z|² = z · z̄.</p>
+    ${ex("Compute (2 + i)/(2 − i).", ["Multiply by (2 + i)/(2 + i): (2 + i)² / (4 + 1) = (3 + 4i)/5.", "= <b>3/5 + 4/5 i</b>."])}
+    ${prac("aime-complex")}` },
+  { id: "polar", t: "Polar form and roots of unity", h: `
+    <p>z = r(cos θ + i sin θ). Multiplying multiplies lengths and adds angles; ${pop("demoivre", "De Moivre")} raises to powers. The ${pop("rou", "roots of unity")} are evenly spaced on the unit circle.</p>
+    ${pats(["Large powers of 1 + i, 1 + i√3, √3 + i: convert to polar.", "Regular polygon vertices: roots of unity.", "Sums like ω + ω² = −1 for cube roots of unity."])}
+    ${traps(["Adding angles but forgetting to multiply lengths.", "Missing that complex roots of real polynomials come in conjugate pairs."])}
+    ${prac("aime-polar aime-unity")}` },
+  ] },
+
+{ id: "play", title: "Problem patterns and test-day playbook", lv: "All levels",
+  intro: "The same problem shapes appear year after year. Recognizing the shape is half the solution.",
+  secs: [
+  { id: "patterns", t: "Patterns by signal", h: `
+    ${tbl(["If you see…", "Try…"], [
+      ["A huge exponent or year number", "a cycle (mod 10, mod 100) or small cases"],
+      ["\"How many ways\"", "multiplication principle, combinations, complement, or a recursion"],
+      ["\"At least one\"", "1 − P(none)"],
+      ["A sum with many terms", "pairing, telescoping, or a formula"],
+      ["xy + ax + by = c", "Simon's Favorite Factoring Trick"],
+      ["A quadratic's roots, not the roots themselves", "Vieta"],
+      ["Parallel lines in a figure", "similar triangles"],
+      ["A circle and a point outside it", "tangent² = power of the point"],
+      ["Two sides and an included angle", "½ab sin C or the law of cosines"],
+      ["Expected number of something", "linearity of expectation with indicators"],
+      ["\"Maximum\" or \"minimum\"", "complete the square or AM-GM"],
+      ["A grid with moves right/up", "C(total moves, right moves)"]])}` },
+  { id: "process", t: "A problem-solving process", h: `
+    <ol class="steps"><li><b>Understand:</b> what is given, what is asked? Draw it.</li><li><b>Plan:</b> which pattern does it match? Have you seen something similar?</li><li><b>Carry out:</b> write neat steps. Keep exact values (√2, π, fractions) until the end.</li><li><b>Look back:</b> is the answer reasonable? Does it fit the format? Could you check a small case?</li></ol>
+    <p>Also see ${pop("wlog", "WLOG")}, ${pop("parity", "parity")}, ${pop("invariant", "invariants")}, ${pop("aime-fmt", "AIME answer format")}.</p>` },
+  { id: "testday", t: "Test day", h: `
+    ${rule("Test-day rules:", "Do a first pass taking every problem you can solve quickly. Mark the rest. Don't spend 10 minutes on one AMC problem in the first pass. On the AMC 10 and 12, leave a blank rather than guessing blindly. On the AIME and AMC 8, answer everything.")}
+    ${prac("aime-strategy")}` },
+  { id: "notes", t: "All notes A to Z", h: `<div class="notes-az">${Object.entries(POPS).sort((a, b) => a[1].t.localeCompare(b[1].t)).map(([k, p]) => pop(k, p.t)).join("")}</div>` },
+  ] },
+);
+/* =========================================================
    STORAGE: shared Claude db when available, else this browser
    results: one doc per finished test or lesson check
    opened:  one doc per student+lesson, written the first time a lesson is opened
@@ -10180,7 +10728,7 @@ function renderChrome() {
   $("#brand").disabled = inTest;
   $("#who").innerHTML = STUDENTS.map(s => `<button class="pill" aria-pressed="${s === S.student}" data-who="${s}" ${inTest ? "disabled" : ""}>${nameOf(s)}${awardBadge(s)}</button>`).join("");
 }
-$("#tabs").addEventListener("click", e => { const b = e.target.closest("[data-go]"); if (b) go(b.dataset.go); });
+$("#tabs").addEventListener("click", e => { const b = e.target.closest("[data-go]"); if (!b) return; if (b.dataset.go === "book" && S.view === "book") S.bookCh = null; go(b.dataset.go); });
 $("#brand").addEventListener("click", () => go("home"));
 $("#who").addEventListener("click", e => {
   const b = e.target.closest("[data-who]"); if (!b || S.view === "test") return;
@@ -10687,11 +11235,94 @@ function viewProgress() {
 }
 
 /* =========================================================
+   TEXTBOOK VIEW: table of contents, one chapter per page, pop-up notes, search
+   ========================================================= */
+const bookCh = id => BOOK.find(c => c.id === id);
+const bookText = h => h.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+const bookPolish = h => prettyMath(h);
+const BOOK_CACHE = {};
+function bookChapterHTML(c) {
+  if (BOOK_CACHE[c.id]) return BOOK_CACHE[c.id];
+  return BOOK_CACHE[c.id] = c.secs.map(s => `<section class="bsec" id="bs-${s.id}"><h3>${s.t}${s.lv ? " " + lv(s.lv) : ""}</h3>${glossify(bookPolish(s.h))}</section>`).join("");
+}
+function bookTOC(cur) {
+  return `<ol class="btoc-list">${BOOK.map((c, i) => `<li class="${c.id === cur ? "cur" : ""}"><button data-act="bookgo" data-ref="${c.id}"><span class="bn">${i + 1}</span>${c.title}</button>
+    ${c.id === cur ? `<ol>${c.secs.map(s => `<li><button data-act="bookgo" data-ref="${c.id}.${s.id}">${s.t}</button></li>`).join("")}</ol>` : ""}</li>`).join("")}</ol>`;
+}
+function viewBook() {
+  const c = S.bookCh && bookCh(S.bookCh);
+  if (!c) return `
+    <section style="display:flex;flex-direction:column;gap:8px"><span class="eyebrow">Reference · AMC 8 · AMC 10 · AMC 12 · AIME</span><h1>Textbook</h1>
+      <div class="row"><input class="numin bsearch" id="bsearch" data-act="bsearch" placeholder="Search the textbook" aria-label="Search the textbook" value="${(S.bookQ || "").replace(/"/g, "&quot;")}" autocomplete="off">${exToggle()}</div>
+      <div id="bres">${bookResults(S.bookQ)}</div></section>
+    <section class="btoc-grid">${BOOK.map((c, i) => `
+      <article class="chap bcard"><div class="chap-h"><button class="chap-link" data-act="bookgo" data-ref="${c.id}"><h3>${c.title}</h3></button><span class="chap-n">Ch ${i + 1}</span></div>
+        <span class="blv">${c.lv}</span>
+        <p class="bintro">${c.intro}</p>
+        <ul class="bsecs">${c.secs.map(s => `<li><button class="xref" data-act="bookgo" data-ref="${c.id}.${s.id}">${s.t}</button></li>`).join("")}</ul></article>`).join("")}
+    </section>`;
+  const i = BOOK.indexOf(c), prev = BOOK[i - 1], next = BOOK[i + 1];
+  return `
+  <nav class="crumbs"><button data-act="bookgo" data-ref="">Textbook</button><span>›</span><span>Chapter ${i + 1}</span></nav>
+  <div class="book">
+    <aside class="btoc panel"><span class="eyebrow">Contents</span>${bookTOC(c.id)}</aside>
+    <article class="prose bookart">
+      <div><span class="eyebrow">Chapter ${i + 1} · ${c.lv}</span><h1>${c.title}</h1>
+        <div class="row" style="margin-top:8px"><span class="status">Dotted words: hover or tap · <span class="pop-demo">underlined</span> words: open a note</span><span style="margin-left:auto">${exToggle()}</span></div></div>
+      <p class="lede">${c.intro}</p>
+      <nav class="bjump">${c.secs.map(s => `<button class="jump" data-act="bookgo" data-ref="${c.id}.${s.id}">${s.t}</button>`).join("")}</nav>
+      ${exState(bookChapterHTML(c))}
+      <div class="row" style="justify-content:space-between;margin-top:10px">
+        ${prev ? `<button class="btn" data-act="bookgo" data-ref="${prev.id}">← ${prev.title}</button>` : "<span></span>"}
+        ${next ? `<button class="btn primary" data-act="bookgo" data-ref="${next.id}">${next.title} →</button>` : ""}
+      </div>
+    </article>
+  </div>`;
+}
+function bookResults(q) {
+  q = (q || "").trim().toLowerCase();
+  if (q.length < 2) return "";
+  const hits = [];
+  for (const c of BOOK) for (const s of c.secs) {
+    const t = bookText(s.h), k = t.toLowerCase().indexOf(q), inTitle = s.t.toLowerCase().includes(q);
+    if (k >= 0 || inTitle) hits.push({ c, s, snip: k >= 0 ? "…" + t.slice(Math.max(0, k - 40), k + 70).trim() + "…" : "" });
+  }
+  for (const [key, p] of Object.entries(POPS)) if ((p.t + " " + bookText(p.h)).toLowerCase().includes(q)) hits.push({ pop: key, p });
+  if (!hits.length) return `<p class="status">No matches</p>`;
+  return `<ul class="bres">${hits.slice(0, 30).map(h => h.pop
+    ? `<li><button class="pop" data-pop="${h.pop}">${h.p.t}</button> <span class="status">note</span></li>`
+    : `<li><button class="xref" data-act="bookgo" data-ref="${h.c.id}.${h.s.id}">${h.c.title} › ${h.s.t}</button>${h.snip ? `<small>${h.snip.replace(/</g, "&lt;")}</small>` : ""}</li>`).join("")}</ul>`;
+}
+function bookGo(ref) {
+  const [ch, sec] = (ref || "").split(".");
+  go("book", { bookCh: ch || null });
+  if (sec) requestAnimationFrame(() => document.getElementById("bs-" + sec)?.scrollIntoView({ behavior: "smooth", block: "start" }));
+}
+/* pop-up notes: open in place, never navigate away */
+function openPop(key) {
+  const p = POPS[key]; if (!p) return;
+  let ov = document.querySelector(".bpop-ov");
+  if (!ov) {
+    ov = document.createElement("div"); ov.className = "bpop-ov"; ov.setAttribute("role", "dialog"); ov.setAttribute("aria-modal", "true");
+    document.body.appendChild(ov);
+    ov.addEventListener("click", e => { if (e.target === ov || e.target.closest("[data-close]")) closePop(); });
+  }
+  ov.innerHTML = `<div class="bpop"><div class="row" style="justify-content:space-between;flex-wrap:nowrap"><h3>${p.t}</h3><button class="btn ghost small" data-close aria-label="Close">✕</button></div><div class="bpop-b">${glossify(prettyMath(p.h))}</div></div>`;
+  ov.setAttribute("aria-label", p.t);
+  ov.querySelector("[data-close]").focus();
+}
+const closePop = () => document.querySelector(".bpop-ov")?.remove();
+document.addEventListener("click", e => {
+  const b = e.target.closest?.(".pop"); if (b) { e.preventDefault(); openPop(b.dataset.pop); return; }
+  const x = e.target.closest?.(".bpop-ov [data-act='bookgo']"); if (x) { closePop(); bookGo(x.dataset.ref); }
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape") closePop(); });
+/* =========================================================
    RENDER + EVENTS
    ========================================================= */
 function render() {
   renderChrome();
-  const v = { home: viewHome, learn: viewLearn, chapter: viewChapter, lesson: viewLesson, formulas: viewFormulas, setup: viewSetup, test: viewTest, result: viewResult, progress: viewProgress, profile: viewProfile }[S.view] || viewHome;
+  const v = { home: viewHome, learn: viewLearn, chapter: viewChapter, lesson: viewLesson, book: viewBook, formulas: viewFormulas, setup: viewSetup, test: viewTest, result: viewResult, progress: viewProgress, profile: viewProfile }[S.view] || viewHome;
   app.innerHTML = v();
 }
 
@@ -10719,6 +11350,8 @@ app.addEventListener("change", e => {
 app.addEventListener("input", e => {
   const ti = e.target.closest('[data-act="tint"]');
   if (ti && S.test) { const v = ti.value.replace(/\D/g, "").slice(0, 3); ti.value = v; S.test.answers[S.test.cur] = v === "" ? undefined : v; document.querySelector(".qnav .cur")?.classList.toggle("ans", v !== ""); return; }
+  const bs = e.target.closest('[data-act="bsearch"]');
+  if (bs) { S.bookQ = bs.value; $("#bres").innerHTML = bookResults(S.bookQ); return; }
   const el = e.target.closest('[data-act="qnum"]'); if (!el) return;
   S.quizState[S.lessonId].answers[+el.dataset.i] = el.value;
 });
@@ -10780,6 +11413,7 @@ app.addEventListener("click", async e => {
     case "fmtop": window.scrollTo({ top: 0, behavior: "smooth" }); break;
     case "fmjump": document.getElementById("fm-" + b.dataset.id)?.scrollIntoView({ behavior: "smooth", block: "start" }); break;
     case "backup": downloadBackup(); break;
+    case "bookgo": bookGo(b.dataset.ref); break;
     case "extoggle": {
       S.exOpen = !S.exOpen; store.lsSet(LS_EXOPEN, S.exOpen);
       document.querySelectorAll("#app details").forEach(d => { if (!d.closest(".keep")) d.open = S.exOpen; });
