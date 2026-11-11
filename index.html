@@ -428,6 +428,7 @@ const LEVELS = {
   mk78:  { short: "MK 7/8",  name: "Math Kangaroo, grades 7–8", count: 30, minutes: 75, secPerQ: 150, desc: "30 questions in 75 min on the real test" },
   amc8:  { short: "AMC 8",   name: "AMC 8",                      count: 25, minutes: 40, secPerQ: 96,  desc: "25 questions in 40 min on the real test" },
   amc10: { short: "AMC 10",  name: "AMC 10",                     count: 25, minutes: 75, secPerQ: 180, desc: "25 questions in 75 min on the real test" },
+  amc12: { short: "AMC 12",  name: "AMC 12",                     count: 25, minutes: 75, secPerQ: 180, desc: "25 questions in 75 min on the real test" },
   aime:  { short: "AIME",    name: "AIME",                       count: 15, minutes: 180, secPerQ: 720, desc: "15 questions in 3 hours; answers 000–999, no choices" },
 };
 // test lengths: "full" matches the real contest; the minis keep its pace
@@ -507,6 +508,12 @@ const CURRICULUM = [
     { title: "Core", lessons: [
       ["prob-basic", "Basic probability"], ["prob-complement", "Complementary probability"], ["independent", "Independent & dependent events"],
       ["conditional", "Conditional probability"], ["expected", "Expected value"], ["geo-prob", "Geometric probability"]] } ] },
+  /* AMC 12 bridge: the precalculus topics AMC 12 adds on top of AMC 10 */
+  { id: "amc12", title: "AMC 12: Precalculus Bridge", groups: [
+    { title: "AMC 12", lessons: [
+      ["a12-functions", "Functions: composition, inverses & transformations"], ["a12-unit-circle", "Unit circle & trig graphs"],
+      ["a12-conics", "Circles, parabolas & ellipses"], ["a12-ineq", "Polynomial & rational inequalities"],
+      ["a12-strategy", "AMC 10/12 scoring & strategy"]] } ] },
   /* AIME chapters: harder versions of earlier ideas, kept together at the end */
   { id: "aime-alg", title: "AIME: Algebra & Polynomials", aime: true, groups: [
     { title: "AIME", lessons: [
@@ -782,7 +789,7 @@ Object.assign(LESSONS, {
       <p class="lede">Reference: <a href="https://artofproblemsolving.com/wiki/index.php/Polygon" target="_blank" rel="noopener">AoPS Wiki: Polygon</a></p>`,
     quiz: [
       { q: "What is the sum of the interior angles of a hexagon (in degrees)?", type: "num", answer: 720, explain: ["Draw diagonals from one corner. A hexagon splits into 6 − 2 = 4 triangles.", "Each triangle has 180°: 4 × 180° = 720°."] },
-      { q: "What is each exterior angle of a regular decagon (10 sides), in degrees?", type: "num", answer: 36, explain: "The exterior angles of any polygon add to 360°. Ten equal ones are 360° ÷ 10 = 36° each." },
+      { q: "What is each exterior angle of a regular decagon (10 sides), in degrees?", type: "num", answer: 36, explain: "The exterior angles of any convex polygon add to 360°. Ten equal ones are 360° ÷ 10 = 36° each." },
       { q: "Each interior angle of a regular polygon is 156°. How many sides does it have?", type: "mc", choices: ["12", "13", "14", "15", "16"], answer: 3, explain: ["An interior and exterior angle make a straight line, so the exterior is 180 − 156 = 24°.", "All exterior angles add to 360°, so there are 360 ÷ 24 = 15 sides."] },
       { q: "Four angles of a pentagon are 100°, 105°, 110°, and 115°. What is the fifth angle, in degrees?", type: "num", answer: 110, explain: "540 − (100 + 105 + 110 + 115) = 540 − 430 = 110°." },
       { q: "Which of these <b>cannot</b> be an interior angle of a regular polygon?", type: "mc", choices: ["120°", "130°", "135°", "140°", "150°"], answer: 1, explain: "130° gives exterior 50°, and 360 ÷ 50 = 7.2 is not a whole number. The others give 6, 8, 9, and 12 sides." },
@@ -796,7 +803,7 @@ Object.assign(LESSONS, {
       <p>A <b>diagonal</b> is a segment joining two corners (vertices) that are <i>not</i> next to each other. Sides don't count.</p>
       <h3>Counting from one corner</h3>
       <p>Stand at one corner of an n-gon. You can't draw a diagonal to yourself or to your two neighbors (those are sides). That leaves <b>n − 3</b> corners to connect to.</p>
-      <figure class="fig">${figDiagonals(6, 0)}<figcaption>From one corner of a hexagon: 6 − 3 = 3 diagonals (solid). All 9 diagonals are dashed.</figcaption></figure>
+      <figure class="fig">${figDiagonals(6, 0)}<figcaption>From one corner of a hexagon: 6 − 3 = 3 diagonals (solid). The other 6 diagonals are dashed, 9 in all.</figcaption></figure>
       <h3>The formula</h3>
       <p>Each of the n corners has n − 3 diagonals, giving n(n − 3). But that counts every diagonal twice, once from each end. So divide by 2.</p>
       <div class="rule"><b>Number of diagonals</b> of an n-gon = ${frac("n(n − 3)", "2")}</div>
@@ -880,7 +887,7 @@ Object.assign(LESSONS, {
         <details><summary>Show solution</summary><p>gcd(5, 8) = 1, so the answer is 40 − 5 − 8 = <b>27¢</b>.</p></details></div>
 
       <h3>Counting the gaps</h3>
-      <p>Exactly half the numbers from 1 to ab − a − b are unreachable. That gives a second formula.</p>
+      <p>Exactly half the numbers from 0 to ab − a − b are unreachable. That gives a second formula.</p>
       <div class="rule"><b>How many</b> positive integers can't be made: ${frac("(a − 1)(b − 1)", "2")}</div>
       <p>Check with 3 and 5: 2 × 4 ÷ 2 = 4, and the list is 1, 2, 4, 7. ✓</p>
       <div class="ex"><span class="lbl">Example 2</span><p>Basketball-style scoring where plays are worth 4 or 7 points. How many positive scores are impossible?</p>
@@ -907,7 +914,7 @@ Object.assign(LESSONS, {
    ========================================================= */
 BANK.push(
   // ---- MK 5/6 ----
-  { id: "k56-1", level: "mk56", topic: "polygon-angles", q: "A stop sign is a regular octagon. What is the measure of each of its interior angles?", choices: ["120°", "128°", "135°", "140°", "144°"], answer: 2, hint: "Each time you turn a corner walking around the sign, you turn 360° ÷ 8.", solution: ["The exterior angles of any polygon add to 360°. An octagon's 8 equal ones are 360 ÷ 8 = 45° each.", "Each interior angle sits on a straight line with an exterior angle: 180 − 45 = 135°."] },
+  { id: "k56-1", level: "mk56", topic: "polygon-angles", q: "A stop sign is a regular octagon. What is the measure of each of its interior angles?", choices: ["120°", "128°", "135°", "140°", "144°"], answer: 2, hint: "Each time you turn a corner walking around the sign, you turn 360° ÷ 8.", solution: ["The exterior angles of any convex polygon add to 360°. An octagon's 8 equal ones are 360 ÷ 8 = 45° each.", "Each interior angle sits on a straight line with an exterior angle: 180 − 45 = 135°."] },
   { id: "k56-2", level: "mk56", topic: "polygon-angles", q: "What is the sum of the interior angles of a pentagon?", choices: ["360°", "450°", "540°", "600°", "720°"], answer: 2, hint: "Split the pentagon into triangles from one corner. How many triangles?", solution: ["Draw diagonals from one corner. A pentagon splits into 5 − 2 = 3 triangles.", "Each triangle has 180°: 3 × 180° = 540°."] },
   { id: "k56-3", level: "mk56", topic: "diagonals", q: "How many diagonals does a hexagon have?", choices: ["6", "8", "9", "12", "15"], answer: 2, hint: "Each corner connects to 3 non-neighbors. Did you count each diagonal twice?", solution: ["Each corner connects to every corner except itself and its 2 neighbors: 6 − 3 = 3 diagonals.", "6 corners × 3 = 18 counts each diagonal twice (once from each end).", "18 ÷ 2 = 9."] },
   { id: "k56-4", level: "mk56", topic: "stars-bars", q: "Ann gives 4 identical stickers to her friends Ben and Cara. A friend may get none. In how many ways can she do this?", choices: ["3", "4", "5", "6", "8"], answer: 2, hint: "Ben can get 0, 1, 2, 3, or 4. Then Cara's amount is decided.", solution: ["Once Ben's share is chosen, Cara gets the rest.", "Ben can get 0, 1, 2, 3, or 4 stickers.", "That's 5 ways."] },
@@ -924,7 +931,7 @@ BANK.push(
 
   // ---- AMC 8 ----
   { id: "a8-1", level: "amc8", topic: "polygon-angles", q: "The interior angles of a convex polygon add up to 2340°. How many sides does the polygon have?", choices: ["13", "14", "15", "16", "17"], answer: 2, hint: "2340 ÷ 180 tells you the number of triangles, which is n − 2.", solution: ["A polygon with n sides splits into n − 2 triangles, so its angles add to (n − 2) × 180°.", "2340 ÷ 180 = 13, so n − 2 = 13.", "n = <b>15</b>."] },
-  { id: "a8-2", level: "amc8", topic: "diagonals", q: "Each exterior angle of a regular polygon is 24°. How many diagonals does the polygon have?", choices: ["75", "84", "90", "105", "120"], answer: 2, hint: "First find n from the exterior angle.", solution: ["Exterior angles of any polygon add to 360°, so n = 360 ÷ 24 = 15 sides.", "Each corner connects by a diagonal to 15 − 3 = 12 others (not itself, not its 2 neighbors).", "15 × 12 counts every diagonal twice, once from each end: 15 × 12 ÷ 2 = <b>90</b>."] },
+  { id: "a8-2", level: "amc8", topic: "diagonals", q: "Each exterior angle of a regular polygon is 24°. How many diagonals does the polygon have?", choices: ["75", "84", "90", "105", "120"], answer: 2, hint: "First find n from the exterior angle.", solution: ["Exterior angles of any convex polygon add to 360°, so n = 360 ÷ 24 = 15 sides.", "Each corner connects by a diagonal to 15 − 3 = 12 others (not itself, not its 2 neighbors).", "15 × 12 counts every diagonal twice, once from each end: 15 × 12 ÷ 2 = <b>90</b>."] },
   { id: "a8-3", level: "amc8", topic: "stars-bars", q: "How many ordered triples (a, b, c) of nonnegative <b>even</b> integers satisfy a + b + c = 14?", choices: ["28", "36", "45", "56", "120"], answer: 1, hint: "Write a = 2a′, b = 2b′, c = 2c′. What do a′, b′, c′ add up to?", solution: ["Even numbers are 2 × something: write a = 2a′, b = 2b′, c = 2c′.", "Then 2(a′ + b′ + c′) = 14, so a′ + b′ + c′ = 7 with each ≥ 0.", "Stars and bars: 7 stars and 2 bars in a row, choose where the 2 bars go: C(9, 2) = <b>36</b>."] },
   { id: "a8-4", level: "amc8", topic: "mcnugget", q: "A store sells stickers only in packs of 7 and packs of 10. How many positive whole numbers of stickers is it impossible to buy exactly?", choices: ["18", "24", "27", "30", "53"], answer: 2, hint: "Count of impossible totals = (a − 1)(b − 1) ÷ 2.", solution: ["7 and 10 share no common factor, so the McNugget formulas apply.", "The count of impossible totals is (a − 1)(b − 1) ÷ 2 = 6 × 9 ÷ 2 = <b>27</b>.", "Don't confuse it with the largest impossible total, 7 × 10 − 7 − 10 = 53."] },
   { id: "a8-5", level: "amc8", topic: "polygon-angles", q: "The six interior angles of a convex hexagon form an arithmetic sequence with common difference 10°. What is the largest angle?", choices: ["135°", "140°", "145°", "150°", "155°"], answer: 2, hint: "The angles average 720° ÷ 6. The middle of the sequence sits between the 3rd and 4th terms.", solution: ["A hexagon's angles add to (6 − 2) × 180 = 720°.", "Call the smallest angle a. The six angles are a, a + 10, …, a + 50, which add to 6a + 150.", "6a + 150 = 720 gives a = 95.", "Largest = 95 + 50 = <b>145°</b>. (It's under 180°, so the hexagon really is convex.)"] },
@@ -2044,7 +2051,7 @@ BANK.push(
   B("ct-ph3", "amc10", "pigeonhole", "What is the fewest numbers you must choose from 1 to 20 to guarantee that two of them differ by exactly 10?", ["10", "11", "12", "15", "20"], 1, "Group the numbers into pairs that differ by 10.", ["Make 10 boxes: {1, 11}, {2, 12}, …, {10, 20}. Two numbers in one box differ by 10.", "10 numbers could be one per box (1 to 10) with no pair.", "The 11th must share a box: <b>11</b>."]),
   B("ct-ci1", "mk78", "circular", "5 friends sit around a round table. Seatings that are rotations of each other count as the same. How many seatings are there?", ["12", "24", "60", "100", "120"], 1, "Seat one friend first to remove the rotations.", ["In a row, 5 friends could sit 5! = 120 ways.", "Each round-table seating shows up 5 times (rotate everyone by 1, 2, 3, 4 seats).", "120 ÷ 5 = 24. Or seat one friend first, then arrange the other 4: 4! = 24."]),
   B("ct-ci2", "amc10", "circular", "4 men and 4 women sit around a round table, alternating men and women. Rotations count as the same. How many seatings are there?", ["144", "288", "576", "1152", "2880"], 0, "Fix one man's seat. Then place the other men, then the women.", ["Seat the men first around the table: (4 − 1)! = 6.", "The 4 gaps between men are now different seats: 4! = 24 ways for the women.", "6 × 24 = <b>144</b>."]),
-  B("ct-de1", "amc8", "derangements", "4 letters are placed in 4 addressed envelopes so that no letter is in its correct envelope. How many ways can this happen?", ["6", "8", "9", "11", "12"], 2, "List them, or use D(4) = 3(D(3) + D(2)).", ["Derangements: 1, 0, 1, 2, 9 for 1–5 items.", "Recursion: D(4) = 3 × (D(3) + D(2)) = 3 × (2 + 1) = <b>9</b>."]),
+  B("ct-de1", "amc8", "derangements", "4 letters are placed in 4 addressed envelopes so that no letter is in its correct envelope. How many ways can this happen?", ["6", "8", "9", "11", "12"], 2, "List them, or use D(4) = 3(D(3) + D(2)).", ["Derangements: 0, 1, 2, 9, 44 for 1–5 items.", "Recursion: D(4) = 3 × (D(3) + D(2)) = 3 × (2 + 1) = <b>9</b>."]),
   B("ct-de2", "amc10", "derangements", "6 students' tests are handed back at random. In how many ways do exactly 2 students get their own test?", ["90", "120", "130", "135", "180"], 3, "Pick the 2 lucky students; everyone else must be deranged.", ["Choose which 2 get their own test: C(6, 2) = 15.", "The other 4 must all get the wrong test: D(4) = 9.", "15 × 9 = <b>135</b>."]),
 );
 
@@ -2159,7 +2166,7 @@ Object.assign(LESSONS, {
       num("How many positive divisors does 36 have?", 9, "36 = 2² × 3². Each exponent can be 0, 1, or 2: 3 × 3 = 9 divisors."),
       num("How many positive divisors does 2⁴ × 3 × 5 have?", 20, "Add 1 to each exponent and multiply: (4 + 1)(1 + 1)(1 + 1) = 5 × 2 × 2 = 20."),
       mc("Which of these has an odd number of positive divisors?", ["48", "50", "72", "98", "144"], 4, "Divisors pair up as d and n/d. Only a perfect square has one that pairs with itself, giving an odd count. 144 = 12²."),
-      num("What is the smallest positive integer with exactly 8 positive divisors?", 24, "2³ × 3 = 24 (divisors 1, 2, 3, 4, 6, 8, 12, 24)."),
+      num("What is the smallest positive integer with exactly 8 positive divisors?", 24, "8 divisors needs exponents like p⁷, p³ × q, or p × q × r. The smallest of each kind: 2⁷ = 128, 2³ × 3 = 24, 2 × 3 × 5 = 30. The smallest is 24 (divisors 1, 2, 3, 4, 6, 8, 12, 24)."),
       num("How many positive divisors of 720 are odd?", 6, "720 = 2⁴ × 3² × 5. An odd divisor uses no 2s, so it divides 3² × 5 = 45, which has 3 × 2 = 6 divisors."),
     ],
   },
@@ -2347,7 +2354,7 @@ BANK.push(
   B("nt-dg3", "amc10", "digits", "What is the sum of the digits of 10²⁰ − 20?", ["162", "164", "166", "168", "170"], 4, "Compute 10³ − 20 and 10⁴ − 20 to see the pattern.", ["10²⁰ is 1 followed by 20 zeros. Subtracting 20 borrows down the line.", "Result: eighteen 9s, then 80 (like 10⁴ − 20 = 9980).", "18 × 9 + 8 + 0 = <b>170</b>."]),
   B("nt-dp1", "mk78", "diophantine", "Using only 5-cent and 7-cent stamps, in how many ways can you make exactly 100 cents? (Using none of one kind is allowed.)", ["2", "3", "4", "5", "6"], 1, "The number of 7-cent stamps must be a multiple of 5. Why?", ["x fives and y sevens: 5x + 7y = 100.", "100 and 5x are multiples of 5, so 7y must be too: y is a multiple of 5.", "y = 0, 5, 10 give x = 20, 13, 6. y = 15 is too much. 3 ways."]),
   B("nt-dp2", "amc8", "diophantine", "Pens cost $3 and notebooks cost $5. Mia spends exactly $34 and buys at least one of each. What is the greatest number of notebooks she could buy?", ["2", "3", "4", "5", "6"], 3, "Try values of y (notebooks) and see whether 34 − 5y is a multiple of 3.", ["3x + 5y = 34 with x, y ≥ 1. Try values of y and check whether 34 − 5y is a multiple of 3.", "y = 2: 24 → x = 8 ✓. y = 5: 9 → x = 3 ✓. (Steps of 3 in y, as expected.)", "y = 8 would need 34 − 40 &lt; 0. Most notebooks: <b>5</b>."]),
-  B("nt-dp3", "amc10", "diophantine", "How many ordered pairs of positive integers (x, y) satisfy 7x + 11y = 200?", ["1", "2", "3", "4", "5"], 2, "Work mod 7 to find which y values work.", ["Find one solution, then step. Try small y: 200 − 11y must be a multiple of 7. y = 1: 189 = 7 × 27 ✓.", "Step: y up by 7, x down by 11. (1, 27) → (8, 16) → (15, 5) → next x would be negative.", "<b>3</b> pairs."]),
+  B("nt-dp3", "amc10", "diophantine", "How many ordered pairs of positive integers (x, y) satisfy 7x + 11y = 200?", ["1", "2", "3", "4", "5"], 2, "Work mod 7 to find which y values work.", ["Find one solution, then step. Try small y: 200 − 11y must be a multiple of 7. y = 1: 189 = 7 × 27 ✓.", "That gives x = 27, so (x, y) = (27, 1). Step: y up by 7, x down by 11. (27, 1) → (16, 8) → (5, 15) → next x would be negative.", "<b>3</b> pairs."]),
 );
 
 /* =========================================================
@@ -2804,7 +2811,7 @@ Object.assign(LESSONS, {
     quiz: [
       mc("Simplify 10/√5.", ["√5", "2√5", "5√2", "10√5", "2"], 1, "Multiply top and bottom by √5: 10√5 / 5 = 2√5."),
       num("What is (√7 + 2)(√7 − 2)?", 3, "(a + b)(a − b) = a² − b²: (√7)² − 2² = 7 − 4 = 3."),
-      mc("Simplify 1/(√3 − 1).", ["√3 + 1", "√3 − 1", "(√3 + 1)/2", "(√3 − 1)/2", "2/(√3 + 1)"], 2, "Multiply top and bottom by √3 + 1. The bottom becomes 3 − 1 = 2, so the answer is (√3 + 1)/2."),
+      mc("Simplify 1/(√3 − 1).", ["√3 + 1", "√3 − 1", "(√3 + 1)/2", "(√3 − 1)/2", "(√3 + 1)/4"], 2, "Multiply top and bottom by √3 + 1. The bottom becomes 3 − 1 = 2, so the answer is (√3 + 1)/2."),
       num("What is (√3 + 1)² + (√3 − 1)²?", 8, "(√3 + 1)² = 3 + 2√3 + 1 = 4 + 2√3. (√3 − 1)² = 4 − 2√3. The √3 parts cancel: 8."),
       mc("What is 1/(√2 + 1) + 1/(√3 + √2) + 1/(2 + √3)?", ["1", "√2", "2", "√3", "3"], 0, "Rationalize each: √2 − 1, √3 − √2, 2 − √3. Adding, everything cancels except 2 − 1 = 1."),
     ],
@@ -2846,7 +2853,7 @@ BANK.push(
   B("ex-q2", "amc8", "sqrt-simplify", "What is √50 + √18?", ["4√2", "6√2", "8√2", "2√17", "√68"], 2, "Simplify each root first.", ["Pull out perfect squares: √50 = √25 × √2 = 5√2, √18 = √9 × √2 = 3√2.", "Like radicals add like apples: 5√2 + 3√2 = <b>8√2</b>."]),
   B("ex-ra1", "amc10", "rationalize", "What is 1/(1 + √2) + 1/(√2 + √3) + 1/(√3 + √4) + … + 1/(√99 + √100)?", ["1", "3", "9", "10", "99"], 2, "Rationalize one term. What does 1/(√n + √(n+1)) become?", ["Rationalize one term: 1/(√n + √(n+1)) × (√(n+1) − √n)/(√(n+1) − √n). Bottom: (n + 1) − n = 1.", "So each term is √(n+1) − √n.", "Adding them, everything cancels except √100 − √1 = 10 − 1 = <b>9</b>."]),
   B("ex-cp1", "amc8", "compare-powers", "Which of these numbers is largest?", ["2⁶⁰", "3⁴⁰", "5²⁰", "6²⁰", "7²⁰"], 1, "Rewrite each with exponent 20.", ["Match the exponents: 2⁶⁰ = (2³)²⁰ = 8²⁰ and 3⁴⁰ = (3²)²⁰ = 9²⁰.", "Same exponent, bigger base wins: 9²⁰ > 8²⁰.", "Largest: <b>3⁴⁰</b>."]),
-  B("ex-cp2", "amc10", "compare-powers", "Let a = 2⁵⁵, b = 3⁴⁴, c = 5³³, d = 6²². Which ordering is correct?", ["a &lt; b &lt; c &lt; d", "d &lt; a &lt; b &lt; c", "a &lt; b &lt; d &lt; c", "a &lt; d &lt; b &lt; c", "c &lt; b &lt; d &lt; a"], 3, "Every exponent is a multiple of 11.", ["The exponents 55, 44, 33, 22 share 11: write each as something¹¹.", "a = 2⁵ˣ¹¹ = 32¹¹, b = 3⁴ˣ¹¹ = 81¹¹, c = 5³ˣ¹¹ = 125¹¹, d = 6²ˣ¹¹ = 36¹¹.", "32 &lt; 36 &lt; 81 &lt; 125: <b>a &lt; d &lt; b &lt; c</b>."]),
+  B("ex-cp2", "amc10", "compare-powers", "Let a = 2⁵⁵, b = 3⁴⁴, c = 5³³, d = 6²². Which ordering is correct?", ["a &lt; b &lt; c &lt; d", "d &lt; a &lt; b &lt; c", "a &lt; b &lt; d &lt; c", "a &lt; d &lt; b &lt; c", "c &lt; b &lt; d &lt; a"], 3, "Every exponent is a multiple of 11.", ["The exponents 55, 44, 33, 22 share 11: write each as something¹¹.", "a = (2⁵)¹¹ = 32¹¹, b = (3⁴)¹¹ = 81¹¹, c = (5³)¹¹ = 125¹¹, d = (6²)¹¹ = 36¹¹.", "32 &lt; 36 &lt; 81 &lt; 125: <b>a &lt; d &lt; b &lt; c</b>."]),
 );
 
 /* =========================================================
@@ -3063,8 +3070,8 @@ function figParallel() {
     ${seg(10, 50, 310, 50)}${seg(10, 140, 310, 140)}
     ${pathEl("M290 50 l-10 -5 M290 50 l-10 5", { w: 1.5 })}${pathEl("M290 140 l-10 -5 M290 140 l-10 5", { w: 1.5 })}
     ${seg(90, 185, 230, 5, { c: "var(--accent)" })}
-    ${txt(214, 42, "1")}${txt(180, 42, "2", { fill: "var(--muted)" })}${txt(182, 68, "3")}${txt(214, 68, "4", { fill: "var(--muted)" })}
-    ${txt(144, 132, "5")}${txt(110, 132, "6", { fill: "var(--muted)" })}${txt(112, 160, "7")}${txt(144, 160, "8", { fill: "var(--muted)" })}`,
+    ${txt(220, 42, "1")}${txt(180, 42, "2", { fill: "var(--muted)" })}${txt(166, 68, "3")}${txt(214, 68, "4", { fill: "var(--muted)" })}
+    ${txt(150, 132, "5")}${txt(110, 132, "6", { fill: "var(--muted)" })}${txt(96, 160, "7")}${txt(144, 160, "8", { fill: "var(--muted)" })}`,
     "Two parallel lines cut by a transversal, eight angles numbered");
 }
 function figClockFace(h = 3, m = 30) {
@@ -3361,8 +3368,8 @@ function figCircleParts() {
     ${seg(120, 110, 183.6, 46.4, { c: "var(--accent)" })}${txt(162, 92, "r", { fill: "var(--accent)" })}
     ${seg(30, 110, 210, 110, { c: "var(--hi)", w: 2.5 })}${txt(70, 104, "diameter", { size: 11 })}
     ${seg(56.4, 173.6, 183.6, 173.6, { w: 2 })}${txt(120, 168, "chord", { size: 11 })}
-    ${seg(250, 0, 250, 220, { c: "var(--muted)", w: 1.5 })}${seg(30, 20, 30, 200, { c: "var(--muted)", w: 1.5, dash: "4 3" })}
-    ${txt(236, 30, "tangent", { size: 11, fill: "var(--muted)", a: "end" })}`, "Circle with radius, diameter, chord and tangent line");
+    ${seg(210, 0, 210, 220, { c: "var(--muted)", w: 1.5 })}${seg(30, 20, 30, 200, { c: "var(--muted)", w: 1.5, dash: "4 3" })}
+    ${txt(213, 214, "tangent", { size: 11, fill: "var(--muted)", a: "start" })}`, "Circle with radius, diameter, chord and tangent line");
 }
 function figInscribed() {
   // circle center (110,110) r 85; arc AB at bottom, central angle 100°, inscribed point C at top
@@ -4020,7 +4027,7 @@ BANK.push(
   B("ar-f4", "amc8", "fractions", "What is 1 / (1 + 1 / (1 + 1/2))?", ["3/5", "5/8", "2/3", "3/2", "5/3"], 0, "Work from the inside out.", ["Work from the inside out.", "1 + 1/2 = 3/2. Then 1 ÷ 3/2 = 2/3.", "1 + 2/3 = 5/3. Then 1 ÷ 5/3 = <b>3/5</b>."]),
   B("ar-r1", "mk56", "ratios", "The ratio of cats to dogs at a shelter is 4 : 3. There are 12 more cats than dogs. How many animals are at the shelter?", ["28", "36", "48", "72", "84"], 4, "How many parts is the difference?", ["4 : 3 means cats have 1 more part than dogs.", "That 1 part is the 12 extra cats, so one part = 12.", "Total 4 + 3 = 7 parts: 7 × 12 = 84."]),
   B("ar-r2", "mk56", "ratios", "If 3 notebooks cost $4.50, how much do 7 notebooks cost?", ["$10.50", "$11.00", "$12.00", "$13.50", "$15.00"], 0, "Find the cost of one.", ["One notebook: $4.50 ÷ 3 = $1.50.", "Seven: 7 × $1.50 = $10.50."]),
-  B("ar-r3", "mk78", "ratios", "If x : y = 3 : 4 and y : z = 6 : 7, what is x : z?", ["9 : 14", "1 : 2", "3 : 7", "18 : 21", "6 : 7"], 0, "Make the y's match.", ["y is 4 in the first ratio and 6 in the second. Make them match at 12.", "x : y = 3 : 4 = 9 : 12. y : z = 6 : 7 = 12 : 14.", "So x : z = 9 : 14."]),
+  B("ar-r3", "mk78", "ratios", "If x : y = 3 : 4 and y : z = 6 : 7, what is x : z?", ["9 : 14", "1 : 2", "3 : 7", "7 : 8", "6 : 7"], 0, "Make the y's match.", ["y is 4 in the first ratio and 6 in the second. Make them match at 12.", "x : y = 3 : 4 = 9 : 12. y : z = 6 : 7 = 12 : 14.", "So x : z = 9 : 14."]),
   B("ar-r4", "amc8", "ratios", "A jar holds red and blue marbles in the ratio 3 : 5. After 8 red marbles are added, the ratio is 1 : 1. How many marbles were in the jar at first?", ["16", "24", "32", "40", "48"], 2, "Call the counts 3k and 5k.", ["Red : blue = 3 : 5, so call them 3k and 5k.", "Adding 8 red makes them equal: 3k + 8 = 5k → k = 4.", "At first: 3k + 5k = 8k = <b>32</b>."]),
   B("ar-a1", "mk56", "averages", "The average of 5 numbers is 20. What is their sum?", ["25", "50", "75", "80", "100"], 4, "Sum = mean × count.", ["Average = sum ÷ count, so sum = average × count.", "5 × 20 = 100."]),
   B("ar-a2", "mk56", "averages", "Sam scored 80, 90, and 85 on three tests. What does he need on the fourth test to average exactly 87?", ["87", "89", "90", "92", "93"], 4, "What total does an 87 average need?", ["To average 87 on 4 tests, the total must be 4 × 87 = 348.", "So far: 80 + 90 + 85 = 255.", "He needs 348 − 255 = 93."]),
@@ -4633,7 +4640,7 @@ FORMULAS["aime-alg"] = [
   { name: "Telescoping", eq: "1/(k(k + 1)) = 1/k − 1/(k + 1)", core: true },
   { name: "Sums of powers", eq: "Σk = n(n + 1)/2; Σk² = n(n + 1)(2n + 1)/6; Σk³ = (n(n + 1)/2)²", core: true },
   { name: "Infinite geometric series", eq: "a/(1 − r) when |r| < 1", core: true },
-  { name: "AM-GM", eq: "(a + b)/2 ≥ √(ab); (a + b + c)/3 ≥ ∛(abc)", note: "Equality when all terms are equal", core: true },
+  { name: "AM-GM", eq: "(a + b)/2 ≥ √(ab); (a + b + c)/3 ≥ ∛(abc)", note: "For positive numbers. Equality when all terms are equal", core: true },
 ];
 
 Object.assign(LESSONS, {
@@ -4692,7 +4699,7 @@ Object.assign(LESSONS, {
       ${ex("P is a monic cubic with P(1) = 1, P(2) = 2, P(3) = 3. Find P(5).", ["P(x) − x is a monic cubic (subtracting x doesn't change the x³ term) with roots 1, 2, 3.", "So P(x) − x = (x − 1)(x − 2)(x − 3).", "P(5) = 5 + 4·3·2 = 5 + 24 = <b>29</b>."])}
       <p>The same idea handles P(k) = 1/k: multiply through to get xP(x) − 1, which has roots at each k.</p>
       <h3>Conjugate roots</h3>
-      ${rule("Roots come in pairs:", "Real coefficients: if a + bi is a root, so is a − bi.<br>Rational coefficients: if a + √b is a root (√b irrational), so is a − √b.<br><b>Rational root theorem:</b> a rational root p/q in lowest terms has p dividing the constant term and q dividing the leading coefficient.")}
+      ${rule("Roots come in pairs:", "Real coefficients: if a + bi is a root, so is a − bi.<br>Rational coefficients: if a + √b is a root (a, b rational, √b irrational), so is a − √b.<br><b>Rational root theorem:</b> a rational root p/q in lowest terms has p dividing the constant term and q dividing the leading coefficient.")}
       ${ex("A cubic with real coefficients has roots 2 and 1 + i, and leading coefficient 1. Find P(0).", ["1 − i must be a root too.", "(x − (1 + i))(x − (1 − i)) = (x − 1)² + 1 = x² − 2x + 2.", "P(x) = (x − 2)(x² − 2x + 2), so P(0) = (−2)(2) = <b>−4</b>."])}
       ${aops("Remainder_Theorem", "Remainder theorem")}`,
     quiz: [
@@ -4969,7 +4976,7 @@ Object.assign(LESSONS, {
       ${ex("How many positive integer solutions does 3x + 5y = 100 have?", ["5y = 100 − 3x must be a multiple of 5, so x is a multiple of 5. Equivalently, look at y: 3x = 100 − 5y needs 100 − 5y ≡ 0 (mod 3), so 5y ≡ 1, y ≡ 2 (mod 3).", "y = 2, 5, 8, 11, 14, 17 give x = 30, 25, 20, 15, 10, 5. y = 20 would make x = 0, not positive.", "<b>6</b> solutions."])}
       <h3>Simon's Favorite Factoring Trick</h3>
       ${rule("SFFT:", "xy + ax + by = c becomes (x + b)(y + a) = c + ab. Add the product of the two coefficients to both sides and factor.")}
-      ${ex("Find all positive integer pairs with xy − 3x − 4y = 0.", ["Add 12 to both sides: xy − 3x − 4y + 12 = 12, which factors as (x − 4)(y − 3) = 12.", "Positive x, y means x − 4 ≥ −3 and y − 3 ≥ −2. Negative factor pairs of 12 would need a factor ≤ −4 or ≤ −6, so they fail.", "Positive factor pairs of 12: (1, 12), (2, 6), (3, 4), (4, 3), (6, 2), (12, 1): <b>6</b> ordered solutions."], "slow walkthrough")}
+      ${ex("Find all positive integer pairs with xy − 3x − 4y = 0.", ["Add 12 to both sides: xy − 3x − 4y + 12 = 12, which factors as (x − 4)(y − 3) = 12.", "Positive x, y means x − 4 ≥ −3 and y − 3 ≥ −2. Every negative factor pair of 12 has x − 4 ≤ −4 or y − 3 ≤ −3 (try (−3, −4) and (−4, −3)), so they all fail.", "Positive factor pairs of 12: (1, 12), (2, 6), (3, 4), (4, 3), (6, 2), (12, 1): <b>6</b> ordered solutions."], "slow walkthrough")}
       <h3>1/x + 1/y = 1/n</h3>
       <p>Clear denominators: ny + nx = xy, so xy − nx − ny = 0, and SFFT gives (x − n)(y − n) = n².</p>
       ${ex("How many ordered pairs of positive integers satisfy 1/x + 1/y = 1/6?", ["(x − 6)(y − 6) = 36.", "Both factors must be positive (if both were negative, x and y would be less than 6 and 1/x + 1/y would be too big).", "d(36) = 9 ordered pairs, so <b>9</b>."])}
@@ -5159,7 +5166,7 @@ Object.assign(LESSONS, {
       num("A and B take turns rolling a die, A first. The first to roll a 6 wins. P(A wins) = m/n in lowest terms. Find m + n.", 17, ["p = 1/6 + (5/6)²p, so p(1 − 25/36) = 1/6 and p = (1/6)(36/11) = 6/11.", "6 + 11 = 17."]),
       num("You start with $4 and bet $1 on fair coin flips until you have $0 or $10. The probability you reach $10 is m/n in lowest terms. Find m + n.", 7, ["Fair game: 4/10 = 2/5.", "2 + 5 = 7."]),
       num("A and B take turns flipping a coin that lands heads with probability 1/3, A first. The first to flip heads wins. P(A wins) = m/n in lowest terms. Find m + n.", 8, ["p = (1/3) ÷ (1 − (2/3)²) = (1/3) ÷ (5/9) = 3/5.", "3 + 5 = 8."]),
-      num("A frog sits on 1 of the numbers 0, 1, 2, 3, 4. Each second it moves one step left or right with equal chance, and stops on 0 or 4. The probability it ends on 4 is p. Find 100p.", 25, ["Fair gambler's ruin with i = 1, N = 4: p = 1/4.", "100p = 25."]),
+      num("A frog sits on the number 1 of a number line marked 0, 1, 2, 3, 4. Each second it moves one step left or right with equal chance, and stops on 0 or 4. The probability it ends on 4 is p. Find 100p.", 25, ["Fair gambler's ruin with i = 1, N = 4: p = 1/4.", "100p = 25."]),
       num("A die is rolled until it shows a 1 or an even number. The probability that a 1 comes first is m/n in lowest terms. Find m + n.", 5, ["Only rolls of 1, 2, 4, 6 matter, and each is equally likely, so P(1 first) = 1/4.", "1 + 4 = 5."]),
     ],
   },
@@ -5395,7 +5402,7 @@ BANK.push(
   B("aime-3d-1", "aime", "aime-3d", "A box has faces with areas 6, 8, and 12. Find the square of its space diagonal.", null, 29, "Multiply the three areas to get (abc)².", ["ab = 6, ac = 8, bc = 12, so (abc)² = 576 and abc = 24.", "a = 24/12 = 2, b = 24/8 = 3, c = 24/6 = 4.", "Diagonal² = 4 + 9 + 16 = 29."]),
   B("aime-3d-2", "aime", "aime-3d", "A regular tetrahedron has edge 6. Let h be the distance from a vertex to the opposite face. Find h².", null, 24, "The foot of the height is the center of the opposite face.", ["The center of an equilateral triangle with side 6 is 6/√3 = 2√3 from each corner.", "h² = 36 − 12 = 24."]),
   B("aime-3d-3", "aime", "aime-3d", "A plane cuts a sphere of radius 13 at distance 5 from the center. The area of the cross-section is kπ. Find k.", null, 144, "The cut is a circle; find its radius.", ["r² = 13² − 5² = 144.", "Area = 144π."]),
-  B("aime-3d-4", "aime", "aime-3d", "A cube has edge 4. M is the midpoint of one edge, and N is the corner farthest from M. Find MN².", null, 36, "Use coordinates.", ["Let M = (2, 0, 0) on the edge from (0, 0, 0) to (4, 0, 0).", "The farthest corner is (0 or 4, 4, 4): both are 2 away in x. N = (4, 4, 4) works.", "MN² = 2² + 4² + 4² = 36."]),
+  B("aime-3d-4", "aime", "aime-3d", "A cube has edge 4. M is the midpoint of one edge, and N is a corner of the cube as far from M as possible. Find MN².", null, 36, "Use coordinates.", ["Let M = (2, 0, 0) on the edge from (0, 0, 0) to (4, 0, 0).", "The farthest corners are (0, 4, 4) and (4, 4, 4): both are 2 away in x, so they tie. Take N = (4, 4, 4).", "MN² = 2² + 4² + 4² = 36."]),
 );
 /* =========================================================
    CHAPTER: AIME: Complex Numbers, Trig & Strategy
@@ -5482,7 +5489,7 @@ Object.assign(LESSONS, {
     body: () => `
       <h3>Solving zⁿ = 1</h3>
       <p>By De Moivre, (cis θ)ⁿ = cis(nθ) = 1 when nθ is a multiple of 360°. So there are exactly n solutions, evenly spaced around the unit circle: the corners of a regular n-gon.</p>
-      ${rule("nth roots of unity:", "cis(360°k/n) for k = 0, 1, …, n − 1. For n ≥ 2 they add to 0 (they balance around the center).<br>A root is <b>primitive</b> if no smaller power gives 1. There are φ(n) primitive nth roots.")}
+      ${rule("nth roots of unity:", "cis(360°k/n) for k = 0, 1, …, n − 1. For n ≥ 2 they add to 0 (they balance around the center).<br>A root is <b>primitive</b> if no smaller positive power gives 1. There are φ(n) primitive nth roots.")}
       <p>The common roots of z¹² = 1 and z⁸ = 1 are the roots of z^gcd(12, 8) = z⁴ = 1.</p>
       <h3>Cube roots of unity</h3>
       ${rule("ω:", "Let ω = cis 120°. Then ω³ = 1 and 1 + ω + ω² = 0. Also ω² = ω̄ = 1/ω.")}
@@ -5490,7 +5497,7 @@ Object.assign(LESSONS, {
       ${ex("Simplify ω¹⁰⁰ + ω⁵⁰.", ["Reduce exponents mod 3: 100 ≡ 1 and 50 ≡ 2.", "ω + ω² = <b>−1</b>."])}
       <h3>Using xⁿ − 1</h3>
       <p>The roots of unity are the roots of xⁿ − 1 = (x − 1)(xⁿ⁻¹ + ··· + x + 1). So the n − 1 roots other than 1 are the roots of 1 + x + ··· + xⁿ⁻¹.</p>
-      ${rule("Product trick:", "(1 − ω)(1 − ω²)···(1 − ωⁿ⁻¹) = 1 + 1 + ··· + 1 = n. Plug x = 1 into 1 + x + ··· + xⁿ⁻¹.<br>Geometric meaning: from one corner of a regular n-gon in the unit circle, the distances to the other corners multiply to n.")}
+      ${rule("Product trick:", "With ω = cis(360°/n): (1 − ω)(1 − ω²)···(1 − ωⁿ⁻¹) = 1 + 1 + ··· + 1 = n. Plug x = 1 into 1 + x + ··· + xⁿ⁻¹.<br>Geometric meaning: from one corner of a regular n-gon in the unit circle, the distances to the other corners multiply to n.")}
       <h3>Roots-of-unity filter</h3>
       <p>Adding f(1), f(ω), f(ω²) keeps only the terms whose exponent is a multiple of 3, because 1 + ωᵏ + ω²ᵏ is 3 when 3 divides k and 0 otherwise.</p>
       ${ex("Find C(6, 0) + C(6, 3) + C(6, 6) using the filter.", ["f(x) = (1 + x)⁶. The sum we want is (f(1) + f(ω) + f(ω²))/3.", "1 + ω = −ω², so f(ω) = (−ω²)⁶ = ω¹² = 1. Likewise f(ω²) = 1.", "(64 + 1 + 1)/3 = <b>22</b>.", "Check directly: 1 + 20 + 1 = 22. ✓"], "slow walkthrough")}
@@ -5581,6 +5588,325 @@ BANK.push(
   B("aime-sg-2", "aime", "aime-strategy", "Find the remainder when 999 · 998 · 997 is divided by 1000.", null, 994, "999 ≡ −1, 998 ≡ −2, 997 ≡ −3 (mod 1000).", ["(−1)(−2)(−3) = −6.", "−6 ≡ 994 (mod 1000)."]),
   B("aime-sg-3", "aime", "aime-strategy", "f(1) = 1 and f(n + 1) = f(n) + 2n + 1. Find f(31).", null, 961, "Compute a few values and look for a pattern.", ["f(2) = 4, f(3) = 9, f(4) = 16: f(n) = n².", "(n + 1)² = n² + 2n + 1 confirms it, so f(31) = 961."]),
   B("aime-sg-4", "aime", "aime-strategy", "A probability works out to 84/210. Written as m/n in lowest terms, find m + n.", null, 7, "Reduce before adding.", ["gcd(84, 210) = 42: 84/210 = 2/5.", "2 + 5 = 7."]),
+);
+/* =========================================================
+   CHAPTER: AMC 12: Precalculus Bridge
+   The precalculus topics AMC 12 adds on top of AMC 10, plus how the AMC 10/12 are scored.
+   Bank items are multiple choice at level "amc12".
+   ========================================================= */
+FORMULAS["amc12"] = [
+  { name: "Composition", eq: "f(g(x)): do g first, then feed the result to f", note: "Order matters: f(g(x)) and g(f(x)) are usually different", core: true },
+  { name: "Inverse function", eq: "f⁻¹(b) = a means f(a) = b", note: "To find a formula: write y = f(x), swap x and y, solve for y", core: true },
+  { name: "Shifts", eq: "y = f(x − h) + k moves the graph right h and up k", core: true },
+  { name: "Flips and stretches", eq: "−f(x): flip over the x-axis; f(−x): flip over the y-axis; a·f(x): y-values × a; f(bx): x-values ÷ b" },
+  { name: "Radians", eq: "180° = π radians; arc length = rθ (θ in radians)", core: true },
+  { name: "Unit circle", eq: "The point at angle θ is (cos θ, sin θ)", core: true },
+  { name: "Pythagorean identity", eq: "sin²θ + cos²θ = 1", core: true },
+  { name: "Special angles", eq: "sin 0°, 30°, 45°, 60°, 90° = √0/2, √1/2, √2/2, √3/2, √4/2", note: "Cosine is the same list backwards" },
+  { name: "Sine wave y = a sin(bx) + d", eq: "amplitude |a|; period 2π/b; midline y = d; max d + |a|; min d − |a|" },
+  { name: "Circle", eq: "(x − h)² + (y − k)² = r²", note: "Center (h, k), radius r. Complete the square to get this form", core: true },
+  { name: "Parabola x² = 4py", eq: "vertex (0, 0); focus (0, p); directrix y = −p", note: "For y = ax², p = 1/(4a)" },
+  { name: "Ellipse x²/a² + y²/b² = 1 (a > b)", eq: "c² = a² − b²; foci (±c, 0); PF₁ + PF₂ = 2a; area = πab", core: true },
+  { name: "Sign chart", eq: "A product changes sign only at a zero of odd power", note: "Start with the sign at the far right and work left", core: true },
+  { name: "Rational inequality", eq: "Move everything to one side, make one fraction, then sign-chart the top and the bottom", note: "Never multiply both sides by something whose sign you don't know" },
+  { name: "AMC 10/12 score", eq: "6 × (correct) + 1.5 × (blank); wrong = 0; maximum 150", core: true },
+  { name: "Guessing", eq: "Random guess among k choices is worth 6/k points on average", note: "Blank = 1.5, so guess only when k ≤ 3" },
+];
+
+/* figures for this chapter (colors are CSS variables so dark mode works) */
+const a12FigUnitCircle = () => {
+  const cx = 120, cy = 120, r = 80, t = 50 * Math.PI / 180;
+  const px = +(cx + r * Math.cos(t)).toFixed(1), py = +(cy - r * Math.sin(t)).toFixed(1);
+  return svg(300, 230,
+    seg(20, cy, 225, cy, { c: "var(--muted)", w: 1 }) + seg(cx, 20, cx, 220, { c: "var(--muted)", w: 1 }) +
+    circ(cx, cy, r) +
+    seg(px, py, px, cy, { c: "var(--accent)", w: 2, dash: "5 4" }) + seg(cx, cy, px, cy, { c: "var(--accent)", w: 3 }) +
+    seg(cx, cy, px, py, { w: 2 }) + dot(px, py, { c: "var(--accent)" }) + dot(cx + r, cy, { r: 3 }) +
+    pathEl(`M${cx + 22} ${cy} A22 22 0 0 0 ${(cx + 22 * Math.cos(t)).toFixed(1)} ${(cy - 22 * Math.sin(t)).toFixed(1)}`, { w: 1.5 }) +
+    txt(cx + 33, cy - 10, "θ") + txt(cx + 18, cy - 38, "1") +
+    txt(px + 9, py - 8, "(cos θ, sin θ)", { a: "start", fill: "var(--accent)" }) +
+    txt((cx + px) / 2, cy + 16, "cos θ", { fill: "var(--accent)" }) + txt(px + 32, (cy + py) / 2 + 4, "sin θ", { a: "start", fill: "var(--accent)" }) +
+    txt(cx + r + 5, cy + 16, "(1, 0)", { a: "start", fill: "var(--muted)", size: 12 }),
+    "Unit circle with the point at angle θ, whose coordinates are cos θ and sin θ");
+};
+const a12FigSine = () => {
+  const x0 = 40, w = 240, ym = 80, amp = 45;
+  let d = "";
+  for (let i = 0; i <= 60; i++) { const u = i / 60; d += (i ? "L" : "M") + (x0 + w * u).toFixed(1) + " " + (ym - amp * Math.sin(2 * Math.PI * u)).toFixed(1) + " "; }
+  return svg(310, 165,
+    seg(x0, ym, x0 + w + 15, ym, { c: "var(--muted)", w: 1 }) + seg(x0, 20, x0, 140, { c: "var(--muted)", w: 1 }) +
+    seg(x0, ym - amp, x0 + w, ym - amp, { c: "var(--line)", w: 1, dash: "4 4" }) + seg(x0, ym + amp, x0 + w, ym + amp, { c: "var(--line)", w: 1, dash: "4 4" }) +
+    pathEl(d, { c: "var(--accent)", w: 2.5 }) +
+    [0.25, 0.5, 0.75, 1].map(u => seg(x0 + w * u, ym - 4, x0 + w * u, ym + 4, { w: 1.5 })).join("") +
+    txt(x0 - 8, ym - amp + 4, "1", { a: "end" }) + txt(x0 - 8, ym + amp + 4, "−1", { a: "end" }) + txt(x0 - 8, ym + 4, "0", { a: "end" }) +
+    txt(x0 + w * 0.25, ym + 18, "π/2", { size: 12 }) + txt(x0 + w * 0.5 + 10, ym - 8, "π", { size: 12 }) + txt(x0 + w * 0.75, ym - 10, "3π/2", { size: 12 }) + txt(x0 + w, ym + 18, "2π", { size: 12 }) +
+    txt(x0 + w / 2, 158, "one period = 2π", { fill: "var(--muted)", size: 12 }),
+    "One period of y = sin x, rising to 1 at π/2 and falling to −1 at 3π/2");
+};
+const a12FigParabola = () => {
+  const ox = 130, oy = 150, s = 20;
+  let d = "";
+  for (let i = -52; i <= 52; i++) { const x = i / 10; d += (i === -52 ? "M" : "L") + (ox + s * x).toFixed(1) + " " + (oy - s * x * x / 4).toFixed(1) + " "; }
+  const px = ox + 4 * s, py = oy - 4 * s;
+  return svg(270, 200,
+    seg(10, oy + s, 260, oy + s, { c: "var(--muted)", w: 2, dash: "6 4" }) +
+    pathEl(d, { w: 2.5 }) +
+    seg(ox, oy - s, px, py, { c: "var(--accent)", w: 2 }) + seg(px, py, px, oy + s, { c: "var(--accent)", w: 2 }) +
+    dot(ox, oy - s, { c: "var(--accent)" }) + dot(ox, oy) + dot(px, py) +
+    txt(ox - 4, oy - s - 10, "focus", { fill: "var(--accent)" }) + txt(ox, oy + 15, "vertex", { size: 12 }) +
+    txt(18, oy + s + 16, "directrix", { a: "start", fill: "var(--muted)", size: 12 }) +
+    txt(px + 8, py + 2, "P", { a: "start" }) + txt((ox + px) / 2 + 4, (oy - s + py) / 2 - 8, "d", { fill: "var(--accent)" }) + txt(px + 9, (py + oy + s) / 2, "d", { a: "start", fill: "var(--accent)" }),
+    "Parabola with its focus, vertex and directrix; a point P is the same distance d from the focus and from the directrix");
+};
+const a12FigEllipse = () => {
+  const cx = 150, cy = 100, a = 110, b = 66, c = 88;
+  const px = cx + 55, py = +(cy - b * Math.sqrt(1 - 0.25)).toFixed(1);
+  return svg(300, 200,
+    seg(cx - a, cy, cx + a, cy, { c: "var(--muted)", w: 1 }) + seg(cx, cy - b, cx, cy + b, { c: "var(--muted)", w: 1 }) +
+    pathEl(`M${cx - a} ${cy} A${a} ${b} 0 1 0 ${cx + a} ${cy} A${a} ${b} 0 1 0 ${cx - a} ${cy}`, { w: 2.5 }) +
+    seg(cx - c, cy, px, py, { c: "var(--accent)", w: 2 }) + seg(cx + c, cy, px, py, { c: "var(--accent)", w: 2 }) +
+    dot(cx - c, cy, { c: "var(--accent)" }) + dot(cx + c, cy, { c: "var(--accent)" }) + dot(px, py) +
+    txt(cx - c, cy + 18, "F₁", { fill: "var(--accent)" }) + txt(cx + c, cy + 18, "F₂", { fill: "var(--accent)" }) + txt(px + 4, py - 8, "P") +
+    txt(cx + 40, cy + 16, "c", { size: 12 }) + txt(cx - 9, cy + 38, "b") + txt(cx - a / 2, cy + 16, "a") +
+    txt(cx, 192, "PF₁ + PF₂ = 2a", { fill: "var(--muted)", size: 12 }),
+    "Ellipse with semi-axes a and b, foci F₁ and F₂ at distance c from the center, and a point P joined to both foci");
+};
+const a12FigSignChart = () => {
+  const y = 50, xs = [80, 160, 240], labs = ["−1", "2", "5"], signs = ["−", "+", "−", "+"], mids = [40, 120, 200, 280];
+  return svg(320, 95,
+    seg(10, y, 310, y, { c: "var(--muted)", w: 1.5 }) +
+    seg(xs[0], y, xs[1], y, { c: "var(--accent)", w: 5 }) + seg(xs[2], y, 310, y, { c: "var(--accent)", w: 5 }) +
+    xs.map((x, i) => dot(x, y, { c: "var(--accent)", r: 5 }) + txt(x, y + 24, labs[i])).join("") +
+    mids.map((x, i) => txt(x, y - 16, signs[i], { size: 20, fill: i % 2 ? "var(--accent)" : "var(--muted)" })).join("") +
+    txt(160, 92, "sign of (x + 1)(x − 2)(x − 5)", { fill: "var(--muted)", size: 12 }),
+    "Sign chart for (x + 1)(x − 2)(x − 5): negative, positive, negative, positive, changing at −1, 2 and 5");
+};
+
+Object.assign(LESSONS, {
+  "a12-functions": {
+    chapter: "amc12", title: "Functions: composition, inverses & transformations", minutes: 20,
+    outline: ["Composition: one function inside another", "Inverse functions", "Shifts, flips and stretches", "Check yourself"],
+    body: () => `
+      <p>A function is a machine: a number goes in, one number comes out. AMC 12 problems chain machines together, run them backwards, and slide their graphs around. All three are easier than they look once you know what to do first.</p>
+      <h3>Composition: one function inside another</h3>
+      <p>f(g(x)) means: put x into g, then put <b>that answer</b> into f. Always work from the inside out.</p>
+      ${rule("Composition:", "f(g(x)): do g first, then f. The order matters: f(g(x)) and g(f(x)) are usually different.")}
+      ${ex("f(x) = 2x + 3 and g(x) = x² − 1. Find f(g(4)) and g(f(4)).", ["f(g(4)): inside first. g(4) = 4² − 1 = 15.", "Now feed 15 to f: f(15) = 2·15 + 3 = <b>33</b>.", "g(f(4)): inside first. f(4) = 2·4 + 3 = 11.", "Now feed 11 to g: g(11) = 11² − 1 = <b>120</b>.", "Same two functions, different order, very different answers."])}
+      <p>When a problem asks you to solve f(f(x)) = something, do not expand. Give the inside a name and solve in two small steps.</p>
+      ${ex("f(x) = x² − 2x. How many real numbers x satisfy f(f(x)) = 3?", ["Call the inside u = f(x). We need f(u) = 3.", "u² − 2u = 3 gives u² − 2u − 3 = 0, so (u − 3)(u + 1) = 0 and u = 3 or u = −1.", "Now undo the name. Case f(x) = 3: this is the same equation, so x = 3 or x = −1.", "Case f(x) = −1: x² − 2x + 1 = 0, so (x − 1)² = 0 and x = 1.", "The solutions are −1, 1, 3. That is <b>3</b> real numbers.", "Why this works: expanding f(f(x)) would give a degree-4 mess. Naming the inside turns it into two quadratics."], "contest style")}
+      <h3>Inverse functions</h3>
+      <p>The inverse f⁻¹ runs the machine backwards: if f turns 2 into 9, then f⁻¹ turns 9 back into 2. (The −1 is a label, not a power. f⁻¹(x) does <b>not</b> mean 1/f(x).)</p>
+      ${rule("Inverse:", "f⁻¹(b) = a means exactly f(a) = b.<br><b>Formula:</b> write y = f(x), swap x and y, then solve for y.<br><b>Graph:</b> the graph of f⁻¹ is the graph of f reflected over the line y = x.<br><b>Check:</b> f(f⁻¹(x)) = x.")}
+      ${ex("f(x) = 2x − 7. Find a formula for f⁻¹(x).", ["Write y = 2x − 7.", "Swap x and y: x = 2y − 7. (Swapping is what \"run it backwards\" means: the old output is the new input.)", "Solve for y: 2y = x + 7, so y = (x + 7)/2.", "f⁻¹(x) = <b>(x + 7)/2</b>.", "Check: f(f⁻¹(x)) = 2 · (x + 7)/2 − 7 = x + 7 − 7 = x. ✓", "It makes sense: f doubles then subtracts 7, so f⁻¹ adds 7 then halves. Undo the steps in reverse order."])}
+      ${ex("f(x) = (3x + 1)/(x − 2). Find f⁻¹(4).", ["You do not need the whole inverse. f⁻¹(4) is the number x with f(x) = 4.", "(3x + 1)/(x − 2) = 4.", "Multiply both sides by (x − 2): 3x + 1 = 4x − 8.", "So x = 9, and f⁻¹(4) = <b>9</b>.", "Check: f(9) = 28/7 = 4. ✓"], "contest style")}
+      <h3>Shifts, flips and stretches</h3>
+      <p>Changing a formula a little moves its graph in a predictable way. Changes <b>outside</b> f change the y-values and do what they say. Changes <b>inside</b> f change the x-values and do the opposite of what they seem to say.</p>
+      ${rule("Graph moves:", "y = f(x) + k: up k.<br>y = f(x − h): <b>right</b> h. (And f(x + h) goes left h.)<br>y = −f(x): flip over the x-axis. &nbsp; y = f(−x): flip over the y-axis.<br>y = a·f(x): every y-value is multiplied by a.<br>y = f(bx): every x-value is <b>divided</b> by b.")}
+      <p>Why inside changes go backwards: in y = f(x − 3), you need x = 3 just to get f(0). Every x has to be 3 bigger to do the same job, so the whole graph sits 3 to the right.</p>
+      ${ex("The graph of y = x² is shifted 3 units right and 2 units up, and then flipped over the x-axis. What is the new equation, and where is its vertex?", ["Right 3: replace x with (x − 3). y = (x − 3)².", "Up 2: add 2 outside. y = (x − 3)² + 2. The vertex has moved from (0, 0) to (3, 2).", "Flip over the x-axis: put a minus sign on the whole right side. y = −((x − 3)² + 2).", "Simplify: <b>y = −(x − 3)² − 2</b>.", "The flip sends the vertex (3, 2) to <b>(3, −2)</b>, and the parabola now opens down.", "The order matters. Flipping first and then moving up 2 would give y = −(x − 3)² + 2 instead."])}
+      ${ex("The point (4, 6) is on the graph of y = f(x). Which point must be on the graph of y = 2f(x − 1) + 3?", ["All we know about f is that f(4) = 6. So we need the inside to equal 4.", "x − 1 = 4 gives x = 5.", "Then y = 2f(4) + 3 = 2·6 + 3 = 15.", "The point is <b>(5, 15)</b>.", "Method: set the inside equal to the old x to get the new x, then apply the outside changes to the old y."], "contest style")}`,
+    quiz: [
+      num("f(x) = 3x − 4 and g(x) = x² + 1. Find f(g(3)).", 26, ["Inside first: g(3) = 3² + 1 = 10.", "Then f(10) = 3·10 − 4 = 26."]),
+      num("f(x) = (5x − 3)/(x + 1). Find f⁻¹(4).", 7, ["f⁻¹(4) is the number x with f(x) = 4.", "(5x − 3)/(x + 1) = 4, so 5x − 3 = 4x + 4.", "x = 7. Check: f(7) = 32/8 = 4. ✓"]),
+      num("f(x) = x² − 4x. How many real numbers x satisfy f(f(x)) = 5?", 4, ["Let u = f(x). Solve f(u) = 5: u² − 4u − 5 = 0, so (u − 5)(u + 1) = 0 and u = 5 or u = −1.", "f(x) = 5 is the same equation: x = 5 or x = −1. That is 2 solutions.", "f(x) = −1: x² − 4x + 1 = 0. Its discriminant is 16 − 4 = 12, which is positive, so 2 more real solutions (2 ± √3).", "All four are different, so the answer is 4."]),
+      mc("The point (−2, 5) is on the graph of y = f(x). Which point must be on the graph of y = f(x + 3) − 4?", ["(−5, 1)", "(−5, 9)", "(−2, 1)", "(1, 1)", "(1, 9)"], 0, ["We know f(−2) = 5, so make the inside equal −2: x + 3 = −2 gives x = −5.", "Then y = f(−2) − 4 = 5 − 4 = 1.", "The point is (−5, 1). (x + 3 moves the graph left 3, and − 4 moves it down 4.)"]),
+      num("The parabola y = x² is shifted 5 units right and 3 units down. What is the y-intercept of the new parabola?", 22, ["Right 5: y = (x − 5)². Down 3: y = (x − 5)² − 3.", "The y-intercept is where x = 0: (0 − 5)² − 3 = 25 − 3 = 22."]),
+    ],
+  },
+
+  "a12-unit-circle": {
+    chapter: "amc12", title: "Unit circle & trig graphs", minutes: 22,
+    outline: ["Radians and the unit circle", "Special angles and reference angles", "Graphs of sine and cosine", "Check yourself"],
+    body: () => `
+      <p>In AMC 10 geometry, sine and cosine live inside right triangles, so the angle is stuck between 0° and 90°. The unit circle frees them: now any angle works, even 210° or −45°, and sine and cosine become functions you can graph.</p>
+      <h3>Radians and the unit circle</h3>
+      <p>The <b>unit circle</b> is the circle of radius 1 centered at the origin. Start at (1, 0) and turn counterclockwise by the angle θ. The point where you land has a name:</p>
+      ${fig(a12FigUnitCircle(), "cos θ is the x-coordinate and sin θ is the y-coordinate.")}
+      ${rule("Unit circle:", "The point at angle θ is (cos θ, sin θ). Since it is on a circle of radius 1, sin²θ + cos²θ = 1 for every angle. Also tan θ = sin θ ÷ cos θ.")}
+      <p>A <b>radian</b> measures an angle by how far you walked along the unit circle. All the way around is the circumference, 2π, so 360° = 2π radians.</p>
+      ${rule("Radians:", "180° = π radians. Degrees → radians: multiply by π/180. Radians → degrees: multiply by 180/π.<br><b>Arc length</b> on a circle of radius r: s = rθ, with θ in radians.")}
+      ${ex("Convert 150° to radians and 7π/4 radians to degrees.", ["150° × π/180 = 150π/180 = <b>5π/6</b>. (Divide top and bottom by 30.)", "7π/4 × 180/π: the π's cancel, leaving 7 · 180/4 = 7 · 45 = <b>315°</b>.", "Quick way: π/4 is 45°, so 7π/4 is seven 45°'s."])}
+      ${ex("A circle has radius 6. How long is the arc cut off by a central angle of 2π/3?", ["Arc length = rθ when θ is in radians.", "6 · 2π/3 = <b>4π</b>.", "Why it works: 2π/3 is one third of a full turn (2π), and one third of the circumference 12π is 4π."])}
+      <h3>Special angles and reference angles</h3>
+      <p>You already know the 30-60-90 and 45-45-90 triangles. They give the only values you must memorize:</p>
+      ${tbl(["θ", "0°", "30° = π/6", "45° = π/4", "60° = π/3", "90° = π/2"], [["sin θ", "0", "1/2", "√2/2", "√3/2", "1"], ["cos θ", "1", "√3/2", "√2/2", "1/2", "0"], ["tan θ", "0", "√3/3", "1", "√3", "undefined"]])}
+      <p>For a bigger angle, find its <b>reference angle</b>: the acute angle between its radius and the x-axis. The size of sin and cos comes from the reference angle, and the sign comes from the quadrant.</p>
+      ${rule("Signs by quadrant:", "Quadrant I: sin and cos both +. &nbsp; Quadrant II: sin +, cos −. &nbsp; Quadrant III: both −. &nbsp; Quadrant IV: sin −, cos +.<br>Just ask: is the point right or left of the y-axis (cos), above or below the x-axis (sin)?")}
+      ${ex("Find cos 210° and sin 210°.", ["210° is 30° past 180°, so the reference angle is 30° and the point is in quadrant III.", "Sizes: cos 30° = √3/2 and sin 30° = 1/2.", "Quadrant III is left of the y-axis and below the x-axis, so both are negative.", "cos 210° = <b>−√3/2</b> and sin 210° = <b>−1/2</b>."])}
+      ${ex("sin θ = 3/5 and θ is in quadrant II. Find cos θ and tan θ.", ["sin²θ + cos²θ = 1, so cos²θ = 1 − 9/25 = 16/25 and cos θ = ±4/5.", "In quadrant II the point is left of the y-axis, so cos θ = <b>−4/5</b>.", "tan θ = sin θ ÷ cos θ = (3/5) ÷ (−4/5) = <b>−3/4</b>.", "The identity only gives the size. The quadrant always decides the sign."], "contest style")}
+      <h3>Graphs of sine and cosine</h3>
+      <p>As θ goes once around the circle, the height sin θ rises from 0 to 1, falls through 0 to −1, and comes back to 0. Then the pattern repeats forever. Plot the height against the angle and you get a wave:</p>
+      ${fig(a12FigSine(), "y = sin x. The graph of y = cos x is the same wave shifted left by π/2, so it starts at its top, (0, 1).")}
+      ${rule("y = a sin(bx) + d (same for cos), with a, b &gt; 0:", "<b>Amplitude</b> a: how far the wave goes above and below its middle.<br><b>Period</b> 2π/b: how long one full wave takes.<br><b>Midline</b> y = d. Maximum = d + a, minimum = d − a.")}
+      ${ex("Find the amplitude, period, maximum and minimum of y = 3 sin(2x) + 1.", ["Amplitude: the 3 outside multiplies every height, so the amplitude is <b>3</b>.", "Period: the 2 inside divides every x-value by 2, so the wave finishes twice as fast: 2π/2 = <b>π</b>.", "Midline y = 1. Maximum = 1 + 3 = <b>4</b>, minimum = 1 − 3 = <b>−2</b>.", "These are the graph moves from the functions lesson: outside changes y, inside changes x backwards."])}
+      ${ex("How many solutions does sin(3x) = 1/2 have for 0 ≤ x &lt; 2π?", ["Let u = 3x. As x runs from 0 up to 2π, u runs from 0 up to 6π: three full turns of the circle.", "In one full turn, the height is 1/2 at exactly two points (u = π/6 and u = 5π/6).", "Three turns give 3 × 2 = <b>6</b> solutions.", "Why this works: every u-solution gives exactly one x = u/3, so counting u's is the same as counting x's."], "contest style")}`,
+    quiz: [
+      num("Convert 5π/3 radians to degrees.", 300, ["Multiply by 180/π: the π's cancel.", "5 · 180/3 = 5 · 60 = 300°."], "°"),
+      mc("What is cos 240°?", ["−√3/2", "−1/2", "1/2", "√2/2", "√3/2"], 1, ["240° is 60° past 180°: reference angle 60°, quadrant III.", "cos 60° = 1/2, and in quadrant III the point is left of the y-axis, so cosine is negative.", "cos 240° = −1/2."]),
+      num("sin θ = 5/13 and θ is in quadrant II. Find 13 cos θ.", -12, ["cos²θ = 1 − 25/169 = 144/169, so cos θ = ±12/13.", "Quadrant II is left of the y-axis, so cos θ = −12/13.", "13 cos θ = −12."]),
+      num("The maximum value of y = 5 sin(4x) + 2 is M, and its period is π/k. Find M + k.", 9, ["Maximum = midline + amplitude = 2 + 5 = 7, so M = 7.", "Period = 2π/4 = π/2, so k = 2.", "M + k = 9."]),
+      num("How many values of x with 0 ≤ x < 2π satisfy cos(2x) = 1/2?", 4, ["Let u = 2x. Then u runs from 0 up to 4π: two full turns.", "In each turn cos u = 1/2 at two points (u = π/3 and u = 5π/3).", "2 × 2 = 4 solutions."]),
+    ],
+  },
+
+  "a12-conics": {
+    chapter: "amc12", title: "Circles, parabolas & ellipses", minutes: 22,
+    outline: ["Circles: complete the square", "Parabolas: focus and directrix", "Ellipses", "Check yourself"],
+    body: () => `
+      <p>Circles, parabolas and ellipses are called <b>conic sections</b>. Each one is defined by a simple distance rule, and each has a standard equation that shows its key points at a glance. Most of the work is getting the equation into that standard form.</p>
+      <h3>Circles: complete the square</h3>
+      <p>A circle is every point at distance r from a center (h, k). The distance formula turns that sentence into an equation.</p>
+      ${rule("Circle:", "(x − h)² + (y − k)² = r² has center (h, k) and radius r.<br>If the equation is expanded, complete the square in x and in y to get back to this form.")}
+      ${ex("Find the center and radius of x² + y² − 6x + 4y − 12 = 0.", ["Group: (x² − 6x) + (y² + 4y) = 12.", "Complete each square. Half of −6 is −3, and (−3)² = 9. Half of 4 is 2, and 2² = 4.", "Add 9 and 4 to <b>both</b> sides: (x² − 6x + 9) + (y² + 4y + 4) = 12 + 9 + 4.", "(x − 3)² + (y + 2)² = 25.", "Center <b>(3, −2)</b>, radius <b>5</b>. (Watch the sign: y + 2 means k = −2.)"])}
+      ${ex("What is the shortest distance from the point (9, 6) to the circle x² + y² − 6x + 4y − 12 = 0?", ["From the last example: center (3, −2), radius 5.", "Distance from (9, 6) to the center: √(6² + 8²) = √100 = 10.", "10 is more than 5, so the point is outside the circle.", "The closest point of the circle is on the segment to the center, so the shortest distance is 10 − 5 = <b>5</b>.", "Why: go straight toward the center and stop when you hit the circle. Any other point of the circle is farther away."], "contest style")}
+      <h3>Parabolas: focus and directrix</h3>
+      <p>A parabola is every point that is the <b>same distance</b> from a fixed point (the <b>focus</b>) and a fixed line (the <b>directrix</b>). The vertex is the point halfway between them.</p>
+      ${fig(a12FigParabola(), "Every point P of the parabola is as far from the focus as it is from the directrix.")}
+      ${rule("Parabola:", "x² = 4py has vertex (0, 0), focus (0, p) and directrix y = −p.<br>With vertex (h, k): (x − h)² = 4p(y − k), focus (h, k + p), directrix y = k − p.<br>For y = ax², compare with x² = 4py to get p = 1/(4a).")}
+      <p>Where the formula comes from: a point (x, y) is √(x² + (y − p)²) from the focus and y + p from the directrix. Set them equal and square: x² + y² − 2py + p² = y² + 2py + p², which simplifies to x² = 4py.</p>
+      ${ex("Find the focus and directrix of y = x²/8.", ["Rewrite as x² = 8y. Compare with x² = 4py: 4p = 8, so p = 2.", "Focus <b>(0, 2)</b>, directrix <b>y = −2</b>.", "Test with a point on the parabola: (4, 2), since 16/8 = 2.", "Distance to the focus (0, 2) is 4. Distance down to the line y = −2 is 2 + 2 = 4. Equal. ✓"])}
+      ${ex("Find the vertex, focus and directrix of y = x² − 4x + 7.", ["Complete the square: y = (x² − 4x + 4) + 3 = (x − 2)² + 3.", "So (x − 2)² = y − 3. The vertex is <b>(2, 3)</b>.", "Compare with (x − h)² = 4p(y − k): 4p = 1, so p = 1/4.", "The focus is p above the vertex: <b>(2, 13/4)</b>.", "The directrix is p below the vertex: <b>y = 11/4</b>.", "The parabola opens up, so the focus is inside the curve (above the vertex) and the directrix is outside (below)."], "slow walkthrough")}
+      <h3>Ellipses</h3>
+      <p>An ellipse is a stretched circle. It has two special points called <b>foci</b> (say \"FOH-sigh\"; one is a focus), and it is every point whose distances to the two foci add up to the same total.</p>
+      ${fig(a12FigEllipse(), "a and b are the half-widths. The foci are c from the center.")}
+      ${rule("Ellipse x²/a² + y²/b² = 1 with a &gt; b:", "It reaches (±a, 0) and (0, ±b). The long axis has length 2a, the short axis 2b.<br>Foci at (±c, 0), where c² = a² − b².<br>For every point P on the ellipse, PF₁ + PF₂ = 2a.<br>Area = πab.<br>If the bigger number is under y², the ellipse is tall and the foci are on the y-axis instead.")}
+      <p>Why c² = a² − b²: look at the top point (0, b). It is the same distance from both foci, and the two distances add to 2a, so each is a. That makes a right triangle with legs b and c and hypotenuse a.</p>
+      ${ex("For the ellipse x²/25 + y²/9 = 1, find the foci, the sum of the distances from any point to the foci, and the area.", ["a² = 25 and b² = 9, so a = 5 and b = 3.", "c² = a² − b² = 25 − 9 = 16, so c = 4. Foci: <b>(−4, 0) and (4, 0)</b>.", "Sum of distances = 2a = <b>10</b>.", "Check with the point (5, 0): it is 1 from (4, 0) and 9 from (−4, 0). 1 + 9 = 10. ✓", "Area = πab = <b>15π</b>."])}
+      ${ex("Find the area of the ellipse 4x² + 9y² = 36 and the distance between its foci.", ["Standard form needs a 1 on the right. Divide everything by 36: x²/9 + y²/4 = 1.", "a² = 9 and b² = 4, so a = 3 and b = 2.", "Area = πab = <b>6π</b>.", "c² = 9 − 4 = 5, so c = √5. The foci are (±√5, 0), which are <b>2√5</b> apart.", "Common mistake: reading a = 4 and b = 9 straight off 4x² + 9y². Always divide to get 1 on the right first."], "contest style")}`,
+    quiz: [
+      num("What is the radius of the circle x² + y² + 8x − 10y − 8 = 0?", 7, ["Group and complete the squares: (x² + 8x + 16) + (y² − 10y + 25) = 8 + 16 + 25.", "(x + 4)² + (y − 5)² = 49.", "The radius is √49 = 7."]),
+      num("The parabola y = x²/12 has its focus at (0, p). Find p.", 3, ["Rewrite as x² = 12y.", "Compare with x² = 4py: 4p = 12, so p = 3."]),
+      num("How far apart are the two foci of the ellipse x²/169 + y²/25 = 1?", 24, ["a² = 169 and b² = 25.", "c² = 169 − 25 = 144, so c = 12.", "The foci are (±12, 0), which are 24 apart."]),
+      num("A point P on the ellipse x²/49 + y²/36 = 1 is 5 units from one focus. How far is P from the other focus?", 9, ["a² = 49, so a = 7.", "The two distances always add to 2a = 14.", "14 − 5 = 9."]),
+      mc("What is the directrix of the parabola y = x² + 6x + 4?", ["y = −6", "y = −21/4", "y = −5", "y = −19/4", "y = −4"], 1, ["Complete the square: y = (x + 3)² − 5, so the vertex is (−3, −5).", "(x + 3)² = y + 5 means 4p = 1, so p = 1/4.", "The parabola opens up, so the directrix is p below the vertex: y = −5 − 1/4 = −21/4."]),
+    ],
+  },
+
+  "a12-ineq": {
+    chapter: "amc12", title: "Polynomial & rational inequalities", minutes: 20,
+    outline: ["Sign charts for polynomials", "Repeated factors", "Rational inequalities", "Check yourself"],
+    body: () => `
+      <p>An equation asks where something equals zero. An inequality asks where it is positive or negative. The trick is that an expression can only change sign at a few special points, so you find those points and check what happens between them.</p>
+      <h3>Sign charts for polynomials</h3>
+      ${rule("Sign chart method:", "1. Move everything to one side so the other side is 0.<br>2. Factor.<br>3. Mark the zeros on a number line. They cut it into intervals.<br>4. Find the sign in each interval, then pick the intervals the inequality wants.<br>For ≤ or ≥ include the zeros; for &lt; or &gt; leave them out.")}
+      <p>Why this works: a product is zero only when a factor is zero, and it cannot jump from positive to negative without passing through zero. So inside each interval the sign never changes, and one test point tells you the sign of the whole interval.</p>
+      ${ex("Solve x² − x − 6 &lt; 0.", ["Factor: (x − 3)(x + 2) &lt; 0. The zeros are −2 and 3.", "Test x = 0 (between the zeros): (−3)(2) = −6, negative. ✓", "Test x = 4 (right of 3): (1)(6) = 6, positive. Test x = −3: (−6)(−1) = 6, positive.", "The product is negative only between the zeros: <b>−2 &lt; x &lt; 3</b>.", "The endpoints are left out because the inequality is strict (&lt;, not ≤)."])}
+      <p>A shortcut saves the test points. To the right of every zero, each factor (x − r) is positive. Each time you move left past a zero, exactly one factor turns negative, so the sign flips.</p>
+      ${fig(a12FigSignChart(), "Start with + on the far right and flip at each zero. The thick parts are where the product is ≥ 0.")}
+      ${ex("Solve (x + 1)(x − 2)(x − 5) ≥ 0.", ["Zeros: −1, 2, 5. They make four intervals.", "Far right (x &gt; 5): all three factors are positive, so the product is +.", "Flip at each zero going left: 2 &lt; x &lt; 5 is −, then −1 &lt; x &lt; 2 is +, then x &lt; −1 is −.", "We want ≥ 0: the + intervals, with the zeros included.", "<b>−1 ≤ x ≤ 2 or x ≥ 5</b>.", "Check a point: x = 0 gives (1)(−2)(−5) = 10, positive. ✓"], "slow walkthrough")}
+      <p>The far-right sign is + only when every factor looks like (x − r) with a positive leading coefficient. If you see (3 − x), rewrite it as −(x − 3) first, or just test a big number.</p>
+      <h3>Repeated factors</h3>
+      <p>A squared factor like (x − 3)² is never negative. Passing through its zero does <b>not</b> flip the sign.</p>
+      ${rule("Flip or no flip:", "At a zero from an <b>odd</b> power, (x − r)¹ or (x − r)³, the sign flips.<br>At a zero from an <b>even</b> power, (x − r)² or (x − r)⁴, the sign stays the same. The expression just touches 0 there.")}
+      ${ex("Solve (x − 1)²(x − 4) ≤ 0.", ["Zeros: 1 (even power) and 4 (odd power).", "Far right (x &gt; 4): +.", "Flip at 4: for 1 &lt; x &lt; 4 the sign is −.", "No flip at 1: for x &lt; 1 the sign is still −.", "We want ≤ 0: everything left of 4, plus the zeros 1 and 4 themselves.", "<b>x ≤ 4</b>."])}
+      ${ex("How many integers x with −10 ≤ x ≤ 10 satisfy (x + 2)(x − 3)² &gt; 0?", ["Zeros: −2 (odd power) and 3 (even power).", "Far right (x &gt; 3): +. No flip at 3: for −2 &lt; x &lt; 3 it is still +. Flip at −2: for x &lt; −2 it is −.", "So the product is positive for x &gt; −2, <b>except</b> at x = 3, where it equals 0 (and 0 is not &gt; 0).", "Integers from −1 to 10: that is 12 numbers. Remove x = 3.", "<b>11</b> integers."], "contest style")}
+      <h3>Rational inequalities</h3>
+      <p>A fraction is positive when its top and bottom have the same sign, just like a product. So the same sign chart works, with two extra cautions.</p>
+      ${rule("Rational inequalities:", "1. <b>Never multiply both sides by an expression with x in it.</b> If it is negative the inequality flips, and you do not know its sign.<br>2. Instead move everything to one side and combine into one fraction.<br>3. Mark the zeros of the top <b>and</b> the bottom. Flip signs as before.<br>4. Zeros of the bottom are never solutions (you cannot divide by 0), even for ≤ or ≥.")}
+      ${ex("Solve (x − 4)/(x + 1) ≤ 0.", ["Top is zero at 4, bottom is zero at −1.", "Far right (x &gt; 4): +. Flip at 4: for −1 &lt; x &lt; 4 it is −. Flip at −1: for x &lt; −1 it is +.", "We want ≤ 0: the interval −1 &lt; x &lt; 4, plus x = 4 where the fraction equals 0.", "x = −1 is left out because the fraction is undefined there.", "<b>−1 &lt; x ≤ 4</b>."])}
+      ${ex("Solve (x + 5)/(x − 1) ≥ 2.", ["Do not multiply by (x − 1). Subtract 2 instead: (x + 5)/(x − 1) − 2 ≥ 0.", "Common denominator: (x + 5 − 2(x − 1))/(x − 1) = (7 − x)/(x − 1) ≥ 0.", "Zeros: top at 7, bottom at 1. Test a big number, x = 10: (−3)/(9) is negative. So the far right is −.", "Flip at 7: for 1 &lt; x &lt; 7 it is +. Flip at 1: for x &lt; 1 it is −.", "We want ≥ 0: <b>1 &lt; x ≤ 7</b>.", "What goes wrong if you cross-multiply: x + 5 ≥ 2x − 2 gives x ≤ 7, which wrongly includes x = 0. But at x = 0 the left side is 5/(−1) = −5, not ≥ 2."], "contest style")}`,
+    quiz: [
+      num("How many integers x satisfy x² − 3x − 10 < 0?", 6, ["Factor: (x − 5)(x + 2) < 0.", "A product of two factors is negative between the zeros: −2 < x < 5.", "Integers: −1, 0, 1, 2, 3, 4. That is 6."]),
+      num("How many positive integers x satisfy (x − 2)(x − 5)(x − 9) < 0?", 4, ["Zeros: 2, 5, 9. Far right is +, then flip at each zero: 5 < x < 9 is −, 2 < x < 5 is +, x < 2 is −.", "Negative when x < 2 or 5 < x < 9.", "Positive integers: 1, then 6, 7, 8. That is 4."]),
+      num("How many integers x with x ≥ 0 satisfy (x − 3)²(x − 8) < 0?", 7, ["Far right (x > 8) is +. Flip at 8: −. No flip at 3 (even power): still −.", "So the product is negative for x < 8, except at x = 3 where it is 0.", "Integers 0 through 7 are 8 numbers; remove 3 to get 7."]),
+      num("How many integers x satisfy (x − 6)/(x + 2) ≤ 0?", 8, ["Zeros: top at 6, bottom at −2. Far right +, flip at 6: − for −2 < x < 6.", "Include x = 6 (fraction equals 0), exclude x = −2 (undefined).", "−2 < x ≤ 6: the integers −1, 0, 1, …, 6. That is 8."]),
+      num("Find the sum of all integers x that satisfy (2x + 3)/(x − 2) ≥ 3.", 42, ["Subtract 3: (2x + 3 − 3(x − 2))/(x − 2) = (9 − x)/(x − 2) ≥ 0.", "Test x = 10: (−1)/(8) is negative, so the far right is −. Flip at 9: + for 2 < x < 9.", "Solution: 2 < x ≤ 9, so x = 3, 4, …, 9.", "3 + 4 + 5 + 6 + 7 + 8 + 9 = 42."]),
+    ],
+  },
+
+  "a12-strategy": {
+    chapter: "amc12", title: "AMC 10/12 scoring & strategy", minutes: 15,
+    outline: ["The test and the score", "Guess or leave blank?", "A time plan for 75 minutes", "Using the answer choices", "Check yourself"],
+    body: () => `
+      <p>The AMC 10 and AMC 12 are scored in an unusual way, and the scoring changes how you should play. A few minutes of arithmetic now is worth real points on test day.</p>
+      <h3>The test and the score</h3>
+      ${rule("AMC 10 and AMC 12:", "25 multiple-choice questions, 75 minutes, five choices (A to E), no calculators.<br><b>6 points</b> for each correct answer, <b>1.5 points</b> for each blank, <b>0 points</b> for each wrong answer. The maximum is 25 × 6 = 150.")}
+      <p>The two tests have the same format. The AMC 12 adds precalculus topics like the ones in this chapter: trigonometry, logarithms, complex numbers and conics. Top scorers on either test are invited to the AIME. The qualifying score changes every year, so aim for your best score, not a fixed number.</p>
+      ${ex("A student answers 17 questions correctly, leaves 5 blank, and gets 3 wrong. What is the score?", ["Correct: 17 × 6 = 102.", "Blank: 5 × 1.5 = 7.5.", "Wrong: 3 × 0 = 0.", "Score = 102 + 7.5 = <b>109.5</b>."])}
+      <p>A useful way to think: a completely blank paper scores 25 × 1.5 = 37.5. Starting from there, each question you answer correctly <b>adds 4.5</b> (it becomes 6 instead of 1.5), and each one you answer wrongly <b>costs 1.5</b>.</p>
+      ${ex("A student answers some questions, gets all of them right, and leaves the rest blank. What is the smallest number of correct answers that scores at least 100?", ["Start from the blank paper: 37.5. Each correct answer adds 4.5.", "We need 37.5 + 4.5C ≥ 100, so 4.5C ≥ 62.5 and C ≥ 13.9 (roughly).", "C must be a whole number, so C = <b>14</b>.", "Check: 14 × 6 + 11 × 1.5 = 84 + 16.5 = 100.5. ✓ And 13 correct gives 78 + 18 = 96, not enough."], "contest style")}
+      <h3>Guess or leave blank?</h3>
+      <p>A blank is a sure 1.5 points. A guess is a gamble, so compare the blank with the guess's <b>expected value</b>: the average number of points per guess if you made the same kind of guess many times.</p>
+      ${tbl(["Choices left", "Chance of being right", "Average points per guess", "Compared with 1.5 for a blank"], [["5 (blind guess)", "1/5", "6 × 1/5 = 1.2", "worse"], ["4", "1/4", "6 × 1/4 = 1.5", "exactly the same"], ["3", "1/3", "6 × 1/3 = 2", "better"], ["2", "1/2", "6 × 1/2 = 3", "much better"]])}
+      ${rule("Guessing rule:", "Never guess blindly: 1.2 is less than 1.5. Guess only after you have <b>eliminated at least 2 choices</b> for a real reason. With one choice eliminated it makes no difference on average.")}
+      ${ex("A student has 4 questions left. On each one, 2 choices are definitely wrong. How many more points does random guessing earn on average than leaving all 4 blank?", ["Each question has 3 choices left, so each guess is worth 6 × 1/3 = 2 points on average.", "Guessing all four: 4 × 2 = 8 points on average.", "Leaving all four blank: 4 × 1.5 = 6 points.", "Guessing wins by <b>2 points</b> on average.", "\"On average\" matters: on one test you might get 0 right and lose 6, or get 3 right and gain 12. Over many tests the gains outweigh the losses."])}
+      ${ex("A student guesses on 8 questions, each narrowed down to 2 choices. What is the smallest number of correct guesses that scores strictly more than leaving all 8 blank?", ["Leaving 8 blank earns 8 × 1.5 = 12 points.", "With r correct guesses the 8 questions earn 6r points.", "6r &gt; 12 needs r &gt; 2, so r = <b>3</b>.", "With coin-flip guesses you expect 4 of 8 right, so the odds are on your side."])}
+      <h3>A time plan for 75 minutes</h3>
+      <p>75 minutes for 25 questions is 3 minutes each on average, but the questions are not equally hard. They get harder as the numbers go up, and every question is worth the same 6 points. So bank the early points quickly and carefully, and spend your saved time later.</p>
+      ${tbl(["Questions", "Difficulty", "Plan"], [["1 to 10", "Easier", "About 1.5 to 2 minutes each. Read carefully: a slip here costs as much as missing a hard one."], ["11 to 20", "Medium", "About 3 to 4 minutes each. Skip one after 4 minutes with no progress, mark it, and come back."], ["21 to 25", "Hard", "Read all five first. Pick the one or two in your best topics and spend what is left there."]])}
+      ${ex("A student spends 90 seconds on each of questions 1 to 10 and 3.5 minutes on each of questions 11 to 20. How many minutes per question are left for questions 21 to 25?", ["Questions 1 to 10: 10 × 1.5 = 15 minutes.", "Questions 11 to 20: 10 × 3.5 = 35 minutes.", "Time left: 75 − 15 − 35 = 25 minutes.", "25 ÷ 5 = <b>5 minutes</b> each. Or 12.5 minutes each for the best two, leaving the other three blank for 4.5 sure points."])}
+      <h3>Using the answer choices</h3>
+      <p>The five choices are information. One of them is right, and you can often find it faster by testing or eliminating than by solving from scratch.</p>
+      ${rule("Ways to use the choices:", "<b>Plug in.</b> Numeric choices are listed in order, so start with the middle one (C). If it is too small, try a bigger one.<br><b>Check a property.</b> Last digit, even or odd, divisible by 3, positive or negative, about how big.<br><b>Estimate.</b> If the choices are far apart, a rough answer is enough.<br>Each choice you rule out also makes a guess worth more.")}
+      ${ex("Which of 4, 5, 6, 7, 8 is a solution of 2ˣ + x = 70?", ["Start in the middle: x = 6 gives 2⁶ + 6 = 64 + 6 = 70. ✓", "The answer is <b>6</b>.", "If the middle choice had been too small you would move up, and if too big, down. At most three tries, because the choices are in order."])}
+      ${ex("The sum of three consecutive odd integers is one of 141, 143, 145, 148, 152. Which one?", ["Call the middle number m. The three numbers are m − 2, m, m + 2, and they add to 3m.", "So the sum is a multiple of 3. It is also odd, because odd + odd + odd is odd.", "148 and 152 are even: out. Digit sums: 143 → 8 and 145 → 10, not multiples of 3: out.", "Only <b>141</b> is left. (Check: 141 = 3 × 47 = 45 + 47 + 49.)", "We never solved for the numbers. Two quick properties removed four choices."], "contest style")}
+      ${aops("AMC_12", "AMC 12")}`,
+    quiz: [
+      num("On an AMC 12, a student answers 19 questions correctly, leaves 2 blank, and gets 4 wrong. What is the score?", 117, ["Correct: 19 × 6 = 114.", "Blank: 2 × 1.5 = 3. Wrong answers earn 0.", "114 + 3 = 117."]),
+      num("A student guesses at random on 6 questions, each narrowed down to 2 choices. How many points do these 6 guesses earn on average?", 18, ["Each guess is right half the time, so it is worth 6 × 1/2 = 3 points on average.", "6 × 3 = 18. (Leaving them blank would earn only 6 × 1.5 = 9.)"]),
+      num("A student answers some questions, all correctly, and leaves the rest of the 25 blank. What is the smallest number of correct answers that scores at least 120?", 19, ["A blank paper scores 37.5, and each correct answer adds 4.5.", "37.5 + 4.5C ≥ 120 needs 4.5C ≥ 82.5, so C ≥ 18.33…, and C = 19.", "Check: 19 × 6 + 6 × 1.5 = 114 + 9 = 123, while 18 correct gives 108 + 10.5 = 118.5."]),
+      num("A student answers all 25 questions on an AMC 10, leaving none blank, and scores 96. How many answers were wrong?", 9, ["With no blanks, the score is 6 × (number correct).", "96 ÷ 6 = 16 correct.", "25 − 16 = 9 wrong."]),
+      mc("On 5 questions a student has eliminated 2 choices each and guesses at random among the other 3. Compared with leaving all 5 blank, the expected total for these questions is:", ["1.5 points lower", "exactly the same", "1 point higher", "2.5 points higher", "10 points higher"], 3, ["Each guess: 6 × 1/3 = 2 points on average. Five guesses: 10 points.", "Five blanks: 5 × 1.5 = 7.5 points.", "10 − 7.5 = 2.5 points higher."]),
+    ],
+  },
+});
+
+TRICKS["a12-functions"] = [
+  { at: "Inverse functions", t: "Swap and solve.", h: "Write y = f(x), swap the two letters, solve for y. If you only need one value like f⁻¹(4), skip the formula and just solve f(x) = 4." },
+  { at: "Shifts, flips and stretches", t: "Inside is backwards.", h: "Outside f does what it says to y: + 2 is up 2, × 3 is three times as tall. Inside f does the opposite to x: (x − 3) is <b>right</b> 3, (2x) is <b>half</b> as wide." },
+];
+TRICKS["a12-unit-circle"] = [
+  { at: "Radians and the unit circle", t: "x comes before y, c comes before s.", h: "The point is (cos θ, sin θ), in alphabetical order. And π is a half turn: 180°." },
+  { at: "Special angles and reference angles", t: "Count 0, 1, 2, 3, 4.", h: "sin of 0°, 30°, 45°, 60°, 90° is √0/2, √1/2, √2/2, √3/2, √4/2. Cosine is the same list read backwards." },
+];
+TRICKS["a12-conics"] = [
+  { at: "Parabolas: focus and directrix", t: "The vertex sits in the middle.", h: "Focus and directrix are both p from the vertex, on opposite sides. The parabola opens toward its focus and away from its directrix." },
+  { at: "Ellipses", t: "The string is 2a long.", h: "Pin a loose string at the two foci and pull it tight with a pencil: that draws the ellipse. The string length is 2a, and a is the hypotenuse: a² = b² + c²." },
+];
+TRICKS["a12-ineq"] = [
+  { at: "Repeated factors", t: "Odd flips, even bounces.", h: "Start with the sign on the far right and walk left. At an odd-power zero the sign flips. At an even-power zero it touches 0 and bounces back with the same sign." },
+  { at: "Rational inequalities", t: "Don't multiply by a mystery.", h: "You don't know whether (x − 1) is positive or negative, so never multiply an inequality by it. Subtract, make one fraction, and sign-chart it. Bottom zeros are always left out." },
+];
+TRICKS["a12-strategy"] = [
+  { at: "The test and the score", t: "Blank paper = 37.5.", h: "Each right answer adds 4.5 to that. Each wrong answer takes 1.5 away. Score = 6 × right + 1.5 × blank." },
+  { at: "Guess or leave blank?", t: "Two gone, guess on.", h: "A guess among k choices is worth 6/k. That beats the 1.5 for a blank only when k is 3 or less, so cross out two choices first." },
+];
+
+BANK.push(
+  B("a12l-fn-1", "amc12", "a12-functions", "Let f(x) = 2x + 1 and g(x) = x². What is the sum of all real numbers x for which f(g(x)) = g(f(x))?", ["−4", "−2", "−1", "0", "2"], 1, "Write out both compositions, working from the inside out, and set them equal.", ["f(g(x)) = 2x² + 1, because g goes first and then f doubles and adds 1.", "g(f(x)) = (2x + 1)² = 4x² + 4x + 1.", "Set equal: 2x² + 1 = 4x² + 4x + 1, so 2x² + 4x = 0 and 2x(x + 2) = 0.", "x = 0 or x = −2. The sum is <b>−2</b>."]),
+  B("a12l-fn-2", "amc12", "a12-functions", "f(x) = ax + b with a > 0, and f(f(x)) = 9x + 8 for all x. What is f(5)?", ["13", "15", "17", "19", "53"], 2, "Compute f(f(x)) in terms of a and b and match coefficients.", ["f(f(x)) = a(ax + b) + b = a²x + ab + b.", "Match the x-coefficient: a² = 9, and a > 0, so a = 3.", "Match the constant: ab + b = 4b = 8, so b = 2.", "f(x) = 3x + 2, so f(5) = <b>17</b>. (53 is f(f(5)), not f(5).)"]),
+  B("a12l-fn-3", "amc12", "a12-functions", "Let f(x) = (x + 4)/(x − 1). What is f(f(f(7)))?", ["6/11", "1", "11/6", "7", "11"], 2, "Compute f(f(x)) in general before plugging in.", ["f(f(x)) = ((x + 4)/(x − 1) + 4) ÷ ((x + 4)/(x − 1) − 1).", "Multiply top and bottom by (x − 1): top = x + 4 + 4x − 4 = 5x, bottom = x + 4 − x + 1 = 5.", "So f(f(x)) = 5x/5 = x: applying f twice gets you back where you started (f is its own inverse).", "Then f(f(f(7))) = f(7) = 11/6. The answer is <b>11/6</b>."]),
+  B("a12l-fn-4", "amc12", "a12-functions", "Let f(x) = 2x³ − 5. What is f⁻¹(49)?", ["2", "3", "4", "27", "235293"], 1, "f⁻¹(49) is the number x with f(x) = 49.", ["Solve 2x³ − 5 = 49.", "2x³ = 54, so x³ = 27.", "x = 3, so f⁻¹(49) = <b>3</b>. (235293 is f(49), which runs the machine the wrong way.)"]),
+  B("a12l-fn-5", "amc12", "a12-functions", "The graph of y = |x| is shifted 4 units left and 3 units down. What is the area of the region enclosed by the new graph and the x-axis?", ["6", "9", "12", "18", "24"], 1, "Write the new equation, then find where it crosses the x-axis.", ["Left 4 means replace x with x + 4; down 3 means subtract 3: y = |x + 4| − 3.", "The lowest point (the corner of the V) is (−4, −3).", "It crosses the x-axis where |x + 4| = 3: x = −1 and x = −7.", "The region is a triangle with base 6 and height 3: area = ½ · 6 · 3 = <b>9</b>."]),
+  B("a12l-fn-6", "amc12", "a12-functions", "The point (6, −4) is on the graph of y = f(x). Which point must be on the graph of y = −3f(2x) + 1?", ["(3, −11)", "(3, 13)", "(6, 13)", "(12, −11)", "(12, 13)"], 1, "Make the inside of f equal to 6, then apply the outside changes to −4.", ["We only know f(6) = −4, so we need 2x = 6, which gives x = 3.", "Then y = −3 · f(6) + 1 = −3 · (−4) + 1 = 12 + 1 = 13.", "The point is <b>(3, 13)</b>. (Inside changes act backwards: 2x halves the x-coordinate.)"]),
+
+  B("a12l-uc-1", "amc12", "a12-unit-circle", "What is sin(7π/6) + cos(2π/3)?", ["−(1 + √3)/2", "−1", "0", "(√3 − 1)/2", "1"], 1, "Find the reference angle and the quadrant for each angle.", ["7π/6 = 210°: reference angle 30°, quadrant III, so sin(7π/6) = −1/2.", "2π/3 = 120°: reference angle 60°, quadrant II, so cos(2π/3) = −1/2.", "−1/2 + (−1/2) = <b>−1</b>."]),
+  B("a12l-uc-2", "amc12", "a12-unit-circle", "A bug starts at (1, 0) and walks counterclockwise around the unit circle for a distance of 17π/3. What is the y-coordinate of the point where it stops?", ["−√3/2", "−1/2", "0", "1/2", "√3/2"], 0, "On the unit circle, distance walked equals the angle in radians, and full laps of 2π don't matter.", ["On a circle of radius 1 the arc length equals the angle in radians, so the angle is 17π/3.", "Remove full laps: 17π/3 − 4π = 17π/3 − 12π/3 = 5π/3.", "5π/3 = 300°: reference angle 60°, quadrant IV, where y is negative.", "y = sin(5π/3) = <b>−√3/2</b>."]),
+  B("a12l-uc-3", "amc12", "a12-unit-circle", "cos θ = −2/3 and sin θ > 0. What is tan θ?", ["−√5/2", "−2√5/5", "−√5/3", "√5/3", "√5/2"], 0, "Use sin²θ + cos²θ = 1 for the size and the given signs for the sign.", ["sin²θ = 1 − 4/9 = 5/9, and sin θ > 0, so sin θ = √5/3.", "tan θ = sin θ ÷ cos θ = (√5/3) ÷ (−2/3) = −√5/2.", "The answer is <b>−√5/2</b>. (Negative makes sense: the point is in quadrant II.)"]),
+  B("a12l-uc-4", "amc12", "a12-unit-circle", "How many values of x with 0 ≤ x ≤ 2π satisfy 2 sin²x − sin x − 1 = 0?", ["1", "2", "3", "4", "5"], 2, "Treat it as a quadratic in s = sin x.", ["Let s = sin x: 2s² − s − 1 = 0 factors as (2s + 1)(s − 1) = 0.", "So sin x = 1 or sin x = −1/2.", "sin x = 1 only at the top of the circle: x = π/2. One solution.", "sin x = −1/2 at two points below the x-axis: x = 7π/6 and x = 11π/6.", "Total: <b>3</b>."]),
+  B("a12l-uc-5", "amc12", "a12-unit-circle", "The graph of y = a sin(bx) + d, with a > 0 and b > 0, has maximum value 7, minimum value −3, and period 4π. What is a + b + d?", ["5.5", "7", "7.5", "9", "11"], 2, "The midline is halfway between the maximum and minimum, and the period is 2π/b.", ["Midline: d = (7 + (−3))/2 = 2.", "Amplitude: a = 7 − 2 = 5.", "Period: 2π/b = 4π, so b = 1/2. (A longer period means a smaller b.)", "a + b + d = 5 + 0.5 + 2 = <b>7.5</b>."]),
+  B("a12l-uc-6", "amc12", "a12-unit-circle", "The minute hand of a clock is 6 cm long. How far does its tip travel in 25 minutes?", ["5π/2 cm", "3π cm", "5π cm", "6π cm", "10π cm"], 2, "Find the angle in radians, then use arc length = rθ.", ["In 60 minutes the hand turns a full 2π radians, so in 25 minutes it turns 25/60 · 2π = 5π/6.", "Arc length = rθ = 6 · 5π/6 = 5π.", "The tip travels <b>5π cm</b>."]),
+
+  B("a12l-co-1", "amc12", "a12-conics", "The circle x² + y² − 4x − 2y − 20 = 0 cuts the x-axis at two points. How far apart are they?", ["2√6", "8", "4√6", "10", "2√29"], 2, "Complete the square, then use the right triangle formed by the center, the x-axis, and a crossing point.", ["Complete the squares: (x − 2)² + (y − 1)² = 20 + 4 + 1 = 25. Center (2, 1), radius 5.", "The center is 1 unit above the x-axis.", "Half the chord is a leg of a right triangle with hypotenuse 5 and other leg 1: √(25 − 1) = √24 = 2√6.", "The full chord is <b>4√6</b>. (10 is the diameter; the x-axis misses the center.)"]),
+  B("a12l-co-2", "amc12", "a12-conics", "The line 3x + 4y = c is tangent to the circle x² + y² = 25, and c > 0. What is c?", ["5", "15", "20", "25", "125"], 3, "A tangent line is exactly one radius away from the center.", ["The center is (0, 0) and the radius is 5.", "The distance from (0, 0) to the line 3x + 4y − c = 0 is |c|/√(3² + 4²) = c/5.", "Tangent means that distance equals the radius: c/5 = 5.", "c = <b>25</b>. (The tangent point is (3, 4): 9 + 16 = 25 on both the circle and the line.)"]),
+  B("a12l-co-3", "amc12", "a12-conics", "A parabola has focus (0, 3) and directrix y = −3. It passes through the point (12, k). What is k?", ["6", "9", "12", "15", "48"], 2, "Vertex at the origin with p = 3 gives x² = 4py.", ["The vertex is halfway between the focus and the directrix: (0, 0), with p = 3.", "Equation: x² = 4 · 3 · y = 12y.", "At x = 12: 144 = 12k, so k = 12.", "Check: (12, 12) is √(144 + 81) = 15 from the focus and 12 + 3 = 15 from the directrix. ✓ The answer is <b>12</b>."]),
+  B("a12l-co-4", "amc12", "a12-conics", "What is the y-coordinate of the focus of the parabola y = 2x² − 8x + 11?", ["23/8", "3", "25/8", "13/4", "7/2"], 2, "Complete the square to find the vertex, then use p = 1/(4a).", ["y = 2(x² − 4x + 4) − 8 + 11 = 2(x − 2)² + 3. The vertex is (2, 3).", "(x − 2)² = (1/2)(y − 3), so 4p = 1/2 and p = 1/8.", "The parabola opens up, so the focus is p above the vertex: 3 + 1/8 = <b>25/8</b>."]),
+  B("a12l-co-5", "amc12", "a12-conics", "A triangle has its vertices at the two foci of the ellipse 16x² + 25y² = 400 and at the top point of the ellipse. What is the area of the triangle?", ["10", "12", "16", "20", "24"], 1, "Divide by 400 to get standard form, then find c.", ["Divide by 400: x²/25 + y²/16 = 1, so a = 5 and b = 4.", "c² = 25 − 16 = 9, so c = 3. Foci: (−3, 0) and (3, 0).", "The top point is (0, 4).", "The triangle has base 6 (between the foci) and height 4: area = ½ · 6 · 4 = <b>12</b>."]),
+  B("a12l-co-6", "amc12", "a12-conics", "An ellipse centered at the origin has foci (−8, 0) and (8, 0) and passes through the point (8, 18/5). What is its area?", ["36π", "48π", "60π", "80π", "100π"], 2, "Add the distances from the point to the two foci to get 2a.", ["Distance to (8, 0): straight down, 18/5.", "Distance to (−8, 0): √(16² + (18/5)²) = √(6400/25 + 324/25) = √(6724/25) = 82/5.", "2a = 18/5 + 82/5 = 20, so a = 10.", "b² = a² − c² = 100 − 64 = 36, so b = 6.", "Area = πab = <b>60π</b>."]),
+
+  B("a12l-iq-1", "amc12", "a12-ineq", "How many integers x satisfy x² < 7x + 18?", ["8", "9", "10", "11", "12"], 2, "Move everything to one side and factor.", ["x² − 7x − 18 < 0 factors as (x − 9)(x + 2) < 0.", "A product of two factors is negative between its zeros: −2 < x < 9.", "The integers are −1, 0, 1, …, 8. That is <b>10</b>. (The endpoints −2 and 9 give 0, which is not less than 0.)"]),
+  B("a12l-iq-2", "amc12", "a12-ineq", "How many integers x satisfy (x − 1)(x − 3)²(x − 6) ≤ 0?", ["3", "4", "5", "6", "7"], 3, "The sign does not flip at the zero of a squared factor.", ["Zeros: 1, 3 (even power), 6.", "Far right (x > 6): +. Flip at 6: − for 3 < x < 6. No flip at 3: − for 1 < x < 3. Flip at 1: + for x < 1.", "≤ 0 includes the zeros, so the solution is 1 ≤ x ≤ 6.", "Integers 1, 2, 3, 4, 5, 6: that is <b>6</b>."]),
+  B("a12l-iq-3", "amc12", "a12-ineq", "How many integers x satisfy (x² − 1)(x² − 16) < 0?", ["2", "4", "6", "8", "10"], 1, "Think of it as a sign chart in the variable x².", ["Let t = x². Then (t − 1)(t − 16) < 0 means 1 < t < 16.", "So 1 < x² < 16: the perfect squares strictly between are 4 and 9.", "x = ±2 and x = ±3.", "That is <b>4</b> integers."]),
+  B("a12l-iq-4", "amc12", "a12-ineq", "How many integers x satisfy (x − 1)/(x − 5) ≥ 3?", ["0", "1", "2", "3", "7"], 2, "Subtract 3 and combine into one fraction; do not multiply by x − 5.", ["(x − 1)/(x − 5) − 3 = (x − 1 − 3x + 15)/(x − 5) = (14 − 2x)/(x − 5) ≥ 0.", "Zeros: top at 7, bottom at 5. Test x = 10: (−6)/(5) is negative, so the far right is −.", "Flip at 7: + for 5 < x < 7. Flip at 5: − for x < 5.", "Solution: 5 < x ≤ 7 (5 is excluded because the fraction is undefined there).", "Integers 6 and 7: <b>2</b>."]),
+  B("a12l-iq-5", "amc12", "a12-ineq", "Which describes all real x with 1/x > 1/(x − 3)?", ["x < 0", "0 < x < 3", "x > 3", "x < 0 or x > 3", "no real x"], 1, "Subtract and combine into a single fraction.", ["1/x − 1/(x − 3) = ((x − 3) − x)/(x(x − 3)) = −3/(x(x − 3)).", "We need −3/(x(x − 3)) > 0. The top is negative, so the bottom must be negative too.", "x(x − 3) < 0 exactly between its zeros: 0 < x < 3.", "The answer is <b>0 < x < 3</b>. (Check x = 1: 1 > −1/2. ✓)"]),
+  B("a12l-iq-6", "amc12", "a12-ineq", "For how many integers k is x² + kx + 9 > 0 true for every real number x?", ["5", "10", "11", "12", "13"], 2, "An upward parabola is always positive exactly when it has no real zeros.", ["The parabola opens up. It stays above the x-axis exactly when it never touches it: no real roots.", "No real roots means the discriminant is negative: k² − 36 < 0.", "So −6 < k < 6. (At k = ±6 the parabola touches 0, and 0 is not > 0.)", "Integers −5 through 5: <b>11</b>."]),
+
+  B("a12l-st-1", "amc12", "a12-strategy", "On an AMC 12 (6 points per correct answer, 1.5 per blank, 0 per wrong answer), a student answers 18 questions correctly, leaves 4 blank, and gets 3 wrong. What is the score?", ["108", "111", "112.5", "114", "118.5"], 3, "Only correct answers and blanks earn points.", ["Correct: 18 × 6 = 108.", "Blank: 4 × 1.5 = 6.", "Wrong: 3 × 0 = 0.", "108 + 6 = <b>114</b>."]),
+  B("a12l-st-2", "amc12", "a12-strategy", "An AMC question is worth 6 points if correct, 1.5 if left blank, and 0 if wrong. On each of 6 questions a student eliminates 2 of the 5 choices and guesses at random among the other 3. On average, how many more points does this earn than leaving all 6 blank?", ["0", "1.5", "3", "9", "12"], 2, "Find the average value of one guess and compare it with 1.5.", ["One guess is right with probability 1/3, so it is worth 6 × 1/3 = 2 points on average.", "That is 2 − 1.5 = 0.5 more than a blank.", "Over 6 questions: 6 × 0.5 = <b>3</b> points."]),
+  B("a12l-st-3", "amc12", "a12-strategy", "On a 25-question AMC 10 (6 points per correct answer, 1.5 per blank, 0 per wrong answer), a student got exactly 3 questions wrong and scored 100.5. How many questions did the student answer correctly?", ["13", "14", "15", "16", "17"], 2, "Let C be the number correct; then 22 − C are blank.", ["3 are wrong, so correct + blank = 22. With C correct there are 22 − C blanks.", "Score: 6C + 1.5(22 − C) = 4.5C + 33.", "4.5C + 33 = 100.5 gives 4.5C = 67.5, so C = 15.", "Check: 15 × 6 + 7 × 1.5 = 90 + 10.5 = 100.5. ✓ The answer is <b>15</b>."]),
+  B("a12l-st-4", "amc12", "a12-strategy", "An AMC has 25 questions: 6 points per correct answer, 1.5 per blank, 0 per wrong answer. Which of these scores is impossible?", ["139.5", "141", "144", "145.5", "147"], 4, "Count how many points are lost from 150: a blank loses 4.5 and a wrong answer loses 6.", ["Start from a perfect 150. Each blank loses 4.5 and each wrong answer loses 6.", "139.5 = 150 − 6 − 4.5 (one wrong, one blank). 141 = 150 − 9 (two blanks). 144 = 150 − 6 (one wrong). 145.5 = 150 − 4.5 (one blank).", "147 would need a loss of exactly 3, but the smallest possible loss is 4.5.", "So <b>147</b> is impossible."]),
+  B("a12l-st-5", "amc12", "a12-strategy", "An AMC question is worth 6 points if correct, 1.5 if left blank, and 0 if wrong. A student narrows each of 3 questions down to 2 choices and guesses at random on all three. What is the probability that the three guesses earn more points in total than leaving all three blank would?", ["1/8", "3/8", "1/2", "7/8", "1"], 3, "Work out how many correct guesses are needed to beat the blanks.", ["Three blanks earn 3 × 1.5 = 4.5 points.", "One correct guess already earns 6, which is more than 4.5. Zero correct earns 0.", "So the guesses win unless all three are wrong: probability (1/2)³ = 1/8.", "1 − 1/8 = <b>7/8</b>."]),
+  B("a12l-st-6", "amc12", "a12-strategy", "An AMC question is worth 6 points if correct, 1.5 if left blank, and 0 if wrong. A student is sure of 15 answers (all correct). Of the other 10 questions, 4 are narrowed down to 2 choices and 6 have no choices eliminated. For each of these 10 the student either guesses at random or leaves it blank, whichever has the higher expected value. What is the expected total score?", ["102", "105", "109.2", "111", "114"], 3, "Compare 6/k with 1.5 for each kind of question.", ["Sure answers: 15 × 6 = 90.", "Narrowed to 2 choices: a guess is worth 6 × 1/2 = 3, more than 1.5, so guess. 4 × 3 = 12.", "Nothing eliminated: a guess is worth 6 × 1/5 = 1.2, less than 1.5, so leave blank. 6 × 1.5 = 9.", "Expected total: 90 + 12 + 9 = <b>111</b>. (Guessing everything gives only 109.2, and leaving all 10 blank gives 105.)"]),
 );
 /* =========================================================
    Hand-written hard problems: geometry chapters
@@ -6391,6 +6717,612 @@ BANK.push(
   H("h18-hr1", "amc10", "heron", "What is the area of a triangle with sides 7, 8, 9?", ["20", "24", "6√5", "12√5", "36"], "12√5", "Heron: √(s(s − a)(s − b)(s − c)).", ["s = (7 + 8 + 9) ÷ 2 = 12.", "s − a, s − b, s − c = 5, 4, 3.", "√(12 × 5 × 4 × 3) = √720 = √(144 × 5) = <b>12√5</b>."])
 );
 
+/* =========================================================
+   AMC 12 practice problems, set A (a12a-1 … a12a-40)
+   Original multiple-choice problems at AMC 12 #5-#22 level, spread over the precalculus-bridge lessons.
+   ========================================================= */
+BANK.push(
+  /* ---- logarithms ---- */
+  H("a12a-1", "amc12", "aime-logs", "If log₂ x + log₄ x = 9, what is x?", ["8", "16", "64", "256", "512"], "64",
+    "Write log₄ x in terms of log₂ x.",
+    ["Put both logs in base 2. Since 4 = 2², it takes half as many 4's as 2's to build x, so log₄ x = (log₂ x)/2.",
+     "Let t = log₂ x. The equation becomes t + t/2 = 9, which is (3/2)t = 9.",
+     "So t = 9 × 2/3 = 6.",
+     "log₂ x = 6 means x = 2⁶ = <b>64</b>.",
+     "Check: log₂ 64 = 6 and log₄ 64 = 3 (because 4³ = 64), and 6 + 3 = 9."]),
+  H("a12a-2", "amc12", "aime-logs", "Let a = log₆ 2. Which expression equals log₃ 12?", ["(1 − a)/(1 + a)", "(1 + a)/(1 − a)", "(1 + 2a)/(1 − a)", "2a/(1 − a)", "(1 + a)/a"], "(1 + a)/(1 − a)",
+    "Change everything to base 6, then split 12 = 6 × 2 and 3 = 6 ÷ 2.",
+    ["We are told about a base-6 log, so move log₃ 12 into base 6 with the change-of-base rule: log₃ 12 = (log₆ 12)/(log₆ 3).",
+     "Top: 12 = 6 × 2, and the log of a product is the sum of the logs. log₆ 12 = log₆ 6 + log₆ 2 = 1 + a.",
+     "Bottom: 3 = 6 ÷ 2, and the log of a quotient is the difference of the logs. log₆ 3 = log₆ 6 − log₆ 2 = 1 − a.",
+     "So log₃ 12 = <b>(1 + a)/(1 − a)</b>.",
+     "Sanity check with decimals: a ≈ 0.387, so (1 + a)/(1 − a) ≈ 1.387/0.613 ≈ 2.26, and 3^2.26 ≈ 12."]),
+  H("a12a-3", "amc12", "aime-logs", "Positive numbers a and b satisfy log₄ a = log₆ b = log₉ (2a + b). What is b/a?", ["3/2", "2", "9/4", "3", "4"], "2",
+    "Call the common value k and write a, b and 2a + b as powers. Notice 4 × 9 = 6².",
+    ["Call the common value k. Undoing each log gives a = 4ᵏ, b = 6ᵏ, and 2a + b = 9ᵏ.",
+     "Substitute the first two into the third: 2 × 4ᵏ + 6ᵏ = 9ᵏ.",
+     "Divide everything by 4ᵏ. Since 6ᵏ ÷ 4ᵏ = (6 ÷ 4)ᵏ = 1.5ᵏ and 9ᵏ ÷ 4ᵏ = (9 ÷ 4)ᵏ = 2.25ᵏ, we get 2 + 1.5ᵏ = 2.25ᵏ.",
+     "Let r = 1.5ᵏ. Because 2.25 = 1.5², we have 2.25ᵏ = (1.5²)ᵏ = (1.5ᵏ)² = r². The equation is 2 + r = r².",
+     "r² − r − 2 = 0 factors as (r − 2)(r + 1) = 0. A power of a positive number is positive, so r = 2.",
+     "The ratio we want is b/a = 6ᵏ ÷ 4ᵏ = 1.5ᵏ = r = <b>2</b>."]),
+
+  /* ---- polynomial remainders & roots ---- */
+  H("a12a-4", "amc12", "aime-poly", "What is the remainder when x⁵ − 3x³ + 2x − 7 is divided by x − 2?", ["−7", "3", "5", "13", "53"], "5",
+    "Remainder Theorem: the remainder on division by x − c is the value of the polynomial at x = c.",
+    ["Dividing P(x) by x − 2 gives P(x) = (x − 2)Q(x) + R, where R is a constant.",
+     "Plug in x = 2. The (x − 2)Q(x) part becomes 0, so R = P(2). That is the Remainder Theorem.",
+     "P(2) = 2⁵ − 3 × 2³ + 2 × 2 − 7 = 32 − 24 + 4 − 7.",
+     "32 − 24 = 8, then 8 + 4 = 12, then 12 − 7 = <b>5</b>."]),
+  H("a12a-5", "amc12", "aime-poly", "A polynomial P(x) leaves remainder 5 when divided by x − 1 and remainder −1 when divided by x + 2. What is the remainder when P(x) is divided by (x − 1)(x + 2)?", ["2x − 3", "2x + 3", "3x + 2", "−2x + 7", "6x − 1"], "2x + 3",
+    "The remainder has degree less than 2, so call it ax + b and plug in x = 1 and x = −2.",
+    ["The Remainder Theorem turns the two facts into values: P(1) = 5 and P(−2) = −1.",
+     "When you divide by a quadratic, the remainder has degree at most 1. Write P(x) = (x − 1)(x + 2)Q(x) + ax + b.",
+     "Plug in x = 1. The first part is 0, so a + b = P(1) = 5.",
+     "Plug in x = −2. The first part is 0 again, so −2a + b = P(−2) = −1.",
+     "Subtract the second equation from the first: 3a = 6, so a = 2. Then b = 5 − 2 = 3.",
+     "The remainder is <b>2x + 3</b>. Check: at x = 1 it is 5, and at x = −2 it is −1."]),
+  H("a12a-6", "amc12", "aime-poly", "What is the remainder when x²⁰²⁵ + x² is divided by x² + x + 1?", ["−x − 1", "−x", "x", "x + 1", "2"], "−x",
+    "(x − 1)(x² + x + 1) = x³ − 1, so when dividing by x² + x + 1 you may replace x³ by 1.",
+    ["Key fact: (x − 1)(x² + x + 1) = x³ − 1. So x³ − 1 is a multiple of x² + x + 1.",
+     "That means x³ and 1 leave the same remainder. When we only care about remainders, we may replace x³ by 1.",
+     "2025 = 3 × 675, so x²⁰²⁵ = (x³)⁶⁷⁵, which leaves the same remainder as 1⁶⁷⁵ = 1.",
+     "So x²⁰²⁵ + x² leaves the same remainder as 1 + x².",
+     "1 + x² still has degree 2, so reduce once more: x² = (x² + x + 1) − x − 1, so x² leaves remainder −x − 1.",
+     "1 + (−x − 1) = <b>−x</b>. Its degree is below 2, so this is the remainder."]),
+
+  /* ---- Vieta & power sums ---- */
+  H("a12a-7", "amc12", "aime-vieta", "The roots of x³ − 6x² + 5x + 4 = 0 are r, s and t. What is 1/r + 1/s + 1/t?", ["−3/2", "−5/4", "−4/5", "5/4", "3/2"], "−5/4",
+    "Put the three fractions over the common denominator rst, then use Vieta.",
+    ["Common denominator: 1/r + 1/s + 1/t = (st + rt + rs)/(rst).",
+     "Vieta for x³ + ax² + bx + c: sum of roots = −a, sum of products in pairs = b, product of roots = −c.",
+     "Here a = −6, b = 5, c = 4. So rs + st + tr = 5 and rst = −4.",
+     "1/r + 1/s + 1/t = 5/(−4) = <b>−5/4</b>."]),
+  H("a12a-8", "amc12", "aime-vieta", "The roots of x³ − 4x² + x + 3 = 0 are r, s and t. What is r³ + s³ + t³?", ["37", "43", "49", "52", "61"], "43",
+    "Each root satisfies r³ = 4r² − r − 3. Add that equation for all three roots.",
+    ["Vieta: r + s + t = 4 and rs + st + tr = 1.",
+     "Sum of squares: r² + s² + t² = (r + s + t)² − 2(rs + st + tr) = 16 − 2 = 14.",
+     "Because r is a root, r³ − 4r² + r + 3 = 0, so r³ = 4r² − r − 3. The same is true for s and t.",
+     "Add the three equations: r³ + s³ + t³ = 4(r² + s² + t²) − (r + s + t) − 9. The 9 is three copies of 3.",
+     "= 4 × 14 − 4 − 9 = 56 − 13 = <b>43</b>."]),
+  H("a12a-9", "amc12", "aime-vieta", "The roots of x³ + 3x² − 2x − 1 = 0 are r, s and t. What is 1/(r + 1)² + 1/(s + 1)² + 1/(t + 1)²?", ["0", "5/3", "25/9", "10/3", "25/3"], "25/9",
+    "Substitute x = y − 1 to get a cubic whose roots are r + 1, s + 1, t + 1.",
+    ["We want facts about r + 1, s + 1, t + 1. Let y = x + 1, so x = y − 1. The cubic in y has exactly those three numbers as roots.",
+     "Substitute: (y − 1)³ + 3(y − 1)² − 2(y − 1) − 1.",
+     "Expand each piece: (y³ − 3y² + 3y − 1) + (3y² − 6y + 3) + (−2y + 2) − 1 = y³ − 5y + 3.",
+     "Call its roots u, v, w. Vieta on y³ + 0y² − 5y + 3: u + v + w = 0, uv + vw + wu = −5, uvw = −3.",
+     "1/u + 1/v + 1/w = (uv + vw + wu)/(uvw) = (−5)/(−3) = 5/3.",
+     "1/(uv) + 1/(vw) + 1/(wu) = (u + v + w)/(uvw) = 0/(−3) = 0.",
+     "Sum of squares = (sum)² − 2 × (sum of products in pairs): 1/u² + 1/v² + 1/w² = (5/3)² − 2 × 0 = <b>25/9</b>."]),
+
+  /* ---- series, telescoping, recursions ---- */
+  H("a12a-10", "amc12", "aime-series", "What is 1/(1 × 3) + 1/(3 × 5) + 1/(5 × 7) + ··· + 1/(39 × 41)?", ["10/41", "20/41", "1/2", "20/21", "40/41"], "20/41",
+    "Each term 1/((2n − 1)(2n + 1)) is half of 1/(2n − 1) − 1/(2n + 1).",
+    ["Try splitting one term: 1/1 − 1/3 = 2/3, which is twice 1/(1 × 3). The same thing happens every time, because the two bottoms differ by 2.",
+     "So 1/((2n − 1)(2n + 1)) = (1/2) × (1/(2n − 1) − 1/(2n + 1)).",
+     "The sum is (1/2) × [(1/1 − 1/3) + (1/3 − 1/5) + (1/5 − 1/7) + ··· + (1/39 − 1/41)].",
+     "It telescopes: −1/3 cancels +1/3, −1/5 cancels +1/5, and so on. Only 1/1 and −1/41 are left.",
+     "(1/2) × (1 − 1/41) = (1/2) × (40/41) = <b>20/41</b>."]),
+  H("a12a-11", "amc12", "aime-series", "What is the value of the infinite sum 1/3 + 2/9 + 3/27 + 4/81 + ···, where the nth term is n/3ⁿ?", ["1/2", "2/3", "3/4", "1", "3/2"], "3/4",
+    "Call the sum S, write S/3 underneath shifted one place, and subtract.",
+    ["Let S = 1/3 + 2/9 + 3/27 + 4/81 + ···.",
+     "Divide every term by 3: S/3 = 1/9 + 2/27 + 3/81 + ···.",
+     "Subtract, matching equal bottoms: S − S/3 = 1/3 + (2 − 1)/9 + (3 − 2)/27 + (4 − 3)/81 + ··· = 1/3 + 1/9 + 1/27 + 1/81 + ···.",
+     "The right side is an infinite geometric series with first term 1/3 and ratio 1/3. Its sum is first term ÷ (1 − ratio) = (1/3) ÷ (2/3) = 1/2.",
+     "So (2/3)S = 1/2, and S = (1/2) × (3/2) = <b>3/4</b>."]),
+  H("a12a-12", "amc12", "aime-series", "A sequence has x₁ = 1 and xₙ₊₁ = xₙ/(1 + n·xₙ) for every n ≥ 1. What is x₁₀?", ["1/56", "1/55", "1/46", "1/45", "1/10"], "1/46",
+    "Flip both sides: the reciprocals of the terms follow a much simpler rule.",
+    ["The rule is messy for xₙ but simple for its reciprocal. Let yₙ be the reciprocal of xₙ, so yₙ = 1 ÷ xₙ and y₁ = 1.",
+     "Flip both sides of the rule: yₙ₊₁ = (1 + n·xₙ) ÷ xₙ. Split the division into two pieces: 1 ÷ xₙ is yₙ, and n·xₙ ÷ xₙ is n. So yₙ₊₁ = yₙ + n.",
+     "In words: the reciprocal goes up by n at step n.",
+     "To get from y₁ to y₁₀ takes 9 steps, which add 1, 2, 3, …, 9.",
+     "y₁₀ = 1 + (1 + 2 + ··· + 9) = 1 + 45 = 46.",
+     "x₁₀ is the reciprocal of y₁₀: <b>1/46</b>.",
+     "Check the start: x₂ = 1/(1 + 1) = 1/2 and x₃ = (1/2) ÷ (1 + 2 × 1/2) = (1/2) ÷ 2 = 1/4, matching y₂ = 2 and y₃ = 4."]),
+
+  /* ---- AM-GM & optimization ---- */
+  H("a12a-13", "amc12", "aime-amgm", "For x > 0, what is the smallest possible value of 4x + 9/x?", ["6", "12", "13", "18", "36"], "12",
+    "The product of 4x and 9/x is a constant, so AM-GM gives a floor for their sum.",
+    ["AM-GM for two positive numbers: a + b ≥ 2√(ab), with equality only when a = b.",
+     "Use a = 4x and b = 9/x. Their product is 4x × 9/x = 36: the x cancels, which is why AM-GM works here.",
+     "4x + 9/x ≥ 2√36 = 12.",
+     "Can 12 really happen? We need 4x = 9/x, so x² = 9/4 and x = 3/2. Then 4x = 6 and 9/x = 6.",
+     "The minimum is <b>12</b>."]),
+  H("a12a-14", "amc12", "aime-amgm", "Positive numbers x and y satisfy x + y = 9. What is the largest possible value of x²y?", ["54", "81", "100", "108", "144"], "108",
+    "Split x into two halves so that three numbers, x/2, x/2 and y, have the fixed sum 9.",
+    ["AM-GM needs a fixed sum and gives a ceiling on a product. The product x²y = x × x × y uses x twice, but x + x + y is not fixed.",
+     "Fix that by splitting x in half: the three numbers x/2, x/2, y add up to x + y = 9.",
+     "AM-GM for three numbers: their product is at most (average)³. The average is 9 ÷ 3 = 3, so (x/2) × (x/2) × y ≤ 3³ = 27.",
+     "The left side is x²y/4, so x²y ≤ 4 × 27 = 108.",
+     "Equality needs x/2 = y. With x + y = 9 that gives x = 6 and y = 3, and 6² × 3 = 108.",
+     "The maximum is <b>108</b>."]),
+  H("a12a-15", "amc12", "aime-amgm", "An open-top box has a square base and volume 32. What is the smallest possible total area of its base and four sides?", ["32", "40", "48", "56", "64"], "48",
+    "Write the area using only the base side x, then split the side-wall term into two equal pieces so the x's cancel in the product.",
+    ["Let the base have side x and the box have height h. Volume: x²h = 32, so h = 32/x².",
+     "Area = base + 4 walls = x² + 4xh = x² + 4x × 32/x² = x² + 128/x.",
+     "For AM-GM we want a product with no x in it. x² × 128/x still has an x, but if we split 128/x into 64/x + 64/x, then x² × (64/x) × (64/x) = 4096. The x's cancel.",
+     "AM-GM for three numbers: x² + 64/x + 64/x ≥ 3 × ∛4096 = 3 × 16 = 48, because 16³ = 4096.",
+     "Equality needs x² = 64/x, so x³ = 64 and x = 4. Then h = 32/16 = 2, and the area is 16 + 4 × 4 × 2 = 48.",
+     "The smallest area is <b>48</b>."]),
+
+  /* ---- complex number basics ---- */
+  H("a12a-16", "amc12", "aime-complex", "Which complex number equals (3 + 4i)/(1 − 2i)?", ["−1 − 2i", "−1 + 2i", "1 + 2i", "3 − 2i", "11/5 − 2i/5"], "−1 + 2i",
+    "Multiply top and bottom by the conjugate of the bottom, 1 + 2i.",
+    ["To divide by a complex number, multiply top and bottom by its conjugate. That makes the bottom a real number.",
+     "The conjugate of 1 − 2i is 1 + 2i. Bottom: (1 − 2i)(1 + 2i) = 1 − 4i² = 1 + 4 = 5.",
+     "Top: (3 + 4i)(1 + 2i) = 3 + 6i + 4i + 8i² = 3 + 10i − 8 = −5 + 10i. Remember i² = −1.",
+     "(−5 + 10i)/5 = <b>−1 + 2i</b>.",
+     "Check by multiplying back: (−1 + 2i)(1 − 2i) = −1 + 2i + 2i − 4i² = 3 + 4i."]),
+  H("a12a-17", "amc12", "aime-complex", "The complex number z satisfies z + 2z̄ = 9 − 4i, where z̄ is the conjugate of z. What is |z|?", ["3", "4", "5", "√41", "7"], "5",
+    "Write z = a + bi, so z̄ = a − bi, and match real and imaginary parts.",
+    ["Let z = a + bi with a and b real. Then z̄ = a − bi.",
+     "z + 2z̄ = (a + bi) + (2a − 2bi) = 3a − bi.",
+     "Two complex numbers are equal only when their real parts match and their imaginary parts match.",
+     "Real parts: 3a = 9, so a = 3. Imaginary parts: −b = −4, so b = 4.",
+     "z = 3 + 4i, and |z| = √(3² + 4²) = √25 = <b>5</b>."]),
+  H("a12a-18", "amc12", "aime-complex", "How many complex numbers z satisfy z³ = z̄, where z̄ is the conjugate of z?", ["2", "3", "4", "5", "6"], "5",
+    "Compare the sizes of both sides first: |z³| = |z|³ and |z̄| = |z|.",
+    ["Take the absolute value of both sides. |z³| = |z|³ and |z̄| = |z|, so |z|³ = |z|.",
+     "|z| is a real number that is 0 or positive, and |z|(|z|² − 1) = 0, so |z| = 0 or |z| = 1.",
+     "Case |z| = 0: z = 0, and 0³ = 0 works. That is 1 solution.",
+     "Case |z| = 1: we always have z × z̄ = |z|², which is 1 here, so z̄ = 1/z.",
+     "The equation becomes z³ = 1/z, so z⁴ = 1. This has exactly 4 solutions: 1, i, −1, −i. All have |z| = 1, so all four count.",
+     "Check one: i³ = −i, and the conjugate of i is −i.",
+     "Total: 1 + 4 = <b>5</b>."]),
+
+  /* ---- polar form & De Moivre ---- */
+  H("a12a-19", "amc12", "aime-polar", "What is (1 + i)¹⁰?", ["−32", "32", "−32i", "32i", "1024i"], "32i",
+    "Write 1 + i in polar form, or square it first.",
+    ["Polar form: 1 + i has length √(1² + 1²) = √2 and points at 45°.",
+     "De Moivre: raising to the 10th power raises the length to the 10th power and multiplies the angle by 10.",
+     "Length: (√2)¹⁰ = 2⁵ = 32. Angle: 10 × 45° = 450°, which is the same direction as 450° − 360° = 90°.",
+     "Length 32 at 90° points straight up the imaginary axis: <b>32i</b>.",
+     "Second way: (1 + i)² = 1 + 2i + i² = 2i, so (1 + i)¹⁰ = (2i)⁵ = 32i⁵ = 32i."]),
+  H("a12a-20", "amc12", "aime-polar", "Let z = (1 + i√3)/(1 − i). What is the smallest positive integer n for which zⁿ is a positive real number?", ["6", "12", "24", "48", "72"], "24",
+    "Find the angle of z. Dividing complex numbers subtracts their angles.",
+    ["1 + i√3 has length 2 and angle 60° (cos 60° = 1/2, sin 60° = √3/2).",
+     "1 − i has length √2 and angle −45°.",
+     "Dividing divides the lengths and subtracts the angles. So z has angle 60° − (−45°) = 105°.",
+     "zⁿ has angle 105n°, and its length is positive. It is a positive real number exactly when its angle is a multiple of 360°.",
+     "105n = 360k. Divide by 15: 7n = 24k. Since 7 and 24 share no factor, n must be a multiple of 24.",
+     "The smallest is n = <b>24</b>. (n = 12 gives angle 1260° = 3 × 360° + 180°, a negative real number.)"]),
+  H("a12a-21", "amc12", "aime-polar", "The complex number z satisfies z + 1/z = √3. What is z²⁰²⁶ + 1/z²⁰²⁶?", ["−√3", "−1", "0", "1", "√3"], "1",
+    "Solve for z. It lies on the unit circle, so z = cos θ + i sin θ and zⁿ + 1/zⁿ = 2 cos nθ.",
+    ["Multiply z + 1/z = √3 by z: z² − √3·z + 1 = 0.",
+     "Quadratic formula: z = (√3 ± √(3 − 4))/2 = (√3 ± i)/2 = √3/2 ± (1/2)i.",
+     "That is cos 30° ± i sin 30°: a point on the unit circle at angle 30° or −30°.",
+     "De Moivre: zⁿ = cos(30n°) ± i sin(30n°). And 1/zⁿ is its conjugate, because the length is 1. Adding, the i parts cancel: zⁿ + 1/zⁿ = 2 cos(30n°). Both choices of z give the same value.",
+     "The angle 30n° repeats every 12 steps (12 × 30° = 360°). 2026 = 12 × 168 + 10, so use n = 10: the angle is 300°.",
+     "2 cos 300° = 2 cos 60° = 2 × 1/2 = <b>1</b>."]),
+
+  /* ---- roots of unity ---- */
+  H("a12a-22", "amc12", "aime-unity", "Let ω be a complex number with ω³ = 1 and ω ≠ 1. What is (1 − ω)(1 − ω²)?", ["0", "1", "2", "3", "4"], "3",
+    "Expand, then use ω³ = 1 and 1 + ω + ω² = 0.",
+    ["Since ω³ − 1 = 0 and ω³ − 1 = (ω − 1)(ω² + ω + 1), and ω ≠ 1, we get ω² + ω + 1 = 0. So ω + ω² = −1.",
+     "Expand: (1 − ω)(1 − ω²) = 1 − ω² − ω + ω³.",
+     "Replace ω³ by 1: this is 2 − (ω + ω²).",
+     "= 2 − (−1) = <b>3</b>."]),
+  H("a12a-23", "amc12", "aime-unity", "Let ω = cos 72° + i sin 72°. What is (2 − ω)(2 − ω²)(2 − ω³)(2 − ω⁴)?", ["15", "16", "31", "32", "33"], "31",
+    "ω, ω², ω³, ω⁴ and 1 are the five roots of x⁵ − 1.",
+    ["72° = 360°/5, so by De Moivre ω⁵ = cos 360° + i sin 360° = 1. The numbers 1, ω, ω², ω³, ω⁴ are the five 5th roots of unity.",
+     "They are all the roots of x⁵ − 1, so x⁵ − 1 = (x − 1)(x − ω)(x − ω²)(x − ω³)(x − ω⁴).",
+     "Divide both sides by x − 1: (x − ω)(x − ω²)(x − ω³)(x − ω⁴) = (x⁵ − 1)/(x − 1).",
+     "This is true for every x except 1. Plug in x = 2: the product we want is (2⁵ − 1)/(2 − 1) = 31/1 = <b>31</b>."]),
+  H("a12a-24", "amc12", "aime-unity", "A regular 7-gon is inscribed in a circle of radius 1, and A is one of its vertices. What is the sum of the squares of the distances from A to the other six vertices?", ["7", "12", "14", "21", "28"], "14",
+    "Put the vertices at the 7th roots of unity with A at 1, and use |w|² = w × w̄.",
+    ["Place the circle in the complex plane with A at 1. The vertices are 1, ω, ω², …, ω⁶, where ω = cos(360°/7) + i sin(360°/7).",
+     "The distance from A to ωᵏ is |1 − ωᵏ|. For any complex number, |w|² = w × w̄.",
+     "The conjugate of ωᵏ is 1/ωᵏ = ω⁻ᵏ, because ωᵏ is on the unit circle. So |1 − ωᵏ|² = (1 − ωᵏ)(1 − ω⁻ᵏ) = 1 − ωᵏ − ω⁻ᵏ + 1 = 2 − ωᵏ − ω⁻ᵏ.",
+     "Add this for k = 1 to 6: the total is 12 − (ω + ω² + ··· + ω⁶) − (ω⁻¹ + ω⁻² + ··· + ω⁻⁶).",
+     "All seven roots of x⁷ − 1 add to 0 (Vieta: there is no x⁶ term). So ω + ω² + ··· + ω⁶ = −1.",
+     "The second bracket is the same six numbers in another order (ω⁻¹ = ω⁶, ω⁻² = ω⁵, and so on), so it is also −1.",
+     "Total = 12 + 1 + 1 = <b>14</b>."]),
+
+  /* ---- trig identities ---- */
+  H("a12a-25", "amc12", "aime-trigid", "If sin x + cos x = 1/2, what is sin 2x?", ["−3/4", "−3/8", "−1/4", "1/4", "3/4"], "−3/4",
+    "Square both sides and look for sin²x + cos²x and 2 sin x cos x.",
+    ["Square both sides: (sin x + cos x)² = 1/4.",
+     "Expand the left side: sin²x + 2 sin x cos x + cos²x.",
+     "sin²x + cos²x = 1 always, and 2 sin x cos x = sin 2x (double-angle identity). So the left side is 1 + sin 2x.",
+     "1 + sin 2x = 1/4, so sin 2x = 1/4 − 1 = <b>−3/4</b>."]),
+  H("a12a-26", "amc12", "aime-trigid", "Acute angles a and b satisfy tan a = 2 and tan b = 3. What is a + b?", ["45°", "60°", "120°", "135°", "150°"], "135°",
+    "Use the tangent addition formula, then decide which angle between 0° and 180° has that tangent.",
+    ["Tangent addition: tan(a + b) = (tan a + tan b)/(1 − tan a × tan b).",
+     "= (2 + 3)/(1 − 2 × 3) = 5/(−5) = −1.",
+     "Both angles are acute, so a + b is between 0° and 180°.",
+     "Between 0° and 180°, the only angle with tangent −1 is 135°. (45° has tangent +1, so it is not the answer.)",
+     "a + b = <b>135°</b>.",
+     "Sense check: tan a = 2 > 1 and tan b = 3 > 1 mean both angles are more than 45°, so the sum must be more than 90°."]),
+  H("a12a-27", "amc12", "aime-trigid", "What is the largest possible value of sin x cos x + sin x + cos x for real x?", ["3/2", "1/2 + √2", "2", "1 + √2", "5/2"], "1/2 + √2",
+    "Let t = sin x + cos x. Squaring t tells you what sin x cos x is.",
+    ["Let t = sin x + cos x. Then t² = sin²x + cos²x + 2 sin x cos x = 1 + 2 sin x cos x, so sin x cos x = (t² − 1)/2.",
+     "The expression becomes (t² − 1)/2 + t, which depends only on t.",
+     "What values can t take? sin x + cos x = √2 sin(x + 45°), because sin(x + 45°) = (sin x + cos x)/√2. So t runs from −√2 to √2.",
+     "Complete the square: (t² − 1)/2 + t = ((t + 1)² − 2)/2. This is a parabola with its lowest point at t = −1, so it is largest at the end of the interval farthest from −1, which is t = √2.",
+     "At t = √2: (2 − 1)/2 + √2 = 1/2 + √2.",
+     "This happens at x = 45°: sin x cos x = 1/2 and sin x + cos x = √2. The maximum is <b>1/2 + √2</b>."]),
+
+  /* ---- trig tools for triangles ---- */
+  H("a12a-28", "amc12", "aime-trig", "A triangle has sides 5, 7 and 8. What is the measure of the angle opposite the side of length 7?", ["30°", "45°", "60°", "75°", "90°"], "60°",
+    "Law of Cosines with c = 7.",
+    ["Law of Cosines: c² = a² + b² − 2ab cos C, where C is the angle opposite side c.",
+     "Here c = 7, a = 5, b = 8: 49 = 25 + 64 − 2 × 5 × 8 × cos C.",
+     "49 = 89 − 80 cos C, so 80 cos C = 40 and cos C = 1/2.",
+     "The angle in a triangle with cosine 1/2 is <b>60°</b>."]),
+  H("a12a-29", "amc12", "aime-trig", "In triangle ABC, AB = 6, AC = 10 and angle A = 120°. What is the radius of the circle through A, B and C?", ["7√3/3", "7", "14√3/3", "7√3", "14"], "14√3/3",
+    "Find BC with the Law of Cosines, then use the extended Law of Sines: a/sin A = 2R.",
+    ["First find BC. Law of Cosines: BC² = 6² + 10² − 2 × 6 × 10 × cos 120°.",
+     "cos 120° = −1/2, so the last term is −120 × (−1/2) = +60. BC² = 36 + 100 + 60 = 196, so BC = 14.",
+     "Extended Law of Sines: each side divided by the sine of its opposite angle equals the diameter 2R of the circumcircle.",
+     "BC is opposite angle A, so 2R = 14 ÷ sin 120° = 14 ÷ (√3/2) = 28/√3.",
+     "R = 14/√3. Multiply top and bottom by √3: R = <b>14√3/3</b>."]),
+  H("a12a-30", "amc12", "aime-trig", "In triangle ABC, AB = 5, AC = 8 and angle A = 60°. The bisector of angle A meets side BC at D. What is AD?", ["20√3/13", "40/13", "40√3/13", "4√3", "7"], "40√3/13",
+    "AD cuts the triangle into two triangles that each have a 30° angle at A. Add their areas.",
+    ["Use area = (1/2) × side × side × sin(angle between them).",
+     "Whole triangle: (1/2) × 5 × 8 × sin 60° = 20 × √3/2 = 10√3.",
+     "AD splits angle A into two 30° angles. Let AD = d.",
+     "Triangle ABD: (1/2) × 5 × d × sin 30° = 5d/4. Triangle ACD: (1/2) × 8 × d × sin 30° = 8d/4.",
+     "The two pieces make the whole: 5d/4 + 8d/4 = 10√3, so 13d/4 = 10√3.",
+     "d = 40√3/13. So AD = <b>40√3/13</b>."]),
+
+  /* ---- functions ---- */
+  H("a12a-31", "amc12", "functions", "A function f satisfies f(2x + 1) = 4x² + 6x − 1 for all real x. What is f(5)?", ["9", "27", "41", "53", "129"], "27",
+    "Choose x so that the input 2x + 1 equals 5.",
+    ["The rule tells us the output when the input is 2x + 1. We want the input to be 5.",
+     "Solve 2x + 1 = 5: x = 2.",
+     "Plug x = 2 into the right side: 4 × 4 + 6 × 2 − 1 = 16 + 12 − 1 = 27.",
+     "f(5) = <b>27</b>. (Plugging x = 5 into the right side would give f(11), not f(5).)"]),
+  H("a12a-32", "amc12", "functions", "A function f satisfies f(x) + 2f(1/x) = 3x for every x ≠ 0. What is f(2)?", ["−2", "−1", "1", "2", "6"], "−1",
+    "Use the rule twice, with x = 2 and with x = 1/2, to get two equations in f(2) and f(1/2).",
+    ["Plug in x = 2: f(2) + 2f(1/2) = 6.",
+     "The unknown f(1/2) showed up. Plug in x = 1/2 to get a second equation with the same two unknowns: f(1/2) + 2f(2) = 3/2.",
+     "Let p = f(2) and q = f(1/2). We have p + 2q = 6 and 2p + q = 3/2.",
+     "Double the second equation: 4p + 2q = 3. Subtract the first: 3p = 3 − 6 = −3, so p = −1.",
+     "f(2) = <b>−1</b>. Check: q = 3/2 − 2(−1) = 7/2, and p + 2q = −1 + 7 = 6."]),
+  H("a12a-33", "amc12", "functions", "Let f(x) = x² − 2x. How many real numbers x satisfy f(f(f(x))) = 3?", ["3", "4", "5", "6", "8"], "5",
+    "Work from the outside in: first find which inputs y give f(y) = 3, then which inputs give those, and so on.",
+    ["Complete the square: f(x) = (x − 1)² − 1. So f(x) = c means (x − 1)² = c + 1. That has 2 real solutions if c > −1, 1 solution if c = −1, and none if c < −1.",
+     "Outer layer: f(y) = 3 means (y − 1)² = 4, so y = 3 or y = −1. So f(f(x)) must be 3 or −1.",
+     "Middle layer: f(w) = 3 gives w = 3 or w = −1 (same as before). f(w) = −1 gives (w − 1)² = 0, so w = 1.",
+     "So f(x) must be 3, −1 or 1.",
+     "Inner layer: f(x) = 3 has 2 solutions (x = 3, −1). f(x) = −1 has 1 solution (x = 1). f(x) = 1 means (x − 1)² = 2, which has 2 solutions (x = 1 ± √2).",
+     "These five x values are all different, so the count is 2 + 1 + 2 = <b>5</b>."]),
+
+  /* ---- quadratics ---- */
+  H("a12a-34", "amc12", "quadratics", "The equation x² + kx + (k + 3) = 0 has exactly one real solution for two values of k. What is the sum of these two values?", ["−12", "−4", "2", "4", "8"], "4",
+    "Exactly one real solution means the discriminant is 0.",
+    ["A quadratic has exactly one real solution (a double root) when its discriminant b² − 4ac is 0.",
+     "Here a = 1, b = k, c = k + 3. Discriminant: k² − 4(k + 3) = k² − 4k − 12.",
+     "Set it to 0: k² − 4k − 12 = (k − 6)(k + 2) = 0, so k = 6 or k = −2.",
+     "Sum: 6 + (−2) = <b>4</b>.",
+     "Check: k = 6 gives x² + 6x + 9 = (x + 3)², and k = −2 gives x² − 2x + 1 = (x − 1)²."]),
+  H("a12a-35", "amc12", "quadratics", "For how many integers m does x² + mx + 12 = 0 have two integer solutions?", ["3", "4", "6", "8", "12"], "6",
+    "By Vieta the two roots multiply to 12, so list the integer pairs with product 12, including negative pairs.",
+    ["Call the roots r and s. Vieta: rs = 12 and r + s = −m.",
+     "If r and s are integers with product 12, the pair is one of: 1 and 12, 2 and 6, 3 and 4, or the negatives −1 and −12, −2 and −6, −3 and −4.",
+     "Their sums are 13, 8, 7, −13, −8, −7. Since m = −(r + s), m is −13, −8, −7, 13, 8 or 7.",
+     "Each pair gives a different m, and any such pair really does give integer roots, so there are <b>6</b> values."]),
+  H("a12a-36", "amc12", "quadratics", "Let a and b be the two roots of x² − 3x + 1 = 0. What is a⁵ + b⁵?", ["76", "113", "123", "199", "243"], "123",
+    "Each root satisfies x² = 3x − 1. Multiply by xⁿ⁻² to get a rule linking the power sums.",
+    ["Let Sₙ = aⁿ + bⁿ. Vieta: a + b = 3 and ab = 1. So S₁ = 3, and S₀ = a⁰ + b⁰ = 2.",
+     "Since a is a root, a² = 3a − 1. Multiply by aⁿ⁻²: aⁿ = 3aⁿ⁻¹ − aⁿ⁻². The same holds for b.",
+     "Add the two: Sₙ = 3Sₙ₋₁ − Sₙ₋₂. Each power sum comes from the two before it.",
+     "S₂ = 3 × 3 − 2 = 7.",
+     "S₃ = 3 × 7 − 3 = 18.",
+     "S₄ = 3 × 18 − 7 = 47.",
+     "S₅ = 3 × 47 − 18 = <b>123</b>."]),
+
+  /* ---- sequences ---- */
+  H("a12a-37", "amc12", "sequences", "In an arithmetic sequence, the sum of the first 10 terms is 100 and the sum of the first 20 terms is 400. What is the sum of the first 30 terms?", ["700", "800", "900", "1000", "1200"], "900",
+    "Sum of the first n terms = (n/2)(2a + (n − 1)d). Write that for n = 10 and n = 20.",
+    ["Let the first term be a and the common difference be d. The sum of the first n terms is (n/2)(2a + (n − 1)d): n times the average of the first and last terms.",
+     "n = 10: 5(2a + 9d) = 100, so 2a + 9d = 20.",
+     "n = 20: 10(2a + 19d) = 400, so 2a + 19d = 40.",
+     "Subtract: 10d = 20, so d = 2. Then 2a + 18 = 20, so a = 1.",
+     "n = 30: 15(2a + 29d) = 15 × (2 + 58) = 15 × 60 = <b>900</b>.",
+     "The sequence is 1, 3, 5, …, the odd numbers, whose first n terms always add to n². (The sum is not 700: the sums do not go up by equal steps.)"]),
+  H("a12a-38", "amc12", "sequences", "Three numbers form an increasing arithmetic sequence with sum 21. If 1 is added to the first, 1 to the second and 5 to the third, the results form a geometric sequence. What is the largest of the three original numbers?", ["9", "10", "11", "13", "15"], "11",
+    "Write the numbers as 7 − d, 7, 7 + d. In a geometric sequence the middle term squared equals the product of its neighbors.",
+    ["In a 3-term arithmetic sequence the middle term is the average. The sum is 21, so the middle term is 7. Write the numbers as 7 − d, 7, 7 + d, with d > 0 because the sequence increases.",
+     "After adding 1, 1 and 5: 8 − d, 8, 12 + d.",
+     "Three numbers are geometric when middle² = first × last: 8² = (8 − d)(12 + d).",
+     "Expand: 64 = 96 − 4d − d², so d² + 4d − 32 = 0.",
+     "Factor: (d + 8)(d − 4) = 0. Since d > 0, d = 4.",
+     "The original numbers are 3, 7, 11, and the new ones are 4, 8, 16 (ratio 2). The largest original number is <b>11</b>."]),
+
+  /* ---- inequalities ---- */
+  H("a12a-39", "amc12", "inequalities", "How many integers x satisfy |x − 3| + |x + 2| ≤ 9?", ["6", "8", "9", "10", "11"], "10",
+    "|x − 3| + |x + 2| is the distance from x to 3 plus the distance from x to −2 on the number line.",
+    ["Think of distances: |x − 3| is the distance from x to 3, and |x + 2| is the distance from x to −2.",
+     "If x is between −2 and 3, the two distances add up to the whole gap, 5. That is ≤ 9, so every x from −2 to 3 works.",
+     "If x is to the right of 3 by an amount e, the distances are e and 5 + e, total 5 + 2e. We need 5 + 2e ≤ 9, so e ≤ 2. That allows x up to 5.",
+     "By the same reasoning on the left, x can go 2 below −2, down to −4.",
+     "So −4 ≤ x ≤ 5. Counting integers: 5 − (−4) + 1 = <b>10</b>."]),
+  H("a12a-40", "amc12", "inequalities", "Real numbers x and y satisfy x² + y² = 4x + 2y + 15. What is the largest possible value of x + 2y?", ["4 + 2√5", "10", "12", "14", "20"], "14",
+    "Complete the square to see a circle, then use the Cauchy-Schwarz inequality on the shifted variables.",
+    ["Move everything to one side and complete the square: (x² − 4x + 4) + (y² − 2y + 1) = 15 + 4 + 1, so (x − 2)² + (y − 1)² = 20.",
+     "Let u = x − 2 and v = y − 1. Then u² + v² = 20, and x + 2y = (u + 2) + 2(v + 1) = u + 2v + 4.",
+     "Cauchy-Schwarz: (1 × u + 2 × v)² ≤ (1² + 2²)(u² + v²) = 5 × 20 = 100. So u + 2v ≤ 10.",
+     "Equality needs (u, v) to be a positive multiple of (1, 2): u = 2, v = 4 works, since 4 + 16 = 20 and 2 + 8 = 10.",
+     "So the largest x + 2y is 10 + 4 = <b>14</b>, reached at x = 4, y = 5.",
+     "Check: 4² + 5² = 41 and 4 × 4 + 2 × 5 + 15 = 41."])
+);
+/* =========================================================
+   AMC 12 practice, set B: counting & probability, number theory, geometry
+   40 original multiple-choice problems (ids a12b-1 … a12b-40), roughly AMC 12 #5 to #22.
+   Every answer was checked by script (audit/scratch-amc12-b/).
+   ========================================================= */
+BANK.push(
+  /* ---- counting & probability ---- */
+  H("a12b-1", "amc12", "aime-bij", "How many 4-digit positive integers have digits that add up to 9?", ["56", "120", "165", "220", "330"], "165", "Stars and bars, but the first digit must be at least 1, so take 1 away from it first.", [
+    "Call the digits a, b, c, d with a + b + c + d = 9. The first digit a must be at least 1 (or the number would not have 4 digits). The others can be 0.",
+    "Stars and bars works best when every variable can be 0, so write a = a′ + 1 with a′ ≥ 0. The equation becomes a′ + b + c + d = 8.",
+    "Stars and bars: 8 stars and 3 bars in a row. Choosing where the 3 bars go among the 11 spots picks one solution, so there are C(11, 3) solutions.",
+    "C(11, 3) = 11 × 10 × 9 ÷ 6 = 165.",
+    "Check that no digit is too big: the total is only 9, so no digit can pass 9. Nothing needs to be thrown out.",
+    "The count is <b>165</b>."]),
+  H("a12b-2", "amc12", "aime-bij", "How many ordered triples (a, b, c) of positive integers satisfy abc = 10800? (Note 10800 = 2⁴ × 3³ × 5².)", ["60", "180", "540", "900", "1800"], "900", "Deal out each prime's exponent among a, b and c separately, like identical candies to 3 kids.", [
+    "Each of a, b, c can only use the primes 2, 3 and 5. The triple is decided by how the exponents are shared out.",
+    "Prime 2: the three exponents of 2 are nonnegative and add to 4. Stars and bars with 4 stars and 2 bars: C(6, 2) = 15 ways.",
+    "Prime 3: exponents add to 3. That is 3 stars and 2 bars: C(5, 2) = 10 ways.",
+    "Prime 5: exponents add to 2. That is 2 stars and 2 bars: C(4, 2) = 6 ways.",
+    "The three primes are shared out independently, so multiply: 15 × 10 × 6 = 900.",
+    "There are <b>900</b> ordered triples."]),
+  H("a12b-3", "amc12", "aime-bij", "How many 3-element subsets of {1, 2, 3, …, 20} have the property that any two of the chosen numbers differ by at least 3?", ["364", "560", "680", "816", "1140"], "560", "Slide the chosen numbers together to remove the forced gaps, and count what is left.", [
+    "Write the subset in order as x < y < z. The rule says y − x ≥ 3 and z − y ≥ 3.",
+    "Squeeze out the forced gaps: let x′ = x, y′ = y − 2, z′ = z − 4. Then y′ − x′ = y − x − 2 ≥ 1 and z′ − y′ ≥ 1, so x′ < y′ < z′ are just three different numbers.",
+    "The largest possible z′ is 20 − 4 = 16, so (x′, y′, z′) is a 3-element subset of {1, …, 16}.",
+    "This can be undone (add 0, 2, 4 back), so the squeezing is a perfect one-to-one matching. That means the two counts are equal.",
+    "C(16, 3) = 16 × 15 × 14 ÷ 6 = 560.",
+    "The answer is <b>560</b>."]),
+  H("a12b-4", "amc12", "aime-rec", "A 2 × 8 rectangle is to be completely covered, with no overlaps, using 1 × 2 dominoes (which may be turned either way) and 2 × 2 squares. In how many ways can this be done?", ["34", "85", "171", "256", "341"], "171", "Look at how the left end of the strip can be covered, and write a rule for a 2 × n strip.", [
+    "Let aₙ be the number of ways to cover a 2 × n strip. Look at the leftmost column.",
+    "Case 1: it is covered by one upright domino. A 2 × (n − 1) strip is left: aₙ₋₁ ways.",
+    "Case 2: it is not. Then the first two columns are filled either by two flat dominoes stacked on each other or by one 2 × 2 square. That is 2 choices, and a 2 × (n − 2) strip is left: 2aₙ₋₂ ways.",
+    "So aₙ = aₙ₋₁ + 2aₙ₋₂, with a₁ = 1 (one upright domino) and a₂ = 3 (two upright, two flat, or a square).",
+    "Build the list: a₃ = 3 + 2 = 5, a₄ = 5 + 6 = 11, a₅ = 11 + 10 = 21, a₆ = 21 + 22 = 43, a₇ = 43 + 42 = 85, a₈ = 85 + 86 = 171.",
+    "There are <b>171</b> ways."]),
+  H("a12b-5", "amc12", "aime-rec", "How many 7-letter words made of the letters A, B and C have no A immediately followed by a B?", ["377", "729", "987", "1458", "1597"], "987", "Add one letter at the end of a shorter good word, then subtract the words where that new letter spoiled it.", [
+    "Let aₙ be the number of good words of length n. Then a₁ = 3, and a₂ = 9 − 1 = 8 (only AB is bad).",
+    "To build a word of length n, take a good word of length n − 1 and add any of 3 letters: 3aₙ₋₁ words.",
+    "The only way this goes wrong is adding B to a good word that ends in A.",
+    "How many good words of length n − 1 end in A? Putting A at the end of ANY good word of length n − 2 never creates AB, so there are exactly aₙ₋₂ of them.",
+    "So aₙ = 3aₙ₋₁ − aₙ₋₂.",
+    "a₃ = 24 − 3 = 21, a₄ = 63 − 8 = 55, a₅ = 165 − 21 = 144, a₆ = 432 − 55 = 377, a₇ = 1131 − 144 = 987.",
+    "(These are every other Fibonacci number, a nice check.) The answer is <b>987</b>."]),
+  H("a12b-6", "amc12", "aime-pie", "How many of the integers from 1 to 1000 are divisible by none of 2, 3 and 7?", ["263", "285", "286", "287", "309"], "286", "Count the numbers divisible by at least one of them with inclusion-exclusion, then subtract from 1000.", [
+    "Count multiples by dividing and rounding down. Singles: 1000 ÷ 2 → 500, 1000 ÷ 3 → 333, 1000 ÷ 7 → 142. Sum: 975.",
+    "A number divisible by two of them was counted twice, so subtract the pairs. Multiples of 6: 166. Multiples of 14: 71. Multiples of 21: 47. Sum: 284.",
+    "A multiple of all three (of 42) was added 3 times and subtracted 3 times, so it must be added back once. Multiples of 42: 23.",
+    "Divisible by at least one: 975 − 284 + 23 = 714.",
+    "Divisible by none: 1000 − 714 = <b>286</b>."]),
+  H("a12b-7", "amc12", "aime-pie", "In how many ways can the numbers 1, 2, 3, 4, 5, 6 be arranged in a row so that no number k is immediately followed by k + 1? (For example, 3 may not be immediately followed by 4.)", ["240", "265", "309", "360", "480"], "309", "There are 5 forbidden links (12, 23, 34, 45, 56). Arrangements containing k chosen links act like 6 − k glued blocks.", [
+    "Call 12, 23, 34, 45, 56 the five bad links. We want arrangements with no bad link, so use inclusion-exclusion on the links.",
+    "Suppose a certain set of k links must all appear. Glue each such pair together. Each link joins two pieces into one, so 6 loose numbers become 6 − k blocks. (Links like 12 and 23 chain into the block 123.)",
+    "The blocks can be arranged in any order: (6 − k)! ways. There are C(5, k) ways to choose which k links.",
+    "Inclusion-exclusion: 6! − C(5, 1) × 5! + C(5, 2) × 4! − C(5, 3) × 3! + C(5, 4) × 2! − C(5, 5) × 1!.",
+    "= 720 − 600 + 240 − 60 + 10 − 1.",
+    "= <b>309</b>."]),
+  H("a12b-8", "amc12", "aime-ev", "A fair coin is flipped 10 times. What is the expected number of times that a head is immediately followed by a tail?", ["2", "9/4", "5/2", "3", "9/2"], "9/4", "Look at each of the 9 pairs of neighboring flips on its own and add the 9 probabilities.", [
+    "There are 9 places where the pattern could happen: flips 1-2, flips 2-3, …, flips 9-10.",
+    "For one such place, the chance of head then tail is 1/2 × 1/2 = 1/4.",
+    "Linearity of expectation: the expected total count is the sum of the chances for each place. This works even though the places overlap and are not independent.",
+    "9 × 1/4 = <b>9/4</b>."]),
+  H("a12b-9", "amc12", "aime-ev", "Five boys and five girls sit down in random order around a round table with 10 seats. What is the expected number of pairs of neighbors that consist of one boy and one girl?", ["9/2", "5", "50/9", "6", "25/4"], "50/9", "A round table with 10 seats has 10 pairs of neighboring seats. Find the chance that one pair is boy-girl.", [
+    "There are 10 pairs of neighboring seats around the table. By linearity of expectation, the answer is 10 × (chance that one given pair is mixed).",
+    "Look at one pair of seats. Whoever sits in the first seat, 9 people remain for the second seat, and 5 of them are of the other kind.",
+    "So the chance the pair is mixed is 5/9. (It is a little more than 1/2 because you cannot sit next to yourself.)",
+    "10 × 5/9 = <b>50/9</b>."]),
+  H("a12b-10", "amc12", "aime-states", "A frog sits on pad 2 in a row of lily pads numbered 0, 1, 2, 3, 4. On each jump it moves up one pad with probability 2/3 or down one pad with probability 1/3. It stops when it reaches pad 0 or pad 4. What is the probability that it stops on pad 4?", ["4/9", "2/3", "3/4", "4/5", "8/9"], "4/5", "From pad 2, look two jumps ahead: up-up, down-down, or back on pad 2.", [
+    "Let p be the chance of ending on pad 4 when starting from pad 2. Watch the next two jumps.",
+    "Up, up: probability 2/3 × 2/3 = 4/9. The frog is on pad 4 and wins.",
+    "Down, down: probability 1/3 × 1/3 = 1/9. The frog is on pad 0 and loses.",
+    "Up-down or down-up: probability 1 − 4/9 − 1/9 = 4/9. The frog is back on pad 2, and its chance from there is p again.",
+    "So p = 4/9 + 4/9 × p. Then 5/9 × p = 4/9, so p = 4/5.",
+    "The probability is <b>4/5</b>."]),
+  H("a12b-11", "amc12", "aime-states", "A fair coin is flipped over and over. What is the probability that two heads in a row appear before three tails in a row appear?", ["3/5", "5/8", "2/3", "7/10", "3/4"], "7/10", "Only the current streak matters. Use three states: a streak of one head, one tail, or two tails.", [
+    "All that matters is the streak at the end of the flips so far. Let h be the chance heads wins when the streak is one head (H), t₁ the chance when it is one tail (T), and t₂ the chance when it is two tails (TT).",
+    "From H: a head (1/2) wins at once, a tail (1/2) moves to T. So h = 1/2 + 1/2 × t₁.",
+    "From T: a head moves to H, a tail moves to TT. So t₁ = 1/2 × h + 1/2 × t₂.",
+    "From TT: a head moves to H, a tail makes TTT and heads loses. So t₂ = 1/2 × h.",
+    "Put t₂ into the T equation: t₁ = 1/2 × h + 1/4 × h = 3/4 × h.",
+    "Put that into the H equation: h = 1/2 + 3/8 × h, so 5/8 × h = 1/2 and h = 4/5. Then t₁ = 3/4 × 4/5 = 3/5.",
+    "The first flip is H or T with chance 1/2 each: 1/2 × 4/5 + 1/2 × 3/5 = <b>7/10</b>."]),
+  H("a12b-12", "amc12", "conditional", "A drawer holds 3 fair coins and 1 coin with heads on both sides. One coin is chosen at random and flipped 3 times. All 3 flips are heads. What is the probability that it is the two-headed coin?", ["1/4", "1/2", "8/11", "4/5", "8/9"], "8/11", "Compare the two ways of seeing HHH: two-headed coin, or a fair coin that got lucky.", [
+    "Way 1: pick the two-headed coin (chance 1/4), and then HHH is certain. Probability 1/4 × 1 = 1/4.",
+    "Way 2: pick a fair coin (chance 3/4), and then HHH has chance 1/2 × 1/2 × 1/2 = 1/8. Probability 3/4 × 1/8 = 3/32.",
+    "Total chance of seeing HHH: 1/4 + 3/32 = 8/32 + 3/32 = 11/32.",
+    "Conditional probability = (the way we want) ÷ (all ways it could happen) = (8/32) ÷ (11/32).",
+    "= <b>8/11</b>."]),
+  H("a12b-13", "amc12", "conditional", "Two fair dice are rolled. Given that the product of the two numbers is a multiple of 6, what is the probability that their sum is 7?", ["1/6", "2/9", "4/15", "1/3", "2/5"], "4/15", "First count the ordered rolls whose product is a multiple of 6, with and without a 6 showing.", [
+    "Count ordered rolls (first die, second die) whose product is a multiple of 6.",
+    "Rolls with at least one 6 always work: 6 + 6 − 1 = 11 rolls (the roll 6, 6 was counted twice).",
+    "Rolls with no 6 use only 1 to 5. The product needs a factor 3, so one die is 3, and it needs a factor 2, so the other is 2 or 4: (3, 2), (2, 3), (3, 4), (4, 3). That is 4 rolls.",
+    "So the condition leaves 11 + 4 = 15 equally likely rolls.",
+    "Of the sum-7 rolls, (1, 6), (6, 1) have product 6 and (3, 4), (4, 3) have product 12: all good. But (2, 5), (5, 2) have product 10: not a multiple of 6. So 4 rolls have sum 7.",
+    "The probability is <b>4/15</b>."]),
+  H("a12b-14", "amc12", "geo-prob", "Square ABCD has side length 2. A point P is chosen at random inside the square. What is the probability that angle APB is greater than 90°?", ["π/16", "π/8", "1/2", "π/6", "π/4"], "π/8", "Where is angle APB exactly 90°? Think of the circle with diameter AB.", [
+    "Thales: if P is on the circle with diameter AB, then angle APB is exactly 90°.",
+    "If P is inside that circle the angle is bigger than 90°, and if P is outside it is smaller. (Moving P toward segment AB opens the angle up toward 180°.)",
+    "So we need P inside the circle with diameter AB. Its radius is 1 and its center is the midpoint of side AB.",
+    "Only half of that circle is inside the square, and the half fits because the square is 2 tall and the radius is only 1. Its area is 1/2 × π × 1² = π/2.",
+    "The square has area 4. Probability = (π/2) ÷ 4 = <b>π/8</b>."]),
+  H("a12b-15", "amc12", "geo-prob", "A point P is chosen at random inside an equilateral triangle ABC with center G (the centroid). What is the probability that P is closer to G than to every one of the vertices A, B and C?", ["1/3", "1/2", "5/9", "2/3", "3/4"], "2/3", "The points closer to A than to G are cut off by the perpendicular bisector of segment AG. What shape is cut off?", [
+    "Let the height of the triangle be h. The centroid lies on each altitude, 2/3 of the way from the vertex, so AG = 2h/3.",
+    "Points that are the same distance from A and G lie on the perpendicular bisector of AG. It crosses the altitude from A at the midpoint of AG, which is h/3 below A, and it is perpendicular to that altitude, so it is parallel to BC.",
+    "So the points closer to A than to G form a small corner triangle at A, cut off by a line parallel to BC. It is similar to ABC with height h/3, a scale factor of 1/3.",
+    "Areas scale by the square of the scale factor: the corner has (1/3)² = 1/9 of the area of ABC.",
+    "The same happens at B and at C. Each corner triangle has side 1/3 of the full side, so the three corners do not overlap.",
+    "P must avoid all three corners: 1 − 3 × 1/9 = <b>2/3</b>."]),
+
+  /* ---- number theory ---- */
+  H("a12b-16", "amc12", "aime-crt", "What is the smallest positive integer that leaves remainder 2 when divided by 5, remainder 3 when divided by 7, and remainder 4 when divided by 9?", ["67", "112", "157", "202", "247"], "157", "Double the number and add 1. What happens to all three remainders?", [
+    "Call the number n. Notice each remainder is just under half of its divisor: 2 × 2 + 1 = 5, 2 × 3 + 1 = 7, 2 × 4 + 1 = 9.",
+    "So look at 2n + 1. Mod 5: 2 × 2 + 1 = 5 ≡ 0. Mod 7: 2 × 3 + 1 = 7 ≡ 0. Mod 9: 2 × 4 + 1 = 9 ≡ 0.",
+    "So 2n + 1 is a multiple of 5, 7 and 9. These share no common factors, so 2n + 1 is a multiple of 5 × 7 × 9 = 315.",
+    "The smallest choice is 2n + 1 = 315, so n = 157. (No other n below 315 works, by the Chinese Remainder Theorem.)",
+    "Check: 157 = 31 × 5 + 2 = 22 × 7 + 3 = 17 × 9 + 4. All three remainders are right.",
+    "The answer is <b>157</b>."]),
+  H("a12b-17", "amc12", "aime-crt", "For how many integers n with 1 ≤ n ≤ 210 is n² − n divisible by 210?", ["2", "4", "8", "16", "32"], "16", "n² − n = n(n − 1), and 210 = 2 × 3 × 5 × 7. Each prime must divide n or n − 1.", [
+    "Factor both: n² − n = n(n − 1) and 210 = 2 × 3 × 5 × 7.",
+    "n and n − 1 are neighbors, so they share no prime factor. For a prime p to divide the product n(n − 1), it must divide n or divide n − 1. In mod language: n ≡ 0 or n ≡ 1 (mod p).",
+    "That gives 2 choices of remainder for each of the 4 primes: 2 × 2 × 2 × 2 = 16 combinations of remainders.",
+    "The Chinese Remainder Theorem says that each combination of remainders mod 2, 3, 5, 7 is hit by exactly one n from 1 to 210 (because 2 × 3 × 5 × 7 = 210).",
+    "For example, all 0's gives n = 210, all 1's gives n = 1, and (1, 0, 0, 0) gives n = 105.",
+    "So there are <b>16</b> such n."]),
+  H("a12b-18", "amc12", "aime-euler", "What are the last two digits of 7²⁰²⁶?", ["01", "07", "43", "49", "99"], "49", "Find a small power of 7 that ends in 01.", [
+    "Last two digits means working mod 100. Compute small powers: 7² = 49, 7³ = 343 → 43, 7⁴ = 43 × 7 = 301 → 01.",
+    "So 7⁴ ≡ 1 (mod 100). Every block of four 7's multiplies to something ending in 01, which changes nothing.",
+    "2026 = 4 × 506 + 2, so 7²⁰²⁶ = (7⁴)⁵⁰⁶ × 7² ≡ 1 × 49 (mod 100).",
+    "The last two digits are <b>49</b>."]),
+  H("a12b-19", "amc12", "aime-euler", "What are the last two digits of 3^(7¹⁰¹)? (The exponent is the huge number 7¹⁰¹.)", ["03", "27", "43", "67", "87"], "87", "Powers of 3 repeat every 20 steps mod 100, so you only need the exponent 7¹⁰¹ mod 20.", [
+    "Step 1: find when powers of 3 return to 01. 3⁵ = 243 → 43. 3¹⁰ → 43² = 1849 → 49. 3²⁰ → 49² = 2401 → 01.",
+    "So 3²⁰ ≡ 1 (mod 100), and only the remainder of the exponent mod 20 matters.",
+    "Step 2: find 7¹⁰¹ mod 20. 7² = 49 ≡ 9, and 7⁴ ≡ 9² = 81 ≡ 1 (mod 20).",
+    "101 = 4 × 25 + 1, so 7¹⁰¹ = (7⁴)²⁵ × 7 ≡ 7 (mod 20).",
+    "Step 3: the exponent is 20k + 7 for some k, so the power is (3²⁰)ᵏ × 3⁷ ≡ 3⁷ (mod 100).",
+    "3⁷ = 2187, which ends in <b>87</b>."]),
+  H("a12b-20", "amc12", "aime-divsum", "How many positive divisors of 12! are perfect squares? (12! = 12 × 11 × 10 × ⋯ × 2 × 1.)", ["12", "18", "36", "72", "792"], "36", "Find the prime factorization of 12!. A square divisor uses only even exponents.", [
+    "Count each prime in 12! by counting multiples. Prime 2: 12 ÷ 2 → 6, 12 ÷ 4 → 3, 12 ÷ 8 → 1, total 10. Prime 3: 12 ÷ 3 → 4, 12 ÷ 9 → 1, total 5.",
+    "Prime 5: 2 (from 5 and 10). Prime 7: 1. Prime 11: 1. So 12! = 2¹⁰ × 3⁵ × 5² × 7 × 11.",
+    "A divisor is a perfect square exactly when every exponent in it is even.",
+    "Choices: for 2 the exponent can be 0, 2, 4, 6, 8, 10 (6 choices). For 3: 0, 2, 4 (3 choices). For 5: 0, 2 (2 choices). For 7 and 11: only 0 (1 choice each).",
+    "6 × 3 × 2 × 1 × 1 = <b>36</b>."]),
+  H("a12b-21", "amc12", "aime-divsum", "A positive integer n has exactly 15 positive divisors, and 2n has exactly 20 positive divisors. How many positive divisors does 16n have?", ["30", "35", "40", "60", "75"], "35", "Write n = 2ᵃ × m with m odd. Multiplying by 2 only changes the exponent of 2.", [
+    "Write n = 2ᵃ × m, where m is odd. Let d be the number of divisors of m.",
+    "The divisor count multiplies over the prime-power pieces, and 2ᵃ has a + 1 divisors. So n has (a + 1) × d divisors: (a + 1) × d = 15.",
+    "2n = 2ᵃ⁺¹ × m has (a + 2) × d divisors: (a + 2) × d = 20.",
+    "Subtract the two equations: d = 5. Then a + 1 = 15 ÷ 5 = 3, so a = 2.",
+    "16n = 2⁴ × 2² × m = 2⁶ × m, which has (6 + 1) × d = 7 × 5 divisors.",
+    "Check with a real example: n = 2² × 3⁴ = 324 has 3 × 5 = 15 divisors and 648 = 2³ × 3⁴ has 4 × 5 = 20.",
+    "So 16n has <b>35</b> divisors."]),
+  H("a12b-22", "amc12", "aime-divsum", "How many ordered pairs (a, b) of positive integers have least common multiple equal to 720? (Note 720 = 2⁴ × 3² × 5.)", ["30", "105", "135", "225", "900"], "135", "Work one prime at a time: the larger of the two exponents must equal the exponent in 720.", [
+    "The LCM takes, for each prime, the larger of the two exponents. So for each prime, the larger exponent must match the one in 720.",
+    "Take a prime whose exponent in 720 is e. The exponents (x, y) in a and b each run from 0 to e, and we need the larger one to be exactly e.",
+    "All pairs with both at most e: (e + 1)². Pairs where both are at most e − 1 (so the larger is too small): e². So the good count is (e + 1)² − e² = 2e + 1.",
+    "Prime 2 (e = 4): 9 pairs. Prime 3 (e = 2): 5 pairs. Prime 5 (e = 1): 3 pairs.",
+    "The primes are independent, so multiply: 9 × 5 × 3 = <b>135</b>."]),
+  H("a12b-23", "amc12", "aime-floor", "What is the largest integer k such that 12ᵏ divides 100! ?", ["24", "32", "48", "49", "97"], "48", "12ᵏ = 2²ᵏ × 3ᵏ. Count the 2's and the 3's in 100! separately.", [
+    "12 = 2² × 3, so 12ᵏ = 2²ᵏ × 3ᵏ. We need 2k twos and k threes inside 100!.",
+    "Count 2's (Legendre): divide 100 by 2, 4, 8, 16, 32, 64 and round down: 50 + 25 + 12 + 6 + 3 + 1 = 97. Each multiple of 4 is counted a second time, each multiple of 8 a third time, and so on, which is exactly right.",
+    "Count 3's: divide 100 by 3, 9, 27, 81 and round down: 33 + 11 + 3 + 1 = 48.",
+    "The 2's need 2k ≤ 97, so k ≤ 48. The 3's need k ≤ 48.",
+    "Both limits allow k = 48 and neither allows 49. The answer is <b>48</b>."]),
+  H("a12b-24", "amc12", "aime-floor", "How many different values does ⌊n²/50⌋ take as n runs through 1, 2, 3, …, 50? (⌊x⌋ means x rounded down to an integer.)", ["26", "37", "38", "39", "50"], "38", "Compare the jump from n²/50 to (n + 1)²/50 with 1. Small jumps cannot skip an integer; big jumps cannot repeat one.", [
+    "The jump from n²/50 to (n + 1)²/50 is (2n + 1)/50.",
+    "For n ≤ 24 the jump is at most 49/50, less than 1. A value that climbs in steps smaller than 1 cannot skip over a whole number, so its floor hits every integer along the way.",
+    "For n = 1 the floor is 0, and for n = 25 it is ⌊625/50⌋ = ⌊12.5⌋ = 12. So n = 1 to 25 gives every value 0, 1, …, 12: that is 13 values.",
+    "For n ≥ 25 the jump is at least 51/50, more than 1. A value that climbs by more than 1 each time gets a new, bigger floor each time.",
+    "So n = 26, 27, …, 50 give 25 different values, all bigger than 12 (the first is ⌊676/50⌋ = 13).",
+    "Total: 13 + 25 = <b>38</b>."]),
+  H("a12b-25", "amc12", "aime-dioph", "How many ordered pairs (x, y) of positive integers satisfy 1/x + 1/y = 1/12?", ["8", "12", "15", "16", "30"], "15", "Clear the fractions and factor it as (x − 12)(y − 12) = 144.", [
+    "Multiply both sides by 12xy: 12y + 12x = xy.",
+    "Move everything to one side: xy − 12x − 12y = 0. Add 144 to both sides so the left side factors: (x − 12)(y − 12) = 144.",
+    "Could both factors be negative? Since x and y are positive, each factor is bigger than −12, so two negative factors would multiply to less than 144. Not possible. Both factors are positive.",
+    "So x − 12 can be any positive divisor of 144, and then y is forced. Each divisor gives one ordered pair.",
+    "144 = 2⁴ × 3², which has (4 + 1)(2 + 1) = 15 divisors.",
+    "There are <b>15</b> ordered pairs."]),
+  H("a12b-26", "amc12", "aime-dioph", "How many ordered pairs (x, y) of integers (positive, negative or zero) satisfy x² + xy + y² = 49?", ["6", "10", "12", "16", "18"], "18", "Multiply by 4 and complete the square: (2x + y)² + 3y² = 196. Then try each possible y.", [
+    "Multiply by 4: 4x² + 4xy + 4y² = 196. Since 4x² + 4xy + y² = (2x + y)², this is (2x + y)² + 3y² = 196.",
+    "A square is never negative, so 3y² ≤ 196, which means y² ≤ 65 and y is between −8 and 8.",
+    "Test y² = 0, 1, 4, 9, 16, 25, 36, 49, 64: the value 196 − 3y² is 196, 193, 184, 169, 148, 121, 88, 49, 4. The perfect squares are 196, 169, 121, 49 and 4.",
+    "So the options are y = 0 with 2x + y = ±14; y = ±3 with 2x + y = ±13; y = ±5 with ±11; y = ±7 with ±7; y = ±8 with ±2.",
+    "x must be an integer, so 2x + y and y must be both odd or both even. They are in every case (14 and 0, 13 and 3, 11 and 5, 7 and 7, 2 and 8), so every sign choice gives one integer x.",
+    "Count: y = 0 gives 2 pairs. Each of the other 8 values of y gives 2 pairs: 16 more.",
+    "2 + 16 = <b>18</b>. (For example (7, 0), (5, 3), (3, 5), (0, 7), (−3, 8) all work.)"]),
+  H("a12b-27", "amc12", "bases", "In a certain base b, the square of the number 24 is 554. (All three numbers are written in base b.) What is b?", ["7", "8", "9", "11", "12"], "12", "Write 24 and 554 in terms of b and set up an equation.", [
+    "In base b, 24 means 2b + 4 and 554 means 5b² + 5b + 4.",
+    "The equation is (2b + 4)² = 5b² + 5b + 4.",
+    "Expand the left side: 4b² + 16b + 16 = 5b² + 5b + 4.",
+    "Move everything to the right: 0 = b² − 11b − 12 = (b − 12)(b + 1).",
+    "A base is positive, so b = 12. Check: 24 in base 12 is 28, and 28² = 784 = 5 × 144 + 5 × 12 + 4.",
+    "The base is <b>12</b>."]),
+  H("a12b-28", "amc12", "bases", "How many of the integers from 1 to 1000 read the same forward and backward when written in base 2? (For example, 5 = 101₂ does, and 6 = 110₂ does not.)", ["46", "60", "61", "62", "63"], "61", "A binary palindrome is fixed by its first half, and its first digit is 1. Count by number of digits, then treat 10-digit numbers with care.", [
+    "A palindrome with L digits is decided by its first half (rounding L/2 up), and the first digit must be 1. So the other digits of the first half are free.",
+    "Lengths 1 to 9 have first halves of 1, 1, 2, 2, 3, 3, 4, 4, 5 digits, giving 1, 1, 2, 2, 4, 4, 8, 8, 16 palindromes. Sum: 46. All of these are below 2⁹ = 512, so all count.",
+    "10-digit binary numbers run from 512 to 1023, and there are 2⁴ = 16 palindromes of that length. Some may be bigger than 1000.",
+    "If the first five digits are 11111, the palindrome is 1111111111₂ = 1023, too big.",
+    "Otherwise the first five digits are at most 11110, so the number is at most 1111011111₂ = 1023 − 32 = 991, which is fine. So 15 of the 16 count.",
+    "Total: 46 + 15 = <b>61</b>."]),
+
+  /* ---- geometry ---- */
+  H("a12b-29", "amc12", "aime-bisector", "In triangle ABC, point D is on side BC with BD : DC = 2 : 3, and point E is on side AC with AE : EC = 1 : 2. Segments AD and BE cross at P. What is AP/PD?", ["4/5", "1", "5/4", "3/2", "2"], "5/4", "Use mass points: put weights on B and C that balance at D, then pick A's weight to balance at E.", [
+    "Mass points: put weights on the corners so each marked point is a balance point. A balance point sits closer to the heavier end: weight × distance is equal on both sides.",
+    "Balance BC at D: BD : DC = 2 : 3, so give B weight 3 and C weight 2 (3 × 2 = 2 × 3). Then D carries 3 + 2 = 5.",
+    "Balance AC at E: AE : EC = 1 : 2 and C already has weight 2. We need (weight of A) × 1 = 2 × 2, so A has weight 4.",
+    "With these weights the whole triangle balances at the point where AD and BE cross, which is P. On segment AD, P balances A (weight 4) against D (weight 5).",
+    "So 4 × AP = 5 × PD, which gives AP/PD = <b>5/4</b>."]),
+  H("a12b-30", "amc12", "aime-bisector", "Triangle ABC has AB = 8, AC = 12 and BC = 10. The bisector of angle A meets BC at D, and I is the incenter of the triangle (where the three angle bisectors meet). What is AI?", ["3√2", "4√2", "6", "2√10", "6√2"], "4√2", "Use the angle bisector theorem twice: once in ABC to find BD, and once in triangle ABD, where BI is a bisector.", [
+    "Angle bisector theorem in ABC: BD/DC = AB/AC = 8/12 = 2/3. Since BD + DC = 10, BD = 4 and DC = 6.",
+    "Length of the bisector: AD² = AB × AC − BD × DC = 96 − 24 = 72, so AD = 6√2.",
+    "Check that with the law of cosines: cos B = (8² + 10² − 12²)/(2 × 8 × 10) = 20/160 = 1/8, and in triangle ABD, AD² = 8² + 4² − 2 × 8 × 4 × 1/8 = 72. It matches.",
+    "The incenter I is on AD, and BI bisects angle B. Use the angle bisector theorem in triangle ABD with bisector BI: AI/ID = AB/BD = 8/4 = 2.",
+    "So AI is 2/3 of AD: AI = 2/3 × 6√2 = <b>4√2</b>."]),
+  H("a12b-31", "amc12", "aime-cyclic", "Triangle ABC has AB = 9, AC = 12 and BC = 18. A circle passes through B and C, crosses side AB again at D, and crosses side AC again at E. If AD = 4, what is DE?", ["4", "9/2", "6", "8", "9"], "6", "Power of the point A gives AE. Then compare triangle ADE with triangle ACB (note the order of the letters).", [
+    "Two lines from A cut the circle: one at D and B, the other at E and C. Power of a point: AD × AB = AE × AC.",
+    "4 × 9 = AE × 12, so AE = 3.",
+    "Now compare triangles ADE and ACB. They share angle A, and the sides around it are in the same ratio: AD/AC = 4/12 = 1/3 and AE/AB = 3/9 = 1/3.",
+    "So the triangles are similar (side-angle-side) with scale factor 1/3. Careful: D matches C and E matches B, so DE is NOT parallel to BC.",
+    "DE matches CB, so DE = 1/3 × 18 = <b>6</b>."]),
+  H("a12b-32", "amc12", "aime-cyclic", "Quadrilateral ABCD is inscribed in a circle, with AB = 7, BC = 24, CD = 20 and DA = 15. What is BD?", ["15", "468/25", "20", "24", "25"], "20", "Find diagonal AC first using the fact that angles B and D add to 180°. Then use Ptolemy.", [
+    "Opposite angles of a cyclic quadrilateral add to 180°, so cos D = −cos B.",
+    "Law of cosines in triangle ABC: AC² = 7² + 24² − 2 × 7 × 24 × cos B = 625 − 336 cos B.",
+    "Law of cosines in triangle ADC: AC² = 15² + 20² − 2 × 15 × 20 × cos D = 625 + 600 cos B.",
+    "Set them equal: −336 cos B = 600 cos B, so cos B = 0. Angles B and D are right angles and AC² = 625, so AC = 25. (Both 7-24-25 and 15-20-25 are right triangles.)",
+    "Ptolemy for a cyclic quadrilateral: AC × BD = AB × CD + BC × DA = 7 × 20 + 24 × 15 = 140 + 360 = 500.",
+    "BD = 500 ÷ 25 = <b>20</b>."]),
+  H("a12b-33", "amc12", "aime-coords", "From the point P = (7, 1), two tangent lines are drawn to the circle x² + y² = 25. They touch the circle at A and B. What is the distance AB?", ["5", "7", "5√2", "5√3", "10"], "5√2", "Find the length of the tangent PA with a right triangle, then look closely at the shape OAPB, where O is the center.", [
+    "The center is O = (0, 0) and the radius is 5. OP² = 7² + 1² = 50.",
+    "A radius meets a tangent at a right angle, so triangle OAP has a right angle at A: PA² = OP² − OA² = 50 − 25 = 25, and PA = 5.",
+    "In the same way PB = 5. So OAPB has four sides of length 5 (OA, AP, PB, BO) and a right angle at A.",
+    "A four-sided shape with four equal sides and a right angle is a square. So OAPB is a square of side 5, and AB is its diagonal.",
+    "AB = <b>5√2</b>. (The touching points are (3, 4) and (4, −3).)"]),
+  H("a12b-34", "amc12", "aime-coords", "Square ABCD has side length 6. M is the midpoint of side BC and N is the midpoint of side CD. Segments AM and BN cross at P. What is the area of quadrilateral PMCN?", ["6", "27/4", "36/5", "15/2", "9"], "36/5", "Put A at the origin, find P as the crossing of two lines, then use the shoelace formula.", [
+    "Use coordinates: A = (0, 0), B = (6, 0), C = (6, 6), D = (0, 6). Then M = (6, 3) and N = (3, 6).",
+    "Line AM goes through (0, 0) and (6, 3): y = x/2.",
+    "Line BN goes through (6, 0) and (3, 6): its slope is (6 − 0)/(3 − 6) = −2, so y = −2(x − 6) = −2x + 12.",
+    "They cross where x/2 = −2x + 12, so 5x/2 = 12 and x = 24/5. Then y = 12/5. So P = (24/5, 12/5).",
+    "Shoelace around P, M, C, N: add x₁y₂ − x₂y₁ for each side. P to M: 24/5 × 3 − 6 × 12/5 = 0. M to C: 6 × 6 − 6 × 3 = 18. C to N: 6 × 6 − 3 × 6 = 18. N to P: 3 × 12/5 − 24/5 × 6 = −108/5.",
+    "Sum: 36 − 108/5 = 72/5. The area is half of that: <b>36/5</b>."]),
+  H("a12b-35", "amc12", "aime-3d", "A pyramid has a square base of side 6, and its top point is directly above the center of the base at height 4. A sphere inside the pyramid touches the base and all four triangular faces. What is the radius of the sphere?", ["1", "4/3", "3/2", "12/7", "2"], "3/2", "Slice the pyramid straight down through the top and the midpoints of two opposite base edges. The sphere becomes a circle inside a triangle.", [
+    "Slice through the top point and the midpoints of two opposite edges of the base. The slice of the pyramid is an isosceles triangle with base 6 and height 4.",
+    "By symmetry the sphere touches each slanted face on its center line, which lies in this slice. So the slice of the sphere is the circle inscribed in the triangle.",
+    "Each slanted side of the triangle is the hypotenuse of a right triangle with legs 3 and 4, so it is 5. The triangle has sides 5, 5, 6.",
+    "Inradius = area ÷ half the perimeter. Area = 1/2 × 6 × 4 = 12. Half the perimeter = (5 + 5 + 6) ÷ 2 = 8. So r = 12/8 = 3/2.",
+    "Check with volume: V = 1/3 × 36 × 4 = 48 and the total surface is 36 + 4 × (1/2 × 6 × 5) = 96. The pyramid splits into 5 small pyramids with top at the sphere's center and height r, so V = 1/3 × r × 96, giving r = 3/2 again.",
+    "The radius is <b>3/2</b>."]),
+  H("a12b-36", "amc12", "aime-3d", "A sphere of radius 1 is inscribed in a cube of side 2. A smaller sphere sits in one corner of the cube, touching the three faces that meet at that corner and also touching the big sphere. What is the radius of the small sphere?", ["1/4", "2 − √3", "(√3 − 1)/2", "√2 − 1", "√3 − 1"], "2 − √3", "Put the corner at (0, 0, 0). A sphere touching the three faces there has center (r, r, r).", [
+    "Put the corner at the origin with the cube filling 0 to 2 in each direction. The big sphere has center (1, 1, 1) and radius 1.",
+    "The small sphere touches the three faces x = 0, y = 0, z = 0, so its center is r away from each: the center is (r, r, r).",
+    "Distance between the centers: √((1 − r)² + (1 − r)² + (1 − r)²) = (1 − r)√3.",
+    "Two spheres that touch from outside have centers exactly (sum of radii) apart: (1 − r)√3 = 1 + r.",
+    "Solve: √3 − 1 = r(√3 + 1), so r = (√3 − 1)/(√3 + 1).",
+    "Multiply top and bottom by (√3 − 1): r = (√3 − 1)²/(3 − 1) = (4 − 2√3)/2 = <b>2 − √3</b>."]),
+  H("a12b-37", "amc12", "inscribed-angles", "Points A, B, C, D lie on a circle in that order. The arcs AB, BC, CD, DA measure 50°, 80°, 110° and 120°. Chords AC and BD cross at P. How many degrees is angle APB?", ["50", "65", "80", "100", "115"], "80", "Angle APB is an outside angle of triangle PBC. The two far angles of that triangle are inscribed angles.", [
+    "P is on segment AC, so angle APB is an exterior angle of triangle PBC. It equals the sum of the two far angles: angle PBC + angle PCB.",
+    "Angle PBC is the same as angle DBC, an inscribed angle that opens onto arc CD. It is half of 110°, which is 55°.",
+    "Angle PCB is the same as angle ACB, an inscribed angle that opens onto arc AB. It is half of 50°, which is 25°.",
+    "Angle APB = 55° + 25° = <b>80</b>°. (In general: an angle between two crossing chords is half the sum of the two arcs it faces.)"]),
+  H("a12b-38", "amc12", "inscribed-angles", "AB is a diameter of a circle of radius 5. Point C is on the circle with AC = 6. The bisector of angle ACB meets the circle again at D. What is CD?", ["5√2", "8", "6√2", "7√2", "10"], "7√2", "Angle ACB is 90°, so CD cuts it into two 45° angles. What does that say about arcs AD and BD? Finish with Ptolemy.", [
+    "AB is a diameter, so angle ACB = 90° (Thales). Then BC = √(10² − 6²) = 8.",
+    "CD cuts the 90° angle into two 45° inscribed angles, ACD and BCD. Each opens onto an arc of 90°, so arcs AD and BD are both 90°: D is the middle of the half circle on the far side of AB from C.",
+    "Equal arcs give equal chords, so AD = BD. Angle ADB = 90° (Thales again), so ADB is a 45-45-90 triangle with hypotenuse 10: AD = BD = 5√2.",
+    "Going around the circle the order is A, C, B, D, so ACBD is a cyclic quadrilateral with diagonals AB and CD.",
+    "Ptolemy: AB × CD = AC × BD + CB × DA, so 10 × CD = 6 × 5√2 + 8 × 5√2 = 70√2.",
+    "CD = <b>7√2</b>."]),
+  H("a12b-39", "amc12", "heron", "A triangle has sides 13, 20 and 21. What is the radius of its circumscribed circle?", ["14/3", "21/2", "65/6", "11", "13"], "65/6", "Find the area with Heron's formula, then use R = abc ÷ (4 × area).", [
+    "Half the perimeter: s = (13 + 20 + 21) ÷ 2 = 27.",
+    "Heron: area² = s(s − a)(s − b)(s − c) = 27 × 14 × 7 × 6. Group the factors: 27 × 6 = 162 = 2 × 81 and 14 × 7 = 98 = 2 × 49. So area² = 4 × 81 × 49 and area = 2 × 9 × 7 = 126.",
+    "Why R = abc/(4K): the area is K = 1/2 × ab × sin C, and the extended law of sines says c = 2R sin C. Replace sin C by c/(2R): K = abc/(4R).",
+    "R = (13 × 20 × 21)/(4 × 126) = 5460/504.",
+    "Divide top and bottom by 84: 5460 ÷ 84 = 65 and 504 ÷ 84 = 6.",
+    "R = <b>65/6</b>."]),
+  H("a12b-40", "amc12", "heron", "A triangle has sides √5, √10 and √13. What is its area?", ["3", "7/2", "4", "9/2", "5"], "7/2", "Heron's formula can be rewritten with only the squares of the sides: 16K² = 4a²b² − (a² + b² − c²)².", [
+    "Plain Heron is messy with square roots, so rewrite it. Heron says 16K² = (a + b + c)(a + b − c)(c + a − b)(c − a + b).",
+    "Pair them up with difference of squares: (a + b + c)(a + b − c) = (a + b)² − c², and (c + a − b)(c − a + b) = c² − (a − b)².",
+    "Write these as 2ab + (a² + b² − c²) and 2ab − (a² + b² − c²). Their product is another difference of squares: 16K² = 4a²b² − (a² + b² − c²)².",
+    "Now only squares of sides appear. With a² = 5, b² = 10, c² = 13: 16K² = 4 × 5 × 10 − (5 + 10 − 13)² = 200 − 4 = 196.",
+    "K² = 196/16, so K = 14/4 = <b>7/2</b>."])
+);
 /* =========================================================
    GENERATORS: Counting
    ========================================================= */
@@ -9596,7 +10528,7 @@ D_("fractions", {
   traps: ["Adding successive percent changes instead of multiplying.", "Using the new value as the base for percent change.", "Up 20% then down 20% is not a return to the start (it's 96%)."],
 });
 D_("ratios", {
-  facts: ["A ratio a : b means amounts ak and bk for some k. Find k from one fact.", "Part-to-whole: in a 3 : 5 ratio, the first part is 3/8 of the total.", "To chain a : b and b : c, rescale so the b's match.", "Direct proportion: double one, double the other (cost and items).", "Inverse proportion: workers × days stays the same for a fixed job.", "Adding the same amount to both parts changes the ratio."],
+  facts: ["A ratio a : b means amounts ak and bk for some k. Find k from one fact.", "Part-to-whole: in a 3 : 5 ratio, the first part is 3/8 of the total.", "To chain a : b and b : c, rescale so the b's match.", "Direct proportion: double one, double the other (cost and items).", "Inverse proportion: workers × days stays the same for a fixed job.", "Adding the same amount to both parts changes the ratio (unless the two parts are equal)."],
   walk: ["Red and blue marbles are in ratio 3 : 4. After 6 more red marbles are added, the ratio is 1 : 1. How many marbles were there at first?", ["Start with 3k red and 4k blue.", "After adding: 3k + 6 red and 4k blue, and these are equal.", "3k + 6 = 4k gives k = 6.", "At first: 18 red, 24 blue, <b>42</b> marbles.", "Check: 24 red and 24 blue after adding. ✓"]],
   walk2: ["8 workers finish a job in 15 days. How many days would 12 workers take at the same rate?", ["The job is 8 · 15 = 120 worker-days.", "12 workers: 120 ÷ 12 = <b>10 days</b>.", "More workers means fewer days: this is an inverse proportion, so don't set up 8/15 = 12/x."]],
   traps: ["Treating a ratio as the actual amounts (3 : 5 doesn't mean 3 boys).", "Setting up a direct proportion for an inverse situation.", "Chaining ratios without matching the shared term."],
@@ -9611,7 +10543,7 @@ D_("mental-math", {
   facts: ["× 5 = × 10 ÷ 2; × 25 = × 100 ÷ 4; × 125 = × 1000 ÷ 8.", "Near a round number: 99 · 13 = 1300 − 13.", "Difference of squares: (a + b)(a − b) = a² − b², so 48 · 52 = 2500 − 4.", "Squares ending in 5: for n5², multiply n(n + 1) and attach 25. 65² = 6·7 then 25 = 4225.", "Two numbers near 100: 97 · 96 = (100 − 3)(100 − 4) = 10000 − 700 + 12 = 9312.", "Estimate first to rule out answer choices."],
   walk: ["Compute 35 · 45 in your head.", ["35 and 45 are equally far from 40: 40 − 5 and 40 + 5.", "(40 − 5)(40 + 5) = 40² − 5² = 1600 − 25.", "= <b>1575</b>."]],
   walk2: ["Compute 103 · 97 + 9.", ["103 · 97 = (100 + 3)(100 − 3) = 10000 − 9 = 9991.", "9991 + 9 = <b>10000</b>. The problem was built for this shortcut."]],
-  traps: ["Rounding both factors up (or both down) doubles the error.", "Forgetting the middle terms when multiplying two numbers near 100 that aren't symmetric."],
+  traps: ["Rounding both factors up (or both down) makes the errors pile up instead of cancel.", "Forgetting the middle terms when multiplying two numbers near 100 that aren't symmetric."],
 });
 D_("units", {
   facts: ["12 in = 1 ft, 3 ft = 1 yd, 5280 ft = 1 mi; 60 s = 1 min, 3600 s = 1 h.", "Multiply by fractions equal to 1 (like 12 in/1 ft) so the unwanted units cancel.", "Square units square the factor: 1 yd² = 9 ft². Cubic units cube it: 1 yd³ = 27 ft³.", "60 mph = 88 ft/s (useful to memorize).", "Write units on every number; if the units of your answer are wrong, the answer is wrong."],
@@ -9649,7 +10581,7 @@ D_("parity", {
 D_("polygon-angles", {
   facts: ["Interior angles of an n-gon add to (n − 2) · 180°. Draw diagonals from one vertex: n − 2 triangles.", "Exterior angles (one at each vertex) always add to 360°, for any convex polygon.", "Regular n-gon: each exterior angle = 360°/n, each interior angle = 180° − 360°/n.", "Interior + exterior at the same vertex = 180°.", "Going backward: if each interior angle is A, then n = 360/(180 − A).", "Common values: triangle 60°, square 90°, pentagon 108°, hexagon 120°, octagon 135°, decagon 144°."],
   walk: ["A convex polygon has interior angles that add to 1980°. How many diagonals does it have?", ["Solve (n − 2) · 180 = 1980: n − 2 = 11, so n = 13.", "Diagonals: n(n − 3)/2 = 13 · 10/2 = <b>65</b>.", "Two formulas chained together is a typical AMC move. Know both cold."]],
-  walk2: ["The interior angles of a pentagon are x, 2x, 3x, 4x and 5x degrees. What is the largest angle?", ["Pentagon sum: 3 · 180 = 540°.", "x + 2x + 3x + 4x + 5x = 15x = 540, so x = 36.", "Largest: 5x = <b>180°</b>. That's a straight angle, so this pentagon can't be convex. Contest problems sometimes test whether you notice."]],
+  walk2: ["The interior angles of a convex pentagon are 2x, 3x, 4x, 4x and 5x degrees. What is the largest angle?", ["Pentagon sum: 3 · 180 = 540°.", "2x + 3x + 4x + 4x + 5x = 18x = 540, so x = 30.", "Largest: 5x = <b>150°</b>. Check: 60 + 90 + 120 + 120 + 150 = 540. ✓"]],
   traps: ["Using n · 180 instead of (n − 2) · 180.", "Thinking exterior angles add to more for bigger polygons (always 360°).", "Dividing the interior sum by n for a polygon that isn't regular."],
 });
 D_("diagonals", {
@@ -9701,7 +10633,7 @@ D_("drt", {
   traps: ["Mixing minutes and hours.", "Using the average of two speeds when the times differ."],
 });
 D_("avg-speed", {
-  facts: ["Average speed = total distance ÷ total time. Never just average the speeds.", "Equal distances at speeds a and b: average = 2ab/(a + b) (the harmonic mean).", "Equal times at speeds a and b: average = (a + b)/2.", "Average speed over equal distances is always below the simple average of the speeds.", "If one leg takes \"forever\" (speed near 0), the average can't be rescued by going fast on another leg."],
+  facts: ["Average speed = total distance ÷ total time. Never just average the speeds.", "Equal distances at speeds a and b: average = 2ab/(a + b) (the harmonic mean).", "Equal times at speeds a and b: average = (a + b)/2.", "Average speed over equal distances is always below the simple average of the speeds (when the two speeds are different).", "If one leg takes \"forever\" (speed near 0), the average can't be rescued by going fast on another leg."],
   walk: ["A car goes up a 6-mile hill at 30 mph. How fast must it go down the same 6 miles to average 40 mph for the trip?", ["Total distance: 12 miles. To average 40 mph, total time = 12/40 hour = 18 minutes.", "Going up takes 6/30 hour = 12 minutes.", "Down must take 6 minutes = 1/10 hour: speed = 6 ÷ (1/10) = <b>60 mph</b>.", "Formula check: 2 · 30 · 60/(30 + 60) = 3600/90 = 40. ✓"]],
   walk2: ["A car goes up the same 6-mile hill at 30 mph. Can it average 60 mph for the 12-mile round trip?", ["Averaging 60 mph over 12 miles takes 12 minutes total.", "The uphill already used 12 minutes.", "The downhill would need 0 minutes, so <b>no</b>, not at any finite speed."]],
   traps: ["Answering (30 + 60)/2 = 45 for equal distances.", "Forgetting that a round trip doubles the distance."],
@@ -9820,7 +10752,7 @@ D_("pythagorean", {
   facts: ["a² + b² = c², with c the hypotenuse (across from the right angle).", "Triples to know: 3-4-5, 5-12-13, 8-15-17, 7-24-25, 20-21-29, 9-40-41, and multiples (6-8-10, 9-12-15…).", "Recognize a scaled triple: legs 15 and 36 are 3 · (5, 12), so the hypotenuse is 39.", "Space diagonal of a box: √(a² + b² + c²).", "Generate triples: m² − n², 2mn, m² + n².", "Altitude to the hypotenuse = (leg · leg)/hypotenuse."],
   walk: ["A right triangle has legs 9 and 12. Find the length of the altitude to the hypotenuse and the two pieces it cuts the hypotenuse into.", ["Hypotenuse: 9-12-15 is 3 · (3-4-5), so 15.", "Area two ways: (9 · 12)/2 = 54 = (15 · h)/2, so h = 108/15 = <b>36/5</b>.", "Pieces: the leg 9 projects onto 81/15 = 27/5, and 12 projects onto 144/15 = 48/5.", "Check: 27/5 + 48/5 = 75/5 = 15. ✓"]],
   walk2: ["An ant walks on the outside of a 3 × 4 × 12 box from one corner to the opposite corner. How short can its path be?", ["Unfold two faces into a flat rectangle. The straight line is shortest.", "Options: √((3 + 4)² + 12²) = √193, √((3 + 12)² + 4²) = √241, √((4 + 12)² + 3²) = √265.", "Shortest: <b>√193</b>, about 13.9. (Flying through the inside would be 13.)"]],
-  traps: ["Adding a leg to the hypotenuse squared in the wrong order (c² − a², not a² − c²).", "Assuming a triangle is right without a right angle or a triple."],
+  traps: ["Adding when you should subtract to find a leg: b² = c² − a², not c² + a².", "Assuming a triangle is right without a right angle or a triple."],
 });
 D_("special-right", {
   facts: ["45-45-90: sides x, x, x√2. Diagonal of a square = side · √2.", "30-60-90: sides x, x√3, 2x. Short leg across from 30°, hypotenuse = 2 × short leg.", "Equilateral triangle with side s: height (√3/2)s, area (√3/4)s².", "Regular hexagon with side s: area (3√3/2)s² (six equilateral triangles).", "From hypotenuse h: 45-45-90 legs are h/√2 = h√2/2."],
@@ -9850,7 +10782,7 @@ D_("primes", {
 D_("divisibility", {
   facts: ["2: last digit even. 4: last two digits. 8: last three digits.", "3 and 9: digit sum. 5: ends in 0 or 5.", "11: alternating digit sum (from the right: +, −, +, …) divisible by 11.", "6 = 2 and 3. 12 = 3 and 4. 15 = 3 and 5. Combine rules for coprime factors.", "7, 11, 13: 1001 = 7 · 11 · 13, so abcabc is divisible by all three.", "A number and its digit sum have the same remainder mod 9."],
   walk: ["The six-digit number 52A4B8 is divisible by 72. Find all possible digit pairs (A, B).", ["72 = 8 · 9, and 8 and 9 share no factor, so check both.", "Divisible by 8: last three digits 4B8. Try B: 408, 448, 488 are multiples of 8 (408 = 8 · 51, 448 = 8 · 56, 488 = 8 · 61). So B = 0, 4, or 8.", "Divisible by 9: 5 + 2 + A + 4 + B + 8 = 19 + A + B must be a multiple of 9, so A + B = 8 or 17.", "B = 0: A = 8. B = 4: A = 4. B = 8: A = 0 (or A + B = 17 gives A = 9).", "Pairs: <b>(8, 0), (4, 4), (0, 8), (9, 8)</b>."]],
-  traps: ["Checking 4 and 6 to test 24 (they share a factor 2; use 3 and 8).", "Starting the 11 rule from the wrong end (either end works for divisibility, but stay consistent)."],
+  traps: ["Checking 4 and 6 to test 24 (they share a factor 2; use 3 and 8).", "Using the 11 rule to find a remainder but starting from the left: either end works for a yes/no divisibility test, but for the remainder the units digit must get the + sign."],
 });
 D_("num-divisors", {
   facts: ["If n = p^a · q^b · r^c, then n has (a + 1)(b + 1)(c + 1) divisors.", "Only perfect squares have an odd number of divisors.", "Divisors pair up: d with n/d. The product of all divisors is n^(d(n)/2).", "Sum of divisors: (1 + p + ··· + p^a)(1 + q + ··· + q^b)…", "Smallest number with k divisors: try exponents in decreasing order on 2, 3, 5, …"],
@@ -10128,7 +11060,7 @@ D_("cubes", {
 D_("sfft", {
   facts: ["xy + ax + by = c becomes (x + b)(y + a) = c + ab.", "Then list factor pairs of c + ab, keeping the sign and range conditions on x and y.", "If the xy coefficient isn't 1, multiply through first: 2xy + 3x + y = 7 times 2 is 4xy + 6x + 2y = 14, and adding 3 gives (2x + 1)(2y + 3) = 17.", "Common setup: 1/x + 1/y = 1/n becomes (x − n)(y − n) = n²."],
   walk: ["Find all pairs of positive integers with 1/x + 1/y = 1/6.", ["Multiply by 6xy: 6y + 6x = xy, so xy − 6x − 6y = 0.", "Add 36: (x − 6)(y − 6) = 36.", "Both factors must be positive (if both were negative, x and y would be under 6, making 1/x + 1/y > 1/6).", "36 has 9 positive divisors, so <b>9</b> ordered pairs, like (7, 42), (12, 12), (42, 7)."]],
-  walk2: ["Find all positive integers x, y with 3xy + x + y = 23.", ["The 3 in front of xy blocks the usual trick, so multiply everything by 3 first.", "9xy + 3x + 3y = 69. Add 1: (3x + 1)(3y + 1) = 70.", "Factors of 70 that are 1 more than a multiple of 3: 1, 4, 7, 10, 70. Need both ≥ 4.", "Pairs: (7, 10) or (10, 7), giving (x, y) = <b>(2, 3) or (3, 2)</b>.", "Check: 3 · 6 + 2 + 3 = 23. ✓"]],
+  walk2: ["Find all positive integers x, y with 3xy + x + y = 23.", ["The 3 in front of xy blocks the usual trick, so multiply everything by 3 first.", "9xy + 3x + 3y = 69. Add 1: (3x + 1)(3y + 1) = 70.", "Factors of 70 that are 1 more than a multiple of 3: 1, 7, 10, 70. Need both ≥ 4 (since x, y ≥ 1).", "Pairs: (7, 10) or (10, 7), giving (x, y) = <b>(2, 3) or (3, 2)</b>.", "Check: 3 · 6 + 2 + 3 = 23. ✓"]],
   traps: ["Adding the wrong constant (it's the product of the two coefficients).", "Forgetting negative factor pairs when variables can be negative."],
 });
 D_("expansions", {
@@ -10721,7 +11653,7 @@ BOOK.push(
   intro: "Exponent rules are a handful of patterns. Radicals are exponents of 1/2, and logarithms run exponents backward. Learn them as one family.",
   secs: [
   { id: "rules", t: "Exponent rules", h: `
-    ${rule("Rules (same base):", "aᵐ · aⁿ = aᵐ⁺ⁿ &nbsp; aᵐ/aⁿ = aᵐ⁻ⁿ &nbsp; (aᵐ)ⁿ = aᵐⁿ &nbsp; (ab)ⁿ = aⁿbⁿ<br>a⁰ = 1, a⁻ⁿ = 1/aⁿ, a^(1/n) = ⁿ√a, a^(m/n) = (ⁿ√a)ᵐ.")}
+    ${rule("Rules (same base):", "aᵐ · aⁿ = aᵐ⁺ⁿ &nbsp; aᵐ/aⁿ = aᵐ⁻ⁿ &nbsp; (aᵐ)ⁿ = aᵐⁿ &nbsp; (ab)ⁿ = aⁿbⁿ<br>a⁰ = 1 and a⁻ⁿ = 1/aⁿ (for a ≠ 0), a^(1/n) = ⁿ√a, a^(m/n) = (ⁿ√a)ᵐ.")}
     ${unp("why each rule is true", ["2³ · 2² = (2 · 2 · 2)(2 · 2) = five 2s = 2⁵. Multiplying strings together adds the counts: 3 + 2.", "(2³)² = 2³ · 2³ = six 2s = 2⁶. Two groups of three: multiply 3 × 2.", "Go down the list 2³ = 8, 2² = 4, 2¹ = 2: each step divides by 2. Keep going: 2⁰ = 1, 2⁻¹ = 1/2, 2⁻² = 1/4.", "Fractional powers: (8^(1/3))³ should be 8¹ = 8, so 8^(1/3) is the cube root, 2. Then 8^(2/3) = 2² = 4."])}
     <p>The main contest move: <b>rewrite everything with the same base</b>. 8ˣ = 2³ˣ, 27 = 3³, 0.25 = 2⁻².</p>
     ${ex("Solve 4ˣ⁺¹ = 8ˣ.", ["Base 2: 2^(2x + 2) = 2^(3x).", "2x + 2 = 3x, so x = <b>2</b>."])}
@@ -10768,7 +11700,7 @@ BOOK.push(
     ${ex("The roots of x² − 7x + 3 are r and s. Find r² + s² and 1/r + 1/s.", ["r + s = 7, rs = 3.", "r² + s² = 49 − 6 = <b>43</b>.", "1/r + 1/s = (r + s)/(rs) = <b>7/3</b>."])}
     ${prac("quadratics aime-vieta")}` },
   { id: "poly", t: "Polynomials", lv: "AMC 12 / AIME", h: `
-    ${rule("Polynomial toolkit:", "<b>Remainder theorem:</b> P(x) ÷ (x − a) leaves P(a).<br><b>Factor theorem:</b> P(a) = 0 ⇔ (x − a) is a factor.<br><b>Coefficient sum</b> = P(1).<br><b>Rational roots</b> p/q: p divides the constant, q divides the leading coefficient.<br><b>Conjugates:</b> real coefficients pair a + bi with a − bi.")}
+    ${rule("Polynomial toolkit:", "<b>Remainder theorem:</b> P(x) ÷ (x − a) leaves P(a).<br><b>Factor theorem:</b> P(a) = 0 ⇔ (x − a) is a factor.<br><b>Coefficient sum</b> = P(1).<br><b>Rational roots</b> p/q (integer coefficients, p/q in lowest terms): p divides the constant, q divides the leading coefficient.<br><b>Conjugates:</b> real coefficients pair a + bi with a − bi.")}
     <p>When P(1) = 1, P(2) = 2, P(3) = 3, look at P(x) − x, which has roots 1, 2, 3.</p>
     ${unp("the P(x) − x trick", ["Let Q(x) = P(x) − x. Then Q(1) = 1 − 1 = 0, Q(2) = 0, Q(3) = 0.", "So 1, 2, 3 are roots of Q, and Q(x) = (x − 1)(x − 2)(x − 3) · (something).", "Example: if P is cubic with leading coefficient 1, the something is 1, so P(x) = (x − 1)(x − 2)(x − 3) + x.", "Then P(4) = 3 · 2 · 1 + 4 = 10."])}
     ${pats(["Find a sum of powers of roots: Vieta or Newton's sums.", "Find a remainder: plug in the root of the divisor.", "Integer roots: Vieta plus factoring (SFFT)."])}
@@ -10796,7 +11728,7 @@ BOOK.push(
     <p>A sequence defined from earlier terms is often <b>periodic</b>. Compute terms until one repeats, then use the remainder of the index.</p>
     ${ex("a₁ = 1, a₂ = 2, aₙ = aₙ₋₁/aₙ₋₂. Find a₂₀₂₆.", ["1, 2, 2, 1, 1/2, 1/2, 1, 2, …: period 6.", "2026 = 6 × 337 + 4, so a₂₀₂₆ = a₄ = <b>1</b>."])}` },
   { id: "amgm", t: "Inequalities and optimization", lv: "AMC 12 / AIME", h: `
-    ${rule("Two tools:", "<b>Squares are never negative:</b> complete the square, minimum at the vertex.<br><b>AM-GM:</b> (a + b)/2 ≥ √(ab); fixed product → smallest sum when equal; fixed sum → largest product when equal.")}
+    ${rule("Two tools:", "<b>Squares are never negative:</b> complete the square, minimum at the vertex.<br><b>AM-GM:</b> for a, b ≥ 0, (a + b)/2 ≥ √(ab); fixed product → smallest sum when equal; fixed sum → largest product when equal.")}
     ${unp("why AM-GM is true", ["Start from a fact you trust: a square is never negative, so (√a − √b)² ≥ 0.", "Expand: a − 2√(ab) + b ≥ 0.", "Rearrange: a + b ≥ 2√(ab), so (a + b)/2 ≥ √(ab).", "Example: a = 4, b = 9. Average 6.5, geometric mean √36 = 6. And 6.5 ≥ 6. ✓", "Equality needs √a − √b = 0, that is a = b."])}
     ${ex("Minimize x + 25/x for x > 0.", ["Product x · 25/x = 25 is fixed.", "x + 25/x ≥ 2√25 = <b>10</b>, at x = 5."])}
     ${pats(["\"How many terms\" in a list: (last − first)/d + 1.", "Infinite geometric series inside word problems (bouncing balls, repeated games).", "Max area for a fixed perimeter: make it as equal as possible."])}
@@ -10833,7 +11765,7 @@ BOOK.push(
   { id: "units", t: "Units digits and big powers", h: `
     <p>Last digits of powers cycle: 2, 4, 8, 6, 2, … (length 4). For the last digit of 7²⁰²⁶, 2026 ≡ 2 (mod 4), so it matches 7² = 49: <b>9</b>.</p>
     ${unp("finding the cycle", ["Last digits of powers of 7: 7¹ = 7, 7² = 49, 7³ = 343, 7⁴ = 2401. Last digits 7, 9, 3, 1.", "7⁵ ends in 1 × 7 = 7 again, so the pattern repeats every 4.", "2026 = 4 × 506 + 2, so after 506 full cycles we are at position 2 of the cycle.", "Position 2 is 9."])}
-    ${rule("Theorems that shrink exponents:", `${"Fermat"}: a^(p − 1) ≡ 1 (mod p). Euler: a^φ(n) ≡ 1 (mod n) when gcd(a, n) = 1. For mod 1000, split into mod 8 and mod 125 and recombine with the Chinese Remainder Theorem.`)}
+    ${rule("Theorems that shrink exponents:", `${"Fermat"}: a^(p − 1) ≡ 1 (mod p) when p is prime and doesn't divide a. Euler: a^φ(n) ≡ 1 (mod n) when gcd(a, n) = 1. For mod 1000, split into mod 8 and mod 125 and recombine with the Chinese Remainder Theorem.`)}
     <p>Pop-ups: ${pop("fermat", "Fermat")}, ${pop("phi", "φ(n)")}, ${pop("crt", "CRT")}.</p>
     ${prac("units-digit aime-euler")}` },
   { id: "bases", t: "Bases and digits", h: `
@@ -10888,7 +11820,7 @@ BOOK.push(
   secs: [
   { id: "basic", t: "Counting probability", h: `
     ${rule("Equally likely outcomes:", "P = favorable ÷ total. List the sample space carefully: two dice have 36 ordered outcomes, not 21.")}
-    ${ex("Two dice are rolled. What is the probability the sum is 8?", ["Ordered pairs: (2,6), (3,5), (4,4), (5,3), (6,2): 5.", "5/36."])}
+    ${ex("Two dice are rolled. What is the probability the sum is 8?", ["Ordered pairs: (2,6), (3,5), (4,4), (5,3), (6,2): 5.", "<b>5/36</b>."])}
     ${prac("prob-basic prob-complement")}` },
   { id: "multi", t: "Independent, dependent, conditional", h: `
     <p>${pop("indep", "Independent")}: multiply. Without replacement: multiply with updated counts. ${pop("cond", "Conditional")}: restrict to what you know.</p>
@@ -10924,7 +11856,7 @@ BOOK.push(
     ${prac("angle-basics parallel-lines exterior-angle angle-chasing")}` },
   { id: "right", t: "Right triangles", h: `
     <p>The ${pop("pythag", "Pythagorean theorem")}: a² + b² = c². Memorize the common ${pop("triples", "triples")} and the ${pop("special", "special right triangles")}.</p>
-    ${tbl(["Triangle", "Sides"], [["3-4-5 family", "6-8-10, 9-12-15, 15-20-25"], ["5-12-13", "10-24-26"], ["8-15-17", "7-24-25, 20-21-29"], ["45-45-90", "x, x, x√2"], ["30-60-90", "x, x√3, 2x"]])}
+    ${tbl(["Triangle", "Sides"], [["3-4-5 family", "6-8-10, 9-12-15, 15-20-25"], ["5-12-13", "10-24-26"], ["Other triples", "8-15-17, 7-24-25, 20-21-29"], ["45-45-90", "x, x, x√2"], ["30-60-90", "x, x√3, 2x"]])}
     ${unp("where the special triangles come from", ["Take an equilateral triangle with side 2 and cut it in half from the top.", "Each half has hypotenuse 2, short leg 1 (half the base), and angles 30°, 60°, 90°.", "The height: √(2² − 1²) = √3. So the sides are 1, √3, 2, which scale to x, x√3, 2x.", "A square with side 1 cut along its diagonal gives a 45-45-90 triangle with hypotenuse √(1² + 1²) = √2."])}
     ${ex("A ladder 13 ft long reaches 12 ft up a wall. How far is its foot from the wall?", ["5-12-13 triangle: <b>5 ft</b>."])}
     ${prac("pythagorean special-right")}` },
@@ -10941,7 +11873,7 @@ BOOK.push(
       [pop("circumcenter", "Circumcenter"), "perpendicular bisectors", "R = abc/(4 · Area)"],
       ["Orthocenter", "altitudes", "in a right triangle, it's the right-angle corner"]])}
     ${unp("why Area = r · s", ["Connect the incenter I to the three corners. That splits the triangle into three smaller triangles.", "Each small triangle has a side of the big triangle as its base, and height r (the incircle touches each side at a right angle).", "Area = ½ar + ½br + ½cr = r × (a + b + c)/2 = r × s.", "Example: 3-4-5 triangle, area 6, s = 6, so r = 1."])}
-    ${rule("Segment formulas:", "Angle bisector: BD/DC = AB/AC. Median: m² = (2b² + 2c² − a²)/4. Stewart: b²m + c²n = a(d² + mn).")}
+    ${rule("Segment formulas:", "Angle bisector: BD/DC = AB/AC. Median: m² = (2b² + 2c² − a²)/4. Stewart: b²m + c²n = a(d² + mn), where a segment of length d from A splits side a into m (next to side c) and n (next to side b).")}
     ${prac("aime-bisector")}` },
   { id: "ineq", t: "Triangle inequality and classification", h: `
     <p>${pop("tri-ineq", "Triangle inequality")}: the longest side must be shorter than the other two added. With c the longest side: c² < a² + b² acute, = right, > obtuse.</p>
@@ -11181,7 +12113,7 @@ ${deep([
   "A system of two linear equations is two lines; the solution is where they cross. Elimination (add or subtract the equations to kill a variable) and substitution (solve one for a variable and plug in) always work. But contests reward a third approach: look at what's asked. If they want x + y, try adding or subtracting the equations before solving for anything.",
   "Watch for the special cases. If elimination wipes out both variables and leaves a true statement like 0 = 0, the lines are the same and there are infinitely many solutions. If it leaves something false like 0 = 4, the lines are parallel and there's no solution."])}
 ${fc("Elimination", "multiply equations so one variable's coefficients match, then add or subtract", "Adding equal things to equal things keeps them equal.", "Two equations, two unknowns, especially with nice coefficients.")}
-${fc("Number of solutions of ax + by = c, dx + ey = f", "one solution unless a/d = b/e", "When the coefficient ratios match, the lines have the same slope, so they're parallel or identical.", "\"For what k does the system have no solution (or infinitely many)?\"")}
+${fc("Number of solutions of ax + by = c, dx + ey = f", "one solution unless ae = bd (the same as a/d = b/e)", "When the coefficient ratios match, the lines have the same slope, so they're parallel or identical.", "\"For what k does the system have no solution (or infinitely many)?\"")}
 ${tips([
   "Clear fractions first by multiplying through by the common denominator.",
   "With three equations that each leave out one variable, add all three.",
@@ -11291,7 +12223,7 @@ ${deep([
   "A quadratic ax² + bx + c has a U-shaped graph (a parabola) that opens up if a > 0 and down if a < 0. Its roots are where the graph crosses the x-axis, and its vertex is the lowest (or highest) point, halfway between the roots.",
   "There are three ways to solve ax² + bx + c = 0. <b>Factor</b> when the numbers are friendly: look for two numbers that multiply to c and add to b (when a = 1). <b>Complete the square</b> to see the vertex. <b>The quadratic formula</b> always works.",
   "Completing the square is worth understanding, not just memorizing, because it's where the formula comes from and because it finds maximums and minimums. x² + 6x is a square missing a corner: (x + 3)² = x² + 6x + 9, so x² + 6x = (x + 3)² − 9. The smallest value of (x + 3)² − 9 is −9, at x = −3.",
-  "The discriminant b² − 4ac is the part under the square root in the formula. It tells you how many real roots there are without solving: two if positive, one (a double root) if zero, none if negative. If it's a perfect square, the roots are rational."])}
+  "The discriminant b² − 4ac is the part under the square root in the formula. It tells you how many real roots there are without solving: two if positive, one (a double root) if zero, none if negative. If a, b, c are integers and it's a perfect square, the roots are rational."])}
 ${fc("Quadratic formula", "x = (−b ± √(b² − 4ac)) / (2a)", "Divide by a, complete the square, take square roots of both sides.", "When factoring isn't obvious, or when you need exact roots with radicals.")}
 ${fc("Vertex", "x = −b/(2a); the min or max value is c − b²/(4a)", "The vertex is halfway between the roots, whose average is −b/(2a).", "Maximizing area or profit, minimizing a quadratic expression.")}
 ${fc("Vertex form", "a(x − h)² + k", "Completing the square rewrites any quadratic this way.", "Reading off the vertex (h, k) and the min/max value k.")}
@@ -11367,7 +12299,7 @@ ${deep([
   "A recursive sequence defines each term from earlier ones, like the Fibonacci numbers Fₙ = Fₙ₋₁ + Fₙ₋₂. Many counting problems produce recursions naturally: to count length-n strings with a property, look at how the string ends and reduce to shorter strings.",
   "When a recursion is hard to solve exactly, just compute terms. Contest problems usually ask for a term small enough (n = 10 or 12) to reach by hand in a table, or they have a cycle you can spot.",
   "Linear recursions like aₙ = 5aₙ₋₁ − 6aₙ₋₂ have a closed form. Try aₙ = xⁿ: you get x² = 5x − 6, so x = 2 or 3, and every solution is aₙ = A·2ⁿ + B·3ⁿ. Use the first two terms to find A and B."])}
-${fc("Characteristic equation", "aₙ = paₙ₋₁ + qaₙ₋₂ → x² = px + q; aₙ = Arⁿ + Bsⁿ", "Powers of a root of the characteristic equation satisfy the recursion, and combinations of solutions are solutions.", "Closed forms for linear recursions; the AIME uses these.")}
+${fc("Characteristic equation", "aₙ = paₙ₋₁ + qaₙ₋₂ → x² = px + q with two different roots r, s; aₙ = Arⁿ + Bsⁿ", "Powers of a root of the characteristic equation satisfy the recursion, and combinations of solutions are solutions.", "Closed forms for linear recursions; the AIME uses these.")}
 ${fc("Counting by the last move", "count(n) = (ways ending in A) + (ways ending in B)", "Every length-n object ends in exactly one way.", "Tilings, stairs climbed 1 or 2 steps at a time, strings with no two consecutive 1s (all Fibonacci).")}
 ${tips([
   "Build a table: n in one column, the count in another, and check the first few by listing.",
@@ -11378,8 +12310,8 @@ ${ex("How many ways can you climb 8 stairs taking 1 or 2 steps at a time?", ["Le
 bx("seq.amgm", `
 ${deep([
   "The AM-GM inequality says the average of nonnegative numbers is at least their geometric mean: (a + b)/2 ≥ √(ab), with equality exactly when a = b. The two-variable version follows from (√a − √b)² ≥ 0, which is just \"squares aren't negative\".",
-  "AM-GM turns a fixed sum into a maximum product, or a fixed product into a minimum sum. If x + y = 10, then xy ≤ 25. If xy = 16, then x + y ≥ 8. In both cases the extreme happens when the numbers are equal, so a good first guess for any optimization problem is \"make things equal\".",
-  "Sometimes you have to split terms to make AM-GM work. To minimize x + 4/x, the product x · (4/x) = 4 is constant, so x + 4/x ≥ 2√4 = 4. To minimize x² + 2/x, split it as x² + 1/x + 1/x so the product of the three pieces is constant."])}
+  "AM-GM turns a fixed sum into a maximum product, or a fixed product into a minimum sum. For positive x and y: if x + y = 10, then xy ≤ 25. If xy = 16, then x + y ≥ 8. In both cases the extreme happens when the numbers are equal, so a good first guess for any optimization problem is \"make things equal\".",
+  "Sometimes you have to split terms to make AM-GM work. To minimize x + 4/x for x > 0, the product x · (4/x) = 4 is constant, so x + 4/x ≥ 2√4 = 4. To minimize x² + 2/x, split it as x² + 1/x + 1/x so the product of the three pieces is constant."])}
 ${fc("AM-GM", "(a₁ + ··· + aₙ)/n ≥ ⁿ√(a₁···aₙ) for aᵢ ≥ 0, equal iff all aᵢ are equal", "Two-variable case: (√a − √b)² ≥ 0. The general case builds from it.", "Max product with a fixed sum, min sum with a fixed product.")}
 ${fc("Trivial inequality", "x² ≥ 0", "A square can't be negative.", "Completing the square to find minimums, and proving other inequalities.")}
 ${fc("Cauchy-Schwarz", "(a₁b₁ + a₂b₂)² ≤ (a₁² + a₂²)(b₁² + b₂²)", "It's the statement that a dot product is at most the product of lengths.", "Maximizing ax + by subject to x² + y² = r²: the max is r√(a² + b²).")}
@@ -11688,7 +12620,7 @@ ${deep([
   "Regular polygons (all sides and angles equal) have each exterior angle 360°/n. That gives the interior angle quickly and works backward too: if each interior angle is 150°, the exterior is 30°, so n = 12.",
   "Regular hexagons and octagons appear constantly. A regular hexagon is six equilateral triangles. A regular octagon is a square with its corners cut off as isosceles right triangles. Both decompositions turn area questions into easy ones."])}
 ${fc("Angle sums", "interior sum = (n − 2) · 180°; exterior sum = 360°", "Triangulate from one vertex; for exterior, total turning is one full circle.", "Polygon angle problems and finding n from an angle.")}
-${fc("Diagonals", "n(n − 3)/2", "Each vertex connects to n − 3 non-neighbors; each diagonal counted twice.", "Counting diagonals and their crossings (C(n, 4) inside a convex polygon).")}
+${fc("Diagonals", "n(n − 3)/2", "Each vertex connects to n − 3 non-neighbors; each diagonal counted twice.", "Counting diagonals and their crossings (C(n, 4) inside a convex polygon when no three diagonals cross at one point).")}
 ${fc("Regular hexagon", "area = (3√3/2)s²; long diagonal 2s; short diagonal s√3", "Six equilateral triangles of side s.", "Hexagons in any problem.")}
 ${tips([
   "Interior + exterior at each vertex = 180°.",
@@ -11835,7 +12767,7 @@ ${ex("A cone has radius 3 and height 4. It is unrolled into a flat sector. What 
 bx("geo4.distances", `
 ${deep([
   "Distances in 3D extend the Pythagorean theorem: the diagonal of a box is √(a² + b² + c²). For any distance between two points in a solid, find a right triangle that contains it, often lying in a hidden plane slice through the solid.",
-  "Slicing a solid with a plane gives a flat cross-section, and many 3D questions become 2D questions about that slice. A plane through the center of a sphere cuts a great circle; slicing a cube through three corners gives an equilateral triangle; the cross-section of a cone parallel to its base is a smaller circle.",
+  "Slicing a solid with a plane gives a flat cross-section, and many 3D questions become 2D questions about that slice. A plane through the center of a sphere cuts a great circle; slicing a cube through the three corners next to one corner gives an equilateral triangle; the cross-section of a cone parallel to its base is a smaller circle.",
   "Shortest paths along the surface (an ant crawling on a box) are solved by unfolding the faces into a flat net and drawing a straight line. Try each way of unfolding the relevant faces and take the smallest."])}
 ${fc("Space diagonal", "d = √(a² + b² + c²); cube: s√3", "Apply Pythagoras twice: across a face, then up.", "Spheres around boxes, longest rod that fits, cube in a sphere.")}
 ${fc("Sphere slices", "a plane at distance d from the center cuts a circle of radius √(R² − d²)", "Right triangle with the radius as hypotenuse.", "Cross-sections, spherical caps, a sphere resting in a hole.")}
@@ -11892,7 +12824,7 @@ ${deep([
 ${fc("Law of cosines", "c² = a² + b² − 2ab cos C", "Drop an altitude from B and apply Pythagoras to both pieces.", "SAS and SSS triangles; any triangle with a 60° or 120° angle.")}
 ${fc("Law of sines", "a/sin A = b/sin B = c/sin C = 2R", "Each side is a chord of the circumcircle, and the inscribed angle across from it is the triangle's angle.", "AAS and ASA triangles, circumradius, ratios of sides.")}
 ${fc("Area", "Area = ½ab sin C", "The height to side a is b sin C.", "Two sides and the angle between them; comparing areas with a shared angle.")}
-${fc("Stewart's theorem", "b²m + c²n = a(d² + mn) for a cevian of length d splitting side a into m and n", "Law of cosines in both small triangles, using cos of supplementary angles.", "Lengths of medians, angle bisectors and other cevians.")}
+${fc("Stewart's theorem", "b²m + c²n = a(d² + mn) for a cevian of length d splitting side a into m (the piece next to side c) and n (the piece next to side b)", "Law of cosines in both small triangles, using cos of supplementary angles.", "Lengths of medians, angle bisectors and other cevians.")}
 ${tips([
   "Law of sines with two sides and a non-included angle (SSA) can give two triangles. Check both.",
   "If you know all three sides, cos C = (a² + b² − c²)/(2ab) tells you whether C is acute (positive) or obtuse (negative).",
@@ -12428,7 +13360,7 @@ function viewHome() {
   return `
   <section class="hero">
     <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
-      <span class="eyebrow">Math Kangaroo · AMC 8 · AMC 10 · AIME</span>
+      <span class="eyebrow">Math Kangaroo · AMC 8 · AMC 10 · AMC 12 · AIME</span>
       <h1>Competition Math Training</h1>
       <div class="row"><button class="btn primary" data-act="go" data-v="learn">Start a lesson</button><button class="btn" data-act="go" data-v="setup">Take a practice test</button><button class="btn ghost" data-act="go" data-v="formulas">Formula sheet</button></div>
       ${storageNote()}
