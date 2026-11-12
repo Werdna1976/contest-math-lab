@@ -1351,7 +1351,7 @@ Object.assign(TRICKS, {
     { at: "Necklaces can flip", t: "Flip → divide by 2 again.", h: "A bracelet can be turned over, so (n − 1)! ÷ 2." },
   ],
   "derangements": [
-    { at: "Small cases", t: "1, 0, 1, 2, 9, 44, 265.", h: "Derangements of 1 through 7 items. Memorize up to 44 (n = 5)." },
+    { at: "Small cases", t: "1, 0, 1, 2, 9, 44, 265.", h: "Derangements of 0 through 6 items. Memorize up to 44 (n = 5)." },
     { at: "The recursion", t: "!n = (n − 1)(!(n − 1) + !(n − 2)).", h: "!5 = 4 × (9 + 2) = 44. For big n, about n! ÷ e (≈ 37% of all orders)." },
   ],
   "inscribed-angles": [
@@ -4175,7 +4175,7 @@ Object.assign(LESSONS, {
     body: () => `
       <h3>Track the pure stuff</h3>
       ${rule("Key idea:", "amount of acid (or salt, or juice) = percent × total. Write that for every container, then add.")}
-      ${ex("Mix 10 L of 20% salt water with 30 L of 40% salt water. What percent is salt?", ["Track the salt, not the percents. 20% of 10 L = 2 L of salt. 40% of 30 L = 12 L.", "Total salt 14 L in 10 + 30 = 40 L of water.", "14 ÷ 40 = 0.35 = <b>35%</b>. (Not 30%: there's more of the 40% mix.)"])}
+      ${ex("Mix 10 L of 20% salt water with 30 L of 40% salt water. What percent is salt?", ["Track the salt, not the percents. 20% of 10 L = 2 L of salt. 40% of 30 L = 12 L.", "Total salt 14 L in 10 + 30 = 40 L of mixture.", "14 ÷ 40 = 0.35 = <b>35%</b>. (Not 30%: there's more of the 40% mix.)"])}
       <h3>Adding water or adding juice</h3>
       <p>Adding water keeps the pure amount fixed. Adding the pure ingredient keeps the <i>water</i> fixed.</p>
       ${ex("How much water turns 6 L of 50% juice into 30% juice?", ["Adding water doesn't change the amount of juice: 50% of 6 L = 3 L.", "Those 3 L must be 30% of the new total: total = 3 ÷ 0.3 = 10 L.", "10 − 6 = <b>4 L</b> of water."])}
@@ -6442,7 +6442,7 @@ BANK.push(
   H("h11-ol1", "amc10", "organized-lists", "How many triangles with whole-number side lengths have perimeter 15? (Count triangles with the same three sides once.)", ["5", "6", "7", "8", "9"], "7", "List a ≤ b ≤ c. The longest side must be less than half the perimeter.", ["Triangle rule: c < a + b, so c < 7.5, so c ≤ 7. Also c ≥ 5.", "c = 7: a + b = 8 → (1,7), (2,6), (3,5), (4,4): 4 triangles.", "c = 6: a + b = 9 with b ≤ 6 → (3,6), (4,5): 2 triangles.", "c = 5: a + b = 10 with b ≤ 5 → (5,5): 1 triangle.", "Total 4 + 2 + 1 = <b>7</b>."]),
   H("h11-ol2", "amc10", "organized-lists", "How many ways can you make 50¢ using only nickels, dimes, and quarters?", ["8", "9", "10", "11", "12"], "10", "Sort by quarters, then dimes. Nickels fill whatever is left.", ["0 quarters: 50¢ left, dimes can be 0 to 5: 6 ways.", "1 quarter: 25¢ left, dimes can be 0 to 2: 3 ways.", "2 quarters: nothing left: 1 way.", "Total 6 + 3 + 1 = <b>10</b>."]),
   H("h11-lp1", "amc10", "logic-puzzles", "Knights always tell the truth and knaves always lie. A says, \"B is a knave.\" B says, \"A and C are the same type.\" How many of A, B, C are knights?", ["0", "1", "2", "3", "Can't be decided"], "1", "Try both cases for A.", ["If A is a knight: B is a knave, so B lies, so A and C differ, so C is a knave. Knights: just A.", "If A is a knave: B is a knight, so A and C are the same, so C is a knave. Knights: just B.", "We can't tell who, but either way there is exactly <b>1</b> knight."]),
-  H("h11-lp2", "amc10", "logic-puzzles", "Knights always tell the truth and knaves always lie. A says, \"Exactly one of us three is a knave.\" B says, \"Exactly two of us are knaves.\" C says, \"All three of us are knaves.\" Who is a knight?", ["Only A", "Only B", "Only C", "A and B", "No one"], "Only B", "The three statements can't both be true, so at most one person is a knight.", ["C can't be a knight: a knight can't truthfully call himself a knave. So C is a knave.", "The statements contradict each other, so at most one is true: at most one knight.", "If there were no knights, C's statement would be true. Impossible. So there is exactly one knight and two knaves.", "\"Exactly two knaves\" is then true, so B is the knight: <b>Only B</b>."]),
+  H("h11-lp2", "amc10", "logic-puzzles", "Knights always tell the truth and knaves always lie. A says, \"Exactly one of us three is a knave.\" B says, \"Exactly two of us are knaves.\" C says, \"All three of us are knaves.\" Who is a knight?", ["Only A", "Only B", "Only C", "A and B", "No one"], "Only B", "No two of the three statements can be true together, so at most one person is a knight.", ["C can't be a knight: a knight can't truthfully call himself a knave. So C is a knave.", "The statements contradict each other, so at most one is true: at most one knight.", "If there were no knights, C's statement would be true. Impossible. So there is exactly one knight and two knaves.", "\"Exactly two knaves\" is then true, so B is the knight: <b>Only B</b>."]),
   H("h11-we1", "amc10", "word-eq", "Pens cost 3 for $2 and notebooks cost $3 each. Maya buys 15 items for exactly $24. How many notebooks did she buy?", ["3", "4", "5", "6", "9"], "6", "Let n be the notebooks. Then 15 − n are pens at 2/3 dollar each.", ["Pens: 15 − n at $2/3 each. Notebooks: n at $3 each.", "(2/3)(15 − n) + 3n = 24. Multiply by 3: 30 − 2n + 9n = 72.", "7n = 42, so n = <b>6</b>.", "Check: 9 pens cost $6 and 6 notebooks cost $18. $6 + $18 = $24."]),
   H("h11-we2", "amc10", "word-eq", "A two-digit number's digits add to 11. Reversing the digits makes the number 27 larger. What is the number?", ["29", "38", "47", "56", "74"], "47", "Write the number as 10a + b. Reversing gives 10b + a.", ["(10b + a) − (10a + b) = 9(b − a) = 27, so b − a = 3.", "Also a + b = 11.", "Add: 2b = 14 → b = 7, a = 4.", "The number is <b>47</b>. Check: 74 − 47 = 27."]),
   H("h11-ab1", "amc10", "angle-basics", "The supplement of an angle is 6 times its complement. What is the angle?", ["60°", "66°", "72°", "75°", "80°"], "72°", "Supplement = 180° − x. Complement = 90° − x.", ["180 − x = 6(90 − x).", "180 − x = 540 − 6x → 5x = 360.", "x = <b>72°</b>. Check: 108 = 6 × 18."]),
@@ -7323,6 +7323,430 @@ BANK.push(
     "Now only squares of sides appear. With a² = 5, b² = 10, c² = 13: 16K² = 4 × 5 × 10 − (5 + 10 − 13)² = 200 − 4 = 196.",
     "K² = 196/16, so K = 14/4 = <b>7/2</b>."])
 );
+/* =========================================================
+   BANK FIGURES: diagrams attached to existing geometry bank problems by id.
+   Runs after every bank file. Each figure is computed from the problem's real numbers (to scale)
+   and labels only what the question gives.
+   ========================================================= */
+const BANK_FIGS = (() => {
+  const RAD = Math.PI / 180, AC = "var(--accent)", SOFT = "var(--accent-soft)";
+  const r1 = v => Math.round(v * 10) / 10;
+  const add = (a, b) => [a[0] + b[0], a[1] + b[1]], sub = (a, b) => [a[0] - b[0], a[1] - b[1]], mul = (a, k) => [a[0] * k, a[1] * k];
+  const len = a => Math.hypot(a[0], a[1]), unit = a => mul(a, 1 / (len(a) || 1));
+  const lerp = (a, b, t) => add(a, mul(sub(b, a), t));
+  const pol = (c, r, deg) => [c[0] + r * Math.cos(deg * RAD), c[1] + r * Math.sin(deg * RAD)];
+  const meet = (a, b, c, d) => { // intersection of lines ab and cd
+    const r = sub(b, a), q = sub(d, c), k = r[0] * q[1] - r[1] * q[0];
+    return add(a, mul(r, ((c[0] - a[0]) * q[1] - (c[1] - a[1]) * q[0]) / k));
+  };
+
+  // Figure context. Points are in math coordinates (y up); F fits them into a box of at most W × H pixels.
+  function F(pts, o = {}) {
+    const pad = o.pad == null ? 22 : o.pad, pl = o.pl == null ? pad : o.pl, pr = o.pr == null ? pad : o.pr, pt = o.pt == null ? pad : o.pt, pb = o.pb == null ? pad : o.pb;
+    const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
+    const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+    const s = Math.min(((o.W || 270) - pl - pr) / (x1 - x0), ((o.H || 190) - pt - pb) / (y1 - y0));
+    const W = Math.round((x1 - x0) * s + pl + pr), H = Math.round((y1 - y0) * s + pt + pb);
+    const T = p => [r1(pl + (p[0] - x0) * s), r1(pt + (y1 - p[1]) * s)];
+    let out = "";
+    const g = {
+      s, T,
+      raw(str) { out += str; },
+      L(a, b, o = {}) { const p = T(a), q = T(b); out += seg(p[0], p[1], q[0], q[1], o); },
+      P(ps, o = {}) { out += poly(ps.map(T), { fill: o.fill || "none", c: o.c, w: o.w }); },
+      C(c, r, o = {}) { const p = T(c); out += circ(p[0], p[1], r1(r * s), o); },
+      E(c, rx, ry, o = {}) { const p = T(c); out += `<ellipse cx="${p[0]}" cy="${p[1]}" rx="${r1(rx * s)}" ry="${r1(ry * s)}" fill="${o.fill || "none"}" stroke="${o.c || "var(--ink)"}" stroke-width="${o.w || 2}" ${o.dash ? `stroke-dasharray="${o.dash}"` : ""}/>`; },
+      D(p, o = {}) { const q = T(p); out += dot(q[0], q[1], { r: o.r || 3, c: o.c }); },
+      t(p, str, dx = 0, dy = 0, o = {}) { const q = T(p); out += txt(r1(q[0] + dx), r1(q[1] + dy + 4.5), str, o); },
+      // label at p pushed d pixels directly away from point `from`
+      lab(p, str, from, d = 13, o = {}) { const u = unit(sub(p, from)); g.t(p, str, u[0] * d, -u[1] * d, o); },
+      // label at the midpoint of ab, pushed d pixels to the side away from point `away`
+      mid(a, b, str, away, d = 11, o = {}) {
+        const m = lerp(a, b, 0.5), v = unit(sub(b, a)); let n = [-v[1], v[0]];
+        if (away && (n[0] * (away[0] - m[0]) + n[1] * (away[1] - m[1])) > 0) n = mul(n, -1);
+        g.t(m, str, n[0] * d, -n[1] * d, o);
+      },
+      // arc from angle t1 to t2 (degrees, counterclockwise) on the circle with center c and radius r
+      arc(c, r, t1, t2, o = {}) {
+        const p = T(pol(c, r, t1)), q = T(pol(c, r, t2)), rr = r1(r * s);
+        out += `<path d="M${p[0]} ${p[1]} A${rr} ${rr} 0 ${t2 - t1 > 180 ? 1 : 0} 0 ${q[0]} ${q[1]}" fill="none" stroke="${o.c || "var(--ink)"}" stroke-width="${o.w || 2}" ${o.dash ? `stroke-dasharray="${o.dash}"` : ""}/>`;
+      },
+      // angle mark at vertex v between rays va and vb; o: r (px), label, ld (px), c, n (number of arcs)
+      ang(v, a, b, o = {}) {
+        let t1 = Math.atan2(a[1] - v[1], a[0] - v[0]) / RAD, d = Math.atan2(b[1] - v[1], b[0] - v[0]) / RAD - t1;
+        while (d <= -180) d += 360; while (d > 180) d -= 360;
+        if (d < 0) { t1 += d; d = -d; }
+        const r = (o.r || 18) / s;
+        for (let k = 0; k < (o.n || 1); k++) g.arc(v, r + k * 3.5 / s, t1, t1 + d, { c: o.c, w: 1.5 });
+        if (o.label) { const q = pol(v, r + (o.ld || 14) / s, t1 + d / 2); g.t(q, o.label, 0, 0, { fill: o.c, size: 12 }); }
+      },
+      // right-angle mark at v between rays va and vb
+      rt(v, a, b, z = 9) {
+        const u = mul(unit(sub(a, v)), z / s), w = mul(unit(sub(b, v)), z / s);
+        const p = T(add(v, u)), q = T(add(add(v, u), w)), r = T(add(v, w));
+        out += pathEl(`M${p[0]} ${p[1]} L${q[0]} ${q[1]} L${r[0]} ${r[1]}`, { w: 1.5 });
+      },
+      // n tick marks across the middle of ab (equal-length marks)
+      tick(a, b, n = 1) {
+        const v = unit(sub(b, a)), nn = [-v[1], v[0]], m = lerp(a, b, 0.5);
+        for (let k = 0; k < n; k++) { const c = add(m, mul(v, (k - (n - 1) / 2) * 4 / s)); g.L(add(c, mul(nn, 5 / s)), add(c, mul(nn, -5 / s)), { w: 1.5 }); }
+      },
+      // path from commands ["M",p] ["L",p] ["A",r,large,ccw,p] ["Z"]; o: fill, c, w, eo (even-odd fill)
+      path(cmds, o = {}) {
+        const d = cmds.map(c => {
+          if (c[0] === "Z") return "Z";
+          if (c[0] === "A") { const p = T(c[4]), rr = r1(c[1] * s); return `A${rr} ${rr} 0 ${c[2]} ${c[3] ? 0 : 1} ${p[0]} ${p[1]}`; }
+          const p = T(c[1]); return `${c[0]}${p[0]} ${p[1]}`;
+        }).join(" ");
+        out += `<path d="${d}" fill="${o.fill || "none"}" ${o.eo ? 'fill-rule="evenodd"' : ""} stroke="${o.c || "var(--ink)"}" stroke-width="${o.w == null ? 2 : o.w}"/>`;
+      },
+      // lens between p and q bounded by two arcs of radius r
+      lens(p, q, r, o = {}) { g.path([["M", p], ["A", r, 0, false, q], ["A", r, 0, false, p], ["Z"]], { fill: SOFT, ...o }); },
+      svg(label) { return svg(W, H, out, label); },
+    };
+    return g;
+  }
+  const circCmds = (c, r) => [["M", [c[0] - r, c[1]]], ["A", r, 1, true, [c[0] + r, c[1]]], ["A", r, 1, true, [c[0] - r, c[1]]], ["Z"]];
+  const polyCmds = ps => [["M", ps[0]], ...ps.slice(1).map(p => ["L", p]), ["Z"]];
+  const box4 = r => [[-r, -r], [r, r]];
+
+  /* ---------- shared builders ---------- */
+  // triangle ABC with D on AB, E on AC, DE parallel to BC (to scale: AB = ad + db, BC = bc)
+  function triDE(ad, db, bc, deLabel, shade) {
+    const B = [0, 0], C = [bc, 0], A = pol(B, ad + db, 62), k = ad / (ad + db), D = lerp(A, B, k), E = lerp(A, C, k);
+    const g = F([A, B, C], { H: 200, pl: 30 });
+    if (shade) g.P([A, D, E], { fill: SOFT, w: 0.1 });
+    g.P([A, B, C]); g.L(D, E, { c: AC });
+    g.t(A, "A", 0, -12); g.t(B, "B", -11, 6); g.t(C, "C", 11, 6); g.t(D, "D", -12, 0); g.t(E, "E", 12, 0);
+    g.mid(A, D, String(ad), C, 13); g.mid(D, B, String(db), C, 13);
+    if (deLabel) g.mid(D, E, deLabel, A, 11);
+    return g.svg("Triangle ABC with D on AB and E on AC, DE parallel to BC");
+  }
+  // two chords AB and CD of a circle of radius R crossing at P, cut into pieces p1, q1 and p2, q2
+  function chords(R, p1, q1, p2, q2, labels) {
+    const O = [0, 0], L1 = p1 + q1, h1 = Math.sqrt(R * R - L1 * L1 / 4), L2 = p2 + q2, h2 = Math.sqrt(R * R - L2 * L2 / 4);
+    const A = [-L1 / 2, -h1], B = [L1 / 2, -h1], P = [p1 - L1 / 2, -h1];
+    const phi = Math.atan2(P[1], P[0]) - Math.atan2(h2, p2 - L2 / 2), rot = p => [p[0] * Math.cos(phi) - p[1] * Math.sin(phi), p[0] * Math.sin(phi) + p[1] * Math.cos(phi)];
+    const C = rot([-L2 / 2, h2]), D = rot([L2 / 2, h2]);
+    const g = F(box4(R), { H: 200, pad: 24 });
+    g.C(O, R); g.L(A, B); g.L(C, D); g.D(P);
+    g.lab(A, "A", O); g.lab(B, "B", O); g.lab(C, "C", O); g.lab(D, "D", O); g.t(P, "P", 9, -11);
+    g.mid(A, P, labels[0], D, 10); g.mid(P, B, labels[1], C, 10); g.mid(C, P, labels[2], A, 11);
+    return g.svg("Two chords AB and CD of a circle crossing at P");
+  }
+  // oblique box drawing: x to the right, y going back, z up
+  const pr3 = (x, y, z) => [x + 0.42 * y, z + 0.3 * y];
+  function box3(g, a, b, c) {
+    g.P([pr3(0, 0, 0), pr3(a, 0, 0), pr3(a, 0, c), pr3(0, 0, c)]);
+    g.L(pr3(0, 0, c), pr3(0, b, c)); g.L(pr3(a, 0, c), pr3(a, b, c)); g.L(pr3(0, b, c), pr3(a, b, c));
+    g.L(pr3(a, 0, 0), pr3(a, b, 0)); g.L(pr3(a, b, 0), pr3(a, b, c));
+    const h = { dash: "4 4", w: 1.2, c: "var(--muted)" };
+    g.L(pr3(0, b, 0), pr3(0, 0, 0), h); g.L(pr3(0, b, 0), pr3(a, b, 0), h); g.L(pr3(0, b, 0), pr3(0, b, c), h);
+  }
+  const boxPts = (a, b, c) => [pr3(0, 0, 0), pr3(a, b, c)];
+
+  return {
+    /* ================= angles ================= */
+    "k78-5": () => {
+      const O = [0, 0], V = [0, 1, 2, 3, 4].map(i => pol(O, 1, 90 + 72 * i)), g = F(V, { H: 180 });
+      g.P(V); g.L(V[0], V[2], { c: AC }); g.ang(V[0], V[1], V[2], { r: 24, c: AC });
+      V.forEach((p, i) => g.lab(p, "ABCDE"[i], O));
+      return g.svg("Regular pentagon ABCDE with diagonal AC");
+    },
+    "ga-ac1": () => {
+      const A = [0, 1], B = [1, 1], C = [1, 0], D = [0, 0], E = [0.5, 1 + Math.sqrt(3) / 2], g = F([C, D, E], { H: 210 });
+      g.P([A, B, C, D]); g.L(A, E); g.L(B, E); g.L(E, D, { c: AC }); g.ang(E, A, D, { r: 36, c: AC });
+      g.t(A, "A", -12, -2); g.t(B, "B", 12, -2); g.t(C, "C", 12, 4); g.t(D, "D", -12, 4); g.t(E, "E", 0, -12);
+      return g.svg("Square ABCD with equilateral triangle ABE on side AB, and segment ED");
+    },
+    "ga-ac3": () => {
+      const b = Math.cos(72 * RAD), A = [0, Math.sin(72 * RAD)], B = [-b, 0], C = [b, 0], D = lerp(A, C, 2 * b), g = F([A, B, C], { H: 210 });
+      g.P([A, B, C]); g.L(B, D); g.tick(A, D); g.tick(B, D); g.tick(B, C);
+      g.t(A, "A", 0, -12); g.t(B, "B", -11, 6); g.t(C, "C", 11, 6); g.t(D, "D", 12, -2);
+      return g.svg("Isosceles triangle ABC with D on AC; AD, BD and BC are marked equal");
+    },
+    "h6-ac1": () => {
+      const B = [0, 0], C = [4, 0], A = pol(B, 4 * Math.sin(80 * RAD) / Math.sin(40 * RAD), 60);
+      const a = 4, b = len(sub(A, C)), c = len(sub(A, B)), k = -a + b + c;
+      const E = [(-a * A[0] + b * B[0] + c * C[0]) / k, (-a * A[1] + b * B[1] + c * C[1]) / k];
+      const B2 = add(B, mul(unit(sub(B, A)), 2.6)), C2 = add(C, mul(unit(sub(C, A)), 2.6));
+      const g = F([A, B2, C2, E], { H: 215 });
+      g.L(A, B2); g.L(A, C2); g.L(B, C); g.L(B, E, { c: AC }); g.L(C, E, { c: AC });
+      g.ang(A, B, C, { label: "40°", r: 30, ld: 15 });
+      g.ang(B, B2, E, { r: 15 }); g.ang(B, E, C, { r: 15 }); g.ang(C, E, C2, { r: 13, n: 2 }); g.ang(C, B, E, { r: 13, n: 2 });
+      g.t(A, "A", 0, -12); g.t(B, "B", -13, -3); g.t(C, "C", 13, -3); g.t(E, "E", 0, 14);
+      return g.svg("Triangle ABC with sides AB and AC extended; the bisectors of the exterior angles at B and C meet at E");
+    },
+    "h18-ac1": () => {
+      const B = [0, 0], C = [5, 0], A = pol(B, 5 * Math.sin(70 * RAD) / Math.sin(50 * RAD), 60);
+      const a = 5, b = len(sub(A, C)), c = len(sub(A, B)), I = [(a * A[0] + b * B[0] + c * C[0]) / (a + b + c), (a * A[1] + b * B[1] + c * C[1]) / (a + b + c)];
+      const g = F([A, B, C], { H: 200 });
+      g.P([A, B, C]); g.L(B, I, { c: AC }); g.L(C, I, { c: AC });
+      g.ang(A, B, C, { label: "50°", r: 22 });
+      g.ang(B, C, I, { r: 24 }); g.ang(B, I, A, { r: 24 }); g.ang(C, I, B, { r: 20, n: 2 }); g.ang(C, A, I, { r: 20, n: 2 });
+      g.t(A, "A", 0, -12); g.t(B, "B", -11, 6); g.t(C, "C", 11, 6); g.t(I, "I", 0, -12);
+      return g.svg("Triangle ABC with the bisectors of angles B and C meeting at I");
+    },
+    "ho-ea3": () => {
+      const b = Math.cos(65 * RAD), A = [0, Math.sin(65 * RAD)], B = [-b, 0], C = [b, 0], D = [b + 0.75, 0], g = F([A, B, D], { H: 190 });
+      g.L(B, D); g.L(A, B); g.L(A, C); g.tick(A, B); g.tick(A, C); g.ang(C, D, A, { label: "115°", r: 16, ld: 20 });
+      g.t(A, "A", 0, -12); g.t(B, "B", -8, 14); g.t(C, "C", 0, 14); g.t(D, "D", 6, 14);
+      return g.svg("Isosceles triangle ABC with BC extended past C to D; angle ACD is 115 degrees");
+    },
+    "ga-pl1": () => {
+      const T = [0, 4], K = add(T, mul([Math.cos(40 * RAD), -Math.sin(40 * RAD)], 2.2 / Math.sin(40 * RAD)));
+      const U = add(K, mul([-Math.cos(35 * RAD), -Math.sin(35 * RAD)], 1.8 / Math.sin(35 * RAD)));
+      const g = F([[-1.2, 0], [5.2, 4]], { H: 170 });
+      g.L([-1.2, 4], [5.2, 4]); g.L([-1.2, 0], [5.2, 0]); g.L(T, K, { c: AC }); g.L(K, U, { c: AC });
+      g.ang(T, [1, 4], K, { label: "40°", r: 26 }); g.ang(U, [U[0] + 1, 0], K, { label: "35°", r: 28 }); g.ang(K, T, U, { label: "?", c: AC, r: 16, ld: 11 });
+      return g.svg("A bent path between two parallel lines, leaving the top line at 40 degrees and meeting the bottom line at 35 degrees");
+    },
+    "hg-pl2": () => {
+      const P = [3.4, 1.6], A = [3.4 - 1.4 / Math.tan(35 * RAD), 3], B = [3.4 - 1.6 / Math.tan(50 * RAD), 0], g = F([[0, 0], [5.4, 3]], { H: 170, pt: 26, pb: 26 });
+      g.L([0, 3], [5.4, 3]); g.L([0, 0], [5.4, 0]); g.L(A, P, { c: AC }); g.L(B, P, { c: AC });
+      g.ang(A, [A[0] + 1, 3], P, { label: "35°", r: 28 }); g.ang(B, [B[0] + 1, 0], P, { label: "50°", r: 22 });
+      g.D(P); g.t(P, "P", 12, 0); g.t(A, "A", 0, -12); g.t(B, "B", 0, 14); g.t([5.4, 3], "ℓ", 10, 0); g.t([5.4, 0], "m", 10, 0);
+      return g.svg("Point P between parallel lines l and m, joined to A on l and B on m");
+    },
+    "hg-pl3": () => {
+      const B = [0, 0], C = [5, 0], A = pol(B, 5 * Math.sin(65 * RAD) / Math.sin(67 * RAD), 48), X = [A[0] - 3.4, A[1]], Y = [A[0] + 2.6, A[1]];
+      const g = F([B, C, X, Y], { H: 190 });
+      g.P([A, B, C]); g.L(X, Y, { c: AC });
+      g.ang(A, X, B, { label: "48°", r: 26 }); g.ang(A, Y, C, { label: "65°", r: 22 });
+      g.t(A, "A", 0, -12); g.t(B, "B", -11, 6); g.t(C, "C", 11, 6);
+      return g.svg("Triangle ABC with a line through A parallel to BC, making 48 degrees with AB and 65 degrees with AC");
+    },
+    "h7-pl1": () => {
+      const A = [0, 0], B = [4, 0], P = pol(A, 4 * Math.sin(70 * RAD) / Math.sin(60 * RAD), -50), k = 5.6 / -P[1];
+      const D = lerp(A, P, k), C = lerp(B, P, k), g = F([[-0.8, 0], [6.2, -5.6]], { H: 215, pt: 26, pb: 26 });
+      g.L([-0.8, 0], [6.2, 0]); g.L([-0.8, -5.6], [6.2, -5.6]); g.L(A, D); g.L(B, C);
+      g.ang(A, B, P, { label: "50°", r: 22 }); g.ang(B, A, P, { label: "70°", r: 20 }); g.ang(P, C, D, { c: AC, r: 16 });
+      g.t(A, "A", 0, -12); g.t(B, "B", 0, -12); g.t(C, "C", 0, 14); g.t(D, "D", 0, 14); g.t(P, "P", 14, 0);
+      g.t([6.2, 0], "ℓ", 10, 0); g.t([6.2, -5.6], "m", 10, 0);
+      return g.svg("Parallel lines l and m; A and B on l, C and D on m; segments AD and BC cross at P");
+    },
+
+    /* ================= similar and right triangles ================= */
+    "gs-cs3": () => {
+      const D = [0, 0], C = [12, 0], A = [3, 5], B = [7, 5], E = meet(A, C, B, D), g = F([A, B, C, D], { H: 170 });
+      g.P([A, B, E], { fill: SOFT, w: 0.1 }); g.P([C, D, E], { fill: SOFT, w: 0.1 }); g.P([A, B, C, D]); g.L(A, C); g.L(B, D);
+      g.t(A, "A", -10, -8); g.t(B, "B", 10, -8); g.t(C, "C", 11, 6); g.t(D, "D", -11, 6); g.t(E, "E", 0, 15);
+      g.mid(A, B, "4", E); g.mid(D, C, "12", E, 13);
+      return g.svg("Trapezoid ABCD with AB = 4 parallel to CD = 12; the diagonals meet at E");
+    },
+    "ga-st2": () => triDE(2, 4, 6.5, "", true),
+    "hg-st1": () => triDE(4, 6, 15, "6", false),
+    "hg-st2": () => {
+      const g = F([[-1.5, 0], [21, 15]], { H: 200, pb: 34, pl: 30 });
+      g.L([-1.5, 0], [21, 0]); g.L([0, 0], [0, 15], { w: 3 }); g.D([0, 15], { r: 5, c: "var(--hi)" });
+      g.L([12, 0], [12, 6], { w: 3 }); g.L([0, 15], [20, 0], { c: AC, dash: "5 4", w: 1.5 }); g.L([12, 0], [20, 0], { c: AC, w: 3.5 });
+      g.t([0, 7.5], "15 ft", -24, 0); g.t([12, 2.6], "6 ft", -22, 0); g.t([6, 0], "12 ft", 0, 15); g.t([16, 0], "shadow", 0, 15, { fill: AC });
+      return g.svg("A 15-foot lamppost, a 6-foot person standing 12 feet away, and the person's shadow");
+    },
+    "hg-st3": () => {
+      const C = [0, 0], A = [0, 6], B = [8, 0], q = 24 / 7, g = F([A, B, C], { H: 200, pl: 30, pb: 30 });
+      g.P([A, C, B]); g.P([[0, 0], [q, 0], [q, q], [0, q]], { fill: SOFT });
+      g.mid(A, C, "6", B, 13); g.mid(C, B, "8", A, 14);
+      return g.svg("Right triangle with legs 6 and 8 and a square in the right-angle corner touching the hypotenuse");
+    },
+    "hg-sr2": () => {
+      const B = [0, 0], H = [6, 0], A = [6, 6], C = [6 + 6 * Math.sqrt(3), 0], g = F([A, B, C], { H: 150, W: 290 });
+      g.P([A, B, C]); g.L(A, H, { dash: "5 4", w: 1.5, c: AC }); g.rt(H, C, A);
+      g.ang(B, C, A, { label: "45°", r: 20, ld: 16 }); g.ang(C, A, B, { label: "30°", r: 30, ld: 17 });
+      g.t(A, "A", 0, -12); g.t(B, "B", -11, 6); g.t(C, "C", 11, 6); g.t([6, 3.2], "6", -10, 0);
+      return g.svg("Triangle ABC with angle B 45 degrees, angle C 30 degrees and altitude 6 from A");
+    },
+    "h3-py1": () => {
+      const g = F([[0, 0], [17, 26]], { H: 220, pl: 34, pb: 34 });
+      g.L([0, 0], [0, 26], { w: 3 }); g.L([0, 0], [17, 0], { w: 3 });
+      g.L([7, 0], [0, 24], { c: AC, w: 3 }); g.L([15, 0], [0, 20], { c: AC, w: 2, dash: "6 4" });
+      g.t([5.25, 6], "25", -17, 0); g.t([3.5, 0], "7", 0, 15); g.t([0, 22], "4", -14, 0); g.t([11, 0], "?", 0, 15, { fill: AC });
+      g.L([-0.8, 20], [0, 20], { w: 1.5 }); g.L([-0.8, 24], [0, 24], { w: 1.5 });
+      return g.svg("A 25-foot ladder against a wall, foot 7 feet out; a second position after the top slides down 4 feet");
+    },
+
+    /* ================= circles ================= */
+    "gc-cp2": () => {
+      const O = [0, 0], A = [-12, -5], B = [12, -5], M = [0, -5], g = F(box4(13), { H: 190 });
+      g.C(O, 13); g.L(A, B, { c: AC, w: 2.5 }); g.L(O, M, { dash: "4 3", w: 1.5 }); g.rt(M, B, O, 7); g.L(O, B, { w: 1.5 });
+      g.D(O); g.t(O, "O", -2, -12); g.t([0, -2.5], "5", -10, 0); g.mid(O, B, "13", M, 12);
+      return g.svg("Circle of radius 13 with a chord 5 units from the center");
+    },
+    "hg-cp2": () => {
+      const O = [0, 0], g = F(box4(15), { H: 190 });
+      g.path([...circCmds(O, 15), ...circCmds(O, 9)], { fill: SOFT, eo: true, w: 0.1 });
+      g.C(O, 15); g.C(O, 9); g.L([-12, -9], [12, -9], { c: AC, w: 2.5 }); g.D(O); g.t([0, -9], "24", 0, 13);
+      return g.svg("Two circles with the same center; a chord of the larger circle of length 24 is tangent to the smaller circle");
+    },
+    "h9-cp2": () => {
+      const O = [0, 0], Q = pol(O, 13, 20), g = F(box4(13), { H: 190 });
+      g.C(O, 13); g.L([-5, 12], [5, 12], { c: AC, w: 2.5 }); g.L([-12, -5], [12, -5], { c: AC, w: 2.5 }); g.L(O, Q, { w: 1.5 });
+      g.D(O); g.t([0, 12], "10", 0, 13); g.t([0, -5], "24", 0, 13); g.mid(O, Q, "13", [0, -5], 11);
+      return g.svg("Circle of radius 13 with parallel chords of lengths 10 and 24 on opposite sides of the center");
+    },
+    "h7-cp1": () => {
+      const O = [0, 0], A = [-5, 0], B = [5, 0], C = [-1.4, 4.8], g = F(box4(5), { H: 190, pad: 24 });
+      g.C(O, 5); g.P([A, B, C]); g.D(O);
+      g.t(A, "A", -11, 0); g.t(B, "B", 11, 0); g.lab(C, "C", O); g.mid(A, C, "6", [-5, 5], 11); g.mid(C, B, "8", [5, 5], 11);
+      return g.svg("Circle with diameter AB and point C on the circle; AC = 6 and BC = 8");
+    },
+    "gc-i2": () => {
+      const O = [0, 0], A = [-1, 0], B = [1, 0], C = pol(O, 1, 56), g = F(box4(1), { H: 190, pad: 24 });
+      g.C(O, 1); g.P([A, B, C]); g.D(O); g.ang(A, B, C, { label: "28°", r: 34, ld: 16 }); g.ang(B, A, C, { c: AC, r: 16 });
+      g.t(A, "A", -11, 0); g.t(B, "B", 11, 0); g.lab(C, "C", O);
+      return g.svg("Circle with diameter AB and point C on the circle; angle CAB is 28 degrees");
+    },
+    "hg-ia1": () => {
+      const O = [0, 0], A = pol(O, 1, 215), B = pol(O, 1, 325), C = pol(O, 1, 80), g = F(box4(1), { H: 200, pad: 24, pb: 34 });
+      g.C(O, 1); g.arc(O, 1, 215, 325, { c: AC, w: 4 }); g.L(C, A); g.L(C, B); g.ang(C, A, B, { c: AC, r: 22 });
+      g.lab(A, "A", O); g.lab(B, "B", O); g.lab(C, "C", O); g.t([0, -1], "110°", 0, 15, { fill: AC });
+      return g.svg("Points A, B, C on a circle; the arc AB not containing C measures 110 degrees");
+    },
+    "a12b-37": () => {
+      const O = [0, 0], an = [110, 60, -20, -130], V = an.map(a => pol(O, 1, a)), P = meet(V[0], V[2], V[1], V[3]), g = F(box4(1), { H: 215, pad: 34 });
+      g.C(O, 1); g.L(V[0], V[2]); g.L(V[1], V[3]); g.D(P); g.ang(P, V[0], V[1], { c: AC, r: 14 });
+      V.forEach((p, i) => g.lab(p, "ABCD"[i], O, 12));
+      [[85, "50°"], [20, "80°"], [-75, "110°"], [170, "120°"]].forEach(([a, s]) => g.lab(pol(O, 1, a), s, O, 17, { fill: "var(--muted)", size: 12 }));
+      g.t(P, "P", -14, 5);
+      return g.svg("Points A, B, C, D in order on a circle with arcs AB 50, BC 80, CD 110, DA 120 degrees; chords AC and BD cross at P");
+    },
+    "a12b-38": () => {
+      const O = [0, 0], A = [-5, 0], B = [5, 0], C = [-1.4, 4.8], D = [0, -5], g = F(box4(5), { H: 200, pad: 24 });
+      g.C(O, 5); g.P([A, B, C]); g.L(C, D, { c: AC }); g.D(O); g.ang(C, A, D, { r: 20 }); g.ang(C, D, B, { r: 20 });
+      g.t(A, "A", -11, 0); g.t(B, "B", 11, 0); g.lab(C, "C", O); g.lab(D, "D", O); g.mid(A, C, "6", [-5, 5], 11); g.t([2.6, 0], "5", 0, 13);
+      return g.svg("Circle of radius 5 with diameter AB, point C with AC = 6, and the bisector of angle ACB meeting the circle again at D");
+    },
+
+    /* ================= tangents and power of a point ================= */
+    "gc-t2": () => {
+      const C = [0, 0], A = [0, 3], B = [4, 0], g = F([A, B, C], { H: 190, pl: 30, pb: 30 });
+      g.P([A, C, B]); g.C([1, 1], 1, { fill: SOFT }); g.rt(C, B, A, 7);
+      g.mid(A, C, "3", B, 13); g.mid(C, B, "4", A, 14); g.mid(A, B, "5", C, 12);
+      return g.svg("Right triangle with sides 3, 4, 5 and its inscribed circle");
+    },
+    "gc-t3": () => {
+      const t = [3, 4, 5, 6]; let lo = 0.1, hi = 50;
+      for (let i = 0; i < 60; i++) { const r = (lo + hi) / 2; if (t.reduce((s, x) => s + Math.atan(x / r), 0) > Math.PI) lo = r; else hi = r; }
+      const r = lo, O = [0, 0], V = []; let phi = 128 * RAD;
+      t.forEach((x, i) => { if (i) phi += Math.atan(t[i - 1] / r) + Math.atan(x / r); V.push([Math.hypot(r, x) * Math.cos(phi), Math.hypot(r, x) * Math.sin(phi)]); });
+      const g = F(V, { H: 205, pad: 26 });
+      g.P(V); g.C(O, r, { fill: SOFT });
+      V.forEach((p, i) => g.lab(p, "ABCD"[i], O));
+      g.mid(V[0], V[1], "7", O); g.mid(V[1], V[2], "9", O, 13); g.mid(V[2], V[3], "11", O, 14); g.mid(V[3], V[0], "?", O, 12, { fill: AC });
+      return g.svg("Quadrilateral ABCD with an inscribed circle; AB = 7, BC = 9, CD = 11");
+    },
+    "h9-tg1": () => {
+      const x = 2 * Math.sqrt(15), c1 = [0, 3], c2 = [x, 5], g = F([[-3.6, 0], [x + 5.6, 10]], { H: 180, pb: 30 });
+      g.L([-3.6, 0], [x + 5.6, 0]); g.C(c1, 3); g.C(c2, 5); g.L(c1, [0, 0], { dash: "4 3", w: 1.5 }); g.L(c2, [x, 0], { dash: "4 3", w: 1.5 });
+      g.L([0, 0], [x, 0], { c: AC, w: 3.5 }); g.D(c1); g.D(c2); g.D([0, 0], { c: AC }); g.D([x, 0], { c: AC });
+      g.t([0, 1.5], "3", -9, 0); g.t([x, 2.5], "5", 9, 0); g.t([x / 2, 0], "?", 0, 15, { fill: AC });
+      return g.svg("Circles of radius 3 and 5 touching each other, resting on a common tangent line");
+    },
+    "hg-pp1": () => chords(8, 4, 9, 3, 12, ["4", "9", "3"]),
+    "hg-pp2": () => {
+      const R = 7, O = [0, 0], d = Math.hypot(12, R), P = [-d, 0], T = [-R * R / d, R * 12 / d], a = -Math.asin(Math.sqrt(R * R - 25) / d), u = [Math.cos(a), Math.sin(a)];
+      const A = add(P, mul(u, 8)), B = add(P, mul(u, 18)), g = F([[-d, -R], [R, R]], { W: 290, H: 190, pad: 24 });
+      g.C(O, R); g.L(P, T, { c: AC }); g.L(P, B); g.D(P); g.D(T); g.D(A); g.D(B);
+      g.t(P, "P", -12, 0); g.t(T, "T", -4, -13); g.t(A, "A", -4, 15); g.t(B, "B", 10, 10);
+      g.mid(P, T, "12", O, 12); g.mid(P, A, "8", O, 12);
+      return g.svg("From outside point P, tangent PT of length 12 and a secant through A and B with PA = 8");
+    },
+    "h6-pp1": () => {
+      const R = 5, O = [0, 0], d = Math.sqrt(61), P = [-d, 0], a1 = Math.asin(Math.sqrt(R * R - 6.25) / d), a2 = -Math.asin(Math.sqrt(R * R - 20.25) / d);
+      const u = [Math.cos(a1), Math.sin(a1)], v = [Math.cos(a2), Math.sin(a2)], A = add(P, mul(u, 4)), B = add(P, mul(u, 9)), C = add(P, mul(v, 3)), D = add(P, mul(v, 12));
+      const g = F([[-d, -R], [R, R]], { W: 290, H: 190, pad: 24 });
+      g.C(O, R); g.L(P, B); g.L(P, D); [P, A, B, C, D].forEach(p => g.D(p));
+      g.t(P, "P", -12, 0); g.t(A, "A", -6, -12); g.t(B, "B", 8, -11); g.t(C, "C", -11, 13); g.t(D, "D", 12, 6);
+      g.mid(P, A, "4", O, 12); g.mid(A, B, "5", [-10, 10], 12); g.mid(P, C, "3", O, 12);
+      return g.svg("From outside point P, one line meets the circle at A then B and another at C then D");
+    },
+
+    /* ================= areas ================= */
+    "hg-sa1": () => {
+      const s = 6, h = 3, g = F([[0, 0], [s, s]], { H: 190, pb: 30 }), K = [[0, 0], [s, 0], [s, s], [0, s]];
+      K.forEach(k => g.lens(k, [h, h], h, { w: 0.1 }));
+      g.arc([h, 0], h, 0, 180, { w: 1.5 }); g.arc([s, h], h, 90, 270, { w: 1.5 }); g.arc([h, s], h, 180, 360, { w: 1.5 }); g.arc([0, h], h, -90, 90, { w: 1.5 });
+      g.P(K); g.t([h, 0], "6", 0, 14);
+      return g.svg("A 6 by 6 square with a semicircle drawn inward on each side; the four overlapping petals are shaded");
+    },
+    "hg-sa2": () => {
+      const c1 = [0, 0], c2 = [6, 0], q = 3 * Math.sqrt(3), g = F([[-6, -6], [12, 6]], { H: 180 });
+      g.lens([3, q], [3, -q], 6, { w: 0.1 }); g.C(c1, 6); g.C(c2, 6); g.L(c1, c2, { dash: "4 3", w: 1.5 }); g.D(c1); g.D(c2); g.t([3, 0], "6", 0, -11);
+      return g.svg("Two circles of radius 6, each passing through the other's center; the overlap is shaded");
+    },
+    "h10-sa1": () => {
+      const A = [0, 0], B = [2, 0], C = [2, 2], D = [0, 2], g = F([A, C], { H: 190, pad: 26 });
+      g.lens(B, D, 2, { w: 1.5 }); g.P([A, B, C, D]);
+      g.t(A, "A", -11, 8); g.t(B, "B", 11, 8); g.t(C, "C", 11, -6); g.t(D, "D", -11, -6); g.t([1, 0], "2", 0, 14);
+      return g.svg("Square ABCD of side 2 with quarter circles centered at A and C; the region inside both is shaded");
+    },
+    "h6-sa1": () => {
+      const O = [0, 0], q = Math.SQRT2, S = [[q, q], [-q, q], [-q, -q], [q, -q]], g = F(box4(2), { H: 190, pb: 30 });
+      g.path([...circCmds(O, 2), ...polyCmds(S)], { fill: SOFT, eo: true, w: 0.1 });
+      g.P([[2, 2], [-2, 2], [-2, -2], [2, -2]]); g.C(O, 2); g.P(S); g.t([0, -2], "4", 0, 14);
+      return g.svg("A circle inscribed in a 4 by 4 square, with a smaller square inscribed in the circle; the region between circle and small square is shaded");
+    },
+    "hg-sa3": () => {
+      const g = F([[0, 0], [10, 10]], { H: 190, pb: 30 });
+      g.path([["M", [10, 10]], ["L", [5, 10]], ["A", 5, 0, false, [10, 5]], ["Z"]], { fill: SOFT, w: 0.1 });
+      g.P([[0, 0], [10, 0], [10, 10], [0, 10]]); g.C([5, 5], 5); g.t([5, 0], "10", 0, 14);
+      return g.svg("A circle inscribed in a 10 by 10 square, with one corner region shaded");
+    },
+    "gc-a3": () => {
+      const q = Math.sqrt(3), c = [[0, 0], [2, 0], [1, q]], g = F([[-1, -1], [3, q + 1]], { H: 200 });
+      g.path([["M", [1, 0]], ["A", 1, 0, false, [1.5, q / 2]], ["A", 1, 0, false, [0.5, q / 2]], ["A", 1, 0, false, [1, 0]], ["Z"]], { fill: AC, w: 0.1 });
+      c.forEach(p => { g.C(p, 1); g.D(p); }); g.L([0, 0], [-1, 0], { w: 1.5 }); g.t([-0.5, 0], "1", 0, -10);
+      return g.svg("Three circles of radius 1, each tangent to the other two; the region enclosed between them is shaded");
+    },
+    "ho-ba4": () => {
+      const A = [0, 0], B = [10, 0], C = [10, 10], D = [0, 10], E = [5, 0], Fp = [10, 5], g = F([A, C], { H: 195, pad: 26 });
+      g.P([D, E, Fp], { fill: SOFT }); g.P([A, B, C, D]);
+      g.t(A, "A", -11, 8); g.t(B, "B", 11, 8); g.t(C, "C", 11, -6); g.t(D, "D", -11, -6); g.t(E, "E", 0, 14); g.t(Fp, "F", 12, 0);
+      g.t([0, 5], "10", -13, 0);
+      return g.svg("Square ABCD of side 10 with E the midpoint of AB and F the midpoint of BC; triangle DEF is shaded");
+    },
+    "a12b-34": () => {
+      const A = [0, 6], B = [6, 6], C = [6, 0], D = [0, 0], M = [6, 3], N = [3, 0], P = meet(A, M, B, N), g = F([D, B], { H: 195, pad: 26 });
+      g.P([P, M, C, N], { fill: SOFT, w: 0.1 }); g.P([A, B, C, D]); g.L(A, M); g.L(B, N); g.D(P);
+      g.t(A, "A", -11, -6); g.t(B, "B", 11, -6); g.t(C, "C", 11, 8); g.t(D, "D", -11, 8); g.t(M, "M", 12, 0); g.t(N, "N", 0, 14); g.t(P, "P", -14, 7);
+      g.t([0, 3], "6", -11, 0);
+      return g.svg("Square ABCD of side 6 with M the midpoint of BC and N the midpoint of CD; AM and BN cross at P and quadrilateral PMCN is shaded");
+    },
+    "hg-pk1": () => {
+      const V = [[0, 0], [6, 1], [5, 7], [1, 4]], g = F([[0, 0], [7, 8]], { H: 215, pl: 24, pb: 24, pt: 12, pr: 16 });
+      g.P(V, { fill: SOFT, w: 0.1 });
+      for (let i = 0; i <= 7; i++) g.L([i, 0], [i, 8], { c: "var(--line)", w: 1 });
+      for (let j = 0; j <= 8; j++) g.L([0, j], [7, j], { c: "var(--line)", w: 1 });
+      g.L([0, 0], [7, 0], { w: 1.5 }); g.L([0, 0], [0, 8], { w: 1.5 }); g.P(V, { c: AC }); V.forEach(p => g.D(p, { c: AC }));
+      [2, 4, 6].forEach(k => { g.t([k, 0], String(k), 0, 12, { size: 11, fill: "var(--muted)" }); g.t([0, k], String(k), -10, 0, { size: 11, fill: "var(--muted)" }); });
+      g.t([0, 0], "0", -9, 10, { size: 11, fill: "var(--muted)" });
+      return g.svg("Quadrilateral with vertices (0,0), (6,1), (5,7), (1,4) drawn on a coordinate grid");
+    },
+
+    /* ================= solids ================= */
+    "ga-py2": () => {
+      const g = F(boxPts(12, 4, 3), { W: 290, H: 150, pl: 28, pb: 30 });
+      box3(g, 12, 4, 3); g.L(pr3(0, 0, 0), pr3(12, 4, 3), { c: AC, dash: "6 4" });
+      g.t(pr3(6, 0, 0), "12", 0, 14); g.t(pr3(0, 0, 1.5), "3", -11, 0); g.t(pr3(12, 2, 0), "4", 13, 5);
+      return g.svg("A 3 by 4 by 12 box with a rod from one corner to the opposite corner");
+    },
+    "hg-su2": () => {
+      const g = F(boxPts(4, 2, 2), { H: 160, pl: 28, pb: 30 });
+      box3(g, 4, 2, 2); g.L(pr3(2, 0, 0), pr3(2, 0, 2), { w: 1.5 }); g.L(pr3(2, 0, 2), pr3(2, 2, 2), { w: 1.5 });
+      g.t(pr3(1, 0, 0), "2", 0, 14); g.t(pr3(3, 0, 0), "2", 0, 14); g.t(pr3(0, 0, 1), "2", -11, 0); g.t(pr3(4, 1, 0), "2", 13, 5);
+      return g.svg("Two 2 by 2 by 2 cubes glued face to face");
+    },
+    "gv-c3": () => {
+      const g = F([[-3.6, 0], [4.2, 6.6]], { H: 200, pt: 12 });
+      g.P([[0, 0], [-1.5, 3], [1.5, 3]], { fill: SOFT, w: 0.1 }); g.E([0, 3], 1.5, 0.3, { fill: SOFT, w: 1.5, c: AC });
+      g.L([0, 0], [-3, 6]); g.L([0, 0], [3, 6]); g.E([0, 6], 3, 0.6);
+      g.L([3.8, 0], [3.8, 6], { w: 1.2 }); [0, 3, 6].forEach(y => g.L([3.6, y], [4, y], { w: 1.2 }));
+      g.t([3.8, 4.5], "½ h", 17, 0, { size: 12 }); g.t([3.8, 1.5], "½ h", 17, 0, { size: 12 });
+      return g.svg("A cone with its point down, filled with water to half its height");
+    },
+  };
+})();
+for (const b of BANK) if (BANK_FIGS[b.id] && !b.fig) b.fig = BANK_FIGS[b.id];
 /* =========================================================
    GENERATORS: Counting
    ========================================================= */
