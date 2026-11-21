@@ -429,6 +429,17 @@ code.pw{font-family:var(--f-mono);font-size:.92rem;background:none;white-space:p
 .dd-faq summary{cursor:pointer;font-weight:600}
 .dd-faq details[open] summary{margin-bottom:6px}
 .dd-faq p{margin:0}
+.dd-guidebox{max-width:1000px}
+.dd-guidebox summary{cursor:pointer;font-size:1.05rem}
+.dd-guide{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.dd-guide h3{font-size:1.1rem;margin:12px 0 0}
+.dd-guide p,.dd-guide ul{margin:0}
+.dd-plan{display:flex;flex-direction:column;gap:12px}
+.dd-q{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:10px 14px;display:flex;flex-direction:column;gap:4px}
+.dd-q>b{color:var(--accent)}
+.dd-donts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.dd-donts li{background:var(--hi-soft);border-left:4px solid var(--hi);border-radius:0 10px 10px 0;padding:10px 14px}
+.dd-donts li b{display:block;margin-bottom:2px}
 table.ddgrid{border-collapse:collapse}
 table.ddgrid td{border:2px solid var(--ink);width:44px;height:44px;text-align:center;font-family:var(--f-mono);font-size:1.1rem}
 </style>
@@ -14683,6 +14694,463 @@ DD({ yr: 2026, t: "II", n: 5, topic: "Probability", title: "Red and blue marbles
     ["Is b = 5 allowed?", "No. The problem says at least 7 of each color, so b ≥ 7."],
     ["Does it matter which color is which?", "Yes. Red is the color with 4 vs 5. Swapping colors gives a different equation."],
   ] });
+/* AIME Deep Dives, part 2: beginner thinking for every problem.
+   plan  [[question you ask yourself, answer]]  → "Make a plan"
+   donts [[what not to do, why it goes wrong]]  → "What not to do"
+   think (optional) replaces the step-by-step list with a more detailed one */
+const DDX = (id, extra) => { const o = AIME_DD.find(p => p.id === id); if (o) Object.assign(o, extra); };
+
+/* ---------- 2026 AIME I ---------- */
+DDX("2026-I-1", {
+  plan: [
+    ["What is the question really asking for?", "The distance from school to park. The m/n part only tells you <b>how to write the answer at the end</b>: the distance will turn out to be a fraction, and the AIME only accepts whole numbers from 0 to 999, so you reduce the fraction and report top + bottom. So your job is: find the distance d. Forget about m and n until the very last line."],
+    ["How do I know the distance is the thing to solve for?", "Because it's what the question asks about (“the distance from the school to the park is …”). Everything else (speeds, times) is a tool to get there. A good habit: underline the final question, then write “GOAL: d = ?” at the top of your paper."],
+    ["What don't I know?", "Patrick's speed, how long Patrick walks, and the distance. Tanya's and Jose's speeds and times are not new unknowns: the problem describes them <b>compared to Patrick</b>. That's a clue to name Patrick's numbers and describe everyone else using them."],
+    ["Why name Patrick's speed v and time T?", "Everyone's speed is “Patrick's plus something” and everyone's time is “Patrick's minus something.” If you name Patrick's, the other two people come for free. If you named Jose's speed instead, you'd have to subtract 9 everywhere, which is messier but would still work."],
+    ["How do I turn the sentences into math?", `Go one sentence at a time and write a line for each.${tbl(["The problem says", "You write"], [["Patrick walks at a constant rate", "Patrick: speed v, time T"], ["Tanya starts 1 hour after Patrick", "Tanya's time = T − 1"], ["Tanya runs 2 mph faster than Patrick", "Tanya's speed = v + 2"], ["Jose starts 1 hour after Tanya", "Jose's time = T − 2"], ["Jose is 7 mph faster than Tanya", "Jose's speed = v + 2 + 7 = v + 9"], ["all three arrive at the same time", "they finish together, so the time differences above are right"], ["same road from school to park", "all three distances are equal: d"]])}`],
+    ["Where do the equations come from?", "From one fact you already know: <b>distance = speed × time</b>. Each person gives a distance: vT, (v + 2)(T − 1), (v + 9)(T − 2). They all travel the same road, so these three are equal. Two equal signs = two equations, and you have two unknowns (v and T). Two equations for two unknowns is exactly enough."],
+    ["How do I know it will work out?", "Count: unknowns v and T (d is just vT). Equations: 2. When the count matches, you can usually solve. If you had fewer equations than unknowns, you'd go back and look for a sentence you haven't used."],
+  ],
+  think: [
+    "Underline the question. Write GOAL: d. Note that the answer will be m + n after you reduce d to a fraction.",
+    "Pick names for the unknowns you need: Patrick's speed v and Patrick's time T. Then d = vT.",
+    "Translate each sentence about Tanya and Jose into a speed and a time in terms of v and T (see the table above).",
+    "Use distance = speed × time for each person, and set the three distances equal (same road).",
+    "Multiply out each pair. The vT appears on both sides and cancels, leaving short equations with no products.",
+    "Solve the two short equations for T and v.",
+    "Compute d = vT. Check it with Tanya or Jose too.",
+    "Only now think about m/n: reduce the fraction, then add top and bottom.",
+  ],
+  donts: [
+    ["Don't try to find m and n directly.", "m and n are just the top and bottom of the answer fraction. There's no equation about m and n. Find the distance first; m and n are read off at the end."],
+    ["Don't give Tanya and Jose their own unknown speeds.", "You'd have 6 unknowns (3 speeds, 3 times) and get lost. Every fact about them is “compared to Patrick,” so describe them using v and T."],
+    ["Don't write Jose's time as T − 1.", "Jose starts 1 hour after Tanya, who started 1 hour after Patrick. That's 2 hours after Patrick."],
+    ["Don't write Jose's speed as v + 7.", "He is 7 faster than <i>Tanya</i>, and Tanya is already v + 2."],
+    ["Don't expand and then panic about v·T terms.", "When you multiply out (v + 2)(T − 1), you get vT − v + 2T − 2. The vT matches the left side, so subtract it from both sides. That always happens in “same distance” problems."],
+    ["Don't round 252/25 to 10.08 and stop.", "The answer must be m + n with the fraction in lowest terms: 252 + 25 = 277."],
+  ],
+});
+
+DDX("2026-I-2", {
+  plan: [
+    ["What is the question asking?", "Count how many numbers have three properties at once: palindrome, no zero digits, digits add to 13. It's a counting problem, so the answer is a number of numbers, not a particular number."],
+    ["Where do I even start counting?", "With the property that cuts the possibilities the most. A palindrome is decided by its first half (and middle digit), so count first halves instead of whole numbers."],
+    ["How does the digit sum relate to the first half?", "Every digit not in the middle appears twice (once on each side). So digit sum = 2 × (first-half sum) + (middle digit, if the length is odd)."],
+    ["What does “13 is odd” tell me?", "2 × anything is even. To reach an odd total, there must be a middle digit and it must be odd: 1, 3, 5, 7, or 9."],
+    ["Then what's left to count?", "For each middle digit, the first half must add to (13 − middle)/2. Count the ways to write that number as an ordered list of digits 1–9. The list can have any length."],
+  ],
+  donts: [
+    ["Don't try to list palindromes one by one.", "There are 62 of them, of different lengths. Listing invites missing some. Count first halves with a formula instead."],
+    ["Don't forget long palindromes.", "1111111111111 (thirteen 1s) is a palindrome with digit sum 13. Trying only a few lengths misses numbers like this; the composition count includes them automatically."],
+    ["Don't allow a 0 in the first half.", "The problem says no zero digits anywhere. That's why each part of the composition is at least 1."],
+    ["Don't count even-length palindromes.", "Their digit sums are always even, so they can't reach 13."],
+  ],
+});
+
+DDX("2026-I-3", {
+  plan: [
+    ["What is T, in plain words?", "The set of spots on the floor where you could set the ball down so it fits under the dome. Near the center it fits easily; near the edge it bumps the curved wall."],
+    ["What shape is T?", "Everything is symmetric around the center O, so T is a disk centered at O. You only need its radius."],
+    ["How do I turn a 3-D problem into something I can draw?", "Slice it straight down through O and P. You get a half circle (radius 200) sitting on a line, and a small circle (radius 42) sitting on the same line. 3-D problems with balls are almost always solved in a cross-section like this."],
+    ["What's the exact condition for “fits inside”?", "The ball fits inside the big ball (radius 200) when the distance between centers plus the small radius is at most 200: center distance ≤ 158."],
+    ["What unknown do I solve for?", "The largest |OP|, call it x. The ball's center is at (x, 42). Its distance to O is √(x² + 42²), and that must be ≤ 158."],
+    ["Why is the answer a ratio of squares?", "Areas of circles are π r². The ratio of two circle areas is (r₁/r₂)², and π cancels. So you only need x² ÷ 200²."],
+  ],
+  donts: [
+    ["Don't say the radius of T is 200 − 42 = 158.", "That's the limit on the ball's <i>center distance</i>, but the center is 42 above the floor. The horizontal distance is less: √(158² − 42²)."],
+    ["Don't compute √23200.", "You never need the radius itself. The area ratio uses x² = 23200 directly."],
+    ["Don't forget to reduce the fraction.", "23200/40000 reduces to 29/50. The answer is 29 + 50 = 79, not 23200 + 40000."],
+  ],
+});
+
+DDX("2026-I-4", {
+  plan: [
+    ["What is the question counting?", "Values n (up to 100) that can be made as a + b + ab. Not the number of pairs (a, b)."],
+    ["Why would anyone think to add 1?", "a + b + ab looks almost like a product. (a + 1)(b + 1) = ab + a + b + 1, which is our expression plus 1. Whenever you see xy + x + y, try adding 1 to factor it. It's a pattern worth memorizing."],
+    ["What does the factored form tell me?", "n + 1 = (a + 1)(b + 1). Since a and b are positive and different, (a + 1) and (b + 1) are different whole numbers, each at least 2. So: which numbers m = n + 1 can be split into two different factors, both at least 2?"],
+    ["Which numbers fail?", "Primes (only 1 × p) and squares of primes (only p × p, equal factors). Every other number from 4 up works."],
+    ["What's the range for m?", "n ≤ 100, so m ≤ 101. The smallest possible m is 2 × 3 = 6."],
+  ],
+  donts: [
+    ["Don't make a 100 × 100 table of a and b.", "You'd be at it for an hour. The factoring turns it into a quick count of composites."],
+    ["Don't forget that a ≠ b.", "Without that rule, 9 = 3 × 3 would count (a = b = 2 gives 8). The word “distinct” is what removes prime squares."],
+    ["Don't count pairs.", "11 comes from a = 1, b = 5 and from a = 2, b = 3, but it is one integer. Count values of n."],
+    ["Don't forget 101.", "m can be 101 (n = 100). It's prime, so it doesn't add anything, but count primes up to 101 carefully: there are 26."],
+  ],
+});
+
+DDX("2026-I-5", {
+  plan: [
+    ["What is moving and what stays put?", "First turn: B stays, A swings around B to A′. Second turn: A′ stays, B swings around A′ to B′. Write “center” next to the fixed point each time."],
+    ["What unknown are we after?", "cos θ. The given fact AB′ = 4/3 is the one equation you'll use."],
+    ["Why use coordinates?", "Rotations are hard to picture twice in a row, but with coordinates each point is just a pair of numbers. Put B at (0, 0) and A at (1, 0) so lengths are simple."],
+    ["Where is A′?", "A is 1 unit from B in direction 0°. Turn it θ counterclockwise: it's 1 unit from B in direction θ: (cos θ, sin θ)."],
+    ["Where is B′?", "Look at the arrow from A′ to B. It points the opposite way from the arrow B→A′, so its direction is θ + 180°. Turning it clockwise by θ gives direction 180°: straight left. Its length is still 1. So B′ = A′ moved 1 left."],
+    ["How do I get an equation?", "Write AB′² using the distance formula and set it equal to (4/3)². Then use sin² + cos² = 1 to leave only cos θ."],
+  ],
+  donts: [
+    ["Don't rotate in the wrong direction.", "The first turn is counterclockwise, the second clockwise. Mixing them up gives a totally different B′."],
+    ["Don't rotate around the wrong point.", "The second rotation is around A′, not around B. B moves; A′ stays."],
+    ["Don't solve for θ in degrees.", "The question wants cos θ as a fraction. θ itself is not a nice angle."],
+    ["Don't forget to square 4/3.", "The distance formula gives AB′², so compare with 16/9, not 4/3."],
+  ],
+});
+
+/* ---------- 2026 AIME II ---------- */
+DDX("2026-II-1", {
+  plan: [
+    ["What is the question asking?", "There are several sequences that fit. Find each one's 10th term and add them up."],
+    ["What decides an arithmetic sequence?", "Its first term and its common difference d. The first term is fixed at 4, so each sequence is one value of d. The job: find every allowed d."],
+    ["How do I turn “includes 24” into math?", "Some term equals 24: 4 + kd = 24 for a whole number k ≥ 1. So kd = 20: d divides 20. Same for 34: d divides 30."],
+    ["Can d be negative or zero?", "No. Starting at 4 and going down (or staying put) never reaches 24."],
+    ["What's the 10th term formula?", "4 + 9d. Write it down before plugging in so you don't use 10d."],
+  ],
+  donts: [
+    ["Don't use 4 + 10d.", "The 1st term has 0 steps of d, so the 10th has 9 steps."],
+    ["Don't take divisors of 20 and 30 separately.", "d must divide both, so it divides their GCD, 10."],
+    ["Don't include d = 20 or 30.", "d = 20 reaches 24 but skips 34. Check both conditions."],
+  ],
+});
+
+DDX("2026-II-2", {
+  plan: [
+    ["What is N?", "The number of different routes. The problem asks for √N only because N is too big to be an AIME answer."],
+    ["Why not just trace paths?", "There are 59,049 of them. You need a way to count without listing."],
+    ["How do I break the walk into pieces?", "The bug can never move left on a horizontal or diagonal, so once it moves past a vertical line, it never comes back. That means you can count square by square."],
+    ["What do I need to remember at each vertical line?", "Only one thing: did the bug reach this line at the bottom or the top? Everything before doesn't matter."],
+    ["How many ways through one square?", "Count from each starting spot (bottom or top) to the next line. You'll find 3 either way. Same number each square means the total is a power."],
+  ],
+  donts: [
+    ["Don't forget the bug can go down a vertical.", "Only horizontal and diagonal moves are one-way. Missing the down-moves gives 2 per square instead of 3."],
+    ["Don't let the bug use the same vertical twice.", "Up and back down the same segment would traverse it twice, which isn't allowed."],
+    ["Don't answer N.", "The question asks for √N = 243. N = 59049 isn't even a legal AIME answer."],
+  ],
+});
+
+DDX("2026-II-3", {
+  plan: [
+    ["What am I counting?", "How many integer values AB can take. Every condition in the problem either fixes the shape or throws out some values."],
+    ["What's the unknown?", "AB, call it b. Once b is known, the whole pentagon is determined (all angles and the other lengths are given)."],
+    ["How do I pin down the shape?", "Coordinates. Put the 90° corner A at the origin with AB along the x-axis and AE up the y-axis. Each given angle tells you which direction the next side goes."],
+    ["Where does the area condition come in?", "Compute the area in terms of b. “Multiple of 16” becomes a divisibility condition on b."],
+    ["What other conditions might cut values?", "Read every clause and ask “does this rule anything out?”: DE < AB, AB < 2026, nonconvex, and B, C, D on the same side of AE. The last one is the sneaky one."],
+  ],
+  donts: [
+    ["Don't skip the “same side of line AE” clause.", "It removes b = 9 and b = 13. Missing it gives 505."],
+    ["Don't draw C sticking outward.", "The 45° angles at B and D are inside the pentagon, so C points inward and the corner at C is 270°."],
+    ["Don't include 2026.", "AB < 2026 means at most 2025."],
+    ["Don't count every b ≡ 1 (mod 4) from 1.", "b must also be at least 17 (C to the right of AE)."],
+  ],
+});
+
+DDX("2026-II-4", {
+  plan: [
+    ["What does f do, in plain words?", "Look at n's biggest digit, add 1 to get a base, and read n's digits in that base."],
+    ["When is f(n) = n easy?", "When the base comes out to 10, reading in base 10 is ordinary reading. That happens exactly when n has a 9."],
+    ["When does f(n) shrink n?", "When the base is less than 10 and n has two or more digits: each place is worth less than in base 10."],
+    ["Single digits?", "A single digit d in base d + 1 is still worth d. So 1–8 all work (and 9 is already counted)."],
+    ["How do I count numbers with a 9?", "Count the ones without a 9 (each digit 0–8) and subtract from 999. Counting “at least one” is usually easiest by complement."],
+  ],
+  donts: [
+    ["Don't count numbers with a 9 by cases on position.", "You'll double count numbers like 99 and 199. The complement (no 9 at all) is cleaner."],
+    ["Don't forget the single digits 1–8.", "They work too, and they're easy to miss because they don't contain a 9."],
+    ["Don't count 0.", "The problem asks about positive integers."],
+  ],
+});
+
+DDX("2026-II-5", {
+  plan: [
+    ["What are the unknowns?", "How many red (r) and blue (b) marbles. n = r + b is what you finally add up."],
+    ["How do I write “probability of exactly 4 red”?", "Choose 4 of the r reds and 3 of the b blues, divided by all ways to choose 7: C(r,4)·C(b,3)/C(n,7)."],
+    ["Why do the denominators disappear?", "Both probabilities divide by the same C(n,7). Equal fractions with equal bottoms have equal tops."],
+    ["Expanding C(r,4) looks awful. Now what?", "Don't expand. Use ratios of neighbors: C(r,5)/C(r,4) = (r − 4)/5 and C(b,3)/C(b,2) = (b − 2)/3. Most factors cancel."],
+    ["What do I do with an equation like 3r = 5b + 2?", "It has many whole-number solutions. List them from smallest, apply r, b ≥ 7, and take the first five."],
+  ],
+  donts: [
+    ["Don't multiply out C(r,4) and C(r,5).", "You'll get a degree-5 mess. The ratio trick cancels almost everything."],
+    ["Don't forget the “at least 7 of each” rule.", "b = 5, r = 9 also solves 3r = 5b + 2 but isn't allowed."],
+    ["Don't add the r values or b values.", "The question asks for the sum of n values (r + b)."],
+  ],
+});
+
+/* ---------- 2025 AIME I ---------- */
+DDX("2025-I-1", {
+  plan: [
+    ["What does 17_b mean?", "Like 17 in base 10 means 1 ten + 7 ones, 17 in base b means 1 b + 7 ones: b + 7."],
+    ["What am I solving for?", "All bases b (above 9) that work. Then add them."],
+    ["How do I handle “divides” with a variable?", "Make the big number look like (multiple of the small number) + leftover. The small number must divide the leftover."],
+    ["Why multiply by 9?", "97_b = 9b + 7 has 9b. To match, use 9 × (b + 7) = 9b + 63. The difference is a plain number, 56."],
+  ],
+  donts: [
+    ["Don't read 17 and 97 as seventeen and ninety-seven.", "In base b they're b + 7 and 9b + 7."],
+    ["Don't include bases 9 or below.", "Base b only has digits 0 to b − 1, so the digit 9 needs b ≥ 10."],
+    ["Don't try bases one at a time.", "You'd never be sure you found them all. The divisor-of-56 trick finds all at once."],
+  ],
+});
+
+DDX("2025-I-2", {
+  plan: [
+    ["What do I know and what do I want?", "Know: lengths along two sides and one area (288). Want: area of a weird 7-sided shape."],
+    ["What should I compute first?", "Full side lengths and the fractions along each side. When two points on different sides are at the same fraction of the way from A, the segment joining them is parallel to the third side."],
+    ["Why does parallel help?", "Parallel to BC means a smaller copy of triangle ABC. Copies have areas in the ratio of the square of their size."],
+    ["How do I handle the heptagon?", "Draw it carefully. Then try to cut it into pieces that each match (in area) a piece of triangle ABC. Reflections keep lengths, so reflected pieces have matching bases."],
+  ],
+  donts: [
+    ["Don't trust the official drawing.", "It's not to scale. Work from the numbers."],
+    ["Don't use area ratio 1 : 5 : 7.", "Areas grow with the square: 1 : 25 : 49."],
+    ["Don't try to find the angle at A.", "You don't need it. Every area is a multiple of one unknown, set by the 288."],
+    ["Don't treat “reflection through F” as reflection across a line.", "Through a point means F is the midpoint of D and M."],
+  ],
+});
+
+DDX("2025-I-3", {
+  plan: [
+    ["What's being counted?", "Ways to give each of 9 different players a flavor. Ann-chocolate and Ann-vanilla are different assignments."],
+    ["How do I organize it?", "Two stages. Stage 1: how many players get each flavor (the head-counts). Stage 2: which players get which flavor."],
+    ["How do I list the head-counts without missing any?", "Start with the smallest group (strawberry). Strawberry ≥ 1, vanilla > strawberry, chocolate > vanilla, total 9. Try strawberry = 1, 2, 3 and stop when it's impossible."],
+    ["How do I count stage 2?", "Choose the chocolate players, then the vanilla players from the rest: C(9, c) × C(9 − c, v). The rest get strawberry."],
+  ],
+  donts: [
+    ["Don't stop at 3.", "3 is the number of head-count patterns, not the number of assignments."],
+    ["Don't use 3⁹.", "That counts every assignment with no rules at all."],
+    ["Don't allow ties.", "“Greater than” is strict: 4, 4, 1 is not allowed."],
+    ["Don't forget the mod 1000.", "N = 2016; the answer is 16."],
+  ],
+});
+
+DDX("2025-I-4", {
+  plan: [
+    ["What is the equation telling me?", "An expression equals 0. The best tool for “= 0” is factoring: a product is 0 only if a factor is 0."],
+    ["How do I spot the factoring?", "Treat it like 12t² − t − 6 = 0. Find two numbers with product 12 × (−6) = −72 and sum −1: −9 and 8."],
+    ["What do the factors mean?", "Each factor = 0 is a line through the origin. Integer points on a line like 4x = 3y are all multiples of (3, 4)."],
+    ["How do I count inside the box?", "Find the range of the multiplier k so both coordinates stay between −100 and 100. The bigger coordinate sets the limit."],
+  ],
+  donts: [
+    ["Don't plug in x values one by one.", "201 values of x, each needing a quadratic in y. Factoring makes it a quick count."],
+    ["Don't count (0, 0) twice.", "It's on both lines."],
+    ["Don't forget negative k.", "x and y can be negative; ordered pairs like (−3, −4) count."],
+  ],
+});
+
+DDX("2025-I-5", {
+  plan: [
+    ["How do I check divisibility by 22?", "22 = 2 × 11, and 2 and 11 share no factor. So check both: even (last digit even) and divisible by 11."],
+    ["What's the test for 11?", "Alternating sum of digits (1st − 2nd + 3rd − …) must be a multiple of 11. For 8 digits, that's (sum of odd places) − (sum of even places)."],
+    ["What do I know about those two sums?", "Together they're 1 + 2 + … + 8 = 36. Their difference must be a multiple of 11 that is also even. Only 0 fits, so each is 18."],
+    ["Then how do I count?", "Choose which 4 digits go in the odd places (sum 18). Arrange them. Arrange the other 4 in the even places, with an even digit last."],
+  ],
+  donts: [
+    ["Don't forget the “even” part.", "Divisible by 11 isn't enough. The last digit must be even."],
+    ["Don't allow O − E = ±11.", "36 is even, so O − E is even. 11 is odd."],
+    ["Don't answer 2025 − N.", "N = 2304 is bigger; the difference is 279."],
+  ],
+});
+
+/* ---------- 2025 AIME II ---------- */
+DDX("2025-II-1", {
+  plan: [
+    ["What does the area of BGE need?", "A base and a height. B and E are on the line, so BE is the base. The height is how far G is from the line."],
+    ["How do I find BE?", "Place every point on a number line. “In that order” plus the given lengths pin them down. Start from A = 0."],
+    ["How do I find G's height?", "G is 40 from C and 30 from D. Put G at (x, h) and write two distance equations. Subtracting kills the h²."],
+    ["Which lengths do I actually need?", "To place B and E you need AC, BD, CE, DF, AF. To find G's height you need CG, DG and CD."],
+  ],
+  donts: [
+    ["Don't assume G is above the segment CD.", "The foot of the height is at 58, beyond D. Coordinates handle this without special cases."],
+    ["Don't use AC = 26 as a distance from B.", "Read each length as between the named points. Label a number line."],
+    ["Don't forget the ½.", "Triangle area is ½ × base × height."],
+  ],
+});
+
+DDX("2025-II-2", {
+  plan: [
+    ["What does “n + 2 divides …” ask?", "The product leaves remainder 0 when divided by n + 2."],
+    ["Why is this hard as written?", "Both the divisor and the product change with n. Make the product into a plain number using remainders."],
+    ["What's the trick?", "Dividing by n + 2, the number n behaves like −2 (because n = (n + 2) − 2). Swap n for −2 to find the remainder: 39."],
+    ["What's left?", "n + 2 must divide 39. List divisors, keep those that give positive n."],
+  ],
+  donts: [
+    ["Don't test n = 1, 2, 3, … until you get bored.", "You'd likely miss n = 37."],
+    ["Don't include n + 2 = 1.", "That gives n = −1, not positive."],
+    ["Don't expand the product first.", "It's not needed; the substitution works on the factored form."],
+  ],
+});
+
+DDX("2025-II-3", {
+  plan: [
+    ["What's the hard part?", "The 4 inner edges each belong to two squares, so the squares' rules are tangled together."],
+    ["How do I untangle them?", "Decide the shared (inner) edges first. Then each square's 2 outer edges are its own business."],
+    ["How many ways to finish a square?", "It needs 2 red total. If its inner edges give k red, it needs 2 − k red among 2 outer edges: C(2, 2 − k) = 1, 2, 1 for k = 0, 1, 2."],
+    ["How do I add it all up?", "For each of the 16 inner colorings, multiply the four squares' counts, then add. Group the 16 cases smartly so you don't do 16 separate products."],
+  ],
+  donts: [
+    ["Don't divide 2¹² by something.", "There's no simple symmetry; you need organized cases."],
+    ["Don't treat rotations as the same.", "Each coloring of the fixed grid counts separately."],
+    ["Don't color the outer edges first.", "Then the inner edges have conditions from two squares each, which is the tangled way."],
+  ],
+});
+
+DDX("2025-II-4", {
+  plan: [
+    ["What makes this product look scary?", "Logs with different bases and big exponents. Two moves simplify it: bring exponents down, then change all logs to one base."],
+    ["How do I know it will collapse?", "Bases go 4, 5, 6, …, 64 from one factor to the next. Consecutive pieces like that usually cancel (telescope)."],
+    ["What's the plan?", "Write each factor as (k² − 1)/(k² − 4) × ln(k + 1)/ln k. Handle the number part and the log part separately."],
+    ["Why factor k² − 1 and k² − 4?", "Factored, each fraction is (k − 1)/(k − 2) × (k + 1)/(k + 2), and each of those telescopes on its own."],
+  ],
+  donts: [
+    ["Don't multiply out 60 fractions.", "Look for cancellation first."],
+    ["Don't forget the log part.", "It's not 1: the leftover is ln 64/ln 4 = 3."],
+    ["Don't stop at 31/13.", "Multiply by the 3 from the logs: 93/13."],
+  ],
+});
+
+DDX("2025-II-5", {
+  plan: [
+    ["What do I need?", "Three arcs: DE, HJ, FG, measured in degrees."],
+    ["What's my best tool for arcs?", "Inscribed angles: an angle with its corner on the circle is half the arc it cuts off. So look for angles you know whose corners are on the circle."],
+    ["Which angles do I know?", "Triangle DEF (midpoints) has the same angles as ABC. Also DF ∥ AC, which copies angle C to the corner D."],
+    ["What about HJ, whose ends are on lines from A?", "A is outside the circle. The angle at an outside point is half the difference of the far and near arcs. You know angle A and the far arc, so solve for the near arc HJ."],
+  ],
+  donts: [
+    ["Don't measure from the picture.", "Even a careful sketch is off by a few degrees, and the answer needs exact values."],
+    ["Don't mix up which arc EF.", "The arc EF not containing D is 168°; the other way around (through H and J) is 192°."],
+    ["Don't forget the weights.", "It's DE + 2·HJ + 3·FG, not the plain sum."],
+  ],
+});
+
+/* ---------- 2024 AIME I ---------- */
+DDX("2024-I-1", {
+  plan: [
+    ["What's the question asking for?", "The total time in minutes at a new speed, coffee included."],
+    ["What don't I know?", "Her normal speed s and the coffee time t. Two unknowns."],
+    ["How many facts do I have?", "Two outings (4 hours and 2 h 24 min). Two facts for two unknowns: good."],
+    ["How do I write each outing as an equation?", "Total time = walking time + coffee time. Walking time = distance ÷ speed = 9/s. Coffee = t minutes = t/60 hours."],
+    ["Which unit should I use?", "Hours, because speeds are per hour. Convert 2 h 24 min to 2.4 h and t minutes to t/60 hours."],
+  ],
+  donts: [
+    ["Don't forget the coffee time is inside the 4 hours.", "The walk alone is shorter than 4 hours."],
+    ["Don't mix minutes and hours.", "Writing 9/s + t = 4 adds hours to minutes. Convert first."],
+    ["Don't answer 180.", "That's the walk only. Add the 24 minutes."],
+  ],
+});
+
+DDX("2024-I-2", {
+  plan: [
+    ["What's asked?", "xy, the product. When a problem asks for a combination, try to get it directly without finding each variable."],
+    ["What log rules apply?", "The power rule pulls exponents out: log_x(y^x) = x · log_x(y). Logs with swapped bases are reciprocals."],
+    ["How do I combine the equations?", "Look at what each side contains. One has x · L, the other 4y / L. Multiplying cancels L and leaves xy."],
+  ],
+  donts: [
+    ["Don't try to solve for x and y separately.", "It leads to equations you can't solve by hand. xy comes out directly."],
+    ["Don't treat 4y as an exponent of 4.", "x^(4y) means x to the power 4 × y."],
+  ],
+});
+
+DDX("2024-I-3", {
+  plan: [
+    ["How do I think about “a strategy that guarantees a win”?", "Label each pile size as winning or losing for the player about to move, starting from the end of the game and working up."],
+    ["What are the rules for labeling?", "0 is losing (you have no move; the opponent took the last token). A pile is winning if you can move to a losing pile. A pile is losing if every move goes to a winning pile."],
+    ["Why does Bob want a losing pile at the start?", "Alice moves first. If the start is losing for the mover, Alice loses and Bob wins."],
+    ["What do I do after a few rows?", "Look for a repeating pattern, explain why it repeats, then count up to 2024."],
+  ],
+  donts: [
+    ["Don't count winning positions.", "Those are Alice's wins. Bob needs the losing ones."],
+    ["Don't guess the pattern from 3 values.", "Fill in at least 10 or 12 before trusting a cycle."],
+    ["Don't forget n ≡ 2 (mod 5).", "Multiples of 5 are only half the losing positions."],
+  ],
+});
+
+DDX("2024-I-4", {
+  plan: [
+    ["What does “given that she won a prize” do?", "It shrinks the set of possibilities to only the draws where she won a prize. Count those; that's the new denominator."],
+    ["How do I count draws with exactly k matches?", "Split the 10 numbers into her 4 and the other 6. Choose k from hers and 4 − k from the others."],
+    ["How many grand prize draws?", "Exactly 1: the draw equal to her picks."],
+  ],
+  donts: [
+    ["Don't answer 1/210.", "That ignores the “given that.”"],
+    ["Don't count only exactly-2 matches.", "“At least two” includes 3 and 4."],
+    ["Don't multiply probabilities instead of counting.", "Counting equally likely draws is simpler and less error-prone here."],
+  ],
+});
+
+DDX("2024-I-5", {
+  plan: [
+    ["What's the unknown?", "DE, the overlap gap. CE = 107 − DE, so finding DE is enough."],
+    ["How do I use “four points on a circle”?", "The circle's center is the same distance from all four. Find the center using perpendicular bisectors, then set two distances equal."],
+    ["Why coordinates?", "Rectangles have right angles, so coordinates are natural. Put D at the origin and the line DF along the x-axis."],
+  ],
+  donts: [
+    ["Don't trust the official picture.", "It's not to scale. DE is only 3."],
+    ["Don't answer DE.", "The question wants CE = 107 − 3."],
+    ["Don't put A and H on the same side.", "The problem says opposite sides: one rectangle below the line, one above."],
+  ],
+});
+
+/* ---------- 2024 AIME II ---------- */
+DDX("2024-II-1", {
+  plan: [
+    ["What's the catch in this problem?", "Everyone owns candy hearts. So “owns exactly two things” means candy + one other."],
+    ["What can I count two ways?", "Ownerships of ring, clubs, spade. By item: 195 + 367 + 562. By person: 1 per item each person owns."],
+    ["What's the unknown?", "w, the people who own all four. Set the two counts equal and solve."],
+  ],
+  donts: [
+    ["Don't draw a 4-circle Venn diagram.", "You don't have enough information to fill it in. The counting trick avoids it."],
+    ["Don't forget the candy hearts.", "Treating “exactly two” as two of the three other items gives the wrong answer."],
+  ],
+});
+
+DDX("2024-II-2", {
+  plan: [
+    ["Which clue is strongest?", "“Median not in the list” forces an even number of items. Start there."],
+    ["What does “unique mode 9” force?", "At least two 9s, and every other number appears fewer times than 9."],
+    ["How do I search?", "Two 9s use 18. The other items add to 12. Try 4 items, then show other lengths fail."],
+  ],
+  donts: [
+    ["Don't assume the median is the middle item.", "With an even count, it's the average of the two middle items."],
+    ["Don't forget to sort before finding the median.", "The median depends on order."],
+    ["Don't answer the sum 30.", "The question wants the sum of squares."],
+  ],
+});
+
+DDX("2024-II-3", {
+  plan: [
+    ["How do I name things?", "Letters for the six cells: a b c on top, d e f below. Then each condition is an equation."],
+    ["What does 999 tell me?", "Adding two 3-digit numbers to get 999 with no carries means each column adds to 9."],
+    ["What does 99 tell me?", "Write the columns sum with place value: 10(a + b + c) + (d + e + f) = 99. Then use d = 9 − a, etc."],
+  ],
+  donts: [
+    ["Don't forbid leading zeros.", "The example uses 008."],
+    ["Don't worry about digits above 9.", "a + b + c = 8 never needs a digit above 8."],
+  ],
+});
+
+DDX("2024-II-4", {
+  plan: [
+    ["Why do logs make this easier, not harder?", "Logs turn products and quotients into sums and differences. Rename a = log₂x, b = log₂y, c = log₂z and the system becomes ordinary linear equations."],
+    ["What's the first move with a symmetric system?", "Add all the equations."],
+    ["What's asked?", "|4a + 3b + 2c| as a reduced fraction."],
+  ],
+  donts: [
+    ["Don't solve for x, y, z.", "You only need a, b, c."],
+    ["Don't drop the absolute value.", "The value inside is −25/8."],
+  ],
+});
+
+DDX("2024-II-5", {
+  plan: [
+    ["How do I picture it?", "Draw the big triangle first, then the hexagon inside, with three of its sides on the triangle's sides."],
+    ["What do the parallel sides give me?", "Each corner of the triangle has a small triangle cut off by a hexagon side that's parallel to the opposite side. Parallel means similar to the big triangle."],
+    ["What's my equation?", "Walk along one side of the big triangle: piece of one small triangle + hexagon side + piece of another small triangle = full side."],
+  ],
+  donts: [
+    ["Don't assume the hexagon is regular.", "Equal sides only; the angles differ."],
+    ["Don't average 200, 240, 300.", "The side is the “harmonic” combination 1/(1/200 + 1/240 + 1/300)."],
+  ],
+});
+
+/* extra unpacked algebra for the travel problem (Andrew asked for more of the basics) */
+(o => { if (o) o.deep += unp("multiplying out (v + 2)(T − 1)", ["Multiply each part of the first bracket by each part of the second: v·T, v·(−1), 2·T, 2·(−1).", "That's vT − v + 2T − 2.", "The equation vT = vT − v + 2T − 2 has vT on both sides. Take it away from both sides: 0 = −v + 2T − 2.", "Move v over: v = 2T − 2."])
+  + unp("multiplying out (v + 9)(T − 2)", ["v·T − 2v + 9T − 18.", "Take vT away from both sides: 0 = −2v + 9T − 18.", "So 2v = 9T − 18."])
+  + unp("solving 2(2T − 2) = 9T − 18", ["Left side: 4T − 4.", "4T − 4 = 9T − 18. Add 18 to both sides: 4T + 14 = 9T.", "Take 4T from both sides: 14 = 5T, so T = 14/5 = 2.8 hours.", "Then v = 2(2.8) − 2 = 3.6 mph, and d = 3.6 × 2.8 = 10.08 = 252/25 miles."]); })(AIME_DD.find(p => p.id === "2026-I-1"));
 /* =========================================================
    APP STATE + HELPERS
    ========================================================= */
@@ -15641,12 +16109,49 @@ function ddSec(n, total, title, body) {
 }
 const ddPolish = h => glossify(prettyMath(h));
 
+const DD_GUIDE = `
+<div class="dd-guide">
+  <h3>1. Read the last sentence first</h3>
+  <p>Find the question at the end and underline it. Write <b>GOAL:</b> at the top of your paper with what you must find. Then read the whole problem with that goal in mind.</p>
+  <h3>2. Decode the answer format</h3>
+  <p>Every AIME answer is a whole number from 0 to 999. When the real answer isn't like that, the problem tells you how to turn it into one. That instruction is about the <b>last step</b>, not the first.</p>
+  ${tbl(["The problem says", "What it means", "What you do"], [
+    ["“… is m/n, where m and n are relatively prime positive integers. Find m + n.”", "The thing you're finding is a fraction.", "Find the fraction first. At the very end, reduce it and add top + bottom. There is never an equation about m and n."],
+    ["“Find the remainder when N is divided by 1000.”", "N may be bigger than 999.", "Find N (or just its last three digits)."],
+    ["“Find √N” or “Find m + n” for m√n", "The real answer is too big or not a whole number.", "Find the real value, then do the last conversion."],
+    ["“Find the number of …”", "It's a counting problem.", "Count. Organize so you don't miss or double count."],
+    ["“Find the sum of all …”", "There are several answers.", "Find every one, then add."],
+  ])}
+  <h3>3. Name the unknowns you need</h3>
+  <p>Ask: “If I knew which numbers, could I answer the question?” Name those with letters. When the problem describes things <b>compared to</b> something else (“2 mph faster than Patrick”), name the base thing and describe the rest with it. Fewer letters means fewer equations to juggle.</p>
+  <h3>4. Translate one sentence at a time</h3>
+  <p>Go through the problem sentence by sentence and write each fact as math on its own line. “One hour later” becomes T − 1. “Twice as many” becomes 2x. “At least two” means 2 or more. If a sentence gives you nothing, ask why it's there: AIME problems rarely include useless facts.</p>
+  <h3>5. Find the connecting rule</h3>
+  <p>Equations come from rules you already know that link the quantities: distance = speed × time, area = ½ base × height, probability = good ÷ total, sum of angles in a polygon. Write the rule, then fill it in with your letters.</p>
+  <h3>6. Count unknowns and equations</h3>
+  <p>Two unknowns usually need two equations. If you're short, you haven't used every sentence yet. If the question asks for a combination (like xy), you may not need each unknown at all.</p>
+  <h3>7. When stuck, try small cases</h3>
+  <p>For counting and games, work out n = 1, 2, 3, … by hand and look for a pattern. Then explain why the pattern continues.</p>
+  <h3>8. Check before you write it down</h3>
+  <p>Plug your answer back into the story. Is it in the right units? Is the fraction reduced? Is it between 0 and 999? Did you answer the question that was asked (CE, not DE)?</p>
+  <h3>Traps that show up again and again</h3>
+  <ul>
+    <li><b>“Exactly” vs “at least”:</b> exactly 2 means 2 only; at least 2 means 2, 3, 4, ….</li>
+    <li><b>“Inclusive”:</b> the end numbers count. From 1 to 10 inclusive is 10 numbers.</li>
+    <li><b>“Ordered pairs”:</b> (2, 3) and (3, 2) are different.</li>
+    <li><b>“Distinct”:</b> no two can be equal.</li>
+    <li><b>Mixed units:</b> minutes vs hours, degrees vs radians. Convert first.</li>
+    <li><b>Pictures “not to scale”:</b> trust the numbers, not the drawing.</li>
+  </ul>
+</div>`;
+
 function viewAime() {
   const o = S.ddId && ddGet(S.ddId);
   if (!o) {
     const seen = ddSeen();
     return `
     <section style="display:flex;flex-direction:column;gap:8px"><span class="eyebrow">AIME I · AIME II · 2024 to 2026 · problems 1 to 5</span><h1>AIME Deep Dives</h1></section>
+    <details class="panel dd-guidebox" ${S.ddGuide ? "open" : ""}><summary><b>Start here: how to attack an AIME problem</b></summary>${ddPolish(DD_GUIDE)}</details>
     <section class="dd-grid">${DD_TESTS.map(([y, t]) => `
       <article class="chap"><div class="chap-h"><h3>${y} AIME ${t}</h3><span class="chap-n">${AIME_DD.filter(p => p.yr === y && p.t === t && seen.has(p.id)).length}/5</span></div>
         <ol class="dd-list">${AIME_DD.filter(p => p.yr === y && p.t === t).sort((a, b) => a.n - b.n).map(p => `
@@ -15658,19 +16163,23 @@ function viewAime() {
   const open = !!S.ddOpen[o.id], tr = S.ddTry[o.id] || {};
   const read = `<div class="tbl-wrap"><table class="dd-read"><thead><tr><th>Words to notice</th><th>Why they matter</th></tr></thead><tbody>${o.read.map(([w, why]) => `<tr><td><b>${w}</b></td><td>${ddPolish(why)}</td></tr>`).join("")}</tbody></table></div>`;
   const paper = `<div class="dd-paper">${o.paper.join("")}</div>`;
-  const total = 7;
+  const total = 9;
+  const plan = `<div class="dd-plan">${(o.plan || []).map(([q, a]) => `<div class="dd-q"><b>${q}</b><div>${ddPolish(a)}</div></div>`).join("")}</div>`;
+  const donts = `<ul class="dd-donts">${(o.donts || []).map(([d, why]) => `<li><b>✗ ${d}</b> ${ddPolish(why)}</li>`).join("")}</ul>`;
   const after = open ? [
-    ddSec(3, total, "Step-by-step thinking", ddPolish(steps(o.think))),
-    ddSec(4, total, `The easy way: ${o.easy.h}`, ddPolish(steps(o.easy.steps))),
-    ddSec(5, total, `The fast way: ${o.fast.h}`, ddPolish(steps(o.fast.steps))),
-    ddSec(6, total, "The details", ddPolish(o.deep)),
-    ddSec(7, total, "FAQ", `<div class="dd-faq">${o.faq.map(([q, a]) => `<details><summary>${q}</summary><p>${ddPolish(a)}</p></details>`).join("")}</div>`),
-  ].join("") : `<div class="dd-gate"><button class="btn primary" data-dd="open">Show the solution</button><span class="status">Sections 3 to 7: thinking, the easy way, the fast way, details, FAQ</span></div>`;
+    ddSec(3, total, "Make a plan", plan),
+    ddSec(4, total, "Step-by-step thinking", ddPolish(steps(o.think))),
+    ddSec(5, total, `The easy way: ${o.easy.h}`, ddPolish(steps(o.easy.steps))),
+    ddSec(6, total, `The fast way: ${o.fast.h}`, ddPolish(steps(o.fast.steps))),
+    ddSec(7, total, "What not to do", donts),
+    ddSec(8, total, "The details", ddPolish(o.deep)),
+    ddSec(9, total, "FAQ", `<div class="dd-faq">${o.faq.map(([q, a]) => `<details><summary>${q}</summary><p>${ddPolish(a)}</p></details>`).join("")}</div>`),
+  ].join("") : `<div class="dd-gate"><button class="btn primary" data-dd="open">Show the solution</button><span class="status">Sections 3 to 9: plan, thinking, easy way, fast way, what not to do, details, FAQ</span></div>`;
   return `
   <nav class="crumbs"><button data-dd="go" data-ref="">AIME Deep Dives</button><span>›</span><span>${o.yr} AIME ${o.t}</span><span>›</span><span>Problem ${o.n}</span></nav>
   <article class="prose dd">
     <div><span class="eyebrow">${o.yr} AIME ${o.t} · Problem ${o.n} · ${o.topic}</span><h1>${o.title}</h1></div>
-    <div class="panel dd-prob"><span class="lbl">The problem</span><p>${ddPolish(o.p)}</p>${o.fig || ""}<a class="dd-src" href="${ddLink(o)}" target="_blank" rel="noopener">Official wording (AoPS Wiki)</a></div>
+    <div class="panel dd-prob"><span class="lbl">The problem</span><p>${ddPolish(o.p)}</p>${o.fig || ""}<div class="row" style="gap:16px"><a class="dd-src" href="${ddLink(o)}" target="_blank" rel="noopener">Official wording (AoPS Wiki)</a><button class="xref dd-src" data-dd="guide">How to attack an AIME problem</button></div></div>
     <div class="dd-try"><label for="ddin">Your answer</label><input class="numin" id="ddin" inputmode="numeric" maxlength="3" autocomplete="off" value="${tr.v ?? ""}" aria-label="Your answer, 0 to 999"><button class="btn" data-dd="check">Check</button>
       ${tr.res ? `<span class="dd-res ${tr.res}">${tr.res === "ok" ? `Correct: ${o.ans}` : "Not yet"}</span>` : ""}
       ${tr.show && tr.res !== "ok" ? `<span class="dd-res show">Answer: ${o.ans}</span>` : (tr.res === "ok" ? "" : `<button class="btn ghost small" data-dd="ans">Show answer</button>`)}</div>
@@ -15704,6 +16213,7 @@ app.addEventListener("click", e => {
   if (a === "go") ddGo(b.dataset.ref);
   else if (a === "open") { S.ddOpen[id] = true; render(); document.querySelectorAll(".dsec")[2]?.scrollIntoView({ behavior: "smooth", block: "start" }); }
   else if (a === "check") ddCheck();
+  else if (a === "guide") { S.ddGuide = true; go("aime", { ddId: null }); requestAnimationFrame(() => document.querySelector(".dd-guidebox")?.scrollIntoView({ block: "start" })); }
   else if (a === "ans") { S.ddTry[id] = { ...S.ddTry[id], show: true }; render(); }
 });
 app.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.id === "ddin") { e.preventDefault(); ddCheck(); } });
