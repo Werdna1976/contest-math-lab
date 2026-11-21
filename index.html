@@ -396,6 +396,41 @@ th{font-weight:600;color:var(--muted);font-size:.8rem;text-transform:uppercase;l
 .exsw-k::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--surface);box-shadow:0 1px 2px rgba(0,0,0,.3);transition:left .15s}
 .exsw[aria-checked="true"] .exsw-k{background:var(--accent)}
 .exsw[aria-checked="true"] .exsw-k::after{left:14px}
+
+/* AIME Deep Dives */
+.dd-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;max-width:1000px}
+@media (max-width:700px){.dd-grid{grid-template-columns:1fr}}
+.dd-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.dd-row{width:100%;display:flex;align-items:center;gap:10px;text-align:left;background:none;border:1px solid transparent;border-radius:10px;padding:6px 8px;color:var(--ink)}
+.dd-row:hover{background:var(--accent-soft);border-color:var(--line)}
+.dd-n{font-family:var(--f-mono);font-weight:700;color:var(--accent-ink);background:var(--accent);border-radius:8px;min-width:28px;text-align:center;padding:2px 6px;flex-shrink:0}
+.dd-t{display:flex;flex-direction:column;line-height:1.3;min-width:0}
+.dd-t small{font-family:var(--f-mono);font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.dd-ok{margin-left:auto;color:var(--accent);font-weight:700}
+.dd{display:flex;flex-direction:column;gap:16px;max-width:860px}
+.dd-prob{display:flex;flex-direction:column;gap:10px;border-left:6px solid var(--hi)}
+.dd-prob .lbl{font-family:var(--f-mono);font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.dd-prob p{margin:0;font-size:1.05rem}
+.dd-src{font-size:.85rem;color:var(--accent);align-self:flex-start}
+.dd-try{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.dd-try label{font-weight:600}
+.dd-try .numin{width:110px}
+.dd-res{font-family:var(--f-mono);font-size:.9rem;padding:4px 10px;border-radius:8px}
+.dd-res.ok{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.dd-res.no{background:var(--hi-soft);color:var(--ink)}
+.dd-res.show{background:var(--surface);border:1px solid var(--line)}
+.dd-read td,.dd-read th{vertical-align:top}
+.dd-read td:first-child{min-width:150px}
+.dd-paper{display:flex;flex-direction:column;gap:6px;background:var(--surface);border:1px dashed var(--line);border-radius:12px;padding:14px 16px}
+code.pw{font-family:var(--f-mono);font-size:.92rem;background:none;white-space:pre-wrap;word-break:break-word}
+.dd-gate{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:18px 0}
+.dd-faq{display:flex;flex-direction:column;gap:8px}
+.dd-faq details{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.dd-faq summary{cursor:pointer;font-weight:600}
+.dd-faq details[open] summary{margin-bottom:6px}
+.dd-faq p{margin:0}
+table.ddgrid{border-collapse:collapse}
+table.ddgrid td{border:2px solid var(--ink);width:44px;height:44px;text-align:center;font-family:var(--f-mono);font-size:1.1rem}
 </style>
 
 <header class="top"><div class="top-in">
@@ -406,6 +441,7 @@ th{font-weight:600;color:var(--muted);font-size:.8rem;text-transform:uppercase;l
   <nav class="tabs" id="tabs">
     <button class="tab" data-go="learn">Learn</button>
     <button class="tab" data-go="book">Textbook</button>
+    <button class="tab" data-go="aime">AIME Deep Dives</button>
     <button class="tab" data-go="setup">Test prep</button>
     <button class="tab" data-go="formulas">Formulas</button>
     <button class="tab" data-go="progress">Progress</button>
@@ -11808,6 +11844,35 @@ const GLOSSARY = [
   ["sphere", "spheres?", "A perfectly round ball."],
   ["polyhedron", "polyhedr(?:on|a|ons)", "A solid whose faces are all flat polygons, like a cube or pyramid."],
   ["Pythagorean", "Pythagorean theorem|Pythagoras", "In a right triangle, leg² + leg² = hypotenuse²."],
+  // AIME Deep Dives words
+  ["logarithm", "logarithms?|log base|logs?(?= (?:of|base|rule|part))", "log base b of x answers: b to what power gives x? log₂ 8 = 3 because 2³ = 8."],
+  ["power rule", "power rule", "log(a^k) = k · log(a): an exponent inside a log can move out front."],
+  ["change of base", "change of base", "log_b x = (log x)/(log b), using any log you like on top and bottom."],
+  ["conditional probability", "conditional probabilit(?:y|ies)", "The chance of one thing when you already know another thing happened: count only the outcomes where it happened."],
+  ["palindrome", "palindromes?", "A number that reads the same forward and backward, like 42124."],
+  ["hemisphere", "hemispheres?", "Half of a ball, cut through its center."],
+  ["numeral", "numerals?", "The way a number is written with digits. 17 in base b means 1·b + 7."],
+  ["base", "base-b|base \\d+|(?<=\\bin )base(?= [a-z0-9])", "The number system. In base b, each place is worth b times the place to its right."],
+  ["unique mode", "unique mode", "The one value that appears more often than every other value, with no tie."],
+  ["reflection", "reflections?", "A mirror image, across a line or through a point. Reflecting D through point F puts F exactly halfway between D and its image."],
+  ["heptagon", "heptagons?", "A polygon with 7 sides."],
+  ["convex", "convex|nonconvex", "Convex: no dents, every angle less than 180°. Nonconvex: at least one angle bigger than 180°."],
+  ["reflex angle", "reflex(?: angles?| corner)?", "An angle bigger than 180°."],
+  ["telescoping", "telescop(?:ing|es?)", "A long sum or product where almost everything cancels, leaving only the ends."],
+  ["composition", "compositions?", "A way to write a number as an ordered list of positive parts: 3 = 1 + 2 = 2 + 1 = 1 + 1 + 1 = 3."],
+  ["stars and bars", "stars and bars", "Count ways to split n identical things into k groups by arranging n stars and k − 1 bars."],
+  ["power of a point", "power of a point", "If two lines through a point P cut a circle, (one piece × other piece) is the same for both lines."],
+  ["inscribed angle", "inscribed angles?", "An angle with its corner on a circle. It is half the arc it cuts off."],
+  ["circumcircle", "circumcircles?", "The circle passing through all corners of a triangle."],
+  ["perpendicular bisector", "perpendicular bisectors?", "The line through a segment's midpoint at a right angle to it. Every point on it is equally far from both ends."],
+  ["without replacement", "without replacement|without putting any back", "Items drawn are not put back, so the same item can't be drawn twice."],
+  ["remainder theorem", "remainder theorem", "Dividing a polynomial P(n) by n − a leaves remainder P(a)."],
+  ["winning position", "winning positions?|losing positions?", "In a game, a winning position means the player about to move can force a win; a losing position means they can't."],
+  ["ordered pair", "ordered pairs?", "A pair (x, y) where order matters: (1, 2) and (2, 1) are different."],
+  ["inclusive", "inclusive", "Including the end numbers. 1 to 5 inclusive means 1, 2, 3, 4, 5."],
+  ["counterclockwise", "counterclockwise|clockwise", "Clockwise turns the way clock hands move; counterclockwise turns the other way."],
+  ["law of cosines", "law of cosines", "c² = a² + b² − 2ab·cos C: the Pythagorean theorem for any triangle."],
+  ["difference of squares", "difference of squares", "a² − b² = (a − b)(a + b)."],
 ];
 GLOSSARY.sort((a, b) => b[0].length - a[0].length); // longer phrases first, so "prime factorization" wins over "prime"
 const GL_RE = new RegExp(`(?<![A-Za-z-])(?:${GLOSSARY.map(([k, r]) => `(${r})`).join("|")})(?![A-Za-z])`, "gi");
@@ -13571,6 +13636,1054 @@ const store = {
 };
 
 /* =========================================================
+   AIME DEEP DIVES: problems 1-5 of AIME I and II, 2024-2026, walked through slowly.
+   Problems are restated in our own words (same math); the official wording is linked on AoPS.
+   Every answer here was checked by computer against the official answer.
+   Fields: yr, t ("I"/"II"), n, topic, title, ans, p (problem), fig (optional svg),
+     read [[phrase, why it matters]], paper [lines], think [steps], easy {h, steps}, fast {h, steps},
+     deep (html), faq [[question, answer]]
+   ========================================================= */
+const AIME_DD = [];
+const DD = o => { o.id = `${o.yr}-${o.t}-${o.n}`; AIME_DD.push(o); };
+const ddLink = o => `https://artofproblemsolving.com/wiki/index.php/${o.yr}_AIME_${o.t}_Problems/Problem_${o.n}`;
+// a line of work to copy onto paper
+const pw = s => `<code class="pw">${s}</code>`;
+/* AIME Deep Dives: 2024 AIME I and II, problems 1-5 */
+
+DD({ yr: 2024, t: "I", n: 1, topic: "Rates", title: "Aya's walk and the coffee shop", ans: 204,
+  p: `Every morning Aya walks 9 kilometers and then stops at a coffee shop. Walking at a constant <i>s</i> km per hour, the whole outing takes 4 hours, and that includes <i>t</i> minutes in the coffee shop. Walking at <i>s</i> + 2 km per hour, the whole outing takes 2 hours 24 minutes, again including the same <i>t</i> minutes in the shop. If she walks at <i>s</i> + ½ km per hour, how many minutes does the whole outing take, coffee shop included?`,
+  read: [
+    ["“including t minutes”", "The 4 hours is walking time <b>plus</b> coffee time. The walk itself is shorter than 4 hours."],
+    ["hours and minutes mixed together", "Speeds are per hour but t is in minutes. Pick one unit (hours) and convert everything before you write equations."],
+    ["the same t both times", "The coffee stop does not change. That is what lets you subtract the two equations and make t disappear."],
+    ["answer in minutes", "Your final answer must be in minutes, and it must include the coffee time."],
+  ],
+  paper: [pw("walk time = 9/s"), pw("9/s + t/60 = 4"), pw("9/(s+2) + t/60 = 2.4"), pw("subtract: 9/s − 9/(s+2) = 1.6")],
+  think: [
+    "Time = distance ÷ speed, so the walking part takes 9/<i>s</i> hours.",
+    "Turn 2 hours 24 minutes into hours: 24 minutes is 24/60 = 0.4 hour, so 2.4 hours.",
+    "Write one equation for each walking speed. Both contain t/60 (the coffee time in hours).",
+    "Subtract the equations. The coffee time cancels, leaving one equation with only <i>s</i>.",
+    "Solve for <i>s</i>, then go back and find t.",
+    "Finally compute the new walk at <i>s</i> + ½, add t, and give the answer in minutes.",
+  ],
+  easy: { h: "Write the two equations and solve", steps: [
+    "Subtracting gives 9/<i>s</i> − 9/(<i>s</i>+2) = 1.6.",
+    "Combine the fractions: 9(<i>s</i>+2) − 9<i>s</i> = 18, so 18 / (<i>s</i>(<i>s</i>+2)) = 1.6.",
+    "Then <i>s</i>(<i>s</i>+2) = 18 ÷ 1.6 = 11.25.",
+    "Try <i>s</i> = 2.5: 2.5 × 4.5 = 11.25. It works, so <i>s</i> = 2.5 km per hour.",
+    "Walking time at 2.5 is 9 ÷ 2.5 = 3.6 hours, so coffee time is 4 − 3.6 = 0.4 hour = 24 minutes.",
+    "New speed 2.5 + 0.5 = 3: walk takes 9 ÷ 3 = 3 hours = 180 minutes. Total 180 + 24 = <b>204</b>.",
+  ] },
+  fast: { h: "Guess the speed from the time drop", steps: [
+    "Going 2 km/h faster saves 4 − 2.4 = 1.6 hours of walking.",
+    "Nice speeds that divide 9 well: try <i>s</i> = 2.5 → 3.6 h, and 4.5 → 2 h. The difference is 1.6 h. Found it.",
+    "Coffee = 4 − 3.6 = 0.4 h = 24 min. At 3 km/h the walk is 3 h. Answer 180 + 24 = <b>204</b>.",
+  ] },
+  deep: `<p>The key idea is that <b>two situations share one unknown that you don't care about</b> (the coffee time). Subtracting the equations removes it. This “subtract to cancel” move shows up constantly in rate problems.</p>
+  ${unp("why s(s+2) = 11.25 has the answer 2.5", ["Multiply both sides by 4 to clear the decimal: 4s² + 8s = 45.", "Rearrange: 4s² + 8s − 45 = 0.", "Factor: (2s − 5)(2s + 9) = 0. Check: 4s² + 18s − 10s − 45 ✓.", "So s = 5/2 = 2.5 (the other root, −4.5, is a negative speed, so it is thrown out)."])}
+  <p>Check your work by plugging back in: at 4.5 km/h the walk is 2 hours, plus 24 minutes of coffee, is 2 hours 24 minutes. ✓</p>`,
+  faq: [
+    ["Why not just say the walk takes 4 hours?", "Because the 4 hours includes sitting in the coffee shop. The walking part alone is 4 hours minus t minutes."],
+    ["I got 180. What happened?", "You found the walking time but forgot to add the 24 minutes in the coffee shop. Reread what the question asks for."],
+    ["Can I work in minutes instead of hours?", "Yes, but then the walking time is 540/s minutes (9 ÷ s hours × 60). Mixing units is the usual mistake, so pick one and stick to it."],
+    ["What does “constant speed” add?", "It means time = distance ÷ speed works. If the speed changed during the walk, you couldn't use that formula."],
+  ] });
+
+DD({ yr: 2024, t: "I", n: 2, topic: "Logarithms", title: "Two logs that both equal 10", ans: 25,
+  p: `Real numbers <i>x</i> and <i>y</i>, both bigger than 1, satisfy log<sub><i>x</i></sub>(<i>y</i><sup><i>x</i></sup>) = 10 and log<sub><i>y</i></sub>(<i>x</i><sup>4<i>y</i></sup>) = 10. Find <i>xy</i>.`,
+  read: [
+    ["“find xy”", "You are asked for the product, not x and y separately. That is a hint that you may never need x or y alone."],
+    ["“both greater than 1”", "This guarantees the logs make sense (a log base must be positive and not 1)."],
+    ["exponents inside the logs", "log<sub>x</sub>(y<sup>x</sup>): the x in the exponent can come out front as a multiplier."],
+  ],
+  paper: [pw("x · log_x(y) = 10"), pw("4y · log_y(x) = 10"), pw("log_x(y) · log_y(x) = 1"), pw("multiply: 4xy = 100")],
+  think: [
+    "Use the power rule: log(a<sup>k</sup>) = k · log(a). Pull the exponents out front.",
+    "Now each equation has a log of y base x or of x base y. Those two are reciprocals of each other.",
+    "Since we want xy, look for a way to combine the equations that makes x and y appear multiplied together.",
+    "Multiplying the two equations does it: the logs cancel and you get 4xy on the left.",
+  ],
+  easy: { h: "Name the log and solve", steps: [
+    "Let L = log<sub>x</sub>(y). Then log<sub>y</sub>(x) = 1/L.",
+    "First equation: xL = 10, so L = 10/x.",
+    "Second equation: 4y · (1/L) = 10, so L = 4y/10 = 2y/5.",
+    "Set them equal: 10/x = 2y/5. Cross-multiply: 50 = 2xy, so xy = <b>25</b>.",
+  ] },
+  fast: { h: "Multiply the equations", steps: [
+    "x · log<sub>x</sub>(y) · 4y · log<sub>y</sub>(x) = 10 · 10.",
+    "The two logs multiply to 1, leaving 4xy = 100, so xy = <b>25</b>.",
+  ] },
+  deep: `<p>Two facts carry this problem.</p>
+  ${unp("the power rule", ["log<sub>x</sub>(y<sup>x</sup>) asks: x to what power gives y<sup>x</sup>?", "If x<sup>L</sup> = y, then x<sup>Lx</sup> = (x<sup>L</sup>)<sup>x</sup> = y<sup>x</sup>.", "So log<sub>x</sub>(y<sup>x</sup>) = x · L = x · log<sub>x</sub>(y)."])}
+  ${unp("why log_x(y) · log_y(x) = 1", ["If x<sup>L</sup> = y, raise both sides to the power 1/L: x = y<sup>1/L</sup>.", "So log<sub>y</sub>(x) = 1/L.", "Multiply: L · (1/L) = 1."])}
+  <p>Do x and y really exist? Yes: x is about 1.75 and y is about 14.3. The AIME promises they exist, so you don't have to find them.</p>`,
+  faq: [
+    ["Do I need to find x and y?", "No. The question asks for xy, and multiplying the equations gives xy directly. Finding x and y by themselves is very hard here."],
+    ["What if I divided the equations instead?", "Dividing leaves log<sub>x</sub>(y)² which doesn't cancel. Multiplying is the move because the two logs are reciprocals."],
+    ["Is 4y the exponent or is it 4 times y?", "x<sup>4y</sup> means x raised to the power 4y (4 times y). That whole 4y comes out front."],
+  ] });
+
+DD({ yr: 2024, t: "I", n: 3, topic: "Games", title: "Take 1 or 4 tokens", ans: 809,
+  p: `Alice and Bob play a game with a stack of <i>n</i> tokens. They take turns, and Alice goes first. On a turn a player removes either 1 token or 4 tokens. Whoever removes the last token wins. For how many positive integers <i>n</i> ≤ 2024 does Bob have a strategy that guarantees he wins no matter what Alice does?`,
+  read: [
+    ["“Alice going first”", "Bob wins exactly when the starting position is a loss for the player about to move."],
+    ["“a strategy that guarantees”", "Bob must win against every possible Alice move, not just against a careless Alice."],
+    ["“removes the last token wins”", "So 0 tokens left on your turn means you already lost."],
+    ["“less than or equal to 2024”", "Include 2024 itself when you count."],
+  ],
+  paper: [pw("n:  0 1 2 3 4 5 6 7 8 9 10"), pw("W/L: L W L W W L W L W W L"), pw("pattern: L when n ≡ 0 or 2 (mod 5)")],
+  think: [
+    "Call a pile size L (losing) if the player about to move loses with best play, and W (winning) otherwise.",
+    "0 is L: there is nothing to take, the other player already took the last token.",
+    "A pile is W if some move (take 1 or take 4) leads to an L pile. A pile is L if every move leads to a W pile.",
+    "Fill in a table for n = 0, 1, 2, … and look for a repeating pattern.",
+    "Bob wins when the starting pile is L. Count the L values from 1 to 2024.",
+  ],
+  easy: { h: "Build the table", steps: [
+    "n = 1: take 1 → 0 (L), so W. n = 2: only move is to 1 (W), so L.",
+    "n = 3: take 1 → 2 (L), so W. n = 4: take 4 → 0 (L), so W. n = 5: moves to 4 or 1, both W, so L.",
+    "n = 6 W, 7 L, 8 W, 9 W, 10 L, … The pattern L, W, L, W, W repeats every 5.",
+    "L positions: n ≡ 0 or 2 (mod 5).",
+    "Multiples of 5 up to 2024: 5, 10, …, 2020 → 404 numbers.",
+    "Numbers ≡ 2 (mod 5): 2, 7, …, 2022 → (2022 − 2)/5 + 1 = 405 numbers.",
+    "Total 404 + 405 = <b>809</b>.",
+  ] },
+  fast: { h: "Spot the cycle and count", steps: [
+    "Moves of 1 and 4 add to 5, so expect a cycle of length 5.",
+    "In each block of 5 consecutive numbers, 2 are losing. 2024 = 5 × 404 + 4: that's 404 full blocks (808 losers) plus 2021–2024, which contains 2022 (≡ 2). Total <b>809</b>.",
+  ] },
+  deep: `<p><b>Why the pattern is exactly mod 5.</b> Bob's strategy is to always hand Alice a pile that is 0 or 2 more than a multiple of 5.</p>
+  <ul><li>Pile is a multiple of 5: if Alice takes 1, Bob takes 4; if Alice takes 4, Bob takes 1. The pile drops by exactly 5 and is a multiple of 5 again. Eventually it hits 0 right after Bob's move, so Bob took the last token.</li>
+  <li>Pile is 5k + 2: if Alice takes 1 (leaving 5k + 1), Bob takes 1 and leaves 5k. If Alice takes 4 (leaving 5k − 2), Bob takes 1 and leaves 5k − 3 = 5(k − 1) + 2. Either way Alice again faces 0 or 2 mod 5. With only 2 tokens, Alice must take 1 and Bob takes the last one.</li></ul>
+  <p>From every other pile size (1, 3, 4 more than a multiple of 5), the first player can move to one of these losing piles, so Alice would win. The general lesson: in take-away games, compute small cases, find the period, then prove it with a strategy.</p>`,
+  faq: [
+    ["Bob is second. Why do we count losing positions?", "Alice moves first. If the starting pile is a losing position for the person to move, that person is Alice, so Bob wins."],
+    ["Why is 0 a losing position?", "If it's your turn and there are 0 tokens, the other player just took the last token and won."],
+    ["Do I count n = 0?", "No, the problem asks about positive integers n. Start counting at 1."],
+    ["Is 2 really a loss? You can take 1.", "Taking 1 leaves 1 token, and the other player takes it and wins. You can't take 4 from 2. So yes, 2 is losing."],
+  ] });
+
+DD({ yr: 2024, t: "I", n: 4, topic: "Probability", title: "Jen's lottery: grand prize given a prize", ans: 116,
+  p: `Jen picks 4 different numbers from S = {1, 2, 3, …, 10}. Then 4 numbers are chosen at random from S. She wins a prize if at least 2 of her numbers are among the chosen 4, and the grand prize if all 4 of her numbers are the chosen ones. The probability that she wins the grand prize, given that she won a prize, is m/n in lowest terms. Find m + n.`,
+  read: [
+    ["“given that she won a prize”", "This is conditional probability. You only look at the draws where she won a prize, and ask what fraction of those are grand prizes."],
+    ["“at least two”", "That means 2, 3, or 4 matches. Three separate cases to add."],
+    ["“relatively prime”", "Reduce the fraction before adding top and bottom."],
+  ],
+  paper: [pw("total draws: C(10,4) = 210"), pw("2 matches: C(4,2)·C(6,2) = 6·15 = 90"), pw("3 matches: C(4,3)·C(6,1) = 4·6 = 24"), pw("4 matches: 1"), pw("P = 1 / (90+24+1) = 1/115")],
+  think: [
+    "Jen's 4 numbers are fixed. The random draw picks 4 of the 10.",
+    "Split the 10 numbers into Jen's 4 and the other 6.",
+    "A draw with exactly k matches picks k from Jen's 4 and 4 − k from the other 6.",
+    "“Given a prize” means: count only draws with at least 2 matches. That count is the new denominator.",
+    "Only 1 draw is the grand prize.",
+  ],
+  easy: { h: "Count the prize draws", steps: [
+    "Exactly 2 matches: choose 2 of her 4 and 2 of the other 6: 6 × 15 = 90.",
+    "Exactly 3: 4 × 6 = 24. Exactly 4: 1.",
+    "Prize draws: 90 + 24 + 1 = 115. Grand prize draws: 1.",
+    "Probability = 1/115, so m + n = 1 + 115 = <b>116</b>.",
+  ] },
+  fast: { h: "Complement inside the count", steps: [
+    "Draws with 0 matches: C(6,4) = 15. With 1 match: 4 × C(6,3) = 80.",
+    "Prize draws = 210 − 15 − 80 = 115. Answer 1/115 → <b>116</b>.",
+  ] },
+  deep: `<p>Conditional probability is just “shrink the world.” Instead of all 210 possible draws, the world is only the 115 draws where Jen got a prize. Every draw is equally likely, so the chance is (good draws in the small world) ÷ (size of the small world) = 1/115.</p>
+  ${unp("C(6,2) = 15", ["C(6,2) counts ways to pick 2 of 6 things when order doesn't matter.", "Ordered picks: 6 × 5 = 30.", "Each pair got counted twice (AB and BA), so 30 ÷ 2 = 15."])}
+  <p>The formula version: P(grand | prize) = P(grand and prize) / P(prize) = (1/210) / (115/210) = 1/115. A grand prize is automatically a prize, so “grand and prize” is just “grand.”</p>`,
+  faq: [
+    ["Why isn't the answer 1/210?", "1/210 is the chance of the grand prize with no information. The problem tells you she won a prize, so the possible draws shrink to 115."],
+    ["Does it matter which 4 numbers Jen picks?", "No. Every set of 4 behaves the same way, so you can pretend she picked 1, 2, 3, 4."],
+    ["Is “at least two” the same as “two”?", "No. At least two includes 3 and 4 matches. Forgetting those gives 1/91, which is wrong."],
+  ] });
+
+DD({ yr: 2024, t: "I", n: 5, topic: "Geometry", title: "Two rectangles and a circle", ans: 104,
+  p: `Rectangle ABCD has AB = 107 and BC = 16. Rectangle EFGH has EF = 184 and FG = 17. Points D, E, C, F lie on one line in that order, and A and H are on opposite sides of that line. Points A, D, H, G all lie on one circle. Find CE.`,
+  fig: fig(svg(420, 118, `${poly([[20, 60], [234, 60], [234, 92], [20, 92]], { fill: "var(--accent-soft)" })}${poly([[26, 26], [394, 26], [394, 60], [26, 60]], { fill: "var(--hi-soft)" })}${seg(10, 60, 410, 60, { c: "var(--muted)", w: 1, dash: "4 3" })}${[["D", 14, 56, "end"], ["E", 30, 74], ["C", 238, 74, "start"], ["F", 398, 74, "start"], ["A", 14, 104, "end"], ["B", 238, 104, "start"], ["H", 22, 22, "end"], ["G", 398, 22, "start"]].map(([s, x, y, a]) => txt(x, y, s, { a: a || "middle" })).join("")}${[[20, 60], [26, 60], [234, 60], [394, 60], [20, 92], [234, 92], [26, 26], [394, 26]].map(([x, y]) => dot(x, y, { r: 3 })).join("")}`, "Rectangle ABCD below line DF and rectangle EFGH above it, to scale"), "To scale: DE turns out to be only 3. The circle through A, D, H, G is huge (radius about 95) and is not drawn."),
+  read: [
+    ["“D, E, C, F lie on line DF in that order”", "E sits between D and C. So the two rectangles overlap along the line, and CE = DC − DE."],
+    ["“A and H on opposite sides”", "One rectangle hangs below the line, the other sits above it."],
+    ["“lie on a common circle”", "Four points on one circle: use the circle's center, which is the same distance from all four."],
+    ["the answer is CE, not DE", "Find DE first, then subtract from 107."],
+  ],
+  paper: [pw("D=(0,0) A=(0,−16) E=(x,0) H=(x,17) G=(x+184,17)"), pw("center: y = −8 and x-coord = x + 92"), pw("dist² to A = dist² to H"), pw("(x+92)² + 64 = 92² + 25²")],
+  think: [
+    "Coordinates make “four points on a circle” easy: the center is equally far from all of them.",
+    "Put D at the origin with the line as the x-axis. Then A = (0, −16). Let DE = x, so E = (x, 0), H = (x, 17), G = (x + 184, 17).",
+    "The center is on the perpendicular bisector of AD, which is the line y = −8.",
+    "It is also on the perpendicular bisector of HG, which is the vertical line through the middle of HG: x-coordinate x + 92.",
+    "So the center is (x + 92, −8). Now make its distance to A equal its distance to H.",
+  ],
+  easy: { h: "Coordinates", steps: [
+    "Distance² from (x+92, −8) to A(0, −16): (x+92)² + 8² = (x+92)² + 64.",
+    "Distance² to H(x, 17): 92² + 25² = 8464 + 625 = 9089.",
+    "So (x+92)² = 9089 − 64 = 9025 = 95².",
+    "x + 92 = 95, so DE = x = 3.",
+    "CE = DC − DE = 107 − 3 = <b>104</b>.",
+  ] },
+  fast: { h: "Power of a point at E", steps: [
+    "The center is at height −8 and has x-coordinate x + 92 (same reasons as above).",
+    "Line DF (the x-axis) hits the circle at D and at its mirror image across the center's vertical line: P = (2x + 184, 0). So EP = x + 184.",
+    "The vertical line through E hits the circle at H (height 17) and at its mirror image across y = −8: height −33. So the two pieces from E are 17 and 33.",
+    "Power of a point: ED · EP = 17 · 33, so x(x + 184) = 561.",
+    "561 = 3 · 187, so x = 3 and CE = 107 − 3 = <b>104</b>.",
+  ] },
+  deep: `<p>The big idea: <b>the center of a circle through points P and Q lies on the perpendicular bisector of PQ</b>. Two chords (AD and HG) give two lines, and their crossing point is the center.</p>
+  ${unp("95² = 9025 in your head", ["Numbers ending in 5: take the tens digit 9, multiply by the next number 10: 90.", "Write 25 after it: 9025.", "So √9025 = 95."])}
+  <p>Check the picture: with DE = 3, E is just a hair to the right of D, which matches the order D, E, C, F. The other solution x + 92 = −95 gives a negative length and is thrown out.</p>`,
+  faq: [
+    ["Why is the center at height −8?", "A is at height −16 and D at 0. The center is equally far from both, so it's halfway: −8."],
+    ["Why x + 92?", "H and G are at the same height, 184 apart. The point equally far from both is straight above (or below) the middle, which is 92 to the right of H."],
+    ["I got 3. Is that the answer?", "3 is DE. The problem asks for CE, which is 107 − 3 = 104."],
+    ["The official picture looks different. Is it wrong?", "Contest pictures are often not to scale. Trust the numbers, not the drawing."],
+  ] });
+
+DD({ yr: 2024, t: "II", n: 1, topic: "Counting", title: "Four things in Aimeville", ans: 73,
+  p: `Aimeville has 900 residents. 195 own a diamond ring, 367 own golf clubs, 562 own a garden spade, and every one of the 900 owns a bag of candy hearts. 437 residents own exactly two of these four things, and 234 own exactly three. How many own all four?`,
+  read: [
+    ["“each of the 900 residents owns a bag of candy hearts”", "This is the trap. Everyone already owns one thing, so “exactly two things” means exactly one of the other three."],
+    ["“exactly two” / “exactly three”", "Exactly means no more and no fewer. These groups don't overlap."],
+    ["“all four”", "With candy hearts automatic, all four means owning all three of ring, clubs, spade."],
+  ],
+  paper: [pw("ring + clubs + spade = 195 + 367 + 562 = 1124"), pw("exactly 2 things → 1 of the 3 items: 437 people"), pw("exactly 3 things → 2 of the 3 items: 234 people"), pw("all 4 → 3 of the 3: w people"), pw("437·1 + 234·2 + w·3 = 1124")],
+  think: [
+    "Ignore the candy hearts after you notice everyone has them. Count only ring, clubs, spade.",
+    "Translate: exactly 2 things = 1 of the three items. Exactly 3 things = 2 of the three. All 4 = all 3 items.",
+    "Add the three item counts: 1124. That total counts each person once for every item (of the three) they own.",
+    "A person with 1 item is counted once, with 2 items twice, with 3 items three times.",
+    "Set up one equation and solve for w.",
+  ],
+  easy: { h: "Count item-ownerships", steps: [
+    "437 people own 1 of the three items: 437 ownerships.",
+    "234 people own 2: 468 ownerships.",
+    "w people own 3: 3w ownerships.",
+    "437 + 468 + 3w = 1124, so 3w = 219 and w = <b>73</b>.",
+  ] },
+  fast: { h: "Same idea, no translation", steps: [
+    "Count all four items: 195 + 367 + 562 + 900 = 2024 ownerships.",
+    "People with exactly 1 thing (only candy) are a, with 2: 437, 3: 234, 4: w. Then a + 437 + 234 + w = 900 and a + 2·437 + 3·234 + 4w = 2024.",
+    "Subtract: 437 + 2·234 + 3w = 1124, the same equation. w = <b>73</b>.",
+  ] },
+  deep: `<p>This is <b>counting the same thing two ways</b>. Instead of fighting with a 4-circle Venn diagram, count pairs (person, item they own). Counting by item gives 1124; counting by person gives 1·437 + 2·234 + 3·w. They must match.</p>
+  ${unp("437 + 468 + 3w = 1124", ["437 + 468 = 905.", "1124 − 905 = 219.", "219 ÷ 3 = 73."])}
+  <p>Sanity check: people owning none of the three items (only candy) = 900 − 437 − 234 − 73 = 156, which is a sensible non-negative number.</p>`,
+  faq: [
+    ["Why can't I use inclusion-exclusion?", "You can, but you don't know the pairwise overlaps. The counting-ownerships trick avoids needing them."],
+    ["Do I need the 900?", "Not for the answer. It's only needed if you also want the number who own just candy hearts."],
+    ["I got 78 or something weird. What's wrong?", "Most likely you treated “exactly two” as two of the three non-candy items. Remember candy counts as one of the things."],
+  ] });
+
+DD({ yr: 2024, t: "II", n: 2, topic: "Statistics", title: "A list with mode 9", ans: 236,
+  p: `A list of positive integers has three properties. Its items add to 30. Its unique mode is 9. Its median is a positive integer that does not appear in the list. Find the sum of the squares of all the items.`,
+  read: [
+    ["“unique mode is 9”", "9 appears more often than any other number, with no tie. So 9 appears at least twice."],
+    ["“median … does not appear in the list”", "If the list had an odd number of items, the median would be the middle item, which is in the list. So the list has an even number of items."],
+    ["“median is a positive integer”", "With an even count, the median is the average of the two middle items, so those two must have an even sum."],
+  ],
+  paper: [pw("9 appears ≥ 2 times; even number of items"), pw("try 4 items: _ _ 9 9 → others sum 12"), pw("sorted a ≤ b < … median = (b + 9)/2 ?"), pw("5, 7, 9, 9: median 8 ✓")],
+  think: [
+    "Use the median clue first: the list length is even.",
+    "9 shows up at least twice. Two 9s already use 18 of the 30.",
+    "Try the smallest even length that works. 2 items: 9, 9 has median 9, which is in the list. No.",
+    "4 items: two 9s and two other numbers adding to 12, not equal to each other (or 9 wouldn't be the unique mode), and neither is 9.",
+    "Sort the list and test the median rule for each option.",
+    "Check whether 6 or more items could work, and rule them out.",
+  ],
+  easy: { h: "Try four items", steps: [
+    "Other two numbers a < b with a + b = 12 (a ≠ b): (1,11), (2,10), (3,9)✗, (4,8), (5,7).",
+    "(1, 11): sorted 1, 9, 9, 11: median 9 is in the list ✗. (2, 10): 2, 9, 9, 10: median 9 ✗.",
+    "(4, 8): 4, 8, 9, 9: median 8.5, not an integer ✗. (5, 7): 5, 7, 9, 9: median 8, not in the list ✓.",
+    "Sum of squares: 25 + 49 + 81 + 81 = <b>236</b>.",
+  ] },
+  fast: { h: "Rule out every other length", steps: [
+    "Six items with two 9s: the other four are distinct (no ties with 9's count) and add to 12: smallest four distinct positives add to 1+2+3+4 = 10. The only options are 1, 2, 3, 6 and 1, 2, 4, 5.",
+    "Sorted, the median is the average of the 3rd and 4th items. For 1,2,3,6,9,9 median is (3+6)/2 = 4.5 ✗; 1,2,4,5,9,9 gives 4.5 ✗.",
+    "Eight or more items with two 9s needs six different extra numbers adding to 12, but 1+2+…+6 = 21. Too big.",
+    "Three 9s use 27, leaving 3: extras {3} gives 3, 9, 9, 9 (median 9 ✗), {1, 2} gives 5 items (odd ✗), {1, 1, 1} ties the mode ✗. Four 9s are 36, too much. Only 5, 7, 9, 9 survives: <b>236</b>.",
+  ] },
+  deep: `<p>Order the clues by how much they cut down the search. “Median not in the list” forces an even count. “Unique mode 9” forces at least two 9s and no other number repeated as often. Then the sum of 30 leaves very little room.</p>
+  <p>A complete check by computer confirms that 5, 7, 9, 9 is the only list that works.</p>`,
+  faq: [
+    ["What does “unique mode” mean?", "The mode is the most common value. Unique means there's no tie: 9 appears strictly more often than every other value."],
+    ["Can the median be a decimal?", "The problem says the median is a positive integer, so no. That rules out 4, 8, 9, 9 (median 8.5)."],
+    ["Why must the list have even length?", "With an odd number of items, the median is the middle item itself, so it would appear in the list."],
+    ["Does the order of the list matter?", "No. Sort it to find the median, but the sum of squares is the same in any order."],
+  ] });
+
+DD({ yr: 2024, t: "II", n: 3, topic: "Counting", title: "Digits in a 2 by 3 grid", ans: 45,
+  p: `Put a digit in each cell of a grid with 2 rows and 3 columns. Read each row left to right as a 3-digit number (leading zeros allowed): the two row numbers must add to 999. Read each column top to bottom as a 2-digit number: the three column numbers must add to 99. For example, rows 0 0 8 and 9 9 1 work, since 8 + 991 = 999 and 09 + 09 + 81 = 99. How many ways can the grid be filled?`,
+  fig: `<div class="tbl-wrap" style="max-width:180px"><table class="ddgrid"><tbody><tr><td>a</td><td>b</td><td>c</td></tr><tr><td>d</td><td>e</td><td>f</td></tr></tbody></table></div>`,
+  read: [
+    ["the example 0 0 8", "Leading zeros are allowed. The top row 008 is the number 8, and column 09 is 9."],
+    ["“reading left to right”", "Two numbers: abc and def."],
+    ["“reading top to bottom”", "Three numbers: ad, be, cf, each a 2-digit number (top digit is the tens digit)."],
+  ],
+  paper: [pw("abc + def = 999 → a+d = 9, b+e = 9, c+f = 9"), pw("10(a+b+c) + (d+e+f) = 99"), pw("d+e+f = 27 − (a+b+c)"), pw("9(a+b+c) = 72 → a+b+c = 8")],
+  think: [
+    "Label the cells a b c (top) and d e f (bottom).",
+    "Row condition: abc + def = 999. Adding two 3-digit numbers to get 999 with no carrying means each column of digits adds to 9.",
+    "Could there be a carry? c + f = 19 is impossible (max 18). So c + f = 9, and then no carry anywhere.",
+    "Column condition: 10a + d + 10b + e + 10c + f = 99.",
+    "Use d = 9 − a and so on to turn this into an equation about a + b + c.",
+    "Count digit triples (a, b, c) with that sum. Then d, e, f are forced.",
+  ],
+  easy: { h: "Reduce to one equation", steps: [
+    "Columns sum: 10(a+b+c) + (d+e+f) = 99.",
+    "d+e+f = 27 − (a+b+c). So 10S + 27 − S = 99, where S = a+b+c.",
+    "9S = 72, so S = 8.",
+    "Count digit solutions to a + b + c = 8 (each 0–9, and 8 is small so the 9 limit never matters): stars and bars C(10, 2) = 45.",
+    "Each choice fixes d, e, f. Answer <b>45</b>.",
+  ] },
+  fast: { h: "Same, in your head", steps: [
+    "Top digits sum to 8 (bottom to 19). Ways to split 8 into three digits: C(10,2) = <b>45</b>.",
+  ] },
+  deep: `${unp("why a + b + c = 8 has 45 solutions", ["Think of 8 stars and 2 bars: ★★|★★★★|★★ means a=2, b=4, c=2.", "That's 10 symbols, and we choose which 2 are bars: C(10,2) = 45.", "Every digit is at most 8, so the “digits go up to 9” rule never removes anything."])}
+  <p>The hidden step is the carry check. When two numbers add to 999, you might worry about cases like 5 + 4 with a carry. But a carry would need a column to add to 19 or more, and two digits max out at 18. So every column adds to exactly 9.</p>`,
+  faq: [
+    ["Can the top row start with 0?", "Yes. The example uses 008. Leading zeros are allowed."],
+    ["Why can't the ones column add to 19?", "Two digits add to at most 9 + 9 = 18."],
+    ["What's stars and bars?", "A way to count ways to split a total among a few boxes. Splitting 8 among 3 boxes: C(8 + 2, 2) = 45."],
+  ] });
+
+DD({ yr: 2024, t: "II", n: 4, topic: "Logarithms", title: "Three log equations", ans: 33,
+  p: `Positive real numbers x, y, z satisfy log<sub>2</sub>(x/(yz)) = 1/2, log<sub>2</sub>(y/(xz)) = 1/3, and log<sub>2</sub>(z/(xy)) = 1/4. Then |log<sub>2</sub>(x<sup>4</sup>y<sup>3</sup>z<sup>2</sup>)| = m/n in lowest terms. Find m + n.`,
+  read: [
+    ["the absolute value bars", "The value inside turns out negative. The bars make the answer positive."],
+    ["log of a quotient", "log(x/(yz)) = log x − log y − log z. Logs turn division into subtraction."],
+    ["“relatively prime”", "Reduce m/n before adding."],
+  ],
+  paper: [pw("a = log₂x, b = log₂y, c = log₂z"), pw("a − b − c = 1/2"), pw("−a + b − c = 1/3"), pw("−a − b + c = 1/4"), pw("want |4a + 3b + 2c|")],
+  think: [
+    "Logs turn products and quotients into sums and differences. Rename the logs as a, b, c to get plain linear equations.",
+    "Add all three equations: each variable appears once with + and twice with −.",
+    "That gives a + b + c, and then each variable falls out one at a time.",
+    "Compute 4a + 3b + 2c and take the absolute value.",
+  ],
+  easy: { h: "Solve the linear system", steps: [
+    "Add: −(a + b + c) = 1/2 + 1/3 + 1/4 = 13/12. So a + b + c = −13/12.",
+    "First equation: a − (b + c) = 1/2. Since b + c = −13/12 − a: 2a + 13/12 = 1/2, so a = −7/24.",
+    "Same way: 2b + 13/12 = 1/3 → b = −3/8. And 2c + 13/12 = 1/4 → c = −5/12.",
+    "4a + 3b + 2c = −7/6 − 9/8 − 5/6 = −2 − 9/8 = −25/8.",
+    "Absolute value 25/8, so m + n = <b>33</b>.",
+  ] },
+  fast: { h: "Combine without solving fully", steps: [
+    "Each equation says 2(variable) − S = right side, where S = a + b + c = −13/12.",
+    "So 2a = 1/2 + S, 2b = 1/3 + S, 2c = 1/4 + S.",
+    "4a + 3b + 2c = 2(2a) + 1.5(2b) + 1(2c) = 2(1/2) + 1.5(1/3) + 1/4 + 4.5S = 1 + 1/2 + 1/4 − 4.5(13/12) = 7/4 − 39/8 = −25/8 → <b>33</b>.",
+  ] },
+  deep: `${unp("adding the three right sides", ["1/2 + 1/3 + 1/4 with denominator 12: 6/12 + 4/12 + 3/12.", "= 13/12."])}
+  <p>The whole trick is renaming. log<sub>2</sub>(x/(yz)) is a scary-looking thing, but it equals a − b − c. Once everything is linear, it's a system of three equations you can solve by adding.</p>
+  <p>Notice the symmetry: each equation is “one variable minus the other two.” Adding all three is the natural first move for any symmetric system.</p>`,
+  faq: [
+    ["Why is the inside negative?", "a, b, c are all negative, which means x, y, z are all less than 1. Then x⁴y³z² is less than 1 and its log is negative."],
+    ["Do I need to find x, y, z?", "No. Working with a, b, c (the logs) is enough."],
+    ["What if I forgot the absolute value?", "You'd get −25/8, and m, n are supposed to be positive. The bars are there to fix the sign."],
+  ] });
+
+DD({ yr: 2024, t: "II", n: 5, topic: "Geometry", title: "Equilateral hexagon inside a triangle", ans: 80,
+  p: `ABCDEF is a convex hexagon with all six sides equal and every pair of opposite sides parallel. Extend sides AB, CD, and EF until they meet: they form a triangle with side lengths 200, 240, and 300. Find the side length of the hexagon.`,
+  fig: fig(svg(300, 260, `${poly([[20, 239.3], [284, 239.3], [37.4, 20]], { fill: "none", c: "var(--muted)", w: 1.5 })}${poly([[31.6, 93.1], [24.6, 180.8], [90.4, 239.3], [178.4, 239.3], [185.4, 151.6], [119.6, 93.1]], { fill: "var(--accent-soft)" })}${[["A", 22, 92], ["B", 14, 184], ["C", 90, 254], ["D", 180, 254], ["E", 196, 150], ["F", 126, 86]].map(([s, x, y]) => txt(x, y, s)).join("")}${txt(10, 130, "200", { size: 11, fill: "var(--muted)" })}${txt(176, 118, "300", { size: 11, fill: "var(--muted)" })}${txt(232, 254, "240", { size: 11, fill: "var(--muted)" })}`, "Hexagon ABCDEF inside the triangle formed by extending AB, CD, EF"), "To scale. The hexagon's other three sides (BC, DE, FA) cut off three small triangles at the corners."),
+  read: [
+    ["“equilateral hexagon”", "All 6 sides equal. Angles don't have to be equal, so it's not a regular hexagon."],
+    ["“opposite sides are parallel”", "BC ∥ EF, DE ∥ AB, FA ∥ CD. This is what makes the corner triangles similar to the big one."],
+    ["“extensions of segments AB, CD, EF”", "The big triangle is built from every other side. The other three sides are inside it."],
+  ],
+  paper: [pw("corner triangles are similar to the big triangle"), pw("side 200 = s + s·200/300 + s·200/240"), pw("1 = s/300 + s/200 + s/240"), pw("s = 1 / (1/200 + 1/240 + 1/300)")],
+  think: [
+    "Draw the big triangle and the hexagon inside it. Each corner of the triangle has a small triangle cut off by one hexagon side.",
+    "Each cutting side is parallel to the big triangle's opposite side, so each small triangle is similar to the big triangle.",
+    "In each small triangle, the hexagon side s matches one side of the big triangle. That gives the scale factor.",
+    "Walk along one side of the big triangle: it is made of a piece of one corner triangle, a hexagon side s, and a piece of another corner triangle.",
+    "Write that as an equation in s.",
+  ],
+  easy: { h: "Walk along one side", steps: [
+    "Let the big triangle's sides be 200 (on line AB), 240 (on CD), 300 (on EF).",
+    "Corner where AB meets CD: cut off by BC, parallel to EF (the 300 side). Scale s/300. Its piece along AB is 200 · s/300.",
+    "Corner where AB meets EF: cut off by FA, parallel to CD (the 240 side). Scale s/240. Its piece along AB is 200 · s/240.",
+    "Line AB: 200 = 200s/300 + s + 200s/240. Divide by 200: 1 = s/300 + s/200 + s/240.",
+    "1/200 + 1/240 + 1/300 = (6 + 5 + 4)/1200 = 15/1200 = 1/80. So s = <b>80</b>.",
+  ] },
+  fast: { h: "Remember the formula", steps: [
+    "For this setup, 1/s = 1/a + 1/b + 1/c with a, b, c the triangle's sides.",
+    "1/200 + 1/240 + 1/300 = 1/80, so s = <b>80</b>.",
+  ] },
+  deep: `<p>The two ideas: <b>parallel lines make similar triangles</b>, and <b>a long segment is the sum of its pieces</b>.</p>
+  ${unp("1/200 + 1/240 + 1/300", ["The LCM of 200, 240, 300 is 1200.", "1200 ÷ 200 = 6, 1200 ÷ 240 = 5, 1200 ÷ 300 = 4.", "Sum: (6 + 5 + 4)/1200 = 15/1200 = 1/80."])}
+  <p>Check another side for safety. Along CD (240): corner AB∩CD piece is 240 · 80/300 = 64, the side CD is 80, corner CD∩EF (cut by DE ∥ AB, scale 80/200) gives 240 · 0.4 = 96. Total 64 + 80 + 96 = 240 ✓.</p>`,
+  faq: [
+    ["Is this a regular hexagon?", "No. Equilateral only means equal sides. A regular hexagon would make the big triangle equilateral, but here its sides are 200, 240, 300."],
+    ["Which side goes with which?", "It doesn't matter for the answer. The formula 1/s = 1/a + 1/b + 1/c is symmetric in a, b, c."],
+    ["How do I know the small triangles are similar?", "Each one has two sides along the big triangle's sides (sharing a corner angle) and a third side parallel to the big triangle's third side. So all three angles match."],
+  ] });
+/* AIME Deep Dives: 2025 AIME I and II, problems 1-5 */
+
+DD({ yr: 2025, t: "I", n: 1, topic: "Number theory", title: "17 in base b divides 97 in base b", ans: 70,
+  p: `Find the sum of all integer bases b > 9 for which the base-b numeral 17<sub>b</sub> divides the base-b numeral 97<sub>b</sub>.`,
+  read: [
+    ["“bases b > 9”", "The digit 9 only exists in base 10 or higher. That's why b must be bigger than 9."],
+    ["17<sub>b</sub>", "In base b this means 1·b + 7, not seventeen."],
+    ["“sum of all”", "There may be several bases. Find every one and add them."],
+  ],
+  paper: [pw("17_b = b + 7"), pw("97_b = 9b + 7"), pw("9b + 7 = 9(b + 7) − 56"), pw("so (b + 7) | 56, and b + 7 > 16")],
+  think: [
+    "Translate both numerals into ordinary numbers using place value.",
+    "You want b + 7 to divide 9b + 7. Rewrite 9b + 7 using multiples of b + 7 so the b's disappear.",
+    "9(b + 7) = 9b + 63, so 9b + 7 is 56 less than a multiple of b + 7. That means b + 7 must divide 56.",
+    "List the divisors of 56 that are bigger than 16 (since b > 9 means b + 7 > 16).",
+  ],
+  easy: { h: "Divisors of 56", steps: [
+    "Divisors of 56: 1, 2, 4, 7, 8, 14, 28, 56.",
+    "Bigger than 16: 28 and 56.",
+    "b + 7 = 28 gives b = 21. b + 7 = 56 gives b = 49.",
+    "Sum: 21 + 49 = <b>70</b>.",
+  ] },
+  fast: { h: "Check one case to trust it", steps: [
+    "b = 21: 17<sub>21</sub> = 28 and 97<sub>21</sub> = 196 = 7 × 28 ✓. b = 49: 56 and 448 = 8 × 56 ✓.",
+    "Answer <b>70</b>.",
+  ] },
+  deep: `<p>The move “subtract a multiple to kill the variable” is the heart of many divisibility problems. If d divides A and d divides B, then d divides A − kB. Here A = 9b + 7, B = b + 7, and k = 9 makes the b vanish.</p>
+  ${unp("9b + 7 = 9(b + 7) − 56", ["9(b + 7) = 9b + 63.", "9b + 7 = (9b + 63) − 56.", "If b + 7 divides the left side and divides 9(b + 7), it must divide 56."])}`,
+  faq: [
+    ["Why must b be bigger than 9?", "A base-b numeral can only use digits 0 to b − 1. To use the digit 9, the base must be at least 10."],
+    ["Why not include b + 7 = 14 (b = 7)?", "b = 7 is not bigger than 9. In base 7, the digit 9 doesn't exist."],
+    ["What does 17_b mean again?", "One group of b plus 7 ones: b + 7. Just like 17 in base 10 is 1·10 + 7."],
+  ] });
+
+DD({ yr: 2025, t: "I", n: 2, topic: "Geometry", title: "A heptagon made by reflections", ans: 588,
+  p: `In triangle ABC, points A, D, E, B lie in that order on side AB with AD = 4, DE = 16, EB = 8. Points A, F, G, C lie in that order on side AC with AF = 13, FG = 52, GC = 26. Let M be the reflection of D through F, and N the reflection of G through E. Quadrilateral DEGF has area 288. Find the area of the seven-sided figure AFNBCEM.`,
+  fig: fig(svg(360, 145, `${poly([[160, 10], [205, 40], [257.5, 40]], { fill: "var(--hi-soft)", w: 1 })}${poly([[10, 85], [141.25, 85], [257.5, 40], [205, 40]], { fill: "var(--hi-soft)", w: 1 })}${poly([[10, 85], [141.25, 85], [340, 130], [130, 130]], { fill: "var(--hi-soft)", w: 1 })}${poly([[160, 10], [130, 130], [340, 130]], { fill: "none", w: 2.5 })}${seg(152.5, 40, 257.5, 40, { w: 1 })}${seg(10, 85, 272.5, 85, { w: 1 })}${[["A", 160, 10, 0, -2], ["D", 152.5, 40, -12, 4], ["F", 205, 40, 0, 14], ["M", 257.5, 40, 12, 4], ["N", 10, 85, 0, -6], ["E", 141.25, 85, -10, -6], ["G", 272.5, 85, 12, 12], ["B", 130, 130, 0, 14], ["C", 340, 130, 0, 14]].map(([s, x, y, dx, dy]) => dot(x, y, { r: 3 }) + txt(x + dx, y + dy, s)).join("")}`, "Triangle ABC with segments DM and NG parallel to BC; the heptagon is shaded"), "Not to scale (like the official picture). DM and NG are parallel to BC. The shaded region is the heptagon."),
+  read: [
+    ["“reflection of D through F”", "Reflecting through a point: F is the midpoint of DM. So FM = DF."],
+    ["“in that order”", "Tells you where each point sits, so AE = 20, AB = 28, AG = 65, AC = 91."],
+    ["“heptagon AFNBCEM”", "Seven corners, visited in that order. Draw it before you calculate."],
+  ],
+  paper: [pw("AD/AB = 4/28 = 1/7, AF/AC = 13/91 = 1/7 → DF ∥ BC"), pw("AE/AB = 20/28 = 5/7, AG/AC = 65/91 = 5/7 → EG ∥ BC"), pw("areas ADF : AEG : ABC = 1 : 25 : 49"), pw("DEGF = 25 − 1 = 24 parts = 288 → 1 part = 12"), pw("ABC = 49 · 12 = 588")],
+  think: [
+    "Find the full side lengths: AB = 4 + 16 + 8 = 28 and AC = 13 + 52 + 26 = 91.",
+    "Notice the ratios: D and F are both 1/7 of the way from A, and E and G are both 5/7 of the way. So DF and EG are parallel to BC.",
+    "Similar triangles: areas scale with the square of the length ratio. ADF : AEG : ABC = 1² : 5² : 7².",
+    "Use DEGF = 288 to find the size of one “part,” then the area of ABC.",
+    "Finally show the heptagon has the same area as triangle ABC.",
+  ],
+  easy: { h: "Similar triangles, then matching pieces", steps: [
+    "DEGF = AEG − ADF = 25 − 1 = 24 parts = 288, so one part is 12. Triangle ABC = 49 parts = 588.",
+    "Heptagon = triangle AFM + trapezoid NEMF + trapezoid NECB.",
+    "Triangle AFM has the same area as ADF: bases FM = DF on the same line, same peak A.",
+    "Trapezoid NEMF has parallel sides NE = EG and FM = DF, at the same height apart as DEGF. Same area as DEGF.",
+    "Trapezoid NECB has parallel sides NE = EG and BC, same height as trapezoid EGCB. Same area.",
+    "So heptagon = ADF + DEGF + EGCB = triangle ABC = <b>588</b>.",
+  ] },
+  fast: { h: "Trust the reflection swap", steps: [
+    "Reflections keep areas. The heptagon is triangle ABC with pieces flipped across F and E, so its area equals ABC.",
+    "ABC = 288 × 49/24 = <b>588</b>.",
+  ] },
+  deep: `${unp("288 × 49/24", ["288 ÷ 24 = 12.", "12 × 49 = 588."])}
+  <p><b>Why the trapezoids match.</b> A trapezoid's area is (top + bottom)/2 × height. Two trapezoids with the same pair of parallel side lengths and the same height have the same area, even if one is slanted and the other isn't.</p>
+  <p>This is a problem where the picture does the work. Without a sketch, “heptagon AFNBCEM” is scary. With the sketch, it's three pieces, each a copy (in area) of a piece of triangle ABC.</p>`,
+  faq: [
+    ["What does “reflection through a point” mean?", "Go from D to F, then keep going the same distance in the same direction. You land on M. F is the midpoint."],
+    ["Why are the areas 1 : 25 : 49 and not 1 : 5 : 7?", "Area grows with the square of the scale. A triangle 5 times as wide and 5 times as tall has 25 times the area."],
+    ["Do I need the angle at A?", "No. Every area here is a multiple of one unknown, and DEGF = 288 sets it."],
+    ["Is the official drawing to scale?", "No. Use the numbers. A to-scale drawing would be a very long, skinny triangle."],
+  ] });
+
+DD({ yr: 2025, t: "I", n: 3, topic: "Counting", title: "Ice cream for 9 players", ans: 16,
+  p: `Each of the 9 players on a team gets one scoop: chocolate, vanilla, or strawberry. Every flavor is chosen by at least one player, and more players chose chocolate than vanilla, and more chose vanilla than strawberry. Let N be the number of different assignments of flavors to players. Find the remainder when N is divided by 1000.`,
+  read: [
+    ["“assignments of flavors to players”", "The players are different people. Ann-chocolate, Ben-vanilla is different from Ann-vanilla, Ben-chocolate."],
+    ["“greater than … greater than”", "Strictly greater: no ties allowed. Chocolate > vanilla > strawberry ≥ 1."],
+    ["“remainder when N is divided by 1000”", "N may be bigger than 999. Give the last three digits."],
+  ],
+  paper: [pw("(c, v, s): c > v > s ≥ 1, c + v + s = 9"), pw("(6,2,1) (5,3,1) (4,3,2)"), pw("9!/(6!2!1!) = 252"), pw("9!/(5!3!1!) = 504"), pw("9!/(4!3!2!) = 1260")],
+  think: [
+    "First find the possible head-counts (c, v, s) for chocolate, vanilla, strawberry.",
+    "Then, for each head-count, count how many ways to decide which players get which flavor.",
+    "Choosing which c players get chocolate, then which v of the rest get vanilla: C(9, c) · C(9 − c, v).",
+    "Add the three cases and take the remainder mod 1000.",
+  ],
+  easy: { h: "List the splits, count each", steps: [
+    "s = 1: v ≥ 2 and c > v with c + v = 8: (6, 2), (5, 3). s = 2: v ≥ 3, c + v = 7, c > v: (4, 3). s = 3: v ≥ 4, c ≥ 5 → total ≥ 12, too big.",
+    "(6,2,1): C(9,6) · C(3,2) = 84 · 3 = 252.",
+    "(5,3,1): C(9,5) · C(4,3) = 126 · 4 = 504.",
+    "(4,3,2): C(9,4) · C(5,3) = 126 · 10 = 1260.",
+    "N = 252 + 504 + 1260 = 2016. Remainder <b>16</b>.",
+  ] },
+  fast: { h: "Multinomials", steps: [
+    "Arrangements of 9 players into groups of sizes c, v, s: 9!/(c! v! s!).",
+    "252 + 504 + 1260 = 2016 → <b>16</b>.",
+  ] },
+  deep: `${unp("9!/(4! 3! 2!) = 1260", ["9! = 362880.", "4! · 3! · 2! = 24 · 6 · 2 = 288.", "362880 ÷ 288 = 1260."])}
+  <p>Two-stage counting: first decide the <b>shape</b> (how many of each flavor), then count the <b>fillings</b> of that shape. Mixing the stages up is how people get 3 (just counting shapes) or 3⁹ (forgetting the rules).</p>`,
+  faq: [
+    ["Why isn't the answer just 3?", "There are 3 possible head-counts, but for each one there are many ways to decide which specific players got which flavor."],
+    ["Could chocolate and vanilla tie?", "No. The problem says greater than, which means strictly more."],
+    ["What is 9!/(6!2!1!)?", "It counts ways to split 9 different people into a group of 6, a group of 2, and a group of 1 (with the groups labeled by flavor)."],
+  ] });
+
+DD({ yr: 2025, t: "I", n: 4, topic: "Algebra", title: "Integer points on 12x² − xy − 6y² = 0", ans: 117,
+  p: `Find the number of ordered pairs (x, y) of integers, with both x and y between −100 and 100 inclusive, such that 12x² − xy − 6y² = 0.`,
+  read: [
+    ["“ordered pairs”", "(3, 4) and (4, 3) are different pairs. Count each that works."],
+    ["“between −100 and 100, inclusive”", "Both −100 and 100 are allowed."],
+    ["“= 0”", "A product equal to 0 means one factor is 0. Look for a factorization."],
+  ],
+  paper: [pw("12x² − xy − 6y² = (3x + 2y)(4x − 3y)"), pw("4x = 3y → (3k, 4k), |4k| ≤ 100 → 51"), pw("3x = −2y → (2k, −3k), |3k| ≤ 100 → 67"), pw("overlap (0,0): 51 + 67 − 1 = 117")],
+  think: [
+    "Factor the quadratic. Treat it like 12t² − t − 6 with t = x/y: two numbers multiplying to 12 · (−6) = −72 and adding to −1 are −9 and 8.",
+    "So the equation becomes (3x + 2y)(4x − 3y) = 0. Either factor can be 0.",
+    "Describe all integer points on each line, then count those inside the box.",
+    "Don't count (0, 0) twice: it's on both lines.",
+  ],
+  easy: { h: "Factor and count each line", steps: [
+    "4x − 3y = 0: x = 3k, y = 4k. Need −100 ≤ 4k ≤ 100, so k from −25 to 25: 51 points.",
+    "3x + 2y = 0: x = 2k, y = −3k. Need |3k| ≤ 100, so k from −33 to 33: 67 points.",
+    "Both lines contain (0, 0). Total 51 + 67 − 1 = <b>117</b>.",
+  ] },
+  fast: { h: "Check the factoring", steps: [
+    "(3x + 2y)(4x − 3y) = 12x² − 9xy + 8xy − 6y² = 12x² − xy − 6y² ✓.",
+    "Count: 51 + 67 − 1 = <b>117</b>.",
+  ] },
+  deep: `<p>Why x = 3k, y = 4k covers every integer solution of 4x = 3y: 3 divides 4x, and 3 shares no factor with 4, so 3 divides x. Write x = 3k; then y = 4k.</p>
+  ${unp("k from −25 to 25 is 51 values", ["From −25 to −1 is 25 values.", "From 1 to 25 is another 25.", "Plus k = 0: 25 + 25 + 1 = 51."])}`,
+  faq: [
+    ["Why subtract 1?", "(0, 0) lies on both lines, so it was counted twice."],
+    ["Why can't y be 4k for k = 26?", "Then y = 104, which is outside −100 to 100. The y-coordinate is the one that limits k here."],
+    ["How do I factor something like 12x² − xy − 6y²?", "Find two numbers that multiply to 12 × (−6) = −72 and add to −1: that's −9 and 8. Split the middle: 12x² − 9xy + 8xy − 6y², then group."],
+  ] });
+
+DD({ yr: 2025, t: "I", n: 5, topic: "Number theory", title: "Eight-digit numbers divisible by 22", ans: 279,
+  p: `There are 8! = 40320 eight-digit numbers that use each of the digits 1 through 8 exactly once. Let N be how many of them are divisible by 22. Find the difference between N and 2025.`,
+  read: [
+    ["“divisible by 22”", "22 = 2 × 11. The number must be even and pass the 11 test."],
+    ["“difference between N and 2025”", "N turns out to be bigger than 2025, so the answer is N − 2025."],
+    ["“each digit exactly once”", "The digits 1 to 8 add to 36 no matter the order."],
+  ],
+  paper: [pw("positions 1 3 5 7 (odd) sum = O, positions 2 4 6 8 (even) sum = E"), pw("O + E = 36, O − E ≡ 0 (mod 11)"), pw("→ O = E = 18"), pw("4-digit subsets with sum 18: 8 of them"), pw("N = 8 · 4! · (2 · 3!) = 2304")],
+  think: [
+    "Test for 11: the alternating sum of digits (odd places minus even places) must be a multiple of 11.",
+    "Odd places and even places each hold 4 digits, and together they sum to 36.",
+    "The difference O − E must be 0, ±11, ±22, … but it also has the same parity as O + E = 36, so it's even: 0 or ±22. ±22 would need O = 29, more than the max 5+6+7+8 = 26. So O = E = 18.",
+    "Count the ways to choose which 4 digits go in the odd places (their sum is 18).",
+    "Even: the last digit (place 8, an even place) must be even. Count arrangements with that rule.",
+  ],
+  easy: { h: "Choose, then arrange", steps: [
+    "4-digit subsets of {1,…,8} with sum 18: {1,2,7,8}, {1,3,6,8}, {1,4,5,8}, {1,4,6,7}, {2,3,5,8}, {2,3,6,7}, {2,4,5,7}, {3,4,5,6}. That's 8.",
+    "Pick one for the even places. Each of these sets has exactly 2 even digits (check!), and so does its complement.",
+    "Even places: the last digit must be one of the 2 even digits in the set: 2 ways, then the other 3 even places: 3! = 6 ways.",
+    "Odd places: the other 4 digits in any order: 4! = 24.",
+    "N = 8 × 2 × 6 × 24 = 2304. N − 2025 = <b>279</b>.",
+  ] },
+  fast: { h: "Shortcut the 2 even digits", steps: [
+    "Sum 18 is even, so a valid subset has an even number of odd digits: 0, 2, or 4. All four odds 1+3+5+7 = 16 and all four evens 2+4+6+8 = 20 both miss 18. So every valid subset has exactly 2 even digits.",
+    "N = 8 · 24 · 2 · 6 = 2304 → <b>279</b>.",
+  ] },
+  deep: `${unp("why the 11 test works", ["10 leaves remainder −1 when divided by 11 (10 = 11 − 1).", "So 100 leaves (−1)² = 1, 1000 leaves −1, and so on.", "A number's remainder mod 11 equals ± (alternating sum of its digits).", "So the number is a multiple of 11 exactly when the alternating sum is."])}
+  <p>Positions don't care whether you count from the left or the right here, since there are 8 digits (an even number): odd-from-left places are even-from-right places. Only the split into two groups of 4 matters.</p>`,
+  faq: [
+    ["Why can't O − E be 11?", "O + E = 36 is even, so O − E is even too. 11 is odd."],
+    ["Why is it N − 2025 and not 2025 − N?", "N = 2304 is bigger than 2025, so the (positive) difference is 2304 − 2025."],
+    ["How do I make sure I found all 8 subsets?", "Organize by smallest digit: start with 1 (need 17 from three digits of 2–8), then smallest 2, then 3. Listing in order makes skipping hard."],
+  ] });
+
+DD({ yr: 2025, t: "II", n: 1, topic: "Geometry", title: "Six points on a line and a point G", ans: 468,
+  p: `Points A, B, C, D, E, F lie on a straight line in that order. Point G is not on the line. AC = 26, BD = 22, CE = 31, DF = 33, AF = 73, CG = 40, and DG = 30. Find the area of triangle BGE.`,
+  fig: fig(svg(340, 130, `${seg(20, 110, 312, 110)}${poly([[92, 110], [252, 14], [248, 110]], { fill: "var(--accent-soft)", w: 1.5 })}${seg(124, 110, 252, 14, { w: 1, dash: "4 3" })}${seg(180, 110, 252, 14, { w: 1, dash: "4 3" })}${seg(252, 14, 252, 110, { c: "var(--accent)", w: 1.5, dash: "3 3" })}${[["A", 20], ["B", 92], ["C", 124], ["D", 180], ["E", 248], ["F", 312]].map(([s, x]) => dot(x, 110, { r: 3 }) + txt(x, 126, s)).join("")}${dot(252, 14, { r: 3 })}${txt(262, 14, "G", { a: "start" })}${txt(262, 66, "24", { a: "start", fill: "var(--accent)", size: 12 })}`, "Points A to F on a line, G above, triangle BGE shaded"), "To scale. The height from G to the line is 24."),
+  read: [
+    ["“in that order”", "Lets you place every point as a number on a number line."],
+    ["CG = 40 and DG = 30", "These two lengths plus CD fix where G is. The height of G above the line is what you need."],
+    ["triangle BGE", "Base BE lies on the line. Area = ½ · BE · height of G."],
+  ],
+  paper: [pw("A=0, F=73, C=26, D=73−33=40, B=40−22=18, E=26+31=57"), pw("CD = 14, BE = 39"), pw("G = (x, h): (x−26)² + h² = 1600, (x−40)² + h² = 900"), pw("x = 58, h = 24"), pw("area = ½ · 39 · 24 = 468")],
+  think: [
+    "Put the line on a number line with A at 0. Use the given lengths to place every point.",
+    "Find the height of G above the line from triangle CGD (sides 40, 30, 14).",
+    "Area of BGE = ½ × base BE × height.",
+  ],
+  easy: { h: "Coordinates", steps: [
+    "A = 0, C = 26, F = 73, D = 73 − 33 = 40, B = 40 − 22 = 18, E = 26 + 31 = 57.",
+    "Let G = (x, h). Subtract the two distance equations: (x − 26)² − (x − 40)² = 1600 − 900 = 700.",
+    "Difference of squares: (2x − 66)(14) = 700, so 2x − 66 = 50, x = 58.",
+    "h² = 1600 − (58 − 26)² = 1600 − 1024 = 576, so h = 24.",
+    "BE = 57 − 18 = 39. Area = ½ · 39 · 24 = <b>468</b>.",
+  ] },
+  fast: { h: "Spot the 3-4-5 shape", steps: [
+    "x = 58 means G's foot is 32 from C and 18 from D. 32-24-40 and 18-24-30 are both 3-4-5 triangles scaled (by 8 and 6).",
+    "So the height is 24 and the area is ½ · 39 · 24 = <b>468</b>.",
+  ] },
+  deep: `<p>Notice that the foot of the height lands at 58, which is <b>past</b> D (at 40). So triangle CGD is obtuse at D, and the height falls outside it. That's fine: the formula still works, and coordinates handle it without any special care.</p>
+  ${unp("(x − 26)² − (x − 40)²", ["Use a² − b² = (a − b)(a + b).", "a − b = (x − 26) − (x − 40) = 14.", "a + b = 2x − 66.", "So the difference is 14(2x − 66)."])}`,
+  faq: [
+    ["Why don't I need AF = 73 to find G?", "You need it to place D (and then B). G's height only uses C, D, and the two distances."],
+    ["Can G be below the line?", "Yes, but the area is the same either way. The height is 24 in both cases."],
+    ["I used Heron's formula on CGD. Is that OK?", "Yes: the area of CGD is 168, so its height to CD is 2 · 168 / 14 = 24. Same answer."],
+  ] });
+
+DD({ yr: 2025, t: "II", n: 2, topic: "Number theory", title: "n + 2 divides 3(n + 3)(n² + 9)", ans: 49,
+  p: `Find the sum of all positive integers n such that n + 2 divides the product 3(n + 3)(n² + 9).`,
+  read: [
+    ["“n + 2 divides …”", "The product leaves remainder 0 when divided by n + 2."],
+    ["“positive integers n”", "n ≥ 1, so n + 2 ≥ 3."],
+    ["“sum of all”", "Find every n and add them."],
+  ],
+  paper: [pw("mod (n + 2): n ≡ −2"), pw("3(n+3)(n²+9) ≡ 3 · 1 · 13 = 39"), pw("n + 2 | 39 → n + 2 ∈ {3, 13, 39}"), pw("n = 1, 11, 37 → 49")],
+  think: [
+    "Dividing by n + 2 is the same as working mod n + 2, where n acts like −2.",
+    "Replace n by −2 in the product to find its remainder.",
+    "n + 2 must divide that remainder, a fixed number.",
+    "List divisors that are at least 3.",
+  ],
+  easy: { h: "Plug in n = −2", steps: [
+    "3(−2 + 3)((−2)² + 9) = 3 · 1 · 13 = 39.",
+    "So n + 2 divides 39. Divisors of 39: 1, 3, 13, 39.",
+    "n + 2 ≥ 3, so n + 2 = 3, 13, or 39: n = 1, 11, 37.",
+    "Sum: 1 + 11 + 37 = <b>49</b>.",
+  ] },
+  fast: { h: "Check one", steps: [
+    "n = 11: 3 · 14 · 130 = 5460 = 13 · 420 ✓. Sum <b>49</b>.",
+  ] },
+  deep: `${unp("why plugging in −2 gives the remainder", ["n = (n + 2) − 2, so n leaves remainder −2 when divided by n + 2.", "Remainders can be added and multiplied: n² ≡ (−2)² = 4, n + 3 ≡ 1, n² + 9 ≡ 13.", "The product ≡ 3 · 1 · 13 = 39.", "This is the Remainder Theorem: a polynomial P(n) divided by n − a leaves P(a). Here a = −2."])}`,
+  faq: [
+    ["Why can't n + 2 be 1?", "n would be −1, which isn't positive."],
+    ["Is n = 1 really allowed?", "Yes: n + 2 = 3 and the product is 3 · 4 · 10 = 120, which 3 divides."],
+    ["What if I tried n = 1, 2, 3, … one by one?", "You'd find 1 and 11 quickly but could easily stop before 37. The remainder method finds all of them at once."],
+  ] });
+
+DD({ yr: 2025, t: "II", n: 3, topic: "Counting", title: "Coloring a 2 by 2 grid's edges", ans: 82,
+  p: `Four unit squares form a 2 × 2 grid, which has 12 unit edges. Color each edge red or blue so that every one of the four small squares has exactly 2 red sides and 2 blue sides. How many colorings are possible?`,
+  fig: fig(svg(120, 120, `${[[10, 10, 60, 10, 1], [60, 10, 110, 10, 1], [10, 60, 60, 60, 0], [60, 60, 110, 60, 0], [10, 110, 60, 110, 1], [60, 110, 110, 110, 1], [10, 10, 10, 60, 0], [60, 10, 60, 60, 1], [110, 10, 110, 60, 0], [10, 60, 10, 110, 1], [60, 60, 60, 110, 0], [110, 60, 110, 110, 1]].map(([a, b, c, d, r]) => seg(a, b, c, d, r ? { c: "#d33", w: 4 } : { c: "var(--accent)", w: 3, dash: "6 4" })).join("")}`, "A 2 by 2 grid with some edges red and some blue"), "Each square needs exactly 2 red sides. The 4 inner edges are each shared by two squares."),
+  read: [
+    ["“each unit square has 2 red sides and 2 blue sides”", "A rule for each of the four squares separately."],
+    ["12 unit segments", "8 are on the outside (each touches one square), 4 are inside (each touches two squares)."],
+  ],
+  paper: [pw("inner edges: 4, shared; outer edges: 8, two per square"), pw("square with k red inner edges: C(2, 2−k) ways for its outer edges"), pw("k=0 → 1, k=1 → 2, k=2 → 1"), pw("total = Σ over inner colorings of 2^(# mixed squares)")],
+  think: [
+    "The inner edges are the tricky ones because they belong to two squares. Decide them first.",
+    "Once the 4 inner edges are colored, each square's 2 outer edges are decided independently.",
+    "A square with 0 or 2 red inner edges has only 1 way to finish. A square with 1 red inner edge has 2 ways (which outer edge is red).",
+    "The 4 inner edges form a cross. Going around the center, each square sits between two neighboring inner edges.",
+    "So count: for each of the 16 inner colorings, how many squares see a “change” (one red, one blue)?",
+  ],
+  easy: { h: "Sort the 16 inner colorings", steps: [
+    "Think of the 4 inner edges in a circle. A square is “mixed” when its two inner edges differ.",
+    "All 4 the same (2 colorings): 0 mixed squares → 1 way each → 2.",
+    "Exactly 2 changes around the circle (12 colorings): 2 mixed squares → 2² = 4 ways each → 48.",
+    "Alternating (2 colorings): 4 mixed → 2⁴ = 16 each → 32.",
+    "Total 2 + 48 + 32 = <b>82</b>.",
+  ] },
+  fast: { h: "Count by number of red inner edges", steps: [
+    "0 red: 1 inner coloring, product 1. 4 red: 1, product 1.",
+    "1 red: 4 colorings, each makes 2 squares mixed: 4 · 4 = 16. 3 red: also 16.",
+    "2 red, neighbors around the center (4 colorings) → 2 mixed → 4 each = 16; 2 red, across from each other (2) → 4 mixed → 16 each = 32.",
+    "1 + 1 + 16 + 16 + 16 + 32 = <b>82</b>.",
+  ] },
+  deep: `<p>The method is “<b>fix the shared part first</b>.” Edges shared by two squares create dependence. Once they're fixed, everything else splits into independent little choices, and you multiply.</p>
+  ${unp("why there are 12 colorings with exactly 2 changes", ["Four inner edges around a circle have 4 gaps between neighbors.", "Choose which 2 gaps are the color changes: C(4, 2) = 6.", "Choose the color of the first edge: 2.", "6 × 2 = 12."])}`,
+  faq: [
+    ["Why not just 2¹² and divide somehow?", "The rule isn't symmetric enough for a simple division. Organized casework is the reliable way."],
+    ["Are rotations of the same picture counted separately?", "Yes. The problem counts colorings of a fixed grid, so rotated versions are different colorings."],
+    ["Which edges are “inner”?", "The 4 edges that form the plus sign in the middle. Each is a side of two squares."],
+  ] });
+
+DD({ yr: 2025, t: "II", n: 4, topic: "Logarithms", title: "A telescoping log product", ans: 106,
+  p: `The product, for k from 4 to 63, of log<sub>k</sub>(5<sup>k² − 1</sup>) ÷ log<sub>k+1</sub>(5<sup>k² − 4</sup>) equals m/n in lowest terms. (It starts log<sub>4</sub>(5<sup>15</sup>)/log<sub>5</sub>(5<sup>12</sup>) · log<sub>5</sub>(5<sup>24</sup>)/log<sub>6</sub>(5<sup>21</sup>) · … and ends log<sub>63</sub>(5<sup>3968</sup>)/log<sub>64</sub>(5<sup>3965</sup>).) Find m + n.`,
+  read: [
+    ["the written-out first terms", "The problem shows you the pattern. Use them to check your formula for each factor."],
+    ["k² − 1 and k² − 4", "Both factor: (k − 1)(k + 1) and (k − 2)(k + 2). Factoring is the first thing to try."],
+    ["bases change from k to k + 1", "A sign that something will cancel from one factor to the next (telescope)."],
+  ],
+  paper: [pw("log_k(5^(k²−1)) = (k²−1) · log_k 5"), pw("factor = (k²−1)/(k²−4) · (log_k 5 / log_(k+1) 5)"), pw("log_k 5 / log_(k+1) 5 = ln(k+1)/ln k"), pw("∏ ln(k+1)/ln k = ln 64 / ln 4 = 3"), pw("∏ (k−1)(k+1)/((k−2)(k+2)) = 31/13")],
+  think: [
+    "Bring the exponents down in front: each factor is (k² − 1)/(k² − 4) times a ratio of logs.",
+    "Change of base: log<sub>k</sub> 5 = ln 5 / ln k. The ratio becomes ln(k + 1)/ln k.",
+    "Split the product into two products, each of which telescopes.",
+    "Factor k² − 1 and k² − 4 and cancel.",
+  ],
+  easy: { h: "Two telescopes", steps: [
+    "Log part: (ln 5/ln 4)(ln 6/ln 5)…(ln 64/ln 63) = ln 64/ln 4 = log<sub>4</sub> 64 = 3.",
+    "Number part: ∏ (k − 1)/(k − 2) · ∏ (k + 1)/(k + 2).",
+    "∏ (k − 1)/(k − 2) for k = 4..63 is 3/2 · 4/3 · … · 62/61 = 62/2 = 31.",
+    "∏ (k + 1)/(k + 2) is 5/6 · 6/7 · … · 64/65 = 5/65 = 1/13.",
+    "Total: 3 · 31/13 = 93/13. m + n = <b>106</b>.",
+  ] },
+  fast: { h: "Check with the first factor", steps: [
+    "First factor from the formula: 15/12 · ln5/ln4. The given first factor is log<sub>4</sub>(5<sup>15</sup>)/log<sub>5</sub>(5<sup>12</sup>) = 15 log<sub>4</sub>5 / 12 ✓.",
+    "Then 3 · 31 · (1/13) = 93/13 → <b>106</b>.",
+  ] },
+  deep: `<p>A <b>telescoping product</b> is one where the top of each factor cancels the bottom of the next, like a collapsing telescope. Only the very first bottom and very last top survive.</p>
+  ${unp("3/2 · 4/3 · 5/4 · … · 62/61", ["The 3 on top of the first cancels the 3 on the bottom of the second.", "That keeps happening all the way along.", "Left over: the last top (62) over the first bottom (2) = 31."])}
+  ${unp("ln 64 / ln 4 = 3", ["ln 64 / ln 4 = log₄ 64 (change of base backwards).", "4³ = 64, so it's 3."])}`,
+  faq: [
+    ["What is ln?", "The natural log. Any base works for change of base; ln is just a common choice. log₁₀ would work the same way."],
+    ["Why split into two products?", "Each piece telescopes by itself. Multiplying them back at the end is easy."],
+    ["Is 93/13 in lowest terms?", "Yes. 13 is prime and doesn't divide 93 = 3 · 31."],
+  ] });
+
+DD({ yr: 2025, t: "II", n: 5, topic: "Geometry", title: "Arcs on the midpoint circle", ans: 336,
+  p: `Triangle ABC has angles ∠A = 84°, ∠B = 60°, ∠C = 36°. D, E, F are the midpoints of BC, AC, AB. The circle through D, E, F crosses segment BD again at G, segment AE again at H, and segment AF again at J. The points G, D, E, H, J, F split this circle into six small arcs. Find arc DE + 2·(arc HJ) + 3·(arc FG), in degrees.`,
+  fig: fig(svg(370, 209, `${poly([[117.5, 20], [20, 188.9], [350, 188.9]], { fill: "none", w: 2 })}${circ(151.3, 113.1, 83, { c: "var(--accent)", w: 1.5 })}${poly([[185, 188.9], [233.8, 104.5], [68.8, 104.5]], { fill: "none", w: 1, c: "var(--muted)" })}${[["A", 117.5, 20, -10, -2], ["B", 20, 188.9, -6, 14], ["C", 350, 188.9, 6, 14], ["D", 185, 188.9, 4, 16], ["E", 233.8, 104.5, 14, 0], ["F", 68.8, 104.5, -14, 0], ["G", 117.5, 188.9, -4, 16], ["H", 134, 32, 12, -4], ["J", 102.5, 46, -12, 0]].map(([s, x, y, dx, dy]) => dot(x, y, { r: 3 }) + txt(x + dx, y + dy, s)).join("")}`, "Triangle ABC, the circle through the midpoints D, E, F, and the extra points G, H, J"), "To scale. Arcs in order around the circle: G, D, E, H, J, F."),
+  read: [
+    ["“circumcircle of DEF”", "The circle through the three midpoints. (It's famous: the nine-point circle.)"],
+    ["“minor arcs”", "Each of the six arcs is the short way between neighboring points."],
+    ["the weights 1, 2, 3", "You need three separate arcs: DE, HJ, FG. Find each, then combine."],
+  ],
+  paper: [pw("triangle DEF has angles D=84, E=60, F=36"), pw("arc DE = 2·∠F = 72, arc EF = 168, arc FD = 120"), pw("FD ∥ AC → ∠FDG = 36 → arc FG = 72"), pw("angle A outside circle: 84 = ½(192 − HJ) → HJ = 24"), pw("72 + 48 + 216 = 336")],
+  think: [
+    "The midpoint triangle DEF has the same angles as ABC: D (opposite) gets 84°, E gets 60°, F gets 36°.",
+    "An inscribed angle is half its arc. That gives arcs DE, EF, FD.",
+    "For arc FG: G and D are both on line BC, and DF is parallel to AC. Find angle FDG.",
+    "For arc HJ: A is outside the circle, and lines AB and AC each cut the circle twice. Use the outside-angle rule.",
+  ],
+  easy: { h: "Inscribed angles and parallel lines", steps: [
+    "In triangle DEF, angle at F is 36°, so arc DE (not containing F) = 72°.",
+    "Angle at D is 84°, so arc EF (not containing D) = 168°. Then the other way around from E to F is 360 − 168 = 192°.",
+    "DF ∥ AC (midpoint segment). So angle FDB = angle ACB = 36°, and G lies on DB. Inscribed angle FDG = 36° gives arc FG = 72°.",
+    "From A, line AC hits the circle at H then E, and line AB at J then F. Angle A = ½(far arc EF − near arc HJ): 84 = ½(192 − HJ), so HJ = 24°.",
+    "Answer: 72 + 2·24 + 3·72 = 72 + 48 + 216 = <b>336</b>.",
+  ] },
+  fast: { h: "Two arcs are twice angle C", steps: [
+    "Arc DE = 2·∠F = 2·36 = 72, and arc FG = 2·∠FDG = 2·36 = 72. Both come from the 36° angle.",
+    "Arc HJ = (far arc EF) − 2·∠A = 192 − 168 = 24.",
+    "72 + 2·24 + 3·72 = <b>336</b>.",
+  ] },
+  deep: `${unp("why triangle DEF has the same angles as ABC", ["Each side of DEF is parallel to a side of ABC (midpoint theorem).", "So DEF is a half-size copy of ABC rotated 180°.", "The angle at D matches angle A, at E matches B, at F matches C."])}
+  ${unp("the outside angle rule", ["If two lines from an outside point P cut a circle, the angle at P equals half of (far arc − near arc).", "Here the far arc is the one from E to F away from A: 192°.", "The near arc is HJ. So 84 = (192 − HJ)/2, giving HJ = 24."])}
+  <p>All six arcs: GD = 48, DE = 72, EH = 96, HJ = 24, JF = 48, FG = 72. They add to 360 ✓.</p>`,
+  faq: [
+    ["Which arc is “arc EF”, the 168 or the 192?", "Arc EF opposite D (not containing D) is 168. The other way around, through H and J, is 192 because the circle is 360."],
+    ["Why is FD parallel to AC?", "The segment joining the midpoints of two sides of a triangle is parallel to the third side. F and D are midpoints of AB and BC."],
+    ["Do I need to know about the nine-point circle?", "No. Inscribed angles, the parallel midpoint segment, and the outside-angle rule are enough."],
+  ] });
+/* AIME Deep Dives: 2026 AIME I and II, problems 1-5 */
+
+DD({ yr: 2026, t: "I", n: 1, topic: "Rates", title: "Patrick, Tanya, and Jose arrive together", ans: 277,
+  p: `Patrick walks at a constant speed along a straight road from school to the park. One hour after Patrick leaves, Tanya starts running along the same road at a constant speed 2 miles per hour faster than Patrick. One hour after Tanya leaves, Jose starts bicycling along the road at a constant speed 7 miles per hour faster than Tanya. All three reach the park at the same moment. The distance from school to park is m/n miles in lowest terms. Find m + n.`,
+  read: [
+    ["“One hour after Patrick left … One hour after Tanya left”", "Jose starts 2 hours after Patrick, not 1."],
+    ["“7 miles per hour faster than Tanya”", "Jose's speed is Patrick's + 2 + 7 = Patrick's + 9."],
+    ["“arrived at the same time”", "Same finishing moment, so their travel times are T, T − 1, T − 2."],
+  ],
+  paper: [pw("Patrick: speed v, time T"), pw("Tanya: v + 2, time T − 1"), pw("Jose: v + 9, time T − 2"), pw("d = vT = (v+2)(T−1) = (v+9)(T−2)")],
+  think: [
+    "Give names to the unknowns: Patrick's speed v and travel time T.",
+    "Everyone covers the same distance, so write distance = speed × time three ways.",
+    "Expand each pair and the vT terms cancel, leaving simple linear equations.",
+    "Solve for T and v, then the distance.",
+  ],
+  easy: { h: "Set the distances equal", steps: [
+    "vT = (v + 2)(T − 1) = vT − v + 2T − 2, so v = 2T − 2.",
+    "vT = (v + 9)(T − 2) = vT − 2v + 9T − 18, so 2v = 9T − 18.",
+    "Substitute: 2(2T − 2) = 9T − 18 → 4T − 4 = 9T − 18 → 5T = 14 → T = 14/5 hours.",
+    "v = 2(14/5) − 2 = 18/5 mph. Distance = vT = (18/5)(14/5) = 252/25 miles.",
+    "252 and 25 share no factor, so m + n = <b>277</b>.",
+  ] },
+  fast: { h: "Check with Jose", steps: [
+    "Jose: speed 18/5 + 9 = 63/5, time 14/5 − 2 = 4/5 h. Distance 63/5 · 4/5 = 252/25 ✓. Answer <b>277</b>.",
+  ] },
+  deep: `<p>When several travelers cover the same distance, <b>set the distance expressions equal</b>. The product vT appears on both sides and cancels, which is why the equations end up linear even though distance is speed times time.</p>
+  ${unp("(18/5)(14/5) = 252/25", ["Multiply tops: 18 × 14 = 252.", "Multiply bottoms: 5 × 5 = 25.", "252 = 4 · 63 = 2² · 3² · 7, which has no factor 5, so it's in lowest terms."])}`,
+  faq: [
+    ["Why is Jose's time T − 2?", "He started 2 hours after Patrick (1 hour after Tanya, who started 1 hour after Patrick) and finished at the same moment."],
+    ["Is Jose's speed v + 7?", "No. He is 7 faster than Tanya, who is 2 faster than Patrick: v + 9."],
+    ["Do the numbers have to be whole?", "No. The speed 3.6 mph and time 2.8 hours are fine. The answer comes as a fraction on purpose."],
+  ] });
+
+DD({ yr: 2026, t: "I", n: 2, topic: "Counting", title: "Palindromes with digit sum 13", ans: 62,
+  p: `How many positive whole numbers (written in base 10) are palindromes, have no zero digits, and have digits adding up to 13? For example, 42124 qualifies. A palindrome reads the same forward and backward.`,
+  read: [
+    ["“no zero digits”", "Every digit is 1 through 9."],
+    ["“palindrome”", "The first half determines the second half. Only the first half (plus the middle) is a free choice."],
+    ["digit sum 13 is odd", "The paired digits contribute an even amount, so there must be a middle digit, and it must be odd."],
+  ],
+  paper: [pw("length 2k + 1, middle digit m (odd)"), pw("2·(half sum) + m = 13"), pw("m = 1,3,5,7,9 → half sum 6,5,4,3,2"), pw("ways to write s as ordered parts ≥ 1: 2^(s−1)"), pw("32 + 16 + 8 + 4 + 2 = 62")],
+  think: [
+    "In a palindrome, each digit off the middle appears twice. So the digit sum is 2 × (sum of the first half) + (middle digit, if any).",
+    "13 is odd, so the length is odd and the middle digit is odd.",
+    "For each middle digit, the first half's digits must add to a fixed number s.",
+    "Count ordered lists of digits 1–9 adding to s, of any length. Since s ≤ 6, no digit can exceed 9 anyway.",
+  ],
+  easy: { h: "Case on the middle digit", steps: [
+    "Middle 1: half sum 6. Middle 3: 5. Middle 5: 4. Middle 7: 3. Middle 9: 2.",
+    "Ordered lists of positive numbers adding to s (compositions): 2<sup>s−1</sup>. So 32, 16, 8, 4, 2.",
+    "Total: 32 + 16 + 8 + 4 + 2 = <b>62</b>.",
+  ] },
+  fast: { h: "Small check", steps: [
+    "Half sum 2: lists (2) and (1,1), giving 292 and 11911 with middle 9. That's 2 = 2¹ ✓.",
+    "Sum of powers 2⁵ + 2⁴ + 2³ + 2² + 2¹ = 64 − 2 = <b>62</b>.",
+  ] },
+  deep: `${unp("why there are 2^(s−1) compositions of s", ["Write s as a row of s ones: 1 1 1 1 1 1 (for s = 6).", "There are s − 1 gaps between them.", "In each gap choose: cut or don't cut. Cutting splits the row into parts.", "2 choices per gap, s − 1 gaps: 2^(s−1) ways."])}
+  <p>Each composition is the first half of the palindrome, read left to right. For example, half sum 6 as (4, 2) with middle 1 gives 42124, the example in the problem.</p>`,
+  faq: [
+    ["Why can't the palindrome have even length?", "Then every digit is paired, and the sum is even. 13 is odd."],
+    ["Is a single digit a palindrome?", "Yes, but no single digit equals 13, so it doesn't count here."],
+    ["Do I worry about digits above 9?", "Not here. The largest half sum is 6, so no digit in the half can be more than 6."],
+  ] });
+
+DD({ yr: 2026, t: "I", n: 3, topic: "Geometry", title: "A ball inside a hemisphere", ans: 79,
+  p: `A hemisphere of radius 200 sits on a flat circular disk of radius 200 with the same center. Let T be the set of points P on the disk where a ball of radius 42 can rest on the disk at P and still fit completely inside the hemisphere. The area of T divided by the area of the disk is p/q in lowest terms. Find p + q.`,
+  fig: fig(svg(360, 190, `${pathEl("M20 180 A160 160 0 0 1 340 180", { c: "var(--ink)", w: 2 })}${seg(10, 180, 350, 180)}${circ(301.9, 146.4, 33.6, { c: "var(--accent)", fill: "var(--accent-soft)" })}${seg(180, 180, 301.9, 146.4, { c: "var(--muted)", w: 1, dash: "4 3" })}${seg(301.9, 146.4, 301.9, 180, { c: "var(--muted)", w: 1, dash: "3 3" })}${dot(180, 180, { r: 3 })}${dot(301.9, 180, { r: 3, c: "var(--accent)" })}${txt(180, 175, "O", { a: "end" })}${txt(306, 175, "P", { a: "start", fill: "var(--accent)" })}${txt(238, 152, "158", { size: 11, fill: "var(--muted)" })}${txt(316, 166, "42", { size: 11, fill: "var(--muted)", a: "start" })}`, "Side view: a ball of radius 42 touching the inside of a hemisphere of radius 200"), "Side view, to scale. The ball's center is 42 above P and at most 200 − 42 = 158 from O."),
+  read: [
+    ["“placed on top of the disk at P”", "The ball touches the disk at P, so its center is straight above P at height 42."],
+    ["“lie completely inside the hemisphere”", "The ball's farthest point from O must be within 200 of O."],
+    ["“area of T divided by the area of the disk”", "A ratio, so π will cancel."],
+  ],
+  paper: [pw("center of ball = (P, height 42)"), pw("|O to center| + 42 ≤ 200"), pw("|OP|² + 42² ≤ 158²"), pw("|OP|² ≤ 158² − 42² = 116 · 200 = 23200"), pw("ratio = 23200 / 40000 = 29/50")],
+  think: [
+    "Look at it from the side. The ball is a circle of radius 42 sitting on the floor.",
+    "A ball fits inside a sphere of radius 200 exactly when its center is within 200 − 42 = 158 of O.",
+    "The center is at height 42 above P, so use the Pythagorean theorem to relate |OP| to that distance.",
+    "T is a disk centered at O. Compare its area to the big disk: the ratio of areas is the ratio of radius squared.",
+  ],
+  easy: { h: "Pythagorean theorem", steps: [
+    "Distance from O to the ball's center: √(|OP|² + 42²). It must be at most 158.",
+    "|OP|² ≤ 158² − 42² = (158 − 42)(158 + 42) = 116 · 200 = 23200.",
+    "T is a disk with radius² = 23200. The big disk has radius² = 40000.",
+    "Ratio = 23200/40000 = 29/50. p + q = <b>79</b>.",
+  ] },
+  fast: { h: "Difference of squares", steps: [
+    "158² − 42² = 116 · 200, and dividing by 200² gives 116/200 = 29/50 → <b>79</b>.",
+  ] },
+  deep: `<p>The tempting wrong answer: “T is a disk of radius 200 − 42 = 158.” That ignores that the ball sits on the floor. Near the edge, the hemisphere curves down to meet the floor, so the ball hits the curved wall before its center gets 158 from O horizontally.</p>
+  ${unp("why “inside” means center within 158", ["Take any point Q on the ball. It is at most 42 from the ball's center C.", "So |OQ| ≤ |OC| + 42.", "If |OC| ≤ 158, every point of the ball is within 200 of O.", "If |OC| > 158, the point of the ball directly away from O sticks out past 200."])}`,
+  faq: [
+    ["Why isn't the answer (158/200)²?", "That would be true if the ball could float at the center's height freely. But its center is fixed at height 42, so the horizontal reach is less than 158."],
+    ["Where does π go?", "Both areas have π times radius squared. π cancels in the ratio."],
+    ["Does the ball also have to stay above the disk?", "It sits on the disk, so its bottom is exactly at the disk. That part is automatic."],
+  ] });
+
+DD({ yr: 2026, t: "I", n: 4, topic: "Number theory", title: "Numbers of the form a + b + ab", ans: 70,
+  p: `How many integers less than or equal to 100 can be written as a + b + ab for some choice of two different positive integers a and b?`,
+  read: [
+    ["“distinct positive integers a and b”", "a ≠ b, and both at least 1. So 1 + 1 + 1 = 3 doesn't count."],
+    ["“the number of integers”", "Count values, not pairs. If two different pairs give the same value, it counts once."],
+    ["a + b + ab", "Add 1 and it factors. That's the whole problem."],
+  ],
+  paper: [pw("a + b + ab + 1 = (a + 1)(b + 1)"), pw("n + 1 = x · y, 2 ≤ x < y"), pw("n + 1 ≤ 101"), pw("works: composite, not a prime squared"), pw("composites ≤ 101: 74; minus 4, 9, 25, 49 → 70")],
+  think: [
+    "Expressions like a + b + ab almost always factor after adding 1: (a + 1)(b + 1) = ab + a + b + 1.",
+    "So n + 1 must be a product of two different whole numbers, each at least 2.",
+    "Which numbers can be split that way? Primes can't. A prime squared p² can only be p · p, which uses equal factors.",
+    "Every other composite has two different factors ≥ 2.",
+    "Count composites up to 101 and remove the prime squares.",
+  ],
+  easy: { h: "Factor and count", steps: [
+    "n + 1 ranges up to 101. Numbers from 2 to 101: 100 of them. Primes up to 101: 26. Composites: 74.",
+    "Prime squares up to 101: 4, 9, 25, 49. Remove them: 74 − 4 = 70.",
+    "Each remaining m gives n = m − 1. Answer <b>70</b>.",
+  ] },
+  fast: { h: "Spot-check the edge cases", steps: [
+    "8 = 2 · 4 → a = 1, b = 3 → 1 + 3 + 3 = 7 ✓. 9 = 3 · 3 only → n = 8 is impossible ✓. 16 = 2 · 8 → n = 15 ✓ (prime cubes and higher are fine).",
+    "Answer <b>70</b>.",
+  ] },
+  deep: `${unp("the add-1 factoring trick", ["(a + 1)(b + 1) = ab + a + b + 1.", "So a + b + ab = (a + 1)(b + 1) − 1.", "This is Simon's Favorite Factoring Trick: add a constant so an expression factors."])}
+  <p>Know the primes up to 100 cold: there are 25 of them (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97). Add 101 for 26.</p>`,
+  faq: [
+    ["Why not count pairs (a, b)?", "The question asks how many integers. a = 1, b = 5 gives 1 + 5 + 5 = 11, and a = 2, b = 3 gives 2 + 3 + 6 = 11: two pairs, one integer."],
+    ["Why is 16 OK but 9 not?", "16 = 2 · 8 uses two different factors. 9 = 3 · 3 is the only way with factors ≥ 2, and they're equal."],
+    ["Could n be negative or zero?", "No. With a, b ≥ 1 and different, the smallest value is 1 + 2 + 2 = 5."],
+  ] });
+
+DD({ yr: 2026, t: "I", n: 5, topic: "Geometry", title: "Two rotations", ans: 65,
+  p: `Points A and B in a plane are 1 unit apart. Rotate A counterclockwise around B by an acute angle θ to get A′. Then rotate B clockwise around A′ by the same angle θ to get B′. If AB′ = 4/3, then cos θ = m/n in lowest terms. Find m + n.`,
+  fig: fig(svg(300, 175, `${seg(100, 150, 260, 150)}${seg(100, 150, 228.9, 55.2, { c: "var(--accent)", w: 1.5 })}${seg(228.9, 55.2, 68.9, 55.2, { c: "var(--accent)", w: 1.5, dash: "5 3" })}${seg(260, 150, 68.9, 55.2, { c: "var(--muted)", w: 1, dash: "3 3" })}${[["B", 100, 150, 0, 16], ["A", 260, 150, 0, 16], ["A′", 228.9, 55.2, 10, -6], ["B′", 68.9, 55.2, -10, -6]].map(([s, x, y, dx, dy]) => dot(x, y, { r: 3 }) + txt(x + dx, y + dy, s)).join("")}${txt(146, 140, "θ", { fill: "var(--accent)" })}`, "Points B, A, A prime, B prime after the two rotations"), "To scale with cos θ = 29/36. A′B′ comes out parallel to BA."),
+  read: [
+    ["“counterclockwise … clockwise”", "The two turns go in opposite directions. That's why they undo each other's direction."],
+    ["“around point B” then “around point A′”", "Different centers. Keep track of which point stays fixed in each step."],
+    ["“acute angle”", "θ is between 0° and 90°, so cos θ is positive."],
+  ],
+  paper: [pw("B = (0,0), A = (1,0)"), pw("A′ = (cos θ, sin θ)"), pw("B′ = A′ + (−1, 0) = (cos θ − 1, sin θ)"), pw("AB′² = (cos θ − 2)² + sin² θ = 5 − 4 cos θ"), pw("5 − 4 cos θ = 16/9 → cos θ = 29/36")],
+  think: [
+    "Set up coordinates with B at the origin and A at (1, 0).",
+    "Rotating A around B by θ puts A′ at (cos θ, sin θ).",
+    "Now rotate B around A′. The arrow from A′ to B points at angle θ + 180°. Turning it clockwise by θ makes it point at 180°, straight left.",
+    "So B′ is 1 unit to the left of A′.",
+    "Compute AB′ with the distance formula and solve.",
+  ],
+  easy: { h: "Coordinates", steps: [
+    "B′ = (cos θ − 1, sin θ). A = (1, 0).",
+    "AB′² = (cos θ − 2)² + sin²θ = cos²θ − 4 cos θ + 4 + sin²θ = 5 − 4 cos θ.",
+    "Set equal to (4/3)² = 16/9: 4 cos θ = 5 − 16/9 = 29/9, so cos θ = 29/36.",
+    "m + n = 29 + 36 = <b>65</b>.",
+  ] },
+  fast: { h: "One triangle with sides 1 and 2", steps: [
+    "B′ is A′ shifted by the arrow from A to B, so (with B at the origin) B′ = A′ − A, and AB′ is the distance between the tips of A′ and 2A.",
+    "Those two arrows from B have lengths 1 and 2 with angle θ between them. Law of cosines: AB′² = 1 + 4 − 4 cos θ = 5 − 4 cos θ.",
+    "16/9 = 5 − 4 cos θ → cos θ = 29/36 → <b>65</b>.",
+  ] },
+  deep: `<p>A rotation by θ followed by a rotation by −θ (around a different center) leaves every direction unchanged. So the arrow from A′ to B′ points the same way as the arrow from A to B: straight left, length 1. Seeing this saves all the messy rotation formulas, and it shows ABB′A′ is a parallelogram.</p>
+  ${unp("sin²θ + cos²θ = 1 in this problem", ["(cos θ − 2)² = cos²θ − 4cos θ + 4.", "Add sin²θ: cos²θ + sin²θ − 4cos θ + 4.", "cos²θ + sin²θ = 1, so this is 5 − 4cos θ."])}
+  <p>Check: cos θ = 29/36 ≈ 0.806, so θ ≈ 36°, which is acute ✓.</p>`,
+  faq: [
+    ["Why do the two rotations cancel?", "Turning left by θ and then right by θ brings any arrow back to its original direction. The center changes, so positions move, but directions don't."],
+    ["Why must cos θ be positive?", "θ is acute (less than 90°), and cosine of an acute angle is positive."],
+    ["What if I rotated the wrong way?", "Rotating B clockwise vs counterclockwise around A′ gives a different B′. Re-read which way each turn goes; drawing it helps."],
+  ] });
+
+DD({ yr: 2026, t: "II", n: 1, topic: "Sequences", title: "Sequences from 4 through 24 and 34", ans: 178,
+  p: `Consider every arithmetic sequence of integers whose first term is 4 and which includes both 24 and 34 as terms. Find the sum of the 10th terms of all these sequences.`,
+  read: [
+    ["“first term equal to 4”", "The sequence starts at 4. Terms after it are 4 + d, 4 + 2d, …"],
+    ["“include both 24 and 34”", "Each must be reachable: 24 − 4 and 34 − 4 must be whole multiples of d."],
+    ["“10th term”", "4 + 9d, not 4 + 10d."],
+  ],
+  paper: [pw("24 = 4 + jd, 34 = 4 + kd"), pw("d | 20 and d | 30 → d | 10"), pw("d > 0: d = 1, 2, 5, 10"), pw("10th term 4 + 9d: 13, 22, 49, 94"), pw("sum 178")],
+  think: [
+    "Write the n-th term: 4 + (n − 1)d.",
+    "For 24 and 34 to appear, 20 and 30 must both be positive multiples of d.",
+    "So d is a positive common divisor of 20 and 30: a divisor of 10.",
+    "Find the 10th term for each d and add.",
+  ],
+  easy: { h: "List the differences", steps: [
+    "Divisors of 10: 1, 2, 5, 10.",
+    "10th terms: 4 + 9 = 13, 4 + 18 = 22, 4 + 45 = 49, 4 + 90 = 94.",
+    "Sum: 13 + 22 + 49 + 94 = <b>178</b>.",
+  ] },
+  fast: { h: "Add the d's first", steps: [
+    "Sum = 4·4 + 9·(1 + 2 + 5 + 10) = 16 + 162 = <b>178</b>.",
+  ] },
+  deep: `<p>Why d can't be negative or zero: the sequence starts at 4. With d ≤ 0, every term is 4 or less, so it can never reach 24. With d > 0, “24 is a term” means 20 is a multiple of d.</p>
+  ${unp("the 10th term is 4 + 9d", ["1st term: 4 + 0d.", "2nd term: 4 + 1d.", "n-th term: 4 + (n − 1)d.", "10th term: 4 + 9d. Off-by-one mistakes here are common."])}`,
+  faq: [
+    ["Why not 4 + 10d?", "The first term already uses zero steps. The 10th term is 9 steps after the first."],
+    ["Could d be 20 or 30?", "d = 20 reaches 24 but jumps over 34 (4, 24, 44). d must divide both 20 and 30."],
+    ["Does the order matter, like 34 before 24?", "With d > 0 the terms increase, so 24 comes first. That's fine; the problem only needs both to appear."],
+  ] });
+
+DD({ yr: 2026, t: "II", n: 2, topic: "Counting", title: "A bug walks across 10 squares", ans: 243,
+  p: `Ten squares sit in a row. Each square has a diagonal from its lower-left corner to its upper-right corner. A bug travels along these segments from vertex to vertex. It never uses the same segment twice, and it never moves right-to-left along a horizontal or diagonal segment (vertical segments can be used up or down). Let N be the number of paths from the lower-left corner A to the upper-right corner B. Find √N.`,
+  fig: fig(svg(370, 60, `${Array.from({ length: 10 }, (_, i) => seg(10 + 35 * i, 50, 45 + 35 * i, 15, { c: "var(--muted)", w: 1 })).join("")}${seg(10, 15, 360, 15, { w: 1.5 })}${seg(10, 50, 360, 50, { w: 1.5 })}${Array.from({ length: 11 }, (_, i) => seg(10 + 35 * i, 15, 10 + 35 * i, 50, { w: 1.5 })).join("")}${txt(10, 58, "A", { size: 11 })}${txt(360, 11, "B", { size: 11 })}`, "A row of 10 squares, each with a diagonal from lower left to upper right"), "A is the lower-left corner, B the upper-right."),
+  read: [
+    ["“never traversing the same segment twice”", "Each vertical can be used at most once, so the bug can go up then down only if it uses two different verticals."],
+    ["“never moving from right to left along a horizontal or diagonal”", "Horizontal and diagonal moves only go right. Verticals can go either way."],
+    ["“Find √N”", "N is too big for an AIME answer. N must be a perfect square, and the square root is what you enter."],
+  ],
+  paper: [pw("state at each vertical line: arrive bottom (b) or top (t)"), pw("from b: → b (1 way), → t (2 ways: diagonal, or up then top)"), pw("from t: → t (2 ways), → b (1 way: down then bottom)"), pw("every state has 3 ways forward"), pw("N = 3^10, √N = 3^5 = 243")],
+  think: [
+    "Cut the picture at each vertical line. When the bug first reaches a vertical line, it's at the bottom or the top.",
+    "Before moving right, it may use that vertical once (to switch levels), then it must move right through the next square.",
+    "Count ways to get from one vertical line to the next, depending on where you arrive.",
+    "At the end (line 10) the bug must finish at the top; arriving at the bottom it goes up the last vertical.",
+  ],
+  easy: { h: "Transfer counting", steps: [
+    "Arrive at the bottom of a line: go right along the bottom (arrive bottom), take the diagonal (arrive top), or go up then along the top (arrive top). 3 ways.",
+    "Arrive at the top: go right along the top (top), or go down then along the bottom (bottom), or go down then up the diagonal (top). 3 ways.",
+    "Either way: 3 choices per square, and at the last line there is exactly 1 way to finish at B.",
+    "N = 3<sup>10</sup> = 59049, so √N = 3<sup>5</sup> = <b>243</b>.",
+  ] },
+  fast: { h: "Try one square", steps: [
+    "One square, from A to its top-right: up-then-right, diagonal, right-then-up. 3 paths. Each extra square multiplies by 3.",
+    "N = 3<sup>10</sup>, √N = <b>243</b>.",
+  ] },
+  deep: `<p>The key observation is that the count of ways forward doesn't depend on where you are (top or bottom). That makes the total a clean power: 3 per square.</p>
+  <p>Why can't the bug go up and then back down on the same vertical? That would traverse the same segment twice. And it can't go left on a horizontal or diagonal. So once it moves into the next square, it can never come back. That's what makes the square-by-square count valid.</p>
+  ${unp("3^10 and its square root", ["3⁵ = 243.", "3¹⁰ = (3⁵)² = 243² = 59049.", "So √N = 243."])}`,
+  faq: [
+    ["Can the bug use the same vertical twice?", "No, that would traverse the same segment twice."],
+    ["Can it go down a vertical?", "Yes. Only horizontal and diagonal segments have the left-to-right rule."],
+    ["Why does the problem ask for √N?", "N = 59049 is bigger than 999, the largest AIME answer. Asking for √N keeps the answer in range."],
+  ] });
+
+DD({ yr: 2026, t: "II", n: 3, topic: "Geometry", title: "A pentagon with a notch", ans: 503,
+  p: `ABCDE is a pentagon that is not convex. Its angles at A and E are 90°, and its angles at B and D are 45°. Also DE < AB, AE = 20, BC = 14√2, and points B, C, D are all on the same side of line AE. AB is an integer less than 2026, and the area of the pentagon is a whole-number multiple of 16. How many values can AB have?`,
+  fig: fig(svg(290, 200, `${poly([[20, 180], [260, 180], [148, 68], [196, 20], [20, 20]], { fill: "var(--accent-soft)" })}${[["A", 20, 180, -10, 14], ["B", 260, 180, 8, 14], ["C", 148, 68, -12, 4], ["D", 196, 20, 8, -4], ["E", 20, 20, -10, -4]].map(([s, x, y, dx, dy]) => dot(x, y, { r: 3 }) + txt(x + dx, y + dy, s)).join("")}${txt(10, 104, "20", { size: 11, fill: "var(--muted)" })}`, "Pentagon ABCDE with a notch at C, shown for AB = 30"), "Example with AB = 30. C is a reflex (270°) corner."),
+  read: [
+    ["“nonconvex”", "One angle is bigger than 180°. Angles add to 540°, so C = 540 − 90 − 90 − 45 − 45 = 270°."],
+    ["“B, C, D lie on the same side of line AE”", "C can't poke past line AE. This rules out a few small AB values."],
+    ["“AB < 2026”", "Strictly less: AB can be at most 2025."],
+    ["“integer multiple of 16”", "Area ÷ 16 must be a whole number."],
+  ],
+  paper: [pw("A=(0,0) B=(b,0) E=(0,20)"), pw("C = B + (−14, 14) = (b − 14, 14)"), pw("D = C + (6, 6) = (b − 8, 20)"), pw("area = 20b − 164"), pw("20b − 164 ≡ 0 (mod 16) → b ≡ 1 (mod 4)"), pw("b − 14 > 0 → b ≥ 17 … 2025")],
+  think: [
+    "Put A at the origin, AB along the x-axis, and AE up the y-axis. Let AB = b.",
+    "At B, the 45° angle sends BC up and to the left. BC = 14√2 means 14 left and 14 up.",
+    "At D, the 45° angle means DC goes down-left from D. D is at height 20, C at height 14, so D is 6 right of C.",
+    "Area: the 20 × b rectangle minus the notch.",
+    "Apply the multiple-of-16 rule and the “same side of AE” rule, then count.",
+  ],
+  easy: { h: "Coordinates and a rectangle", steps: [
+    "C = (b − 14, 14), D = (b − 8, 20). So DE = b − 8 < b ✓.",
+    "Area = the 20 × b rectangle minus the notch with corners B, (b, 20), D, C. The notch has area 164 (worked out in the details below).",
+    "Area = 20b − 164. Need 16 | 20b − 164. Mod 16: 20b − 164 ≡ 4b − 4, so 4(b − 1) ≡ 0 mod 16, b ≡ 1 mod 4.",
+    "C must be to the right of AE: b − 14 > 0, so b ≥ 15. With b ≡ 1 (mod 4): b = 17, 21, …, 2025.",
+    "Count: (2025 − 17)/4 + 1 = 502 + 1 = <b>503</b>.",
+  ] },
+  fast: { h: "Shoelace directly", steps: [
+    "Vertices (0,0), (b,0), (b−14,14), (b−8,20), (0,20). Shoelace gives area 20b − 164.",
+    "b ≡ 1 (mod 4), 17 ≤ b ≤ 2025 → <b>503</b>.",
+  ] },
+  deep: `${unp("the notch has area 164", ["Notch corners: B(b, 0), Q(b, 20), D(b − 8, 20), C(b − 14, 14).", "Slide it left by b (area doesn't change): (0,0), (0,20), (−8,20), (−14,14). Use the shoelace formula.", "Cross terms: 0·20 − 0·0 = 0; 0·20 − (−8)·20 = 160; (−8)·14 − (−14)·20 = 168; (−14)·0 − 0·14 = 0.", "Sum 328, half is 164."])}
+  <p>The trap: without the “same side of AE” condition, b = 9 and b = 13 would also satisfy b ≡ 1 (mod 4), giving 505. For those, C = (b − 14, 14) has a negative x-coordinate and crosses to the other side of AE. Reading that clause carefully is worth 2 values.</p>`,
+  faq: [
+    ["Why is angle C 270°?", "A pentagon's angles add to 540°. The other four add to 270°, so C gets 270°, which makes the pentagon nonconvex."],
+    ["Why not b ≥ 9?", "b ≥ 9 only makes DE positive. The clause about B, C, D on the same side of AE needs C's x-coordinate b − 14 to be positive."],
+    ["Is 2025 allowed?", "Yes. AB < 2026 means AB ≤ 2025, and 2025 ≡ 1 (mod 4)."],
+    ["Why does the condition become b ≡ 1 (mod 4)?", "20b − 164 = 4(5b − 41). For 16 to divide it, 4 must divide 5b − 41, i.e. b ≡ 41 ≡ 1 (mod 4) since 5 ≡ 1."],
+  ] });
+
+DD({ yr: 2026, t: "II", n: 4, topic: "Number theory", title: "When a numeral equals itself in a smaller base", ans: 279,
+  p: `For a positive integer n, let f(n) be the value of the digits of n read in base b, where b is one more than the largest digit of n. For example, n = 72 has largest digit 7, so b = 8, and 72 read in base 8 is 7·8 + 2 = 58, so f(72) = 58. How many positive integers n less than 1000 have f(n) = n?`,
+  read: [
+    ["“least integer greater than the greatest digit”", "b = (largest digit) + 1. If n contains a 9, b = 10."],
+    ["“less than 1000”", "n goes from 1 to 999."],
+    ["f(n) = n", "Reading the digits in base b gives back the same number."],
+  ],
+  paper: [pw("contains a 9 → b = 10 → f(n) = n ✓"), pw("no 9, 2+ digits → b ≤ 9 < 10 → f(n) < n"), pw("1 digit d → b = d + 1 → f(d) = d ✓"), pw("with a 9: 999 − 728 = 271"), pw("single digits 1–8: 8 → 279")],
+  think: [
+    "If the base comes out to 10, reading in base b is ordinary reading, so f(n) = n.",
+    "If the base is less than 10, a number with 2 or more digits shrinks (its tens digit is worth less than 10).",
+    "A single digit is its own value in any base bigger than it.",
+    "Count numbers below 1000 that contain a 9, then add single digits without a 9.",
+  ],
+  easy: { h: "Complementary counting", steps: [
+    "Numbers 1–999 with no 9: think 000 to 999 with digits 0–8: 9³ = 729 strings, minus 000: 728.",
+    "Numbers containing a 9: 999 − 728 = 271.",
+    "Single digits 1–8 also work: 8 more.",
+    "Total <b>279</b>.",
+  ] },
+  fast: { h: "Check a few", steps: [
+    "f(19) = 19 (b = 10) ✓. f(10): b = 2, “10” in base 2 = 2 ≠ 10 ✗. f(5) = 5 ✓. Count 271 + 8 = <b>279</b>.",
+  ] },
+  deep: `<p>Why multi-digit numbers shrink in a smaller base: a number like 47 is 4·10 + 7. In base 8 it's 4·8 + 7, which is smaller since 8 < 10. Any number with a nonzero digit in the tens place or higher loses value. Only single digits are safe.</p>
+  ${unp("728 numbers with no 9", ["Write every number from 0 to 999 with three digits: 000 to 999.", "No 9 means each digit is 0–8: 9 choices, three digits: 729.", "Remove 000 (not positive): 728."])}`,
+  faq: [
+    ["What base does 100 use?", "Largest digit 1, so b = 2. “100” in base 2 is 4, not 100."],
+    ["Is 9 itself counted?", "Yes, it contains a 9 (it's in the 271)."],
+    ["Why not count the single digit 9 again with the 1–8 group?", "It's already in the 271. That's why the second group is 1 through 8."],
+  ] });
+
+DD({ yr: 2026, t: "II", n: 5, topic: "Probability", title: "Red and blue marbles in an urn", ans: 190,
+  p: `An urn has n marbles, each red or blue, with at least 7 of each color. Draw 7 marbles at random without putting any back. The chance of getting exactly 4 red equals the chance of getting exactly 5 red. Find the sum of the five smallest possible values of n.`,
+  read: [
+    ["“without replacement”", "Use combinations: choose which marbles come out."],
+    ["“at least 7 marbles of each color”", "Both r ≥ 7 and b ≥ 7. This rules out small cases."],
+    ["“five least values of n”", "Find the pattern of valid n, take the first five, add them."],
+  ],
+  paper: [pw("C(r,4) C(b,3) = C(r,5) C(b,2)"), pw("C(b,3)/C(b,2) = (b − 2)/3"), pw("C(r,5)/C(r,4) = (r − 4)/5"), pw("(b − 2)/3 = (r − 4)/5 → 3r = 5b + 2"), pw("b = 8,11,14,17,20 → n = 22,30,38,46,54")],
+  think: [
+    "Let r be red and b blue. 4 red out of 7 means 4 red and 3 blue: C(r,4)·C(b,3) ways. 5 red: C(r,5)·C(b,2).",
+    "Equal probabilities have the same denominator C(n,7), so just set the counts equal.",
+    "Ratios of neighboring binomial coefficients are simple fractions. Use them instead of expanding everything.",
+    "Solve for r in terms of b, check r, b ≥ 7, and list the smallest n = r + b.",
+  ],
+  easy: { h: "Ratios of binomials", steps: [
+    "C(b,3)/C(b,2) = (b − 2)/3 and C(r,5)/C(r,4) = (r − 4)/5.",
+    "C(r,4)C(b,3) = C(r,5)C(b,2) means (b − 2)/3 = (r − 4)/5.",
+    "Cross-multiply: 5b − 10 = 3r − 12, so 3r = 5b + 2.",
+    "Need 5b + 2 divisible by 3: b ≡ 2 (mod 3). With b ≥ 7: b = 8, 11, 14, 17, 20 and r = 14, 19, 24, 29, 34.",
+    "n = 22, 30, 38, 46, 54. Sum <b>190</b>.",
+  ] },
+  fast: { h: "n grows by 8", steps: [
+    "Each step b → b + 3 makes r → r + 5, so n goes up by 8. First n = 8 + 14 = 22.",
+    "Five terms: 5 · 22 + 8 · (0 + 1 + 2 + 3 + 4) = 110 + 80 = <b>190</b>.",
+  ] },
+  deep: `${unp("C(r,5) / C(r,4) = (r − 4)/5", ["C(r,5) = r(r−1)(r−2)(r−3)(r−4) / 5!.", "C(r,4) = r(r−1)(r−2)(r−3) / 4!.", "Divide: the first four factors cancel, leaving (r − 4) and 4!/5! = 1/5."])}
+  <p>b = 5 and r = 9 (n = 14) also satisfy 3r = 5b + 2, but the problem requires at least 7 blue marbles, so n = 14 is out. Always apply the stated limits before listing answers.</p>`,
+  faq: [
+    ["Why can I ignore the denominator C(n,7)?", "Both probabilities divide by the same C(n,7), so equal probabilities means equal counts."],
+    ["Is b = 5 allowed?", "No. The problem says at least 7 of each color, so b ≥ 7."],
+    ["Does it matter which color is which?", "Yes. Red is the color with 4 vs 5. Swapping colors gives a different equation."],
+  ] });
+/* =========================================================
    APP STATE + HELPERS
    ========================================================= */
 const S = {
@@ -13744,7 +14857,7 @@ function renderChrome() {
   $("#brand").disabled = inTest;
   $("#who").innerHTML = STUDENTS.map(s => `<button class="pill" aria-pressed="${s === S.student}" data-who="${s}" ${inTest ? "disabled" : ""}>${nameOf(s)}${awardBadge(s)}</button>`).join("");
 }
-$("#tabs").addEventListener("click", e => { const b = e.target.closest("[data-go]"); if (!b) return; if (b.dataset.go === "book" && S.view === "book") S.bookCh = null; go(b.dataset.go); });
+$("#tabs").addEventListener("click", e => { const b = e.target.closest("[data-go]"); if (!b) return; if (b.dataset.go === "book" && S.view === "book") S.bookCh = null; if (b.dataset.go === "aime") S.ddId = null; go(b.dataset.go); });
 $("#brand").addEventListener("click", () => go("home"));
 $("#who").addEventListener("click", e => {
   const b = e.target.closest("[data-who]"); if (!b || S.view === "test") return;
@@ -14513,11 +15626,94 @@ document.addEventListener("click", e => {
 });
 document.addEventListener("keydown", e => { if (e.key === "Escape") closePop(); });
 /* =========================================================
+   AIME DEEP DIVES VIEW: test list, then one problem per page
+   Sections 1-2 (reading, paper) show at once; 3-7 open after "Show the solution"
+   or a correct answer. Visited problems get a check (this browser only).
+   ========================================================= */
+const DD_TESTS = [[2026, "I"], [2026, "II"], [2025, "I"], [2025, "II"], [2024, "I"], [2024, "II"]];
+const LS_DDSEEN = "cml.dd.seen";
+const ddSeen = () => new Set(store.lsGet(LS_DDSEEN, []));
+const ddGet = id => AIME_DD.find(o => o.id === id);
+S.ddOpen = S.ddOpen || {}; S.ddTry = S.ddTry || {};
+
+function ddSec(n, total, title, body) {
+  return `<section class="bsec dsec"><div class="bsec-h"><span class="bsec-n">${n}</span><div class="bsec-t"><h3>${title}</h3><span class="bsec-p" aria-label="Section ${n} of ${total}">${Array.from({ length: total }, (_, j) => `<i class="${j < n ? "on" : ""}"></i>`).join("")}</span></div></div>${body}</section>`;
+}
+const ddPolish = h => glossify(prettyMath(h));
+
+function viewAime() {
+  const o = S.ddId && ddGet(S.ddId);
+  if (!o) {
+    const seen = ddSeen();
+    return `
+    <section style="display:flex;flex-direction:column;gap:8px"><span class="eyebrow">AIME I · AIME II · 2024 to 2026 · problems 1 to 5</span><h1>AIME Deep Dives</h1></section>
+    <section class="dd-grid">${DD_TESTS.map(([y, t]) => `
+      <article class="chap"><div class="chap-h"><h3>${y} AIME ${t}</h3><span class="chap-n">${AIME_DD.filter(p => p.yr === y && p.t === t && seen.has(p.id)).length}/5</span></div>
+        <ol class="dd-list">${AIME_DD.filter(p => p.yr === y && p.t === t).sort((a, b) => a.n - b.n).map(p => `
+          <li><button class="dd-row" data-dd="go" data-ref="${p.id}"><span class="dd-n">${p.n}</span><span class="dd-t">${p.title}<small>${p.topic}</small></span>${seen.has(p.id) ? `<span class="dd-ok" aria-label="visited">✓</span>` : ""}</button></li>`).join("")}</ol></article>`).join("")}
+    </section>`;
+  }
+  const list = DD_TESTS.flatMap(([y, t]) => AIME_DD.filter(p => p.yr === y && p.t === t).sort((a, b) => a.n - b.n));
+  const i = list.indexOf(o), prev = list[i - 1], next = list[i + 1];
+  const open = !!S.ddOpen[o.id], tr = S.ddTry[o.id] || {};
+  const read = `<div class="tbl-wrap"><table class="dd-read"><thead><tr><th>Words to notice</th><th>Why they matter</th></tr></thead><tbody>${o.read.map(([w, why]) => `<tr><td><b>${w}</b></td><td>${ddPolish(why)}</td></tr>`).join("")}</tbody></table></div>`;
+  const paper = `<div class="dd-paper">${o.paper.join("")}</div>`;
+  const total = 7;
+  const after = open ? [
+    ddSec(3, total, "Step-by-step thinking", ddPolish(steps(o.think))),
+    ddSec(4, total, `The easy way: ${o.easy.h}`, ddPolish(steps(o.easy.steps))),
+    ddSec(5, total, `The fast way: ${o.fast.h}`, ddPolish(steps(o.fast.steps))),
+    ddSec(6, total, "The details", ddPolish(o.deep)),
+    ddSec(7, total, "FAQ", `<div class="dd-faq">${o.faq.map(([q, a]) => `<details><summary>${q}</summary><p>${ddPolish(a)}</p></details>`).join("")}</div>`),
+  ].join("") : `<div class="dd-gate"><button class="btn primary" data-dd="open">Show the solution</button><span class="status">Sections 3 to 7: thinking, the easy way, the fast way, details, FAQ</span></div>`;
+  return `
+  <nav class="crumbs"><button data-dd="go" data-ref="">AIME Deep Dives</button><span>›</span><span>${o.yr} AIME ${o.t}</span><span>›</span><span>Problem ${o.n}</span></nav>
+  <article class="prose dd">
+    <div><span class="eyebrow">${o.yr} AIME ${o.t} · Problem ${o.n} · ${o.topic}</span><h1>${o.title}</h1></div>
+    <div class="panel dd-prob"><span class="lbl">The problem</span><p>${ddPolish(o.p)}</p>${o.fig || ""}<a class="dd-src" href="${ddLink(o)}" target="_blank" rel="noopener">Official wording (AoPS Wiki)</a></div>
+    <div class="dd-try"><label for="ddin">Your answer</label><input class="numin" id="ddin" inputmode="numeric" maxlength="3" autocomplete="off" value="${tr.v ?? ""}" aria-label="Your answer, 0 to 999"><button class="btn" data-dd="check">Check</button>
+      ${tr.res ? `<span class="dd-res ${tr.res}">${tr.res === "ok" ? `Correct: ${o.ans}` : "Not yet"}</span>` : ""}
+      ${tr.show && tr.res !== "ok" ? `<span class="dd-res show">Answer: ${o.ans}</span>` : (tr.res === "ok" ? "" : `<button class="btn ghost small" data-dd="ans">Show answer</button>`)}</div>
+    ${ddSec(1, total, "How to read it", read)}
+    ${ddSec(2, total, "What to write on paper", paper)}
+    ${after}
+    <div class="row" style="justify-content:space-between;margin-top:10px">
+      ${prev ? `<button class="btn" data-dd="go" data-ref="${prev.id}">← ${prev.yr} ${prev.t} #${prev.n}</button>` : "<span></span>"}
+      ${next ? `<button class="btn primary" data-dd="go" data-ref="${next.id}">${next.yr} ${next.t} #${next.n} →</button>` : ""}
+    </div>
+  </article>`;
+}
+
+function ddGo(id) {
+  if (id) { const s = ddSeen(); s.add(id); store.lsSet(LS_DDSEEN, [...s]); }
+  go("aime", { ddId: id || null });
+}
+function ddCheck() {
+  const o = ddGet(S.ddId); if (!o) return;
+  const v = ($("#ddin")?.value || "").replace(/\D/g, "").slice(0, 3);
+  if (v === "") return;
+  const ok = +v === o.ans;
+  S.ddTry[o.id] = { ...S.ddTry[o.id], v, res: ok ? "ok" : "no" };
+  if (ok) S.ddOpen[o.id] = true;
+  render();
+  $("#ddin")?.focus();
+}
+app.addEventListener("click", e => {
+  const b = e.target.closest("[data-dd]"); if (!b) return;
+  const a = b.dataset.dd, id = S.ddId;
+  if (a === "go") ddGo(b.dataset.ref);
+  else if (a === "open") { S.ddOpen[id] = true; render(); document.querySelectorAll(".dsec")[2]?.scrollIntoView({ behavior: "smooth", block: "start" }); }
+  else if (a === "check") ddCheck();
+  else if (a === "ans") { S.ddTry[id] = { ...S.ddTry[id], show: true }; render(); }
+});
+app.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.id === "ddin") { e.preventDefault(); ddCheck(); } });
+app.addEventListener("input", e => { if (e.target.id === "ddin") { e.target.value = e.target.value.replace(/\D/g, "").slice(0, 3); S.ddTry[S.ddId] = { ...S.ddTry[S.ddId], v: e.target.value }; } });
+/* =========================================================
    RENDER + EVENTS
    ========================================================= */
 function render() {
   renderChrome();
-  const v = { home: viewHome, learn: viewLearn, chapter: viewChapter, lesson: viewLesson, book: viewBook, formulas: viewFormulas, setup: viewSetup, test: viewTest, result: viewResult, progress: viewProgress, profile: viewProfile, practice: viewPractice }[S.view] || viewHome;
+  const v = { home: viewHome, learn: viewLearn, chapter: viewChapter, lesson: viewLesson, book: viewBook, aime: viewAime, formulas: viewFormulas, setup: viewSetup, test: viewTest, result: viewResult, progress: viewProgress, profile: viewProfile, practice: viewPractice }[S.view] || viewHome;
   app.innerHTML = v();
 }
 
