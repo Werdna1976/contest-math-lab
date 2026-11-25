@@ -20169,9 +20169,21 @@ function tierBar() {
   </div>`;
 }
 
+/* Explain lessons the tier filter or level cap is hiding, so a chapter never looks empty. */
+function hiddenNote(c, compact) {
+  const ls = readyLessons(c);
+  const byTier = ls.filter(l => !tierOK(l.id)).length;
+  const byLevel = ls.filter(l => tierOK(l.id) && !S.showAbove && !inLevel(S.student, l.id)).length;
+  if (!byTier && !byLevel) return "";
+  const why = [byTier ? `${byTier} not in the ${TIERS[S.tier]} filter` : "", byLevel ? `${byLevel} above ${nameOf(S.student)}'s target level (${LEVELS[capOf(S.student)].short})` : ""].filter(Boolean).join(", ");
+  const all = byTier + byLevel === ls.length;
+  return `<p class="status hidden-note">${all ? "All " : ""}${byTier + byLevel} lesson${byTier + byLevel === 1 ? "" : "s"} hidden: ${why}. <button class="linkbtn" data-act="showall">Show ${all ? "them" : "all"}</button>${compact ? "" : ` · <button class="linkbtn" data-act="go" data-v="profile">Change level</button>`}</p>`;
+}
+
 function viewMap() {
   const shown = l => (S.showAbove || inLevel(S.student, l.id)) && tierOK(l.id);
   const chaps = CURRICULUM.filter(c => !S.tier || chapterLessons(c).some(shown));
+  const empty = c => !chapterLessons(c).some(l => LESSONS[l.id] && shown(l));
   return `<section style="display:flex;flex-direction:column;gap:14px">
     <div class="row" style="justify-content:space-between"><div><span class="eyebrow">Curriculum · ${nameOf(S.student)}</span><h2>${S.tier ? `${TIERS[S.tier]} path` : "All chapters"}</h2></div>${statusLegend()}</div>
     ${tierBar()}
@@ -20190,6 +20202,7 @@ function viewMap() {
               : `<li><button class="ready t${l.tier} ${above ? "above" : ""}" data-act="lesson" data-id="${l.id}"><span class="lt">${l.title}${above ? lvlTag(l.id) : ""}</span><span class="row" style="gap:4px;flex-wrap:nowrap">${S.tier ? "" : tierDot(l.id)}${awardMini(S.student, l.id)}${statusTag(st)}</span></button></li>`;
           }).join("")}</ul>` : "";
         }).join("")}
+        ${empty(c) ? hiddenNote(c, true) : ""}
         <button class="fm-tile" data-act="chapter" data-id="${c.id}"><span class="fm-ico" aria-hidden="true">ƒ(x)</span><span><b>Key formulas</b><small>${(FORMULAS[c.id] || []).length} equations · chapter page</small></span><span aria-hidden="true">→</span></button>
       </article>`;
     }).join("")}
@@ -20221,8 +20234,9 @@ function viewChapter() {
   <section style="display:flex;flex-direction:column;gap:10px"><span class="eyebrow">Chapter ${ci + 1} · ${nameOf(S.student)}: ${p.done} of ${p.total} complete</span><h1>${c.title}</h1>${tierBar()}</section>
   <div class="chap-grid">
     <div style="display:flex;flex-direction:column;gap:18px;min-width:0">
-      ${c.groups.map(g => `<section style="display:flex;flex-direction:column;gap:8px"><h3>${g.title}</h3>
-        <div class="lesson-list">${g.lessons.filter(l => (S.showAbove || inLevel(S.student, l.id)) && tierOK(l.id)).map(l => {
+      ${hiddenNote(c)}
+      ${c.groups.map(g => [g, g.lessons.filter(l => (S.showAbove || inLevel(S.student, l.id)) && tierOK(l.id))]).filter(([, ls]) => ls.length).map(([g, ls]) => `<section style="display:flex;flex-direction:column;gap:8px"><h3>${g.title}</h3>
+        <div class="lesson-list">${ls.map(l => {
           const st = lessonStatus(S.student, l.id), les = LESSONS[l.id], above = !inLevel(S.student, l.id);
           return `<button class="lesson-row t${l.tier} ${above ? "above" : ""}" data-act="lesson" data-id="${l.id}" ${les ? "" : "disabled"}><span><b>${l.title}</b>${les ? `<small>about ${les.minutes} min · ${les.quiz.length}-question check${above ? " · above " + S.student + "'s level" : ""}</small>` : `<small>Not written yet</small>`}</span><span class="row" style="gap:6px;flex-wrap:nowrap">${tierDot(l.id)}${lvlTag(l.id)}${awardMini(S.student, l.id)}${statusTag(st)}</span></button>`;
         }).join("")}</div></section>`).join("")}
@@ -21107,6 +21121,7 @@ app.addEventListener("click", async e => {
     case "nameclear": store.setSetting(S.student, { name: "" }); toast("Name reset"); break;
     case "setcap": store.setSetting(b.dataset.s, { maxLevel: b.dataset.k }); break;
     case "showabove": S.showAbove = !S.showAbove; render(); break;
+    case "showall": S.showAbove = true; S.tier = 0; store.lsSet(LS_TIER, 0); render(); break;
     case "tier": S.tier = +b.dataset.t; store.lsSet(LS_TIER, S.tier); render(); break;
     case "reset": S.confirmReset = { scope: b.dataset.scope, id: b.dataset.id, student: PERSON_SCOPES.includes(b.dataset.scope) ? b.dataset.id : S.student }; render(); break;
     case "resetno": S.confirmReset = null; render(); break;
